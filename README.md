@@ -4,6 +4,8 @@
 
 Issue tracking is handled in [Jira](https://jira.hyperledger.org/secure/RapidBoard.jspa?projectKey=FAB&rapidView=5&view=planning).
 
+Technical discussion is handled in [Slack](http://hyperledgerproject.slack.com) channel `#fabric-sdk-py`.
+
 ## Incubation Notice
 
 This project is a Hyperledger project in _Incubation_. It was proposed to the community and documented [here](https://docs.google.com/document/d/1N-KbwlFb7Oo_pTG2NjjLTqwlhqp_kjyv5fco7VH8WrE/), and was approved by [Hyperledger TSC at 2016-09-08](http://lists.hyperledger.org/pipermail/hyperledger-tsc/2016-September/000292.html). Information on what _Incubation_ entails can be found in the [Hyperledger Project Lifecycle document](https://goo.gl/4edNRc).
@@ -32,18 +34,12 @@ See [Change Log](docs/change_log.md).
 
 ## Community
 
-[Hyperledger Community](https://www.hyperledger.org/community)
-
-[Hyperledger mailing lists and archives](http://lists.hyperledger.org/)
-
-[Hyperledger Slack](http://hyperledgerproject.slack.com) - if you need an invitation, try our [Slack inviter](https://slack.hyperledger.org)
-
-[Hyperledger Wiki](https://github.com/hyperledger/hyperledger/wiki)
-
-[Hyperledger Code of Conduct](https://github.com/hyperledger/hyperledger/wiki/Hyperledger-Project-Code-of-Conduct)
-
-[Community Calendar](https://github.com/hyperledger/hyperledger/wiki/PublicMeetingCalendar)
+* [Hyperledger Community](https://www.hyperledger.org/community)
+* [Hyperledger mailing lists and archives](http://lists.hyperledger.org/)
+* [Hyperledger Slack](http://hyperledgerproject.slack.com) - if you need an invitation, try our [Slack inviter](https://slack.hyperledger.org)
+* [Hyperledger Wiki](https://github.com/hyperledger/hyperledger/wiki)
+* [Hyperledger Code of Conduct](https://github.com/hyperledger/hyperledger/wiki/Hyperledger-Project-Code-of-Conduct)
+* [Community Calendar](https://github.com/hyperledger/hyperledger/wiki/PublicMeetingCalendar)
 
 ## License <a name="license"></a>
-The Hyperledger Project uses the [Apache License Version 2.0](LICENSE) software
-license.
+The Hyperledger Project uses the [Apache License Version 2.0](LICENSE) software license.
