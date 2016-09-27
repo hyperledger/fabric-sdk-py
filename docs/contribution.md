@@ -41,9 +41,17 @@ $ cd fabric-sdk-py
 $ git checkout -b issue-NNNN
 ```
 
-* Commit your code with `-s` to sign-off, and `-a` to automatically add changes.
+* After change, run `tox` to make sure the checking is passed. Then Commit your code with `-s` to sign-off, and `-a` to automatically add changes.
 
 ```sh
+$ tox
+  ...
+  py27: commands succeeded
+  py30: commands succeeded
+  py35: commands succeeded
+  flake8: commands succeeded
+  congratulations :)
+  
 $ git commit -s -a
 ```
 

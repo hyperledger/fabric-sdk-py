@@ -75,7 +75,7 @@ message TransactionResult {
 }
 
 // Block carries The data that describes a block in the blockchain.
-// version - Version used to track any protocol changes.
+// VERSION - Version used to track any protocol changes.
 // timestamp - The time at which the block or transaction order
 // was proposed. This may not be used by all consensus modules.
 // transactions - The ordered list of transactions in the block.

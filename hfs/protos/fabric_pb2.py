@@ -401,7 +401,7 @@ _BLOCK = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='version', full_name='protos.Block.version', index=0,
+      name='VERSION', full_name='protos.Block.VERSION', index=0,
       number=1, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
