@@ -51,7 +51,7 @@ $ tox
   py35: commands succeeded
   flake8: commands succeeded
   congratulations :)
-  
+
 $ git commit -s -a
 ```
 
