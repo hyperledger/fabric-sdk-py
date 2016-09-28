@@ -1,6 +1,7 @@
 #!/usr/bin/env python
+import io
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 from hfs import VERSION
 
 ROOT_DIR = os.path.dirname(__file__)
@@ -14,12 +15,8 @@ requirements = [
 
 exec(open('hfs/VERSION.py').read())
 
-with open('README.md') as f:
-    long_description = f.read()
-
 with open('./requirements-test.txt') as test_reqs_txt:
     test_requirements = [line for line in test_reqs_txt]
-
 
 setup(
     name='hyperledger-fabric-sdk',
@@ -27,12 +24,11 @@ setup(
     keywords=('Hyperledger Fabric', 'SDK'),
     license='Apache License v2.0',
     description="Python SDK for Hyperledger Fabric.",
-    long_description=long_description,
+    long_description=io.open('README.md', encoding='utf-8').read(),
     author='Hyperledger Community',
     url='https://github.com/hyperledger/fabric-sdk-py/',
-    packages=[
-        'hfs',
-    ],
+    download_url='https://github.com/hyperledger/fabric-sdk-py/',
+    packages=find_packages(),
     platforms='any',
     install_requires=requirements,
     tests_require=test_requirements,
@@ -46,9 +42,9 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.0',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Topic :: Utilities',
         'License :: OSI Approved :: Apache Software License',
     ],
+    include_package_data=True,
 )
