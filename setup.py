@@ -13,13 +13,13 @@ requirements = [
     # 'websocket-client >= 0.32.0',
 ]
 
-exec(open('hfs/VERSION.py').read())
+exec(open('hfs/version.py').read())
 
 with open('./requirements-test.txt') as test_reqs_txt:
     test_requirements = [line for line in test_reqs_txt]
 
 setup(
-    name='hyperledger-fabric-sdk',
+    name='hfs',
     version=VERSION,
     keywords=('Hyperledger Fabric', 'SDK'),
     license='Apache License v2.0',
