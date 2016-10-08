@@ -1,1 +1,5 @@
 six >= 1.4.0
+pycryptodomex >= 3.4.2
+cryptography >= 1.5.2
+pysha3 == 1.0b1
+hkdf >= 0.0.3
