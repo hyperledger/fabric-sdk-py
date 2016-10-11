@@ -2,7 +2,7 @@
 
 **Note:** This is a **read-only mirror** of the formal [Gerrit](https://gerrit.hyperledger.org/r/#/admin/projects/fabric-sdk-py) repository, where active development is ongoing.
 
-Issue tracking is handled in [Jira](https://jira.hyperledger.org/secure/RapidBoard.jspa?projectKey=FAB&rapidView=5&view=planning).
+Issue tracking is handled in [Jira](https://jira.hyperledger.org/secure/RapidBoard.jspa?rapidView=85).
 
 Technical discussion is handled in [Slack](http://hyperledgerproject.slack.com) channel `#fabric-sdk-py`.
 
