@@ -1,18 +1,21 @@
 # Contribution
 Any kind of contribution is encouraged, e.g., bug report, question answer, and submit pull-request.
 
-Before taking actions, we highly recommend reading the [doc](docs).
+Before taking actions, we highly recommend reading the [docs](docs).
 
 
 ## Bug and Questions
 
 We now have two channels for bug and questions:
 
-* [Jira](https://jira.hyperledger.org): report bug issues.
-* [Slack](https://hyperledgerproject.slack.com/archives/fabric-sdk-py): technical discussions.
+* [Jira](https://jira.hyperledger.org/secure/RapidBoard.jspa?rapidView=85): report bug issues, create to-do tasks.
+* [Slack](https://hyperledgerproject.slack.com/archives/fabric-sdk-py): technical discussions and questions.
 
+Jira tasks with `To Do` status are available for picking. If you want to handle one, assign it to yourself, and update the status to `In Progress`. Remember to mark it to `Done` when the patch is merged.
 
 ## Code Commit
+
+*Before committing code, please go to [Jira](https://jira.hyperledger.org/secure/RapidBoard.jspa?rapidView=85) to check existing tasks.*
 
 The project employs [Gerrit](https://gerrit.hyperledger.org) as the code commit/review system. More details about Gerrit can be learned from the [Hyperledger Fabric Gerrit Doc](https://github.com/hyperledger/fabric/blob/master/docs/Gerrit/).
 
