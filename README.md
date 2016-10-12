@@ -29,15 +29,22 @@ Full details of how to contribute to this project are documented [here](http://h
 
 For developers, please also see [How to Contribution](docs/contribution.md).
 
-
 ## Testing
-
 The following command will build a Docker image with the fabric-sdk-py installed.
 
 ```sh
 $ docker build -t hyperledger/fabric-sdk-py .
 $ docker run -it hyperledger/fabric-sdk-py tox
 ```
+
+## Core Developers
+| Name | GitHub | Gerrit | Email |
+| ---- | ------ | ------ | ----- |
+| Baohua Yang | yeasy | baohua | yangbaohua@gmail.com |
+| Chen Kai    | grapebaba | grapebaba | 281165273@qq.com |
+| Chang Chen  | | lafenicecc | ccchenbj@cn.ibm.com |
+| Qiang Wang  | | qiang0723  | wqiang0723@gmail.com |
+| Chuanjian Wang | | ckeyer | me@ckeyer.com |
 
 ## Change Logs
 See [Change Log](docs/change_log.md).
