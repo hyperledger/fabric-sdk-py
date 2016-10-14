@@ -37,6 +37,13 @@ $ docker build -t hyperledger/fabric-sdk-py .
 $ docker run -it hyperledger/fabric-sdk-py tox
 ```
 
+Also, you can use docker-compose to start a cluster for testing, including a fabric peer, a membersrvc, and an sdk-py container.
+
+```sh
+$ docker-compose up -d
+$ docker exec -it sdk-py tox
+```
+
 ## Core Developers
 | Name | GitHub | Gerrit | Email |
 | ---- | ------ | ------ | ----- |
