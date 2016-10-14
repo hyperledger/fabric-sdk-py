@@ -41,10 +41,10 @@ $ cd fabric-sdk-py
 $ git checkout -b issue-NNNN
 ```
 
-* After change, run `tox` to make sure the checking is passed. Then Commit your code with `-s` to sign-off, and `-a` to automatically add changes.
+* After change, run `make check` to make sure the checking is passed. Then Commit your code with `-s` to sign-off, and `-a` to automatically add changes.
 
 ```sh
-$ tox
+$ make check
   ...
   py27: commands succeeded
   py30: commands succeeded

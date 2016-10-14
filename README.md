@@ -27,14 +27,21 @@ We welcome contributions to the Hyperledger Project in many forms. There’s alw
 
 Full details of how to contribute to this project are documented [here](http://hyperledger-fabric.readthedocs.io/en/latest/CONTRIBUTING/).
 
-For developers, please also see [How to Contribution](docs/contribution.md).
+For developers, please also see [How to Contribution](docs/CONTRIBUTING.md).
+
 
 ## Testing
-The following command will build a Docker image with the fabric-sdk-py installed.
+The following command will run the testing.
 
 ```sh
-$ docker build -t hyperledger/fabric-sdk-py .
-$ docker run -it hyperledger/fabric-sdk-py tox
+$ make check
+```
+
+## Generating Docker images
+The following command will build a Docker image `hyperledger/fabric-sdk-py` with the fabric-sdk-py installed.
+
+```sh
+$ make docker
 ```
 
 Also, you can use docker-compose to start a cluster for testing, including a fabric peer, a membersrvc, and an sdk-py container.
