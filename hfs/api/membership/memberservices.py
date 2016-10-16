@@ -14,6 +14,7 @@
 #
 
 import grpc
+import logging
 from ....protos import ca_pb2
 
 
