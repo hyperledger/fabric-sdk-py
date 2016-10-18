@@ -50,10 +50,12 @@ class Peer(object):
             """
 
         peer_response = self.peer_stub.GetPeers(
-                        google_dot_protobuf_dot_empty__pb2.Empty())
+                google_dot_protobuf_dot_empty__pb2.Empty())
         for peer_message in peer_response.peers:
-            self.logger.debug("peer information:--IDName:{0}--address:{1}--type:{2}\n".format(
-                   peer_message.ID.name,
-                   peer_message.address,
-                   peer_message.type))
+            self.logger.debug("peer information:"
+                              "--IDName:{0}"
+                              "--address:{1}"
+                              "--type:{2}\n".format(peer_message.ID.name,
+                                                    peer_message.address,
+                                                    peer_message.type))
         return peer_response
