@@ -6,4 +6,4 @@ check:
 # Generate the hyperledger/fabric-sdk-py image
 .PHONY: docker
 docker:
-	build -t hyperledger/fabric-sdk-py .
+	docker build -t hyperledger/fabric-sdk-py .
