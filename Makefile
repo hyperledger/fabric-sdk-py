@@ -30,3 +30,12 @@ flake8:
 .PHONY: docker
 docker:
 	docker build -t hyperledger/fabric-sdk-py .
+
+# Generate the protobuf python files
+.PHONY: proto
+proto:
+	python -m grpc.tools.protoc \
+		-I./hfs/protos \
+		--python_out=./hfs/protos \
+		--grpc_python_out=./hfs/protos \
+		hfs/protos/*.proto
