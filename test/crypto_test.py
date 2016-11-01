@@ -24,7 +24,7 @@ class CryptoTest(unittest.TestCase):
     def setUp(self):
         self.plain_text = b'Hello world!'
 
-    def testEciesSECP384R1_SHA3(self):
+    def test_ecies_secp384r1_sha3(self):
         """Test case for security level 384, hash SHA3."""
         ecies384 = ecies(CURVE_P_384_Size, SHA3)
         private_key = ecies384.generate_private_key()
@@ -34,8 +34,8 @@ class CryptoTest(unittest.TestCase):
         self.assertEqual(ecies384.decrypt(private_key, cipher_text),
                          self.plain_text)
 
-    def testEciesSECP256R1_SHA3(self):
-        """Test case for security 256, hash SHA3."""
+    def test_ecies_secp256r1_sha3(self):
+        """Test case for security level 256, hash SHA3."""
         ecies256 = ecies(CURVE_P_256_Size, SHA3)
         private_key = ecies256.generate_private_key()
         cipher_text = ecies256.encrypt(private_key.public_key(),
@@ -44,7 +44,7 @@ class CryptoTest(unittest.TestCase):
         self.assertEqual(ecies256.decrypt(private_key, cipher_text),
                          self.plain_text)
 
-    def testEciesSECP256R1_SHA2(self):
+    def test_ecies_secp256r1_sha2(self):
         """Test case for security level 256, hash SHA2."""
         ecies256 = ecies(CURVE_P_256_Size, SHA2)
         private_key = ecies256.generate_private_key()
