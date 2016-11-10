@@ -1,10 +1,11 @@
 FROM python:3.5
+MAINTAINER fabric-sdk-py "https://wiki.hyperledger.org/projects/fabric-sdk-py.md"
 
-RUN git clone https://github.com/hyperledger/fabric-sdk-py \
-    && cd fabric-sdk-py \
-    && pip install tox pytest \
-    && python setup.py install
+COPY . /fabric-sdk-py
 
 WORKDIR /fabric-sdk-py
 
-CMD while true; do sleep 1000; done
+RUN pip install tox pytest \
+    && python setup.py install
+
+CMD ["bash", "-c", "while true; do sleep 1000; done"]
