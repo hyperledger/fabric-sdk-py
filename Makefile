@@ -27,8 +27,8 @@ flake8:
 	$(call run-py-tox)
 
 # Generate the hyperledger/fabric-sdk-py image
-.PHONY: docker
-docker:
+.PHONY: image
+image:
 	docker build -t hyperledger/fabric-sdk-py .
 
 # Generate the protobuf python files
