@@ -18,7 +18,7 @@ from shutil import rmtree
 
 import rx
 
-from hfs.util.keyvaluestore import file_key_value_store
+from hfc.util.keyvaluestore import file_key_value_store
 
 
 class KeyValueStoreTest(unittest.TestCase):

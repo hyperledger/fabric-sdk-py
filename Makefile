@@ -35,7 +35,7 @@ image:
 .PHONY: proto
 proto:
 	python -m grpc.tools.protoc \
-		-I./hfs/protos \
-		--python_out=./hfs/protos \
-		--grpc_python_out=./hfs/protos \
-		hfs/protos/*.proto
+		-I./hfc/protos \
+		--python_out=./hfc/protos \
+		--grpc_python_out=./hfc/protos \
+		hfc/protos/*.proto

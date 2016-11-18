@@ -2,12 +2,12 @@
 import io
 import os
 from setuptools import setup, find_packages
-from hfs import VERSION
+from hfc import VERSION
 
 ROOT_DIR = os.path.dirname(__file__)
 SOURCE_DIR = os.path.join(ROOT_DIR)
 
-exec (open('hfs/version.py').read())
+exec (open('hfc/version.py').read())
 
 with open('./requirements.txt') as reqs_txt:
     requirements = [line for line in reqs_txt]
@@ -16,7 +16,7 @@ with open('./requirements-test.txt') as test_reqs_txt:
     test_requirements = [line for line in test_reqs_txt]
 
 setup(
-        name='hfs',
+        name='hfc',
         version=VERSION,
         keywords=('Hyperledger Fabric', 'SDK'),
         license='Apache License v2.0',

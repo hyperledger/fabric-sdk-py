@@ -14,7 +14,7 @@
 #
 import unittest
 
-from hfs.api.crypto.crypto import \
+from hfc.api.crypto.crypto import \
     CURVE_P_256_Size, SHA3, SHA2, CURVE_P_384_Size, ecies
 
 
