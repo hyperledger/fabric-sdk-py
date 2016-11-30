@@ -35,7 +35,18 @@ image:
 .PHONY: proto
 proto:
 	python -m grpc.tools.protoc \
-		-I./hfc/protos \
+		-I./hfc/protos/\
 		--python_out=./hfc/protos \
 		--grpc_python_out=./hfc/protos \
-		hfc/protos/*.proto
+		hfc/protos/peer/chaincode.proto \
+		hfc/protos/peer/chaincode_proposal.proto \
+		hfc/protos/peer/chaincode_transaction.proto \
+		hfc/protos/peer/chaincodeevent.proto \
+		hfc/protos/peer/events.proto \
+		hfc/protos/peer/fabric.proto \
+		hfc/protos/peer/fabric_block.proto \
+		hfc/protos/peer/fabric_message.proto \
+		hfc/protos/peer/fabric_proposal.proto \
+		hfc/protos/peer/fabric_proposal_response.proto \
+		hfc/protos/peer/fabric_service.proto \
+		hfc/protos/peer/fabric_transaction.proto

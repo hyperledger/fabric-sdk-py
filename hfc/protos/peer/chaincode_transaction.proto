@@ -18,7 +18,9 @@ syntax = "proto3";
 
 package protos;
 
-import "fabric_proposal_response.proto";
+option go_package = "github.com/hyperledger/fabric/protos/peer";
+
+import "peer/fabric_proposal_response.proto";
 
 // ChaincodeActionPayload is the message to be used for the TransactionAction's
 // payload when the Header's type is set to CHAINCODE.  It carries the
