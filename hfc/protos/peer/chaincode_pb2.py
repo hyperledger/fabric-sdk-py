@@ -830,95 +830,120 @@ _sym_db.RegisterMessage(RangeQueryStateResponse)
 
 DESCRIPTOR.has_options = True
 DESCRIPTOR._options = _descriptor._ParseOptions(descriptor_pb2.FileOptions(), _b('\n\026org.hyperledger.protosZ)github.com/hyperledger/fabric/protos/peer'))
-import grpc
-from grpc.beta import implementations as beta_implementations
-from grpc.beta import interfaces as beta_interfaces
-from grpc.framework.common import cardinality
-from grpc.framework.interfaces.face import utilities as face_utilities
+try:
+  # THESE ELEMENTS WILL BE DEPRECATED.
+  # Please use the generated *_pb2_grpc.py files instead.
+  import grpc
+  from grpc.framework.common import cardinality
+  from grpc.framework.interfaces.face import utilities as face_utilities
+  from grpc.beta import implementations as beta_implementations
+  from grpc.beta import interfaces as beta_interfaces
 
 
-class ChaincodeSupportStub(object):
-  """Interface that provides support to chaincode execution. ChaincodeContext
-  provides the context necessary for the server to respond appropriately.
-  """
-
-  def __init__(self, channel):
-    """Constructor.
-
-    Args:
-      channel: A grpc.Channel.
+  class ChaincodeSupportStub(object):
+    """Interface that provides support to chaincode execution. ChaincodeContext
+    provides the context necessary for the server to respond appropriately.
     """
-    self.Register = channel.stream_stream(
-        '/protos.ChaincodeSupport/Register',
-        request_serializer=ChaincodeMessage.SerializeToString,
-        response_deserializer=ChaincodeMessage.FromString,
-        )
+
+    def __init__(self, channel):
+      """Constructor.
+
+      Args:
+        channel: A grpc.Channel.
+      """
+      self.Register = channel.stream_stream(
+          '/protos.ChaincodeSupport/Register',
+          request_serializer=ChaincodeMessage.SerializeToString,
+          response_deserializer=ChaincodeMessage.FromString,
+          )
 
 
-class ChaincodeSupportServicer(object):
-  """Interface that provides support to chaincode execution. ChaincodeContext
-  provides the context necessary for the server to respond appropriately.
-  """
+  class ChaincodeSupportServicer(object):
+    """Interface that provides support to chaincode execution. ChaincodeContext
+    provides the context necessary for the server to respond appropriately.
+    """
 
-  def Register(self, request_iterator, context):
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-
-def add_ChaincodeSupportServicer_to_server(servicer, server):
-  rpc_method_handlers = {
-      'Register': grpc.stream_stream_rpc_method_handler(
-          servicer.Register,
-          request_deserializer=ChaincodeMessage.FromString,
-          response_serializer=ChaincodeMessage.SerializeToString,
-      ),
-  }
-  generic_handler = grpc.method_handlers_generic_handler(
-      'protos.ChaincodeSupport', rpc_method_handlers)
-  server.add_generic_rpc_handlers((generic_handler,))
+    def Register(self, request_iterator, context):
+      context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+      context.set_details('Method not implemented!')
+      raise NotImplementedError('Method not implemented!')
 
 
-class BetaChaincodeSupportServicer(object):
-  """Interface that provides support to chaincode execution. ChaincodeContext
-  provides the context necessary for the server to respond appropriately.
-  """
-  def Register(self, request_iterator, context):
-    context.code(beta_interfaces.StatusCode.UNIMPLEMENTED)
+  def add_ChaincodeSupportServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+        'Register': grpc.stream_stream_rpc_method_handler(
+            servicer.Register,
+            request_deserializer=ChaincodeMessage.FromString,
+            response_serializer=ChaincodeMessage.SerializeToString,
+        ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+        'protos.ChaincodeSupport', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
 
 
-class BetaChaincodeSupportStub(object):
-  """Interface that provides support to chaincode execution. ChaincodeContext
-  provides the context necessary for the server to respond appropriately.
-  """
-  def Register(self, request_iterator, timeout, metadata=None, with_call=False, protocol_options=None):
-    raise NotImplementedError()
+  class BetaChaincodeSupportServicer(object):
+    """The Beta API is deprecated for 0.15.0 and later.
+
+    It is recommended to use the GA API (classes and functions in this
+    file not marked beta) for all further purposes. This class was generated
+    only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0."""
+    """Interface that provides support to chaincode execution. ChaincodeContext
+    provides the context necessary for the server to respond appropriately.
+    """
+    def Register(self, request_iterator, context):
+      context.code(beta_interfaces.StatusCode.UNIMPLEMENTED)
 
 
-def beta_create_ChaincodeSupport_server(servicer, pool=None, pool_size=None, default_timeout=None, maximum_timeout=None):
-  request_deserializers = {
-    ('protos.ChaincodeSupport', 'Register'): ChaincodeMessage.FromString,
-  }
-  response_serializers = {
-    ('protos.ChaincodeSupport', 'Register'): ChaincodeMessage.SerializeToString,
-  }
-  method_implementations = {
-    ('protos.ChaincodeSupport', 'Register'): face_utilities.stream_stream_inline(servicer.Register),
-  }
-  server_options = beta_implementations.server_options(request_deserializers=request_deserializers, response_serializers=response_serializers, thread_pool=pool, thread_pool_size=pool_size, default_timeout=default_timeout, maximum_timeout=maximum_timeout)
-  return beta_implementations.server(method_implementations, options=server_options)
+  class BetaChaincodeSupportStub(object):
+    """The Beta API is deprecated for 0.15.0 and later.
+
+    It is recommended to use the GA API (classes and functions in this
+    file not marked beta) for all further purposes. This class was generated
+    only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0."""
+    """Interface that provides support to chaincode execution. ChaincodeContext
+    provides the context necessary for the server to respond appropriately.
+    """
+    def Register(self, request_iterator, timeout, metadata=None, with_call=False, protocol_options=None):
+      raise NotImplementedError()
 
 
-def beta_create_ChaincodeSupport_stub(channel, host=None, metadata_transformer=None, pool=None, pool_size=None):
-  request_serializers = {
-    ('protos.ChaincodeSupport', 'Register'): ChaincodeMessage.SerializeToString,
-  }
-  response_deserializers = {
-    ('protos.ChaincodeSupport', 'Register'): ChaincodeMessage.FromString,
-  }
-  cardinalities = {
-    'Register': cardinality.Cardinality.STREAM_STREAM,
-  }
-  stub_options = beta_implementations.stub_options(host=host, metadata_transformer=metadata_transformer, request_serializers=request_serializers, response_deserializers=response_deserializers, thread_pool=pool, thread_pool_size=pool_size)
-  return beta_implementations.dynamic_stub(channel, 'protos.ChaincodeSupport', cardinalities, options=stub_options)
+  def beta_create_ChaincodeSupport_server(servicer, pool=None, pool_size=None, default_timeout=None, maximum_timeout=None):
+    """The Beta API is deprecated for 0.15.0 and later.
+
+    It is recommended to use the GA API (classes and functions in this
+    file not marked beta) for all further purposes. This function was
+    generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
+    request_deserializers = {
+      ('protos.ChaincodeSupport', 'Register'): ChaincodeMessage.FromString,
+    }
+    response_serializers = {
+      ('protos.ChaincodeSupport', 'Register'): ChaincodeMessage.SerializeToString,
+    }
+    method_implementations = {
+      ('protos.ChaincodeSupport', 'Register'): face_utilities.stream_stream_inline(servicer.Register),
+    }
+    server_options = beta_implementations.server_options(request_deserializers=request_deserializers, response_serializers=response_serializers, thread_pool=pool, thread_pool_size=pool_size, default_timeout=default_timeout, maximum_timeout=maximum_timeout)
+    return beta_implementations.server(method_implementations, options=server_options)
+
+
+  def beta_create_ChaincodeSupport_stub(channel, host=None, metadata_transformer=None, pool=None, pool_size=None):
+    """The Beta API is deprecated for 0.15.0 and later.
+
+    It is recommended to use the GA API (classes and functions in this
+    file not marked beta) for all further purposes. This function was
+    generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
+    request_serializers = {
+      ('protos.ChaincodeSupport', 'Register'): ChaincodeMessage.SerializeToString,
+    }
+    response_deserializers = {
+      ('protos.ChaincodeSupport', 'Register'): ChaincodeMessage.FromString,
+    }
+    cardinalities = {
+      'Register': cardinality.Cardinality.STREAM_STREAM,
+    }
+    stub_options = beta_implementations.stub_options(host=host, metadata_transformer=metadata_transformer, request_serializers=request_serializers, response_deserializers=response_deserializers, thread_pool=pool, thread_pool_size=pool_size)
+    return beta_implementations.dynamic_stub(channel, 'protos.ChaincodeSupport', cardinalities, options=stub_options)
+except ImportError:
+  pass
 # @@protoc_insertion_point(module_scope)
