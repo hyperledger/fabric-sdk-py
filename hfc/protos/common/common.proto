@@ -29,15 +29,24 @@ enum Status {
     BAD_REQUEST = 400;
     FORBIDDEN = 403;
     NOT_FOUND = 404;
+    REQUEST_ENTITY_TOO_LARGE = 413;
     INTERNAL_SERVER_ERROR = 500;
     SERVICE_UNAVAILABLE = 503;
 }
 
 enum HeaderType {
-        MESSAGE = 0;                   // Used for messages which are signed but opaque
-        CONFIGURATION_TRANSACTION = 1; // Used for messages which reconfigure the chain
-        CONFIGURATION_ITEM = 2;        // Used inside of the the reconfiguration message for signing over ConfigurationItems
-        ENDORSER_TRANSACTION = 3;      // Used by the SDK to submit endorser based transactions
+    MESSAGE = 0;                   // Used for messages which are signed but opaque
+    CONFIGURATION_TRANSACTION = 1; // Used for messages which reconfigure the chain
+    CONFIGURATION_ITEM = 2;        // Used inside of the the reconfiguration message for signing over ConfigurationItems
+    ENDORSER_TRANSACTION = 3;      // Used by the SDK to submit endorser based transactions
+    ORDERER_TRANSACTION = 4;       // Used internally by the orderer for management
+}
+
+// This enum enlist indexes of the block metadata array
+enum BlockMetadataIndex {
+    SIGNATURES = 0;             // Block metadata array position for block signatures
+    LAST_CONFIGURATION = 1;     // Block metadata array poistion to store last configuration block sequence number
+    TRANSACTIONS_FILTER = 2;    // Block metadata array poistion to store serialized bit array filter of invalid transactions
 }
 
 message Header {
@@ -57,7 +66,7 @@ message ChainHeader {
     google.protobuf.Timestamp timestamp = 3;
 
     // Identifier of the chain this message is bound for
-    bytes chainID = 4;
+    string chainID = 4;
 
     // An unique identifier that is used end-to-end.
     //  -  set by higher layers such as end user or SDK

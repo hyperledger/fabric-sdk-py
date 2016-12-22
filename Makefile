@@ -34,10 +34,13 @@ image:
 # Generate the protobuf python files
 .PHONY: proto
 proto:
-	python -m grpc.tools.protoc \
+	python3 -m grpc.tools.protoc \
 		-I./hfc/protos/\
 		--python_out=./hfc/protos \
 		--grpc_python_out=./hfc/protos \
+		hfc/protos/common/*.proto \
+		hfc/protos/msp/*.proto \
+		hfc/protos/orderer/*.proto \
 		hfc/protos/peer/chaincode.proto \
 		hfc/protos/peer/chaincode_proposal.proto \
 		hfc/protos/peer/chaincode_transaction.proto \
