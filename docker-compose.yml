@@ -1,52 +1,53 @@
-# This compose file will start a peer node, a membersrvc,
+# This compose file will start a peer node, an orderer,
 # and an sdk environment for testing
 
 version: '2'
 
 services:
-  membersrvc:
-    container_name: membersrvc
-    image: hyperledger/fabric-membersrvc
-    restart: unless-stopped
-    expose:
-      - "7054"
-    command: membersrvc
-
-  peer:
-    container_name: peer
-    image: hyperledger/fabric-peer
-    restart: unless-stopped
+  orderer:
+    container_name: fabric-orderer
+    image: hyperledger/fabric-orderer
     environment:
-      - CORE_PEER_ADDRESSAUTODETECT=true
-      - CORE_PEER_NETWORKID=dev
-      - CORE_LOGGING_LEVEL=DEBUG
-      - CORE_PEER_ID=vp0
-      - CORE_SECURITY_ENABLED=true
-      - CORE_SECURITY_ENROLLID=test_vp0
-      - CORE_SECURITY_ENROLLSECRET=MwYpmSRjupbT
-      - CORE_PEER_PKI_ECA_PADDR=membersrvc:7054
-      - CORE_PEER_PKI_TCA_PADDR=membersrvc:7054
-      - CORE_PEER_PKI_TLSCA_PADDR=membersrvc:7054
-      - CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=noops
+      - ORDERER_GENERAL_LEDGERTYPE=ram
+      - ORDERER_GENERAL_BATCHTIMEOUT=10s
+      - ORDERER_GENERAL_BATCHSIZE=10
+      - ORDERER_GENERAL_MAXWINDOWSIZE=1000
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_RAMLEDGER_HISTORY_SIZE=100
+      - ORDERER_GENERAL_ORDERERTYPE=solo
     expose:
       - "7050"
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderer
+    command: orderer
+
+  peer:
+    container_name: fabric-peer
+    image: hyperledger/fabric-peer
+    environment:
+      - CORE_PEER_ADDRESSAUTODETECT=true
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_NETWORKID=dev
+      - CORE_NEXT=true
+      - CORE_PEER_ENDORSER_ENABLED=true
+      - CORE_PEER_ID=vp0
+      - CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
+    expose:
       - "7051"
-      - "7052"
-      - "7053"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     links:
-      - membersrvc
-    command: sh -c "sleep 5; peer node start --peer-chaincodedev"
+      - orderer
+    command: peer node start
 
   sdk-py:
-    container_name: sdk-py
+    container_name: fabric-sdk-py
     build: .
     image: hyperledger/fabric-sdk-py
     environment:
-      - PEER_GRPC_ADDR=peer:7051
-      - MEMBERSRVC_GRPC_ADDR=membersrvc:7054
+      - ORDERER_ADDR=orderer:7050
+      - PEER_ADDR=peer:7051
     links:
-      - membersrvc
+      - orderer
       - peer
     command: sh -c "while true; do sleep 1000; done"

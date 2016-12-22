@@ -80,11 +80,11 @@ The following command will build a Docker image `hyperledger/fabric-sdk-py` with
 $ make docker
 ```
 
-Also, you can use docker-compose to start a cluster for testing, including a fabric peer, a membersrvc, and an sdk-py container.
+Also, you can use docker-compose to start a cluster for testing, including a fabric peer, an orderer, and an sdk-py container. **Note:** For the orderer, after you pull the hyperledger/fabric-peer image, you need to retag it to hyperledger/fabric-orderer.
 
 ```sh
 $ docker-compose up -d
-$ docker exec -it sdk-py tox
+$ docker exec -it fabric-sdk-py tox
 ```
 
 ## Change Logs
