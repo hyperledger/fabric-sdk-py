@@ -1,3 +1,4 @@
+requests >= 2.12.4
 six >= 1.4.0
 pycryptodomex >= 3.4.2
 cryptography >= 1.5.2

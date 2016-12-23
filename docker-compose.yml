@@ -47,7 +47,16 @@ services:
     environment:
       - ORDERER_ADDR=orderer:7050
       - PEER_ADDR=peer:7051
+      - COP_ADDR=cop:8888
     links:
       - orderer
       - peer
+      - cop
     command: sh -c "while true; do sleep 1000; done"
+
+  cop:
+    container_name: fabric-cop
+    image: yeasy/hyperledger-fabric-cop
+    command: cop server start -ca testdata/ec.pem -ca-key testdata/ec-key.pem -config testdata/testconfig.json
+    expose:
+      - "8888"
