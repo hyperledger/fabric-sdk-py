@@ -12,8 +12,8 @@ endef
 check:
 	bash check.sh
 
-# Run all test cases
-test: pylint flake8 py27 py35
+# Run all unit test cases
+unittest: pylint flake8 py27 py35
 
 pylint:
 	$(call run-py-tox)

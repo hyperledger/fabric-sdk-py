@@ -14,10 +14,11 @@
 #
 import os
 import unittest
-
+import time
 from requests.exceptions import RequestException
 
 from hfc.api.cop.copservice import COPClient
+from test.unit.util import cli_call
 
 with open(os.path.join(os.path.dirname(__file__),
                        "../fixtures/cop/enroll-csr.pem")) as f:
@@ -28,13 +29,34 @@ class COPTest(unittest.TestCase):
     """Test for cop module. """
 
     def setUp(self):
-        global result
         self._enrollment_id = "testUser"
         self._enrollment_secret = "user1"
         if os.getenv("COP_ADDR"):
             self._cop_server_address = os.getenv("COP_ADDR")
         else:
             self._cop_server_address = "localhost:8888"
+
+    @staticmethod
+    def start_test_env():
+        cli_call(["docker-compose", "-f",
+                  os.path.join(os.path.dirname(__file__),
+                               "../fixtures/cop/docker-compose.yml"),
+                  "up", "-d"])
+
+    @staticmethod
+    def shutdown_test_env():
+        cli_call(["docker-compose", "-f",
+                  os.path.join(os.path.dirname(__file__),
+                               "../fixtures/cop/docker-compose.yml"),
+                  "stop"])
+        cli_call(["docker-compose", "-f",
+                  os.path.join(os.path.dirname(__file__),
+                               "../fixtures/cop/docker-compose.yml"),
+                  "kill"])
+        cli_call(["docker-compose", "-f",
+                  os.path.join(os.path.dirname(__file__),
+                               "../fixtures/cop/docker-compose.yml"),
+                  "rm", "-f"])
 
     def test_enroll_missing_enrollment_id(self):
         """Test enroll missing enrollment id.
@@ -65,10 +87,14 @@ class COPTest(unittest.TestCase):
     def test_enroll_success(self):
         """Test enroll success.
         """
+        self.shutdown_test_env()
+        self.start_test_env()
+        time.sleep(5)
         cop_client = COPClient("http://" + self._cop_server_address)
         ecert = cop_client.enroll(self._enrollment_id,
                                   self._enrollment_secret, test_pem)
         self.assertTrue(ecert.startswith(b"-----BEGIN CERTIFICATE-----"))
+        self.shutdown_test_env()
 
     def test_enroll_unreachable_server_address(self):
         """Test enroll unreachable server address.
