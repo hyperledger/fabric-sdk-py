@@ -54,6 +54,40 @@ class CryptoTest(unittest.TestCase):
         self.assertEqual(ecies256.decrypt(private_key, cipher_text),
                          self.plain_text)
 
+    def test_ecies_secp256r1_sha2_sign_verify(self):
+        """Test case for security level 256, hash SHA2."""
+        ecies256 = ecies(CURVE_P_256_Size, SHA2)
+        private_key = ecies256.generate_private_key()
+        signature = ecies256.sign(private_key,
+                                  self.plain_text)
+
+        self.assertEqual(ecies256.verify(private_key.public_key(),
+                                         self.plain_text,
+                                         signature),
+                         True)
+
+        self.assertEqual(ecies256.verify(private_key.public_key(),
+                                         self.plain_text + b'!',
+                                         signature),
+                         False)
+
+    def test_ecies_secp384r1_sha2_sign_verify(self):
+        """Test case for security level 256, hash SHA2."""
+        ecies384 = ecies(CURVE_P_384_Size, SHA2)
+        private_key = ecies384.generate_private_key()
+        signature = ecies384.sign(private_key,
+                                  self.plain_text)
+
+        self.assertEqual(ecies384.verify(private_key.public_key(),
+                                         self.plain_text,
+                                         signature),
+                         True)
+
+        self.assertEqual(ecies384.verify(private_key.public_key(),
+                                         self.plain_text + b'!',
+                                         signature),
+                         False)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -22,9 +22,11 @@ from Cryptodome import Random
 from Cryptodome.Cipher import AES
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import constant_time
+from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric.ec \
     import EllipticCurvePublicNumbers
+from cryptography.exceptions import InvalidSignature
 from hkdf import Hkdf
 
 if sys.version_info < (3, 6):
@@ -84,6 +86,17 @@ class Crypto(object):
         :return: An object including secure context
         """
 
+    @abstractmethod
+    def verify(self, public_key, message, signature):
+        """ Verify the signature by signing public key.
+
+        :param public_key: Signing public key
+        :param message: Origin message
+        :param signature: Signature of message
+
+        :return: A boolean True as valid
+        """
+
 
 def generate_nonce(size):
     """ Generate a secure random for cryptographic use.
@@ -106,8 +119,10 @@ class Ecies(Crypto):
         """
         if security_level == CURVE_P_256_Size:
             self.curve = ec.SECP256R1
+            self.sign_hash_algorithm = hashes.SHA256()
         else:
             self.curve = ec.SECP384R1
+            self.sign_hash_algorithm = hashes.SHA384()
 
         if hash_algorithm == SHA2:
             self.hash = hashlib.sha256
@@ -117,7 +132,34 @@ class Ecies(Crypto):
             self.hash = hashlib.sha3_384
 
     def sign(self, private_key, message):
-        pass
+        """ECDSA sign message.
+
+        :param private_key: private key
+        :param message: message to sign
+        :return: signature
+        """
+        signer = private_key.signer(ec.ECDSA(self.sign_hash_algorithm))
+        signer.update(message)
+        return signer.finalize()
+
+    def verify(self, public_key, message, signature):
+        """ECDSA verify signature.
+
+        :param public_key: Signing public key
+        :param message: Origin message
+        :param signature: Signature of message
+        :return: verify result boolean, True means valid
+        """
+        verifier = public_key.verifier(signature,
+                                       ec.ECDSA(self.sign_hash_algorithm))
+        verifier.update(message)
+        try:
+            verifier.verify()
+        except InvalidSignature:
+            return False
+        except Exception as e:
+            raise e
+        return True
 
     def generate_private_key(self):
         """ECDSA key pair generation by current curve.
