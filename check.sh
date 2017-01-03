@@ -12,7 +12,7 @@ docker pull yeasy/hyperledger-fabric-peer
 docker pull yeasy/hyperledger-fabric-orderer
 docker tag yeasy/hyperledger-fabric-cop:latest hyperledger/fabric-cop:latest
 docker tag yeasy/hyperledger-fabric-peer:latest hyperledger/fabric-peer:latest
-docker tag yeasy/hyperledger-fabric-orderer:latest hyperledger/fabric-order:latest
+docker tag yeasy/hyperledger-fabric-orderer:latest hyperledger/fabric-orderer:latest
 
 # run tests
 echo "===Starting test..."

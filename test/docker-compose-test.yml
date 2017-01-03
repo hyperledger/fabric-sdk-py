@@ -1,5 +1,7 @@
+# https://github.com/hyperledger/fabric-sdk-py
 # This compose file will start a peer node, an orderer,
 # and a cop server environment for testing
+
 cop:
   container_name: fabric-cop
   image: hyperledger/fabric-cop
@@ -12,7 +14,7 @@ cop:
 
 orderer:
   container_name: fabric-orderer
-  image: hyperledger/fabric-order
+  image: hyperledger/fabric-orderer
   ports:
     - "7050:7050"
   command: orderer
