@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='orderer/configuration.proto',
   package='orderer',
   syntax='proto3',
-  serialized_pb=_b('\n\x1borderer/configuration.proto\x12\x07orderer\x1a\x13\x63ommon/common.proto\"\x1d\n\rConsensusType\x12\x0c\n\x04type\x18\x01 \x01(\t\"$\n\tBatchSize\x12\x17\n\x0fmaxMessageCount\x18\x01 \x01(\r\"0\n\x0e\x43reationPolicy\x12\x0e\n\x06policy\x18\x01 \x01(\t\x12\x0e\n\x06\x64igest\x18\x02 \x01(\x0c\"!\n\rChainCreators\x12\x10\n\x08policies\x18\x01 \x03(\t\"\x1f\n\x0cKafkaBrokers\x12\x0f\n\x07\x62rokers\x18\x01 \x03(\tB.Z,github.com/hyperledger/fabric/protos/ordererb\x06proto3')
+  serialized_pb=_b('\n\x1borderer/configuration.proto\x12\x07orderer\x1a\x13\x63ommon/common.proto\"\x1d\n\rConsensusType\x12\x0c\n\x04type\x18\x01 \x01(\t\"$\n\tBatchSize\x12\x17\n\x0fmaxMessageCount\x18\x01 \x01(\r\"\x1f\n\x0c\x42\x61tchTimeout\x12\x0f\n\x07timeout\x18\x01 \x01(\t\"0\n\x0e\x43reationPolicy\x12\x0e\n\x06policy\x18\x01 \x01(\t\x12\x0e\n\x06\x64igest\x18\x02 \x01(\x0c\"\x1d\n\rIngressPolicy\x12\x0c\n\x04name\x18\x01 \x01(\t\"!\n\rChainCreators\x12\x10\n\x08policies\x18\x01 \x03(\t\"\x1f\n\x0cKafkaBrokers\x12\x0f\n\x07\x62rokers\x18\x01 \x03(\tB.Z,github.com/hyperledger/fabric/protos/ordererb\x06proto3')
   ,
   dependencies=[common_dot_common__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -90,6 +90,37 @@ _BATCHSIZE = _descriptor.Descriptor(
 )
 
 
+_BATCHTIMEOUT = _descriptor.Descriptor(
+  name='BatchTimeout',
+  full_name='orderer.BatchTimeout',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='timeout', full_name='orderer.BatchTimeout.timeout', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=130,
+  serialized_end=161,
+)
+
+
 _CREATIONPOLICY = _descriptor.Descriptor(
   name='CreationPolicy',
   full_name='orderer.CreationPolicy',
@@ -123,8 +154,39 @@ _CREATIONPOLICY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=130,
-  serialized_end=178,
+  serialized_start=163,
+  serialized_end=211,
+)
+
+
+_INGRESSPOLICY = _descriptor.Descriptor(
+  name='IngressPolicy',
+  full_name='orderer.IngressPolicy',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='name', full_name='orderer.IngressPolicy.name', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=213,
+  serialized_end=242,
 )
 
 
@@ -154,8 +216,8 @@ _CHAINCREATORS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=180,
-  serialized_end=213,
+  serialized_start=244,
+  serialized_end=277,
 )
 
 
@@ -185,13 +247,15 @@ _KAFKABROKERS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=215,
-  serialized_end=246,
+  serialized_start=279,
+  serialized_end=310,
 )
 
 DESCRIPTOR.message_types_by_name['ConsensusType'] = _CONSENSUSTYPE
 DESCRIPTOR.message_types_by_name['BatchSize'] = _BATCHSIZE
+DESCRIPTOR.message_types_by_name['BatchTimeout'] = _BATCHTIMEOUT
 DESCRIPTOR.message_types_by_name['CreationPolicy'] = _CREATIONPOLICY
+DESCRIPTOR.message_types_by_name['IngressPolicy'] = _INGRESSPOLICY
 DESCRIPTOR.message_types_by_name['ChainCreators'] = _CHAINCREATORS
 DESCRIPTOR.message_types_by_name['KafkaBrokers'] = _KAFKABROKERS
 
@@ -209,12 +273,26 @@ BatchSize = _reflection.GeneratedProtocolMessageType('BatchSize', (_message.Mess
   ))
 _sym_db.RegisterMessage(BatchSize)
 
+BatchTimeout = _reflection.GeneratedProtocolMessageType('BatchTimeout', (_message.Message,), dict(
+  DESCRIPTOR = _BATCHTIMEOUT,
+  __module__ = 'orderer.configuration_pb2'
+  # @@protoc_insertion_point(class_scope:orderer.BatchTimeout)
+  ))
+_sym_db.RegisterMessage(BatchTimeout)
+
 CreationPolicy = _reflection.GeneratedProtocolMessageType('CreationPolicy', (_message.Message,), dict(
   DESCRIPTOR = _CREATIONPOLICY,
   __module__ = 'orderer.configuration_pb2'
   # @@protoc_insertion_point(class_scope:orderer.CreationPolicy)
   ))
 _sym_db.RegisterMessage(CreationPolicy)
+
+IngressPolicy = _reflection.GeneratedProtocolMessageType('IngressPolicy', (_message.Message,), dict(
+  DESCRIPTOR = _INGRESSPOLICY,
+  __module__ = 'orderer.configuration_pb2'
+  # @@protoc_insertion_point(class_scope:orderer.IngressPolicy)
+  ))
+_sym_db.RegisterMessage(IngressPolicy)
 
 ChainCreators = _reflection.GeneratedProtocolMessageType('ChainCreators', (_message.Message,), dict(
   DESCRIPTOR = _CHAINCREATORS,

@@ -22,7 +22,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='peer/chaincode.proto',
   package='protos',
   syntax='proto3',
-  serialized_pb=_b('\n\x14peer/chaincode.proto\x12\x06protos\x1a\x19peer/chaincodeevent.proto\x1a\x1fgoogle/protobuf/timestamp.proto\")\n\x0b\x43haincodeID\x12\x0c\n\x04path\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"\x1e\n\x0e\x43haincodeInput\x12\x0c\n\x04\x61rgs\x18\x01 \x03(\x0c\"\xd6\x02\n\rChaincodeSpec\x12(\n\x04type\x18\x01 \x01(\x0e\x32\x1a.protos.ChaincodeSpec.Type\x12(\n\x0b\x63haincodeID\x18\x02 \x01(\x0b\x32\x13.protos.ChaincodeID\x12\'\n\x07\x63torMsg\x18\x03 \x01(\x0b\x32\x16.protos.ChaincodeInput\x12\x0f\n\x07timeout\x18\x04 \x01(\x05\x12\x15\n\rsecureContext\x18\x05 \x01(\t\x12:\n\x14\x63onfidentialityLevel\x18\x06 \x01(\x0e\x32\x1c.protos.ConfidentialityLevel\x12\x10\n\x08metadata\x18\x07 \x01(\x0c\x12\x12\n\nattributes\x18\x08 \x03(\t\">\n\x04Type\x12\r\n\tUNDEFINED\x10\x00\x12\n\n\x06GOLANG\x10\x01\x12\x08\n\x04NODE\x10\x02\x12\x07\n\x03\x43\x41R\x10\x03\x12\x08\n\x04JAVA\x10\x04\"\x86\x02\n\x17\x43haincodeDeploymentSpec\x12,\n\rchaincodeSpec\x18\x01 \x01(\x0b\x32\x15.protos.ChaincodeSpec\x12\x31\n\reffectiveDate\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x13\n\x0b\x63odePackage\x18\x03 \x01(\x0c\x12\x45\n\x07\x65xecEnv\x18\x04 \x01(\x0e\x32\x34.protos.ChaincodeDeploymentSpec.ExecutionEnvironment\".\n\x14\x45xecutionEnvironment\x12\n\n\x06\x44OCKER\x10\x00\x12\n\n\x06SYSTEM\x10\x01\"`\n\x17\x43haincodeInvocationSpec\x12,\n\rchaincodeSpec\x18\x01 \x01(\x0b\x32\x15.protos.ChaincodeSpec\x12\x17\n\x0fidGenerationAlg\x18\x02 \x01(\t\"\xe3\x03\n\x10\x43haincodeMessage\x12+\n\x04type\x18\x01 \x01(\x0e\x32\x1d.protos.ChaincodeMessage.Type\x12-\n\ttimestamp\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0f\n\x07payload\x18\x03 \x01(\x0c\x12\x0c\n\x04txid\x18\x04 \x01(\t\x12.\n\x0e\x63haincodeEvent\x18\x06 \x01(\x0b\x32\x16.protos.ChaincodeEvent\"\xa3\x02\n\x04Type\x12\r\n\tUNDEFINED\x10\x00\x12\x0c\n\x08REGISTER\x10\x01\x12\x0e\n\nREGISTERED\x10\x02\x12\x08\n\x04INIT\x10\x03\x12\t\n\x05READY\x10\x04\x12\x0f\n\x0bTRANSACTION\x10\x05\x12\r\n\tCOMPLETED\x10\x06\x12\t\n\x05\x45RROR\x10\x07\x12\r\n\tGET_STATE\x10\x08\x12\r\n\tPUT_STATE\x10\t\x12\r\n\tDEL_STATE\x10\n\x12\x14\n\x10INVOKE_CHAINCODE\x10\x0b\x12\x0c\n\x08RESPONSE\x10\r\x12\x15\n\x11RANGE_QUERY_STATE\x10\x0e\x12\x1a\n\x16RANGE_QUERY_STATE_NEXT\x10\x0f\x12\x1b\n\x17RANGE_QUERY_STATE_CLOSE\x10\x10\x12\r\n\tKEEPALIVE\x10\x11\"*\n\x0cPutStateInfo\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x0c\"3\n\x0fRangeQueryState\x12\x10\n\x08startKey\x18\x01 \x01(\t\x12\x0e\n\x06\x65ndKey\x18\x02 \x01(\t\"!\n\x13RangeQueryStateNext\x12\n\n\x02ID\x18\x01 \x01(\t\"\"\n\x14RangeQueryStateClose\x12\n\n\x02ID\x18\x01 \x01(\t\"5\n\x17RangeQueryStateKeyValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x0c\"n\n\x17RangeQueryStateResponse\x12\x36\n\rkeysAndValues\x18\x01 \x03(\x0b\x32\x1f.protos.RangeQueryStateKeyValue\x12\x0f\n\x07hasMore\x18\x02 \x01(\x08\x12\n\n\x02ID\x18\x03 \x01(\t*4\n\x14\x43onfidentialityLevel\x12\n\n\x06PUBLIC\x10\x00\x12\x10\n\x0c\x43ONFIDENTIAL\x10\x01\x32X\n\x10\x43haincodeSupport\x12\x44\n\x08Register\x12\x18.protos.ChaincodeMessage\x1a\x18.protos.ChaincodeMessage\"\x00(\x01\x30\x01\x42\x43\n\x16org.hyperledger.protosZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_pb=_b('\n\x14peer/chaincode.proto\x12\x06protos\x1a\x19peer/chaincodeevent.proto\x1a\x1fgoogle/protobuf/timestamp.proto\")\n\x0b\x43haincodeID\x12\x0c\n\x04path\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"\x1e\n\x0e\x43haincodeInput\x12\x0c\n\x04\x61rgs\x18\x01 \x03(\x0c\"\xbf\x02\n\rChaincodeSpec\x12(\n\x04type\x18\x01 \x01(\x0e\x32\x1a.protos.ChaincodeSpec.Type\x12(\n\x0b\x63haincodeID\x18\x02 \x01(\x0b\x32\x13.protos.ChaincodeID\x12\'\n\x07\x63torMsg\x18\x03 \x01(\x0b\x32\x16.protos.ChaincodeInput\x12\x0f\n\x07timeout\x18\x04 \x01(\x05\x12:\n\x14\x63onfidentialityLevel\x18\x05 \x01(\x0e\x32\x1c.protos.ConfidentialityLevel\x12\x10\n\x08metadata\x18\x06 \x01(\x0c\x12\x12\n\nattributes\x18\x07 \x03(\t\">\n\x04Type\x12\r\n\tUNDEFINED\x10\x00\x12\n\n\x06GOLANG\x10\x01\x12\x08\n\x04NODE\x10\x02\x12\x07\n\x03\x43\x41R\x10\x03\x12\x08\n\x04JAVA\x10\x04\"\x86\x02\n\x17\x43haincodeDeploymentSpec\x12,\n\rchaincodeSpec\x18\x01 \x01(\x0b\x32\x15.protos.ChaincodeSpec\x12\x31\n\reffectiveDate\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x13\n\x0b\x63odePackage\x18\x03 \x01(\x0c\x12\x45\n\x07\x65xecEnv\x18\x04 \x01(\x0e\x32\x34.protos.ChaincodeDeploymentSpec.ExecutionEnvironment\".\n\x14\x45xecutionEnvironment\x12\n\n\x06\x44OCKER\x10\x00\x12\n\n\x06SYSTEM\x10\x01\"`\n\x17\x43haincodeInvocationSpec\x12,\n\rchaincodeSpec\x18\x01 \x01(\x0b\x32\x15.protos.ChaincodeSpec\x12\x17\n\x0fidGenerationAlg\x18\x02 \x01(\t\"\xe3\x03\n\x10\x43haincodeMessage\x12+\n\x04type\x18\x01 \x01(\x0e\x32\x1d.protos.ChaincodeMessage.Type\x12-\n\ttimestamp\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0f\n\x07payload\x18\x03 \x01(\x0c\x12\x0c\n\x04txid\x18\x04 \x01(\t\x12.\n\x0e\x63haincodeEvent\x18\x06 \x01(\x0b\x32\x16.protos.ChaincodeEvent\"\xa3\x02\n\x04Type\x12\r\n\tUNDEFINED\x10\x00\x12\x0c\n\x08REGISTER\x10\x01\x12\x0e\n\nREGISTERED\x10\x02\x12\x08\n\x04INIT\x10\x03\x12\t\n\x05READY\x10\x04\x12\x0f\n\x0bTRANSACTION\x10\x05\x12\r\n\tCOMPLETED\x10\x06\x12\t\n\x05\x45RROR\x10\x07\x12\r\n\tGET_STATE\x10\x08\x12\r\n\tPUT_STATE\x10\t\x12\r\n\tDEL_STATE\x10\n\x12\x14\n\x10INVOKE_CHAINCODE\x10\x0b\x12\x0c\n\x08RESPONSE\x10\r\x12\x15\n\x11RANGE_QUERY_STATE\x10\x0e\x12\x1a\n\x16RANGE_QUERY_STATE_NEXT\x10\x0f\x12\x1b\n\x17RANGE_QUERY_STATE_CLOSE\x10\x10\x12\r\n\tKEEPALIVE\x10\x11\"*\n\x0cPutStateInfo\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x0c\"3\n\x0fRangeQueryState\x12\x10\n\x08startKey\x18\x01 \x01(\t\x12\x0e\n\x06\x65ndKey\x18\x02 \x01(\t\"!\n\x13RangeQueryStateNext\x12\n\n\x02ID\x18\x01 \x01(\t\"\"\n\x14RangeQueryStateClose\x12\n\n\x02ID\x18\x01 \x01(\t\"5\n\x17RangeQueryStateKeyValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x0c\"n\n\x17RangeQueryStateResponse\x12\x36\n\rkeysAndValues\x18\x01 \x03(\x0b\x32\x1f.protos.RangeQueryStateKeyValue\x12\x0f\n\x07hasMore\x18\x02 \x01(\x08\x12\n\n\x02ID\x18\x03 \x01(\t*4\n\x14\x43onfidentialityLevel\x12\n\n\x06PUBLIC\x10\x00\x12\x10\n\x0c\x43ONFIDENTIAL\x10\x01\x32X\n\x10\x43haincodeSupport\x12\x44\n\x08Register\x12\x18.protos.ChaincodeMessage\x1a\x18.protos.ChaincodeMessage\"\x00(\x01\x30\x01\x42\x43\n\x16org.hyperledger.protosZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
   ,
   dependencies=[peer_dot_chaincodeevent__pb2.DESCRIPTOR,google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -44,8 +44,8 @@ _CONFIDENTIALITYLEVEL = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1696,
-  serialized_end=1748,
+  serialized_start=1673,
+  serialized_end=1725,
 )
 _sym_db.RegisterEnumDescriptor(_CONFIDENTIALITYLEVEL)
 
@@ -83,8 +83,8 @@ _CHAINCODESPEC_TYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=448,
-  serialized_end=510,
+  serialized_start=425,
+  serialized_end=487,
 )
 _sym_db.RegisterEnumDescriptor(_CHAINCODESPEC_TYPE)
 
@@ -105,8 +105,8 @@ _CHAINCODEDEPLOYMENTSPEC_EXECUTIONENVIRONMENT = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=729,
-  serialized_end=775,
+  serialized_start=706,
+  serialized_end=752,
 )
 _sym_db.RegisterEnumDescriptor(_CHAINCODEDEPLOYMENTSPEC_EXECUTIONENVIRONMENT)
 
@@ -187,8 +187,8 @@ _CHAINCODEMESSAGE_TYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1068,
-  serialized_end=1359,
+  serialized_start=1045,
+  serialized_end=1336,
 )
 _sym_db.RegisterEnumDescriptor(_CHAINCODEMESSAGE_TYPE)
 
@@ -298,29 +298,22 @@ _CHAINCODESPEC = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='secureContext', full_name='protos.ChaincodeSpec.secureContext', index=4,
-      number=5, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='confidentialityLevel', full_name='protos.ChaincodeSpec.confidentialityLevel', index=5,
-      number=6, type=14, cpp_type=8, label=1,
+      name='confidentialityLevel', full_name='protos.ChaincodeSpec.confidentialityLevel', index=4,
+      number=5, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='metadata', full_name='protos.ChaincodeSpec.metadata', index=6,
-      number=7, type=12, cpp_type=9, label=1,
+      name='metadata', full_name='protos.ChaincodeSpec.metadata', index=5,
+      number=6, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='attributes', full_name='protos.ChaincodeSpec.attributes', index=7,
-      number=8, type=9, cpp_type=9, label=3,
+      name='attributes', full_name='protos.ChaincodeSpec.attributes', index=6,
+      number=7, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -339,7 +332,7 @@ _CHAINCODESPEC = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=168,
-  serialized_end=510,
+  serialized_end=487,
 )
 
 
@@ -391,8 +384,8 @@ _CHAINCODEDEPLOYMENTSPEC = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=513,
-  serialized_end=775,
+  serialized_start=490,
+  serialized_end=752,
 )
 
 
@@ -429,8 +422,8 @@ _CHAINCODEINVOCATIONSPEC = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=777,
-  serialized_end=873,
+  serialized_start=754,
+  serialized_end=850,
 )
 
 
@@ -489,8 +482,8 @@ _CHAINCODEMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=876,
-  serialized_end=1359,
+  serialized_start=853,
+  serialized_end=1336,
 )
 
 
@@ -527,8 +520,8 @@ _PUTSTATEINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1361,
-  serialized_end=1403,
+  serialized_start=1338,
+  serialized_end=1380,
 )
 
 
@@ -565,8 +558,8 @@ _RANGEQUERYSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1405,
-  serialized_end=1456,
+  serialized_start=1382,
+  serialized_end=1433,
 )
 
 
@@ -596,8 +589,8 @@ _RANGEQUERYSTATENEXT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1458,
-  serialized_end=1491,
+  serialized_start=1435,
+  serialized_end=1468,
 )
 
 
@@ -627,8 +620,8 @@ _RANGEQUERYSTATECLOSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1493,
-  serialized_end=1527,
+  serialized_start=1470,
+  serialized_end=1504,
 )
 
 
@@ -665,8 +658,8 @@ _RANGEQUERYSTATEKEYVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1529,
-  serialized_end=1582,
+  serialized_start=1506,
+  serialized_end=1559,
 )
 
 
@@ -710,8 +703,8 @@ _RANGEQUERYSTATERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1584,
-  serialized_end=1694,
+  serialized_start=1561,
+  serialized_end=1671,
 )
 
 _CHAINCODESPEC.fields_by_name['type'].enum_type = _CHAINCODESPEC_TYPE
