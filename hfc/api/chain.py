@@ -108,7 +108,7 @@ class Chain(object):
         """
         pass
 
-    def initialize(self):
+    def initialize_chain(self):
         """Initialize a new chain
 
         Calls the orderer(s) to start building the new chain, which is a
@@ -118,7 +118,19 @@ class Chain(object):
         :return: True if the chain initialization process was successful,
             False otherwise.
         """
-        pass
+        return True
+
+    def update_chain(self):
+        """Update a new chain
+
+        Calls the orderer(s) to update an existing chain. This allows the
+        addition and deletion of Peer nodes to an existing chain, as well as
+        the update of Peer certificate information upon certificate renewals.
+
+        Returns: True if the chain update process was successful,
+            False otherwise.
+        """
+        return True
 
     def is_readonly(self):
         """Check the chain if read-only
@@ -129,25 +141,6 @@ class Chain(object):
         can be submitted.
 
         :return: True if the chain is read-only, False otherwise.
-        """
-        pass
-
-    def get_event_hub(self):
-        """Get the eventHub for this chain.
-
-        :return: The active eventHub for this chain.
-        """
-        pass
-
-    def event_hub_connect(self, address):
-        """Create and connect the eventHub for this chain.
-
-        :param address: Peer address (string) for event source
-        """
-        pass
-
-    def event_hub_disconnect(self):
-        """Disconnect the eventHub for this chain.
         """
         pass
 
@@ -176,3 +169,96 @@ class Chain(object):
         :return: TransactionInfo containing the transaction
         """
         pass
+
+    def create_deploy_proposal(self, chaincode_path, chaincode_name, fcn, args,
+                               sign=True):
+        """Create a chaincode deploy proposal
+
+        This involves assembling the proposal with the data (chaincodeID,
+        chaincode invocation spec, etc.) and signing it using the private key
+        corresponding to the ECert to sign.
+
+        Args:
+            chaincode_path (string): path to the chaincode to deploy
+            chaincode_name (string): a custom name to identify the chaincode
+            on the chain
+            fcn (string): name of the chaincode function to call after deploy
+            to initiate the state
+            args (string[]): arguments for calling the init function
+            designated by “fcn”
+            sign (Bool): Whether to sign the transaction, default to True
+
+        Returns: (Proposal): The created Proposal instance or None.
+
+        """
+        return None
+
+    def create_transaction_proposal(self, chaincode_name, args, sign=True):
+        """Create a transaction proposal.
+
+        This involves assembling the proposal with the data (chaincodeID,
+        chaincode invocation spec, etc.) and signing it using the private key
+        corresponding to the ECert to sign.
+
+        Args:
+            chaincode_name (string): The name given to the invoked chaincode
+            args (string[]): arguments for the “invoke” method on the chaincode
+            sign (Bool): Whether to sign the transaction, default to True
+
+
+        Returns:
+            (Transaction_Proposal instance): The created Transaction_Proposal
+            instance or None.
+
+        """
+        return None
+
+    def send_transaction_proposal(self, transaction_proposal, chain, retry=0):
+        """Send  the created proposal to peer for endorsement.
+
+        Args:
+            transaction_proposal: The transaction proposal data
+            chain: The target chain whose peers the proposal will be sent to
+            retry: times to retry when failure, by default to 0 (no try)
+
+        Returns:
+            (Transaction_Proposal_Response response): The response to send
+            proposal request.
+
+        """
+        return None
+
+    def create_transaction(self, proposal_responses):
+        """Create a transaction with proposal response.
+
+        Following the endorsement policy.
+
+        Args:
+            proposal_responses ([Transaction_Proposal_Response]):
+                The array of proposal responses received in the proposal call.
+
+
+        Returns:
+            (Transaction instance): The created transaction object instance.
+
+        """
+        return None
+
+    def send_transaction(self, transaction):
+        """Send a transaction to the chain’s orderer service (one or more
+        orderer endpoints) for consensus and committing to the ledger.
+
+        This call is asynchronous and the successful transaction commit is
+        notified via a BLOCK or CHAINCODE event. This method must provide a
+        mechanism for applications to attach event listeners to handle
+        “transaction submitted”, “transaction complete” and “error” events.
+
+        Args:
+            transaction (Transaction): The transaction object constructed above
+
+        Returns:
+            result (EventEmitter): an handle to allow the application to
+            attach event handlers on “submitted”, “complete”, and “error”.
+
+        """
+        return None
