@@ -42,7 +42,8 @@ proto:
 		-I./hfc/protos/\
 		--python_out=./hfc/protos \
 		--grpc_python_out=./hfc/protos \
-		hfc/protos/common/*.proto \
+		hfc/protos/common/common.proto \
+		hfc/protos/common/configuration.proto \
 		hfc/protos/msp/*.proto \
 		hfc/protos/orderer/*.proto \
 		hfc/protos/peer/chaincode.proto \
