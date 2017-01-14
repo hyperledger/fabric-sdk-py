@@ -13,6 +13,13 @@
 # limitations under the License.
 #
 
+import logging
+import os
+
+from ..util.constants import dockerfile_contents
+from .crypto import crypto
+from ..util import utils
+
 
 class Chain(object):
     """ The Chain Object
@@ -22,10 +29,14 @@ class Chain(object):
     on channel.
     """
 
-    def __init__(self):
-        self.peers = []
+    def __init__(self, name):
+        self.name = name
+        self.peers = {}
+        self.orders = {}
         self.keyValStore = None
         self.tcertBatchSize = 0
+        self.logger = logging.getLogger(__name__)
+        self.logger.info('Init Chain with name={}'.format(self.name))
 
     def getKeyValueStore(self):
         """Get the key val store instance
@@ -38,7 +49,7 @@ class Chain(object):
         """
         return self.keyValStore
 
-    def setKeyValueStore(self, keyValStore):
+    def set_kv_store(self, keyValStore):
         """Set the key value store implementation
 
         :param keyValStore: a KeyValueStore instance
@@ -64,14 +75,17 @@ class Chain(object):
 
         :param peer: an instance of the Peer class
         """
-        self.peers.append(peer)
+        if peer.grpc_addr not in self.peers:
+            self.peers[peer.grpc_addr] = peer
 
-    def remove_peer(self, peer):
+    def remove_peer(self, grpc_addr):
         """Remove peer endpoint from a chain object
 
-        :param peer (Peer): an instance of the Peer class
+        Args:
+            grpc_addr(string): grpc address of the peer to remove
         """
-        self.peers.remove(peer)
+        if grpc_addr in self.peers:
+            self.peers.pop(grpc_addr, None)
 
     def get_peers(self):
         """Get peers of a chain.
@@ -170,7 +184,42 @@ class Chain(object):
         """
         pass
 
+    def package_chaincode(self, chaincode_path, chaincode_name,
+                          dockerfile_contents=dockerfile_contents):
+        """ Package all chaincode env into a tar.gz file
+        Args:
+            chaincode_path: path to the chaincode
+            chaincode_name: name of the chaincode
+            dockerfile_contents: docker file content
+
+        Returns: Bool
+        """
+        self.logger.debug('Packaging chaincode path={}'.format(chaincode_path))
+        go_path = os.environ['GOPATH']
+        if not go_path:
+            self.logger.warning('No GOPATH env variable is found')
+            return False
+        proj_path = go_path + '/src/' + chaincode_path
+        self.logger.debug('Project path={}'.format(proj_path))
+        dockerfile_contents = dockerfile_contents.format(chaincode_name)
+        docker_file_path = proj_path + '/Dockerfile'
+        try:
+            with open(docker_file_path, 'w') as f:
+                f.write(dockerfile_contents)
+            # TODO: the file should be some tmp file in future
+            tz_file_path = '/tmp/deployment-package.tar.gz'
+            if not utils.create_targz(proj_path, tz_file_path):
+                self.logger.error('Error to create tar.gz file for {}'.format(
+                    proj_path))
+                return False
+        except Exception as e:
+            self.logger.error('Exception to package chaincode: {}'.format(e))
+            return False
+        return True
+
     def create_deploy_proposal(self, chaincode_path, chaincode_name, fcn, args,
+                               chain_id, tx_id,
+                               nonce=crypto.generate_nonce(24),
                                sign=True):
         """Create a chaincode deploy proposal
 
@@ -181,17 +230,33 @@ class Chain(object):
         Args:
             chaincode_path (string): path to the chaincode to deploy
             chaincode_name (string): a custom name to identify the chaincode
-            on the chain
+                on the chain
             fcn (string): name of the chaincode function to call after deploy
-            to initiate the state
+                to initiate the state
             args (string[]): arguments for calling the init function
-            designated by “fcn”
+                designated by 'fcn'
+            chain_id (string): id of chain to send, to support multiple chain
+            tx_id (string): Transaction id
+            nonce (string): Random byte array for avoid repeating attack
             sign (Bool): Whether to sign the transaction, default to True
 
         Returns: (Proposal): The created Proposal instance or None.
 
         """
-        return None
+        self.logger.debug('Create deploy proposal with chaincode={}'.format(
+            chaincode_name))
+        if not self.package_chaincode(chaincode_path, chaincode_name):
+            self.logger.error('Fail to package chaincode')
+            return None
+        # TODO: will return the proposal object
+        return "proposal"
+
+    def send_deploy_proposal(self):
+        # TODO: will fillup this function later
+        if len(self.peers) < 1:
+            self.logger.warning('No peer to send deploy proposal')
+            return False
+        return True
 
     def create_transaction_proposal(self, chaincode_name, args, sign=True):
         """Create a transaction proposal.
@@ -202,7 +267,7 @@ class Chain(object):
 
         Args:
             chaincode_name (string): The name given to the invoked chaincode
-            args (string[]): arguments for the “invoke” method on the chaincode
+            args (string[]): arguments for the 'invoke' method on the chaincode
             sign (Bool): Whether to sign the transaction, default to True
 
 
@@ -245,20 +310,20 @@ class Chain(object):
         return None
 
     def send_transaction(self, transaction):
-        """Send a transaction to the chain’s orderer service (one or more
+        """Send a transaction to the chain's orderer service (one or more
         orderer endpoints) for consensus and committing to the ledger.
 
         This call is asynchronous and the successful transaction commit is
         notified via a BLOCK or CHAINCODE event. This method must provide a
         mechanism for applications to attach event listeners to handle
-        “transaction submitted”, “transaction complete” and “error” events.
+        'transaction submitted', 'transaction complete' and 'error' events.
 
         Args:
             transaction (Transaction): The transaction object constructed above
 
         Returns:
             result (EventEmitter): an handle to allow the application to
-            attach event handlers on “submitted”, “complete”, and “error”.
+            attach event handlers on 'submitted', 'complete', and 'error'.
 
         """
         return None

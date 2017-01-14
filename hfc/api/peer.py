@@ -1,8 +1,10 @@
-import grpc
-from ..protos import api_pb2
-from ..constants import DEFAULT_PEER_GRPC_ADDR
 import logging
+
+import grpc
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
+
+from ..util.constants import DEFAULT_PEER_GRPC_ADDR
+from ..protos.peer import fabric_service_pb2_grpc
 
 
 class Peer(object):
@@ -12,10 +14,28 @@ class Peer(object):
     """
 
     def __init__(self, grpc_addr=DEFAULT_PEER_GRPC_ADDR):
-        self.logger = logging.getLogger(__name__)
+        self.grpc_addr = grpc_addr
         self.channel = grpc.insecure_channel(grpc_addr)
-        self.peer_stub = api_pb2.OpenchainStub(self.channel)
+        # self.peer_stub = api_pb2.OpenchainStub(self.channel)
+        self.endorser_client = fabric_service_pb2_grpc.EndorserStub(
+          self.channel)
+        self.logger = logging.getLogger(__name__)
+        self.logger.info('Init peer with grpc_addr={}'.format(self.grpc_addr))
 
+    def send_proposal(self, proposal):
+        """ Send an endorsement proposal to endorser
+
+        Args:
+            proposal: The endorsement proposal, see
+                      /protos/peer/fabric_proposal.proto
+        Return:
+            proposal_response
+        """
+        self.logger.debug("Send proposal={}".format(proposal))
+        self.endorser_client.proposeProposal(proposal)
+        return None
+
+    # will deprecate
     def peer_list(self):
         """list peer on the chain
 

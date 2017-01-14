@@ -4,6 +4,14 @@
 version: '2'
 
 services:
+  cop:
+    container_name: fabric-cop
+    image: hyperledger/fabric-cop
+    ports:
+      - "8888:8888"
+    #command: cop server start -ca testdata/ec.pem -ca-key testdata/ec-key.pem -config testdata/testconfig.json
+    command: bash -c "cop server start -ca ./testdata/ec.pem -ca-key ./testdata/ec-key.pem -config ./testdata/testconfig.json -address 0.0.0.0"
+
   orderer:
     container_name: fabric-orderer
     image: hyperledger/fabric-orderer
@@ -15,29 +23,32 @@ services:
       - ORDERER_GENERAL_MAXWINDOWSIZE=1000
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
       - ORDERER_RAMLEDGER_HISTORY_SIZE=100
-    expose:
-      - "7050"
-    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderer
+    ports:
+      - "7050:7050"
+    #working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderer
     command: orderer
 
   peer:
     container_name: fabric-peer
     image: hyperledger/fabric-peer
     environment:
+      - CORE_PEER_ID=vp0
+      - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
       - CORE_PEER_ADDRESSAUTODETECT=true
       - CORE_LOGGING_LEVEL=DEBUG
       - CORE_PEER_NETWORKID=dev
       - CORE_NEXT=true
       - CORE_PEER_ENDORSER_ENABLED=true
-      - CORE_PEER_ID=vp0
       - CORE_PEER_PROFILE_ENABLED=true
-      - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
-    expose:
-      - "7051"
+    ports:
+      - "7051:7051"
+      - "7052:7052"
+      - "7053:7053"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     links:
       - orderer
+      - cop
     command: peer node start
 
   sdk-py:
@@ -53,11 +64,5 @@ services:
       - peer
       - cop
     command: sh -c "while true; do sleep 1000; done"
-
-  cop:
-    container_name: fabric-cop
-    image: hyperledger/fabric-cop
-    #command: cop server start -ca testdata/ec.pem -ca-key testdata/ec-key.pem -config testdata/testconfig.json
-    command: bash -c "cop server start -ca ./testdata/ec.pem -ca-key ./testdata/ec-key.pem -config ./testdata/testconfig.json -address 0.0.0.0"
     expose:
-      - "8888"
+      - "80"

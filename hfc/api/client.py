@@ -13,6 +13,10 @@
 # limitations under the License.
 #
 
+import logging
+
+from .chain import Chain
+
 
 class Client(object):
     """
@@ -20,15 +24,22 @@ class Client(object):
         Client can maintain several chains.
     """
 
-    def new_chain(self, chain_name):
+    def __init__(self):
+        self.chains = {}
+        self.states = {}
+        self.logger = logging.getLogger(__name__)
+        self.logger.info('Init Client')
+
+    def new_chain(self, name):
         """Init a chain instance with given name.
 
-        :param chain_name: The name of chain
+        :param name: The name of chain
 
         :return: The inited chain instance
         """
-
-        pass
+        if name not in self.chains:
+            self.chains[name] = Chain(name)
+        return self.chains[name]
 
     def get_chain(self, chain_name):
         """ Get a chain instance
@@ -39,7 +50,7 @@ class Client(object):
         """
         pass
 
-    def set_KeyValueStore(self, store):
+    def set_kv_store(self, store):
         """store user enrollment materials. The SDK should make this
         pluggable so that different store implementations can be
         selected by the application. For instance, in some cases
@@ -60,7 +71,7 @@ class Client(object):
         This is useful because an application would likely want to use a
         common logger for all parts of the code.
         And typically an IT organization would have log scraping set up for
-        monitoring and analytics purposes, such that a “standard” log format
+        monitoring and analytics purposes, such that a 'standard' log format
         is desirable.
         The SDK should have a built-in logger so that developers get logging by
         default.

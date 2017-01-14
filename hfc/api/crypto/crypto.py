@@ -101,9 +101,10 @@ class Crypto(object):
 def generate_nonce(size):
     """ Generate a secure random for cryptographic use.
 
-    :param size: Number of bytes
+    Args:
+        size: Number of bytes for the nonce
 
-    :return: Secure random bytes
+    Returns: Generated random bytes
     """
     return Random.get_random_bytes(size)
 

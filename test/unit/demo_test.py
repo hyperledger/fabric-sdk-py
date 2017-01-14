@@ -1,10 +1,22 @@
 import unittest
 
 
-def fun(x):
+def add_one(x):
     return x + 1
 
 
-class MyTest(unittest.TestCase):
-    def test(self):
-        self.assertEqual(fun(3), 4)
+class ChaincodeTest(unittest.TestCase):
+    """ Test chaincode deploy, invoke and query
+    """
+    def setUp(self):
+        self.name = b'Hello world!'
+
+    def tearDown(self):
+        pass
+
+    def test_add_one(self):
+        self.assertEqual(add_one(3), 4)
+
+
+if __name__ == '__main__':
+    unittest.main()

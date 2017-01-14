@@ -2,8 +2,8 @@ import grpc
 from grpc.framework.common import cardinality
 from grpc.framework.interfaces.face import utilities as face_utilities
 
-import peer.fabric_proposal_pb2 as peer_dot_fabric__proposal__pb2
-import peer.fabric_proposal_response_pb2 as peer_dot_fabric__proposal__response__pb2
+import hfc.protos.peer.fabric_proposal_pb2 as peer_dot_fabric__proposal__pb2
+import hfc.protos.peer.fabric_proposal_response_pb2 as peer_dot_fabric__proposal__response__pb2
 
 
 class EndorserStub(object):
