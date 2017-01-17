@@ -16,9 +16,13 @@
 import logging
 import os
 
-from ..util.constants import dockerfile_contents
 from .crypto import crypto
+from ..protos.common import common_pb2 as common_proto
+from ..protos.peer import chaincode_pb2 as chaincode_proto
+from ..protos.peer import chaincode_proposal_pb2 as chaincode_proposal_proto
+from ..protos.peer import fabric_proposal_pb2 as fabric_proposal_proto
 from ..util import utils
+from ..util.constants import dockerfile_contents
 
 
 class Chain(object):
@@ -192,13 +196,13 @@ class Chain(object):
             chaincode_name: name of the chaincode
             dockerfile_contents: docker file content
 
-        Returns: Bool
+        Returns: The chaincode pkg path or None
         """
         self.logger.debug('Packaging chaincode path={}'.format(chaincode_path))
         go_path = os.environ['GOPATH']
         if not go_path:
             self.logger.warning('No GOPATH env variable is found')
-            return False
+            return None
         proj_path = go_path + '/src/' + chaincode_path
         self.logger.debug('Project path={}'.format(proj_path))
         dockerfile_contents = dockerfile_contents.format(chaincode_name)
@@ -211,11 +215,88 @@ class Chain(object):
             if not utils.create_targz(proj_path, tz_file_path):
                 self.logger.error('Error to create tar.gz file for {}'.format(
                     proj_path))
-                return False
+                return None
         except Exception as e:
             self.logger.error('Exception to package chaincode: {}'.format(e))
-            return False
-        return True
+            return None
+        return tz_file_path
+
+    @staticmethod
+    def _build_header(creator, chain_id, chaincode_name, tx_id, nonce):
+        """ Build a header for transaction.
+
+            This is a private method.
+        Args:
+            creator: creator info
+            chain_id: id of the chain
+            chaincode_name: name of the chaincode
+            tx_id: transaction id
+            nonce: nonce string
+
+        Returns: the generated header
+
+        """
+        chain_header = common_proto.ChainHeader()
+        chain_header.type = common_proto.HeaderType.Value(
+            'ENDORSER_TRANSACTION')
+        chain_header.txID = str(tx_id)
+        chain_header.chainID = chain_id
+        if chaincode_name:
+            chaincode_id = chaincode_proto.ChaincodeID()
+            chaincode_id.name = chaincode_name
+            header_ext = chaincode_proposal_proto.ChaincodeHeaderExtension()
+            header_ext.chaincodeID.name = chaincode_id.name
+            chain_header.extension = header_ext.SerializeToString()
+        signature_header = common_proto.SignatureHeader()
+        signature_header.creator = creator.encode()
+        signature_header.nonce = nonce
+
+        header = common_proto.Header()
+        header.signatureHeader.creator = signature_header.creator
+        header.signatureHeader.nonce = signature_header.nonce
+        header.chainHeader.type = chain_header.type
+        header.chainHeader.txID = chain_header.txID
+        header.chainHeader.chainID = chain_header.chainID
+        return header
+
+    @staticmethod
+    def _build_proposal(invoke_spec, header):
+        """ Create an invoke transaction proposal
+        Args:
+            invoke_spec: The spec
+            header: header of the proposl
+
+        Returns: The created proposal
+
+        """
+        cci_spec = chaincode_proto.ChaincodeInvocationSpec()
+        cci_spec.chaincodeSpec.type = invoke_spec['type']
+        cci_spec.chaincodeSpec.chaincodeID.name = \
+            invoke_spec['chaincodeID']['name']
+        cci_spec.chaincodeSpec.ctorMsg.args.extend(
+            invoke_spec['ctorMsg']['args'])
+
+        cc_payload = chaincode_proposal_proto.ChaincodeProposalPayload()
+        cc_payload.Input = cci_spec.SerializeToString()
+
+        proposal = fabric_proposal_proto.Proposal()
+        proposal.header = header.SerializeToString()
+        proposal.payload = cc_payload.SerializeToString()
+
+        return proposal
+
+    @staticmethod
+    def _sign_proposal(signing_identity, proposal):
+        """ Sign a proposal
+        Args:
+            signing_identity: id to sign with
+            proposal: proposal to sign on
+
+        Returns: Signed proposal
+
+        """
+        # proposal_bytes = json.dumps(proposal)
+        return None
 
     def create_deploy_proposal(self, chaincode_path, chaincode_name, fcn, args,
                                chain_id, tx_id,
@@ -245,11 +326,60 @@ class Chain(object):
         """
         self.logger.debug('Create deploy proposal with chaincode={}'.format(
             chaincode_name))
-        if not self.package_chaincode(chaincode_path, chaincode_name):
+
+        # step 0: construct a chaincode package
+        tz_file_path = self.package_chaincode(chaincode_path, chaincode_name)
+        if not tz_file_path:
             self.logger.error('Fail to package chaincode')
             return None
-        # TODO: will return the proposal object
-        return "proposal"
+
+        # step 1: construct a chaincode spec
+        args_str = [fcn] + args
+        cc_spec = {
+            'type': chaincode_proto.ChaincodeSpec.Type.Value('GOLANG'),
+            'chaincodeID': {
+                'name': chaincode_name
+            },
+            'ctorMsg': {
+                'args': list(map(lambda x: x.encode(), args_str))
+            }
+        }
+
+        # step 2: construct a chaincodedeployment spec
+        cc_deployment_spec = chaincode_proto.ChaincodeDeploymentSpec()
+        assert not cc_deployment_spec.HasField('chaincodeSpec')
+        cc_deployment_spec.chaincodeSpec.type = cc_spec['type']
+        cc_deployment_spec.chaincodeSpec.chaincodeID.name = \
+            cc_spec['chaincodeID']['name']
+        cc_deployment_spec.chaincodeSpec.ctorMsg.args.extend(
+            cc_spec['ctorMsg']['args'])
+
+        try:
+            with open(tz_file_path, 'rb') as f:
+                pkg_content = f.read()
+                cc_deployment_spec.codePackage = pkg_content
+        except Exception as e:
+            self.logger.error('Failed to read {}'.format(tz_file_path))
+            self.logger.error(e)
+            return None
+        # TODO: add ESCC/VSCC info here
+        lccc_spec = {
+            'type': chaincode_proto.ChaincodeSpec.Type.Value('GOLANG'),
+            'chaincodeID': {
+                'name': 'lccc'
+            },
+            'ctorMsg': {
+                'args': [b'deploy', b'default',
+                         cc_deployment_spec.SerializeToString()]
+            }
+        }
+
+        # step 3: construct a chaincode deploy proposal
+        header = self._build_header('admin', chain_id, 'lccc', tx_id, nonce)
+        proposal = self._build_proposal(lccc_spec, header)
+
+        # TODO: will signed the proposal object
+        return proposal
 
     def send_deploy_proposal(self):
         # TODO: will fillup this function later

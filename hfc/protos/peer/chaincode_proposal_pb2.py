@@ -13,7 +13,7 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-from peer import chaincode_pb2 as peer_dot_chaincode__pb2
+from hfc.protos.peer import chaincode_pb2 as peer_dot_chaincode__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(

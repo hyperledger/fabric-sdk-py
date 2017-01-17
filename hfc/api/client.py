@@ -27,6 +27,8 @@ class Client(object):
     def __init__(self):
         self.chains = {}
         self.states = {}
+        self.crypto_suite = None
+        self.user_context = None
         self.logger = logging.getLogger(__name__)
         self.logger.info('Init Client')
 

@@ -14,7 +14,7 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-from peer import chaincodeevent_pb2 as peer_dot_chaincodeevent__pb2
+from hfc.protos.peer import chaincodeevent_pb2 as peer_dot_chaincodeevent__pb2
 from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 
 
