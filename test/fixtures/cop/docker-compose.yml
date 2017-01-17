@@ -1,6 +1,8 @@
 cop:
   container_name: fabric-cop
   image: hyperledger/fabric-cop
-  command: cop server start -ca testdata/ec.pem -ca-key testdata/ec-key.pem -config testdata/testconfig.json -address="0.0.0.0"
+  command: cop server start -ca testdata/ec.pem -ca-key testdata/ec-key.pem -config ./testdata/testconfig-sdk.json -address "0.0.0.0"
+  volumes:
+    - ./testconfig-sdk.json:/go/src/github.com/hyperledger/fabric-cop/testdata/testconfig-sdk.json
   ports:
     - "8888:8888"

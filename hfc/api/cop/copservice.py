@@ -55,7 +55,8 @@ class COPClient(object):
                              "'enrollmentID', 'enrollmentSecret' and 'csr'"
                              " are all required.")
 
-        response = requests.post(self._base_url + "enroll", data=csr,
+        req = {"certificate_request": csr}
+        response = requests.post(self._base_url + "enroll", json=req,
                                  auth=(enrollment_id, enrollment_secret),
                                  verify=self._ca_certs_path)
 

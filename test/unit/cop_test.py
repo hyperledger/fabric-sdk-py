@@ -48,15 +48,7 @@ class COPTest(unittest.TestCase):
         cli_call(["docker-compose", "-f",
                   os.path.join(os.path.dirname(__file__),
                                "../fixtures/cop/docker-compose.yml"),
-                  "stop"])
-        cli_call(["docker-compose", "-f",
-                  os.path.join(os.path.dirname(__file__),
-                               "../fixtures/cop/docker-compose.yml"),
-                  "kill"])
-        cli_call(["docker-compose", "-f",
-                  os.path.join(os.path.dirname(__file__),
-                               "../fixtures/cop/docker-compose.yml"),
-                  "rm", "-f"])
+                  "down"])
 
     def test_enroll_missing_enrollment_id(self):
         """Test enroll missing enrollment id.
@@ -84,7 +76,7 @@ class COPTest(unittest.TestCase):
             cop_client.enroll(self._enrollment_id,
                               self._enrollment_secret, "")
 
-    @unittest.skip("enroll interface changed, will resume when code changed")
+    # @unittest.skip("enroll interface changed, will resume when code changed")
     def test_enroll_success(self):
         """Test enroll success.
         """

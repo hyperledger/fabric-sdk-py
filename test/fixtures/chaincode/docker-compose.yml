@@ -7,10 +7,7 @@ cop:
   image: hyperledger/fabric-cop
   ports:
     - "8888:8888"
-  #volumes:
-  #  - ./fixtures/cop/testconfig-sdk.json:/go/src/github.com/hyperledger/fabric-cop/testdata/testconfig-sdk.json
-#  command: /go/src/github.com/hyperledger/fabric-cop/bin/cop server start -ca testdata/ec.pem -ca-key testdata/ec-key.pem -config testdata/testconfig.json
-  command: cop server start -ca testdata/ec.pem -ca-key testdata/ec-key.pem -config testdata/testconfig-sdk.json -address="0.0.0.0"
+  command: cop server start -ca testdata/ec.pem -ca-key testdata/ec-key.pem -config testdata/testconfig.json -address="0.0.0.0"
 
 orderer:
   container_name: fabric-orderer
@@ -49,16 +46,3 @@ peer:
     - orderer
     - cop
   command: peer node start
-
-#sdk-py:
-#  container_name: fabric-sdk-py
-#  image: hyperledger/fabric-sdk-py
-#  environment:
-#    - ORDERER_ADDR=orderer:7050
-#    - PEER_ADDR=peer:7051
-#    - COP_ADDR=cop:8888
-#  links:
-#    - orderer
-#    - peer
-#    - cop
-#  command: bash -c "while true; do sleep 1000; done"

@@ -42,15 +42,7 @@ class ChaincodeTest(unittest.TestCase):
         cli_call(["docker-compose", "-f",
                   os.path.join(os.path.dirname(__file__),
                                "../fixtures/chaincode/docker-compose.yml"),
-                  "stop"])
-        cli_call(["docker-compose", "-f",
-                  os.path.join(os.path.dirname(__file__),
-                               "../fixtures/chaincode/docker-compose.yml"),
-                  "kill"])
-        cli_call(["docker-compose", "-f",
-                  os.path.join(os.path.dirname(__file__),
-                               "../fixtures/chaincode/docker-compose.yml"),
-                  "rm", "-f"])
+                  "down"])
 
     def test_deploy(self):
         self.start_test_env()
