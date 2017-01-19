@@ -14,6 +14,10 @@
 #
 import unittest
 
+from cryptography import x509
+from cryptography.hazmat.primitives.serialization import Encoding
+from cryptography.x509 import NameOID
+
 from hfc.api.crypto.crypto import \
     CURVE_P_256_Size, SHA3, SHA2, CURVE_P_384_Size, ecies
 
@@ -87,6 +91,15 @@ class CryptoTest(unittest.TestCase):
                                          self.plain_text + b'!',
                                          signature),
                          False)
+
+    def test_ecies_generate_csr(self):
+        """Test case for generate certificate signing request."""
+        ecies256 = ecies()
+        csr = ecies256.generate_csr(x509.Name(
+            [x509.NameAttribute(NameOID.COMMON_NAME, u"test")]))
+        csr_pem = csr.public_bytes(Encoding.PEM)
+        self.assertTrue(csr_pem.startswith(
+            b"-----BEGIN CERTIFICATE REQUEST-----"))
 
 
 if __name__ == '__main__':

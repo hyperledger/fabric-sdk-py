@@ -20,6 +20,7 @@ from abc import ABCMeta, abstractmethod
 import six
 from Cryptodome import Random
 from Cryptodome.Cipher import AES
+from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import constant_time
 from cryptography.hazmat.primitives import hashes
@@ -112,7 +113,7 @@ def generate_nonce(size):
 class Ecies(Crypto):
     """ A crypto implementation based on ECDSA and SHA. """
 
-    def __init__(self, security_level=CURVE_P_256_Size, hash_algorithm=SHA3):
+    def __init__(self, security_level=CURVE_P_256_Size, hash_algorithm=SHA2):
         """ Init curve and hash function.
 
         :param security_level: security level
@@ -186,19 +187,19 @@ class Ecies(Crypto):
         key_len = private_key.curve.key_size
         if key_len != self.curve.key_size:
             raise ValueError(
-                    "Invalid key. Input security level {} does not "
-                    "match the current security level {}".format(
-                            key_len,
-                            self.curve.key_size))
+                "Invalid key. Input security level {} does not "
+                "match the current security level {}".format(
+                    key_len,
+                    self.curve.key_size))
 
         d_len = key_len >> 3
         rb_len = ((key_len + 7) // 8) * 2 + 1
         ct_len = len(cipher_text)
         if ct_len <= rb_len + d_len:
             raise ValueError(
-                    "Illegal cipherText length: cipher text length {} "
-                    "must be > rb length plus d_len {}".format(ct_len,
-                                                               rb_len + d_len)
+                "Illegal cipherText length: cipher text length {} "
+                "must be > rb length plus d_len {}".format(ct_len,
+                                                           rb_len + d_len)
             )
 
         rb = cipher_text[:rb_len]
@@ -255,6 +256,31 @@ class Ecies(Crypto):
 
         return rb + em + d
 
+    def generate_csr(self, subject_name, extensions=None):
+        """Generate certificate signing request.
 
-def ecies(security_level, hash_algorithm):
+        Args:
+            subject_name (x509.Name): Subject name
+            extensions
+        Returns: x509.CertificateSigningRequest
+
+        """
+        private_key = self.generate_private_key()
+        builder = x509.CertificateSigningRequestBuilder(
+            subject_name, [] if extensions is None else extensions)
+
+        return builder.sign(
+            private_key, self.sign_hash_algorithm, default_backend())
+
+
+def ecies(security_level=CURVE_P_256_Size, hash_algorithm=SHA2):
+    """Factory method for creating a Ecies instance.
+
+    Args:
+        security_level: Security level
+        hash_algorithm: Hash algorithm
+
+    Returns: A Ecies instance
+
+    """
     return Ecies(security_level, hash_algorithm)

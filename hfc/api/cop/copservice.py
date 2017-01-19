@@ -16,6 +16,12 @@ import base64
 import logging
 
 import requests
+import six
+from cryptography import x509
+from cryptography.hazmat.primitives.serialization import Encoding
+from cryptography.x509 import NameOID
+
+from hfc.api.crypto.crypto import ecies
 
 _logger = logging.getLogger(__name__)
 
@@ -68,3 +74,39 @@ class COPClient(object):
         else:
             raise ValueError("Enrollment failed with errors {0}"
                              .format(enrollment_response['errors']))
+
+
+class COPService(object):
+    """This is a cop server delegate."""
+
+    def __init__(self, target, ca_certs_path=None, crypto=ecies()):
+        """ Init COP service.
+
+        Args:
+            target (str): COP server address including protocol,hostname,port
+            ca_certs_path (str): Local ca certs path
+            crypto (Crypto): A crypto instance
+        """
+        self._cop_client = COPClient(target, ca_certs_path)
+        self._crypto = crypto
+
+    def enroll(self, enrollment_id, enrollment_secret):
+        """Enroll a registered user in order to receive a signed X509 certificate
+
+        Args:
+            enrollment_id (str): The registered ID to use for enrollment
+            enrollment_secret (str): The secret associated with the
+                                     enrollment ID
+
+        Returns: PEM-encoded X509 certificate
+
+        Raises:
+            RequestException: errors in requests.exceptions
+            ValueError: Failed response, json parse error, args missing
+
+        """
+        csr = self._crypto.generate_csr(x509.Name(
+            [x509.NameAttribute(NameOID.COMMON_NAME, six.u(enrollment_id))]))
+        return self._cop_client.enroll(
+            enrollment_id, enrollment_secret,
+            csr.public_bytes(Encoding.PEM).decode("utf-8"))

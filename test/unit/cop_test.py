@@ -13,11 +13,12 @@
 # limitations under the License.
 #
 import os
-import unittest
 import time
+import unittest
+
 from requests.exceptions import RequestException
 
-from hfc.api.cop.copservice import COPClient
+from hfc.api.cop.copservice import COPClient, COPService
 from test.unit.util import cli_call
 
 with open(os.path.join(os.path.dirname(__file__),
@@ -76,7 +77,6 @@ class COPTest(unittest.TestCase):
             cop_client.enroll(self._enrollment_id,
                               self._enrollment_secret, "")
 
-    # @unittest.skip("enroll interface changed, will resume when code changed")
     def test_enroll_success(self):
         """Test enroll success.
         """
@@ -106,6 +106,18 @@ class COPTest(unittest.TestCase):
         with self.assertRaises(RequestException):
             cop_client.enroll(self._enrollment_id,
                               self._enrollment_secret, test_pem)
+
+    def test_enroll_with_generated_csr_success(self):
+        """Test enroll with generated csr success.
+        """
+        self.shutdown_test_env()
+        self.start_test_env()
+        time.sleep(5)
+        cop_service = COPService("http://" + self._cop_server_address)
+        ecert = cop_service.enroll(self._enrollment_id,
+                                   self._enrollment_secret)
+        self.assertTrue(ecert.startswith(b"-----BEGIN CERTIFICATE-----"))
+        self.shutdown_test_env()
 
 
 if __name__ == '__main__':
