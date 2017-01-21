@@ -1,13 +1,13 @@
 # https://github.com/hyperledger/fabric-sdk-py
 # This compose file will start a peer node, an orderer,
-# and a cop server environment for testing
+# and a ca server environment for testing
 
-cop:
-  container_name: fabric-cop
-  image: hyperledger/fabric-cop
+ca:
+  container_name: fabric-ca
+  image: hyperledger/fabric-ca
   ports:
     - "8888:8888"
-  command: cop server start -ca testdata/ec.pem -ca-key testdata/ec-key.pem -config testdata/testconfig.json -address="0.0.0.0"
+  command: fabric-ca server start -ca testdata/ec.pem -ca-key testdata/ec-key.pem -config testdata/testconfig.json -address="0.0.0.0"
 
 orderer:
   container_name: fabric-orderer
@@ -44,5 +44,5 @@ peer:
     - /var/run/docker.sock:/var/run/docker.sock
   links:
     - orderer
-    - cop
+    - ca
   command: peer node start

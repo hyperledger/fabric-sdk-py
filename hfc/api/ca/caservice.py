@@ -26,14 +26,14 @@ from hfc.api.crypto.crypto import ecies
 _logger = logging.getLogger(__name__)
 
 
-class COPClient(object):
-    """Client for communicating with the Fabric COP APIs."""
+class CAClient(object):
+    """Client for communicating with the Fabric CA APIs."""
 
     def __init__(self, target, ca_certs_path=None):
-        """ Init COP client.
+        """ Init CA client.
 
         Args:
-            target (str): COP server address including protocol,hostname,port
+            target (str): CA server address including protocol,hostname,port
             ca_certs_path (str): Local ca certs path
         """
         self._ca_certs_path = ca_certs_path
@@ -76,18 +76,18 @@ class COPClient(object):
                              .format(enrollment_response['errors']))
 
 
-class COPService(object):
-    """This is a cop server delegate."""
+class CAService(object):
+    """This is a ca server delegate."""
 
     def __init__(self, target, ca_certs_path=None, crypto=ecies()):
-        """ Init COP service.
+        """ Init CA service.
 
         Args:
-            target (str): COP server address including protocol,hostname,port
+            target (str): CA server address including protocol,hostname,port
             ca_certs_path (str): Local ca certs path
             crypto (Crypto): A crypto instance
         """
-        self._cop_client = COPClient(target, ca_certs_path)
+        self._ca_client = CAClient(target, ca_certs_path)
         self._crypto = crypto
 
     def enroll(self, enrollment_id, enrollment_secret):
@@ -107,6 +107,6 @@ class COPService(object):
         """
         csr = self._crypto.generate_csr(x509.Name(
             [x509.NameAttribute(NameOID.COMMON_NAME, six.u(enrollment_id))]))
-        return self._cop_client.enroll(
+        return self._ca_client.enroll(
             enrollment_id, enrollment_secret,
             csr.public_bytes(Encoding.PEM).decode("utf-8"))

@@ -4,13 +4,13 @@
 version: '2'
 
 services:
-  cop:
-    container_name: fabric-cop
-    image: hyperledger/fabric-cop
+  ca:
+    container_name: fabric-ca
+    image: hyperledger/fabric-ca
     ports:
       - "8888:8888"
-    #command: cop server start -ca testdata/ec.pem -ca-key testdata/ec-key.pem -config testdata/testconfig.json
-    command: bash -c "cop server start -ca ./testdata/ec.pem -ca-key ./testdata/ec-key.pem -config ./testdata/testconfig.json -address 0.0.0.0"
+    #command: fabric-ca server start -ca testdata/ec.pem -ca-key testdata/ec-key.pem -config testdata/testconfig.json
+    command: bash -c "fabric-ca server start -ca ./testdata/ec.pem -ca-key ./testdata/ec-key.pem -config ./testdata/testconfig.json -address 0.0.0.0"
 
   orderer:
     container_name: fabric-orderer
@@ -48,7 +48,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     links:
       - orderer
-      - cop
+      - ca
     command: peer node start
 
   sdk-py:
@@ -58,11 +58,11 @@ services:
     environment:
       - ORDERER_ADDR=orderer:7050
       - PEER_ADDR=peer:7051
-      - COP_ADDR=cop:8888
+      - CA_ADDR=ca:8888
     links:
       - orderer
       - peer
-      - cop
+      - ca
     command: sh -c "while true; do sleep 1000; done"
     expose:
       - "80"
