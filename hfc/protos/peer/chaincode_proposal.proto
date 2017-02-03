@@ -18,9 +18,9 @@ syntax = "proto3";
 
 option go_package = "github.com/hyperledger/fabric/protos/peer";
 
-package protos;
+package hfc.protos.peer;
 
-import "peer/chaincode.proto";
+import "hfc/protos/peer/chaincode.proto";
 
 /*
 The flow to get a CHAINCODE transaction approved goes as follows:

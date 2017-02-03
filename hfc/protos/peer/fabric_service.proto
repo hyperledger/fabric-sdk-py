@@ -18,10 +18,10 @@ syntax = "proto3";
 
 option go_package = "github.com/hyperledger/fabric/protos/peer";
 
-package protos;
+package hfc.protos.peer;
 
-import "peer/fabric_proposal.proto";
-import "peer/fabric_proposal_response.proto";
+import "hfc/protos/peer/fabric_proposal.proto";
+import "hfc/protos/peer/fabric_proposal_response.proto";
 
 service Endorser {
 	rpc ProcessProposal(SignedProposal) returns (ProposalResponse) {}

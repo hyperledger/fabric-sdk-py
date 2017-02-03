@@ -18,7 +18,7 @@ syntax = "proto3";
 
 option go_package = "github.com/hyperledger/fabric/protos/peer";
 
-package protos;
+package hfc.protos.peer;
 
 // AnchorPeers simply represents list of anchor peers which is used in ConfigurationItem
 message AnchorPeers {

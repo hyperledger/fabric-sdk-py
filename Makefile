@@ -39,9 +39,9 @@ image:
 .PHONY: proto
 proto:
 	python3 -m grpc.tools.protoc \
-		-I./hfc/protos/\
-		--python_out=./hfc/protos \
-		--grpc_python_out=./hfc/protos \
+		-I./\
+		--python_out=./ \
+		--grpc_python_out=./ \
 		hfc/protos/common/common.proto \
 		hfc/protos/common/configuration.proto \
 		hfc/protos/msp/*.proto \

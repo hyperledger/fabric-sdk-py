@@ -19,7 +19,7 @@ syntax = "proto3";
 
 option go_package = "github.com/hyperledger/fabric/protos/common";
 
-package common;
+package hfc.protos.common;
 
 
 // chain-config.proto contains proto messages defining the schema of

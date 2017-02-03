@@ -16,12 +16,12 @@ limitations under the License.
 
 syntax = "proto3";
 
-import "common/common.proto";
-import "common/chain-config.proto";
+import "hfc/protos/common/common.proto";
+import "hfc/protos/common/chain-config.proto";
 
 option go_package = "github.com/hyperledger/fabric/protos/common";
 
-package common;
+package hfc.protos.common;
 
 // ConfigurationEnvelope is designed to contain _all_ configuration for a chain with no dependency
 // on previous configuration transactions.

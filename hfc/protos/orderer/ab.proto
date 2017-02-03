@@ -16,11 +16,11 @@ limitations under the License.
 
 syntax = "proto3";
 
-import "common/common.proto";
+import "hfc/protos/common/common.proto";
 
 option go_package = "github.com/hyperledger/fabric/protos/orderer";
 
-package orderer;
+package hfc.protos.orderer;
 
 message BroadcastResponse {
     common.Status status = 1;

@@ -16,10 +16,10 @@ limitations under the License.
 
 syntax = "proto3";
 
-package protos;
+package hfc.protos.peer;
 option java_package = "org.hyperledger.protos";
 option go_package = "github.com/hyperledger/fabric/protos/peer";
-import "peer/chaincodeevent.proto";
+import "hfc/protos/peer/chaincodeevent.proto";
 import "google/protobuf/timestamp.proto";
 
 

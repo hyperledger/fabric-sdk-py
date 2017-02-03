@@ -16,7 +16,7 @@ limitations under the License.
 
 syntax = "proto3";
 
-package protos;
+package hfc.protos.peer;
 
 import "google/protobuf/timestamp.proto";
 
