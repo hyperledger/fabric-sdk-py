@@ -35,7 +35,7 @@ class CATest(unittest.TestCase):
         if os.getenv("COP_ADDR"):
             self._ca_server_address = os.getenv("COP_ADDR")
         else:
-            self._ca_server_address = "localhost:8888"
+            self._ca_server_address = "localhost:7054"
 
     @staticmethod
     def start_test_env():

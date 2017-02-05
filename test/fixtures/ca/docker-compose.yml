@@ -5,4 +5,4 @@ ca:
   volumes:
     - ./testconfig-sdk.json:/go/src/github.com/hyperledger/fabric-ca/testdata/testconfig-sdk.json
   ports:
-    - "8888:8888"
+    - "7054:7054"
