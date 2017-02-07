@@ -9,7 +9,7 @@ Before taking actions, we highly recommend reading the [docs](docs).
 We now have two channels for bug and questions:
 
 * [Jira](https://jira.hyperledger.org/secure/RapidBoard.jspa?rapidView=85): report bug issues, create to-do tasks.
-* [Slack](https://hyperledgerproject.slack.com/archives/fabric-sdk-py): technical discussions and questions.
+* [Chat](https://chat.hyperledger.org/channel/fabric-sdk-python): technical discussions and questions.
 
 Jira tasks with `To Do` status are available for picking. If you want to handle one, assign it to yourself, and update the status to `In Progress`. Remember to mark it to `Done` when the patch is merged.
 

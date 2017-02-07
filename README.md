@@ -19,7 +19,7 @@ We're following [pep8 style guide](https://www.python.org/dev/peps/pep-0008/) an
 
 ## Meeting
 
-Weekly scrum meeting will be held at Slack channel [#fabric-sdk-py](https://hyperledgerproject.slack.com/messages/fabric-sdk-dev/) at 03:00 UTC every Friday. More information, please see the project [wiki](wiki.hyperledger.org/projects/fabric-sdk-py.md).
+Weekly scrum meeting will be held at chat channel [#fabric-sdk-python](https://chat.hyperledger.org/channel/fabric-sdk-python/) at 03:00 UTC every Friday. More information, please see the project [wiki](wiki.hyperledger.org/projects/fabric-sdk-py.md).
 
 ## Testing
 The following command will run the testing.
@@ -51,7 +51,7 @@ See [Change Log](docs/change_log.md).
 
 * [Hyperledger Project](https://www.hyperledger.org)
 * [Hyperledger mailing lists and archives](http://lists.hyperledger.org/)
-* [Hyperledger Slack](http://hyperledgerproject.slack.com) - if you need an invitation, try our [Slack inviter](https://slack.hyperledger.org)
+* [Hyperledger Chat](http://chat.hyperledger.org)
 * [Hyperledger Wiki](https://github.com/hyperledger/hyperledger/wiki)
 
 ## License <a name="license"></a>
