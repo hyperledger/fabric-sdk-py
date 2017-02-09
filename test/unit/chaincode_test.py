@@ -8,7 +8,6 @@ from hfc.api.client import Client
 from hfc.api.peer import Peer
 from test.unit.util import cli_call
 
-
 CHAINCODE_PATH = 'github.com/example_cc'
 CHAINCODE_NAME = 'example_cc'
 FCN = 'init'
@@ -51,7 +50,7 @@ class ChaincodeTest(unittest.TestCase):
         client = Client()
         chain = client.new_chain(CHAIN_ID)
         client.set_kv_store('test_store')
-        chain.add_peer(Peer(grpc_addr=grpc_addr))
+        chain.add_peer(Peer(endpoint=grpc_addr))
         proposal = chain.create_deploy_proposal(chaincode_path=CHAINCODE_PATH,
                                                 chaincode_name=CHAINCODE_NAME,
                                                 fcn=FCN, args=F_ARGS,

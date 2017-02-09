@@ -13,235 +13,33 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-from hfc.protos.common import common_pb2 as hfc_dot_protos_dot_common_dot_common__pb2
-from hfc.protos.common import chain_config_pb2 as hfc_dot_protos_dot_common_dot_chain__config__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/common/configuration.proto',
   package='hfc.protos.common',
   syntax='proto3',
-  serialized_pb=_b('\n%hfc/protos/common/configuration.proto\x12\x11hfc.protos.common\x1a\x1ehfc/protos/common/common.proto\x1a$hfc/protos/common/chain-config.proto\"R\n\x15\x43onfigurationEnvelope\x12\x39\n\x05Items\x18\x01 \x03(\x0b\x32*.hfc.protos.common.SignedConfigurationItem\"s\n\x17SignedConfigurationItem\x12\x19\n\x11\x43onfigurationItem\x18\x01 \x01(\x0c\x12=\n\nSignatures\x18\x02 \x03(\x0b\x32).hfc.protos.common.ConfigurationSignature\"\x9a\x02\n\x11\x43onfigurationItem\x12.\n\x06Header\x18\x01 \x01(\x0b\x32\x1e.hfc.protos.common.ChainHeader\x12\x44\n\x04Type\x18\x02 \x01(\x0e\x32\x36.hfc.protos.common.ConfigurationItem.ConfigurationType\x12\x14\n\x0cLastModified\x18\x03 \x01(\x04\x12\x1a\n\x12ModificationPolicy\x18\x04 \x01(\t\x12\x0b\n\x03Key\x18\x05 \x01(\t\x12\r\n\x05Value\x18\x06 \x01(\x0c\"A\n\x11\x43onfigurationType\x12\n\n\x06Policy\x10\x00\x12\t\n\x05\x43hain\x10\x01\x12\x0b\n\x07Orderer\x10\x02\x12\x08\n\x04Peer\x10\x03\"D\n\x16\x43onfigurationSignature\x12\x17\n\x0fsignatureHeader\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"Y\n\x06Policy\x12\x0c\n\x04type\x18\x01 \x01(\x05\x12\x0e\n\x06policy\x18\x02 \x01(\x0c\"1\n\nPolicyType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\r\n\tSIGNATURE\x10\x01\x12\x07\n\x03MSP\x10\x02\"\x93\x01\n\x17SignaturePolicyEnvelope\x12\x0f\n\x07Version\x18\x01 \x01(\x05\x12\x32\n\x06Policy\x18\x02 \x01(\x0b\x32\".hfc.protos.common.SignaturePolicy\x12\x33\n\nIdentities\x18\x03 \x03(\x0b\x32\x1f.hfc.protos.common.MSPPrincipal\"\xb3\x01\n\x0fSignaturePolicy\x12\x12\n\x08SignedBy\x18\x01 \x01(\x05H\x00\x12\x39\n\x04\x46rom\x18\x02 \x01(\x0b\x32).hfc.protos.common.SignaturePolicy.NOutOfH\x00\x1aI\n\x06NOutOf\x12\t\n\x01N\x18\x01 \x01(\x05\x12\x34\n\x08Policies\x18\x02 \x03(\x0b\x32\".hfc.protos.common.SignaturePolicyB\x06\n\x04TypeB-Z+github.com/hyperledger/fabric/protos/commonb\x06proto3')
-  ,
-  dependencies=[hfc_dot_protos_dot_common_dot_common__pb2.DESCRIPTOR,hfc_dot_protos_dot_common_dot_chain__config__pb2.DESCRIPTOR,])
+  serialized_pb=_b('\n%hfc/protos/common/configuration.proto\x12\x11hfc.protos.common\" \n\x10HashingAlgorithm\x12\x0c\n\x04name\x18\x01 \x01(\t\"*\n\x19\x42lockDataHashingStructure\x12\r\n\x05width\x18\x01 \x01(\r\"%\n\x10OrdererAddresses\x12\x11\n\taddresses\x18\x01 \x03(\tB-Z+github.com/hyperledger/fabric/protos/commonb\x06proto3')
+)
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
 
-_CONFIGURATIONITEM_CONFIGURATIONTYPE = _descriptor.EnumDescriptor(
-  name='ConfigurationType',
-  full_name='hfc.protos.common.ConfigurationItem.ConfigurationType',
-  filename=None,
-  file=DESCRIPTOR,
-  values=[
-    _descriptor.EnumValueDescriptor(
-      name='Policy', index=0, number=0,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='Chain', index=1, number=1,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='Orderer', index=2, number=2,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='Peer', index=3, number=3,
-      options=None,
-      type=None),
-  ],
-  containing_type=None,
-  options=None,
-  serialized_start=549,
-  serialized_end=614,
-)
-_sym_db.RegisterEnumDescriptor(_CONFIGURATIONITEM_CONFIGURATIONTYPE)
 
-_POLICY_POLICYTYPE = _descriptor.EnumDescriptor(
-  name='PolicyType',
-  full_name='hfc.protos.common.Policy.PolicyType',
-  filename=None,
-  file=DESCRIPTOR,
-  values=[
-    _descriptor.EnumValueDescriptor(
-      name='UNKNOWN', index=0, number=0,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='SIGNATURE', index=1, number=1,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='MSP', index=2, number=2,
-      options=None,
-      type=None),
-  ],
-  containing_type=None,
-  options=None,
-  serialized_start=726,
-  serialized_end=775,
-)
-_sym_db.RegisterEnumDescriptor(_POLICY_POLICYTYPE)
-
-
-_CONFIGURATIONENVELOPE = _descriptor.Descriptor(
-  name='ConfigurationEnvelope',
-  full_name='hfc.protos.common.ConfigurationEnvelope',
+_HASHINGALGORITHM = _descriptor.Descriptor(
+  name='HashingAlgorithm',
+  full_name='hfc.protos.common.HashingAlgorithm',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='Items', full_name='hfc.protos.common.ConfigurationEnvelope.Items', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=130,
-  serialized_end=212,
-)
-
-
-_SIGNEDCONFIGURATIONITEM = _descriptor.Descriptor(
-  name='SignedConfigurationItem',
-  full_name='hfc.protos.common.SignedConfigurationItem',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='ConfigurationItem', full_name='hfc.protos.common.SignedConfigurationItem.ConfigurationItem', index=0,
-      number=1, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b(""),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='Signatures', full_name='hfc.protos.common.SignedConfigurationItem.Signatures', index=1,
-      number=2, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=214,
-  serialized_end=329,
-)
-
-
-_CONFIGURATIONITEM = _descriptor.Descriptor(
-  name='ConfigurationItem',
-  full_name='hfc.protos.common.ConfigurationItem',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='Header', full_name='hfc.protos.common.ConfigurationItem.Header', index=0,
-      number=1, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='Type', full_name='hfc.protos.common.ConfigurationItem.Type', index=1,
-      number=2, type=14, cpp_type=8, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='LastModified', full_name='hfc.protos.common.ConfigurationItem.LastModified', index=2,
-      number=3, type=4, cpp_type=4, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='ModificationPolicy', full_name='hfc.protos.common.ConfigurationItem.ModificationPolicy', index=3,
-      number=4, type=9, cpp_type=9, label=1,
+      name='name', full_name='hfc.protos.common.HashingAlgorithm.name', index=0,
+      number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
-    _descriptor.FieldDescriptor(
-      name='Key', full_name='hfc.protos.common.ConfigurationItem.Key', index=4,
-      number=5, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='Value', full_name='hfc.protos.common.ConfigurationItem.Value', index=5,
-      number=6, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b(""),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-    _CONFIGURATIONITEM_CONFIGURATIONTYPE,
-  ],
-  options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=332,
-  serialized_end=614,
-)
-
-
-_CONFIGURATIONSIGNATURE = _descriptor.Descriptor(
-  name='ConfigurationSignature',
-  full_name='hfc.protos.common.ConfigurationSignature',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='signatureHeader', full_name='hfc.protos.common.ConfigurationSignature.signatureHeader', index=0,
-      number=1, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b(""),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='signature', full_name='hfc.protos.common.ConfigurationSignature.signature', index=1,
-      number=2, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b(""),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
   ],
   extensions=[
   ],
@@ -254,38 +52,30 @@ _CONFIGURATIONSIGNATURE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=616,
-  serialized_end=684,
+  serialized_start=60,
+  serialized_end=92,
 )
 
 
-_POLICY = _descriptor.Descriptor(
-  name='Policy',
-  full_name='hfc.protos.common.Policy',
+_BLOCKDATAHASHINGSTRUCTURE = _descriptor.Descriptor(
+  name='BlockDataHashingStructure',
+  full_name='hfc.protos.common.BlockDataHashingStructure',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='type', full_name='hfc.protos.common.Policy.type', index=0,
-      number=1, type=5, cpp_type=1, label=1,
+      name='width', full_name='hfc.protos.common.BlockDataHashingStructure.width', index=0,
+      number=1, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
-    _descriptor.FieldDescriptor(
-      name='policy', full_name='hfc.protos.common.Policy.policy', index=1,
-      number=2, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b(""),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
-    _POLICY_POLICYTYPE,
   ],
   options=None,
   is_extendable=False,
@@ -293,35 +83,21 @@ _POLICY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=686,
-  serialized_end=775,
+  serialized_start=94,
+  serialized_end=136,
 )
 
 
-_SIGNATUREPOLICYENVELOPE = _descriptor.Descriptor(
-  name='SignaturePolicyEnvelope',
-  full_name='hfc.protos.common.SignaturePolicyEnvelope',
+_ORDERERADDRESSES = _descriptor.Descriptor(
+  name='OrdererAddresses',
+  full_name='hfc.protos.common.OrdererAddresses',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='Version', full_name='hfc.protos.common.SignaturePolicyEnvelope.Version', index=0,
-      number=1, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='Policy', full_name='hfc.protos.common.SignaturePolicyEnvelope.Policy', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='Identities', full_name='hfc.protos.common.SignaturePolicyEnvelope.Identities', index=2,
-      number=3, type=11, cpp_type=10, label=3,
+      name='addresses', full_name='hfc.protos.common.OrdererAddresses.addresses', index=0,
+      number=1, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -338,169 +114,34 @@ _SIGNATUREPOLICYENVELOPE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=778,
-  serialized_end=925,
+  serialized_start=138,
+  serialized_end=175,
 )
 
+DESCRIPTOR.message_types_by_name['HashingAlgorithm'] = _HASHINGALGORITHM
+DESCRIPTOR.message_types_by_name['BlockDataHashingStructure'] = _BLOCKDATAHASHINGSTRUCTURE
+DESCRIPTOR.message_types_by_name['OrdererAddresses'] = _ORDERERADDRESSES
 
-_SIGNATUREPOLICY_NOUTOF = _descriptor.Descriptor(
-  name='NOutOf',
-  full_name='hfc.protos.common.SignaturePolicy.NOutOf',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='N', full_name='hfc.protos.common.SignaturePolicy.NOutOf.N', index=0,
-      number=1, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='Policies', full_name='hfc.protos.common.SignaturePolicy.NOutOf.Policies', index=1,
-      number=2, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1026,
-  serialized_end=1099,
-)
-
-_SIGNATUREPOLICY = _descriptor.Descriptor(
-  name='SignaturePolicy',
-  full_name='hfc.protos.common.SignaturePolicy',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='SignedBy', full_name='hfc.protos.common.SignaturePolicy.SignedBy', index=0,
-      number=1, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='From', full_name='hfc.protos.common.SignaturePolicy.From', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[_SIGNATUREPOLICY_NOUTOF, ],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-    _descriptor.OneofDescriptor(
-      name='Type', full_name='hfc.protos.common.SignaturePolicy.Type',
-      index=0, containing_type=None, fields=[]),
-  ],
-  serialized_start=928,
-  serialized_end=1107,
-)
-
-_CONFIGURATIONENVELOPE.fields_by_name['Items'].message_type = _SIGNEDCONFIGURATIONITEM
-_SIGNEDCONFIGURATIONITEM.fields_by_name['Signatures'].message_type = _CONFIGURATIONSIGNATURE
-_CONFIGURATIONITEM.fields_by_name['Header'].message_type = hfc_dot_protos_dot_common_dot_common__pb2._CHAINHEADER
-_CONFIGURATIONITEM.fields_by_name['Type'].enum_type = _CONFIGURATIONITEM_CONFIGURATIONTYPE
-_CONFIGURATIONITEM_CONFIGURATIONTYPE.containing_type = _CONFIGURATIONITEM
-_POLICY_POLICYTYPE.containing_type = _POLICY
-_SIGNATUREPOLICYENVELOPE.fields_by_name['Policy'].message_type = _SIGNATUREPOLICY
-_SIGNATUREPOLICYENVELOPE.fields_by_name['Identities'].message_type = hfc_dot_protos_dot_common_dot_chain__config__pb2._MSPPRINCIPAL
-_SIGNATUREPOLICY_NOUTOF.fields_by_name['Policies'].message_type = _SIGNATUREPOLICY
-_SIGNATUREPOLICY_NOUTOF.containing_type = _SIGNATUREPOLICY
-_SIGNATUREPOLICY.fields_by_name['From'].message_type = _SIGNATUREPOLICY_NOUTOF
-_SIGNATUREPOLICY.oneofs_by_name['Type'].fields.append(
-  _SIGNATUREPOLICY.fields_by_name['SignedBy'])
-_SIGNATUREPOLICY.fields_by_name['SignedBy'].containing_oneof = _SIGNATUREPOLICY.oneofs_by_name['Type']
-_SIGNATUREPOLICY.oneofs_by_name['Type'].fields.append(
-  _SIGNATUREPOLICY.fields_by_name['From'])
-_SIGNATUREPOLICY.fields_by_name['From'].containing_oneof = _SIGNATUREPOLICY.oneofs_by_name['Type']
-DESCRIPTOR.message_types_by_name['ConfigurationEnvelope'] = _CONFIGURATIONENVELOPE
-DESCRIPTOR.message_types_by_name['SignedConfigurationItem'] = _SIGNEDCONFIGURATIONITEM
-DESCRIPTOR.message_types_by_name['ConfigurationItem'] = _CONFIGURATIONITEM
-DESCRIPTOR.message_types_by_name['ConfigurationSignature'] = _CONFIGURATIONSIGNATURE
-DESCRIPTOR.message_types_by_name['Policy'] = _POLICY
-DESCRIPTOR.message_types_by_name['SignaturePolicyEnvelope'] = _SIGNATUREPOLICYENVELOPE
-DESCRIPTOR.message_types_by_name['SignaturePolicy'] = _SIGNATUREPOLICY
-
-ConfigurationEnvelope = _reflection.GeneratedProtocolMessageType('ConfigurationEnvelope', (_message.Message,), dict(
-  DESCRIPTOR = _CONFIGURATIONENVELOPE,
+HashingAlgorithm = _reflection.GeneratedProtocolMessageType('HashingAlgorithm', (_message.Message,), dict(
+  DESCRIPTOR = _HASHINGALGORITHM,
   __module__ = 'hfc.protos.common.configuration_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigurationEnvelope)
+  # @@protoc_insertion_point(class_scope:hfc.protos.common.HashingAlgorithm)
   ))
-_sym_db.RegisterMessage(ConfigurationEnvelope)
+_sym_db.RegisterMessage(HashingAlgorithm)
 
-SignedConfigurationItem = _reflection.GeneratedProtocolMessageType('SignedConfigurationItem', (_message.Message,), dict(
-  DESCRIPTOR = _SIGNEDCONFIGURATIONITEM,
+BlockDataHashingStructure = _reflection.GeneratedProtocolMessageType('BlockDataHashingStructure', (_message.Message,), dict(
+  DESCRIPTOR = _BLOCKDATAHASHINGSTRUCTURE,
   __module__ = 'hfc.protos.common.configuration_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.SignedConfigurationItem)
+  # @@protoc_insertion_point(class_scope:hfc.protos.common.BlockDataHashingStructure)
   ))
-_sym_db.RegisterMessage(SignedConfigurationItem)
+_sym_db.RegisterMessage(BlockDataHashingStructure)
 
-ConfigurationItem = _reflection.GeneratedProtocolMessageType('ConfigurationItem', (_message.Message,), dict(
-  DESCRIPTOR = _CONFIGURATIONITEM,
+OrdererAddresses = _reflection.GeneratedProtocolMessageType('OrdererAddresses', (_message.Message,), dict(
+  DESCRIPTOR = _ORDERERADDRESSES,
   __module__ = 'hfc.protos.common.configuration_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigurationItem)
+  # @@protoc_insertion_point(class_scope:hfc.protos.common.OrdererAddresses)
   ))
-_sym_db.RegisterMessage(ConfigurationItem)
-
-ConfigurationSignature = _reflection.GeneratedProtocolMessageType('ConfigurationSignature', (_message.Message,), dict(
-  DESCRIPTOR = _CONFIGURATIONSIGNATURE,
-  __module__ = 'hfc.protos.common.configuration_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigurationSignature)
-  ))
-_sym_db.RegisterMessage(ConfigurationSignature)
-
-Policy = _reflection.GeneratedProtocolMessageType('Policy', (_message.Message,), dict(
-  DESCRIPTOR = _POLICY,
-  __module__ = 'hfc.protos.common.configuration_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.Policy)
-  ))
-_sym_db.RegisterMessage(Policy)
-
-SignaturePolicyEnvelope = _reflection.GeneratedProtocolMessageType('SignaturePolicyEnvelope', (_message.Message,), dict(
-  DESCRIPTOR = _SIGNATUREPOLICYENVELOPE,
-  __module__ = 'hfc.protos.common.configuration_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.SignaturePolicyEnvelope)
-  ))
-_sym_db.RegisterMessage(SignaturePolicyEnvelope)
-
-SignaturePolicy = _reflection.GeneratedProtocolMessageType('SignaturePolicy', (_message.Message,), dict(
-
-  NOutOf = _reflection.GeneratedProtocolMessageType('NOutOf', (_message.Message,), dict(
-    DESCRIPTOR = _SIGNATUREPOLICY_NOUTOF,
-    __module__ = 'hfc.protos.common.configuration_pb2'
-    # @@protoc_insertion_point(class_scope:hfc.protos.common.SignaturePolicy.NOutOf)
-    ))
-  ,
-  DESCRIPTOR = _SIGNATUREPOLICY,
-  __module__ = 'hfc.protos.common.configuration_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.SignaturePolicy)
-  ))
-_sym_db.RegisterMessage(SignaturePolicy)
-_sym_db.RegisterMessage(SignaturePolicy.NOutOf)
+_sym_db.RegisterMessage(OrdererAddresses)
 
 
 DESCRIPTOR.has_options = True

@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-                 http://www.apache.org/licenses/LICENSE-2.0
+		 http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,29 +13,26 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
 syntax = "proto3";
 
-option go_package = "github.com/hyperledger/fabric/protos/orderer";
+option go_package = "github.com/hyperledger/fabric/protos/peer";
 
-package hfc.protos.orderer;
+package hfc.protos.peer;
 
-message KafkaMessage {
-    oneof Type {
-        KafkaMessageRegular regular = 1;
-        KafkaMessageTimeToCut time_to_cut = 2;
-        KafkaMessageConnect connect = 3;
-    }
+import "hfc/protos/peer/proposal.proto";
+import "hfc/protos/peer/proposal_response.proto";
+
+message PeerID {
+    string name = 1;
 }
 
-message KafkaMessageRegular {
-    bytes payload = 1;
+message PeerEndpoint {
+    PeerID ID = 1;
+    string address = 2;
 }
 
-message KafkaMessageTimeToCut {
-    uint64 block_number = 1;
-}
+//-------- the Endorser service ------------
 
-message KafkaMessageConnect {
-    bytes payload = 1;
+service Endorser {
+	rpc ProcessProposal(SignedProposal) returns (ProposalResponse) {}
 }

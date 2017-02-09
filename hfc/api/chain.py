@@ -19,8 +19,7 @@ import os
 from .crypto import crypto
 from ..protos.common import common_pb2 as common_proto
 from ..protos.peer import chaincode_pb2 as chaincode_proto
-from ..protos.peer import chaincode_proposal_pb2 as chaincode_proposal_proto
-from ..protos.peer import fabric_proposal_pb2 as fabric_proposal_proto
+from ..protos.peer import proposal_pb2
 from ..util import utils
 from ..util.constants import dockerfile_contents
 
@@ -79,17 +78,17 @@ class Chain(object):
 
         :param peer: an instance of the Peer class
         """
-        if peer.grpc_addr not in self.peers:
-            self.peers[peer.grpc_addr] = peer
+        if peer.endpoint not in self.peers:
+            self.peers[peer.endpoint] = peer
 
-    def remove_peer(self, grpc_addr):
+    def remove_peer(self, endpoint):
         """Remove peer endpoint from a chain object
 
         Args:
-            grpc_addr(string): grpc address of the peer to remove
+            endpoint(string): grpc address of the peer to remove
         """
-        if grpc_addr in self.peers:
-            self.peers.pop(grpc_addr, None)
+        if endpoint in self.peers:
+            self.peers.pop(endpoint, None)
 
     def get_peers(self):
         """Get peers of a chain.
@@ -244,7 +243,7 @@ class Chain(object):
         if chaincode_name:
             chaincode_id = chaincode_proto.ChaincodeID()
             chaincode_id.name = chaincode_name
-            header_ext = chaincode_proposal_proto.ChaincodeHeaderExtension()
+            header_ext = proposal_pb2.ChaincodeHeaderExtension()
             header_ext.chaincodeID.name = chaincode_id.name
             chain_header.extension = header_ext.SerializeToString()
         signature_header = common_proto.SignatureHeader()
@@ -273,13 +272,13 @@ class Chain(object):
         cci_spec.chaincodeSpec.type = invoke_spec['type']
         cci_spec.chaincodeSpec.chaincodeID.name = \
             invoke_spec['chaincodeID']['name']
-        cci_spec.chaincodeSpec.ctorMsg.args.extend(
-            invoke_spec['ctorMsg']['args'])
+        cci_spec.chaincodeSpec.input.args.extend(
+            invoke_spec['input']['args'])
 
-        cc_payload = chaincode_proposal_proto.ChaincodeProposalPayload()
+        cc_payload = proposal_pb2.ChaincodeProposalPayload()
         cc_payload.Input = cci_spec.SerializeToString()
 
-        proposal = fabric_proposal_proto.Proposal()
+        proposal = proposal_pb2.Proposal()
         proposal.header = header.SerializeToString()
         proposal.payload = cc_payload.SerializeToString()
 
@@ -335,24 +334,16 @@ class Chain(object):
 
         # step 1: construct a chaincode spec
         args_str = [fcn] + args
-        cc_spec = {
-            'type': chaincode_proto.ChaincodeSpec.Type.Value('GOLANG'),
-            'chaincodeID': {
-                'name': chaincode_name
-            },
-            'ctorMsg': {
-                'args': list(map(lambda x: x.encode(), args_str))
-            }
-        }
 
         # step 2: construct a chaincodedeployment spec
         cc_deployment_spec = chaincode_proto.ChaincodeDeploymentSpec()
         assert not cc_deployment_spec.HasField('chaincodeSpec')
-        cc_deployment_spec.chaincodeSpec.type = cc_spec['type']
-        cc_deployment_spec.chaincodeSpec.chaincodeID.name = \
-            cc_spec['chaincodeID']['name']
-        cc_deployment_spec.chaincodeSpec.ctorMsg.args.extend(
-            cc_spec['ctorMsg']['args'])
+        cc_deployment_spec.chaincodeSpec.type = \
+            chaincode_proto.ChaincodeSpec.Type.Value('GOLANG')
+        cc_deployment_spec.chaincodeSpec.chaincodeID.name = chaincode_name
+        cc_deployment_spec.chaincodeSpec.chaincodeID.path = chaincode_path
+        cc_deployment_spec.chaincodeSpec.input.args.extend(
+            list(map(lambda x: x.encode(), args_str)))
 
         try:
             with open(tz_file_path, 'rb') as f:
@@ -368,7 +359,7 @@ class Chain(object):
             'chaincodeID': {
                 'name': 'lccc'
             },
-            'ctorMsg': {
+            'input': {
                 'args': [b'deploy', b'default',
                          cc_deployment_spec.SerializeToString()]
             }

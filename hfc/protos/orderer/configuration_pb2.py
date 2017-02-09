@@ -13,16 +13,14 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-from hfc.protos.common import common_pb2 as hfc_dot_protos_dot_common_dot_common__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/orderer/configuration.proto',
   package='hfc.protos.orderer',
   syntax='proto3',
-  serialized_pb=_b('\n&hfc/protos/orderer/configuration.proto\x12\x12hfc.protos.orderer\x1a\x1ehfc/protos/common/common.proto\"\x1d\n\rConsensusType\x12\x0c\n\x04type\x18\x01 \x01(\t\"$\n\tBatchSize\x12\x17\n\x0fmaxMessageCount\x18\x01 \x01(\r\"\x1f\n\x0c\x42\x61tchTimeout\x12\x0f\n\x07timeout\x18\x01 \x01(\t\"0\n\x0e\x43reationPolicy\x12\x0e\n\x06policy\x18\x01 \x01(\t\x12\x0e\n\x06\x64igest\x18\x02 \x01(\x0c\"\x1d\n\rIngressPolicy\x12\x0c\n\x04name\x18\x01 \x01(\t\"\x1c\n\x0c\x45gressPolicy\x12\x0c\n\x04name\x18\x01 \x01(\t\"!\n\rChainCreators\x12\x10\n\x08policies\x18\x01 \x03(\t\"\x1f\n\x0cKafkaBrokers\x12\x0f\n\x07\x62rokers\x18\x01 \x03(\tB.Z,github.com/hyperledger/fabric/protos/ordererb\x06proto3')
-  ,
-  dependencies=[hfc_dot_protos_dot_common_dot_common__pb2.DESCRIPTOR,])
+  serialized_pb=_b('\n&hfc/protos/orderer/configuration.proto\x12\x12hfc.protos.orderer\"\x1d\n\rConsensusType\x12\x0c\n\x04type\x18\x01 \x01(\t\"Y\n\tBatchSize\x12\x17\n\x0fmaxMessageCount\x18\x01 \x01(\r\x12\x18\n\x10\x61\x62soluteMaxBytes\x18\x02 \x01(\r\x12\x19\n\x11preferredMaxBytes\x18\x03 \x01(\r\"\x1f\n\x0c\x42\x61tchTimeout\x12\x0f\n\x07timeout\x18\x01 \x01(\t\" \n\x0e\x43reationPolicy\x12\x0e\n\x06policy\x18\x01 \x01(\t\"#\n\x12IngressPolicyNames\x12\r\n\x05names\x18\x01 \x03(\t\"\"\n\x11\x45gressPolicyNames\x12\r\n\x05names\x18\x01 \x03(\t\")\n\x18\x43hainCreationPolicyNames\x12\r\n\x05names\x18\x01 \x03(\t\"\x1f\n\x0cKafkaBrokers\x12\x0f\n\x07\x62rokers\x18\x01 \x03(\tB.Z,github.com/hyperledger/fabric/protos/ordererb\x06proto3')
+)
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
@@ -54,8 +52,8 @@ _CONSENSUSTYPE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=94,
-  serialized_end=123,
+  serialized_start=62,
+  serialized_end=91,
 )
 
 
@@ -73,6 +71,20 @@ _BATCHSIZE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='absoluteMaxBytes', full_name='hfc.protos.orderer.BatchSize.absoluteMaxBytes', index=1,
+      number=2, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='preferredMaxBytes', full_name='hfc.protos.orderer.BatchSize.preferredMaxBytes', index=2,
+      number=3, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -85,8 +97,8 @@ _BATCHSIZE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=125,
-  serialized_end=161,
+  serialized_start=93,
+  serialized_end=182,
 )
 
 
@@ -116,8 +128,8 @@ _BATCHTIMEOUT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=163,
-  serialized_end=194,
+  serialized_start=184,
+  serialized_end=215,
 )
 
 
@@ -135,13 +147,6 @@ _CREATIONPOLICY = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
-    _descriptor.FieldDescriptor(
-      name='digest', full_name='hfc.protos.orderer.CreationPolicy.digest', index=1,
-      number=2, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b(""),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
   ],
   extensions=[
   ],
@@ -154,82 +159,20 @@ _CREATIONPOLICY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=196,
-  serialized_end=244,
+  serialized_start=217,
+  serialized_end=249,
 )
 
 
-_INGRESSPOLICY = _descriptor.Descriptor(
-  name='IngressPolicy',
-  full_name='hfc.protos.orderer.IngressPolicy',
+_INGRESSPOLICYNAMES = _descriptor.Descriptor(
+  name='IngressPolicyNames',
+  full_name='hfc.protos.orderer.IngressPolicyNames',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='hfc.protos.orderer.IngressPolicy.name', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=246,
-  serialized_end=275,
-)
-
-
-_EGRESSPOLICY = _descriptor.Descriptor(
-  name='EgressPolicy',
-  full_name='hfc.protos.orderer.EgressPolicy',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='name', full_name='hfc.protos.orderer.EgressPolicy.name', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=277,
-  serialized_end=305,
-)
-
-
-_CHAINCREATORS = _descriptor.Descriptor(
-  name='ChainCreators',
-  full_name='hfc.protos.orderer.ChainCreators',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='policies', full_name='hfc.protos.orderer.ChainCreators.policies', index=0,
+      name='names', full_name='hfc.protos.orderer.IngressPolicyNames.names', index=0,
       number=1, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -247,8 +190,70 @@ _CHAINCREATORS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=307,
-  serialized_end=340,
+  serialized_start=251,
+  serialized_end=286,
+)
+
+
+_EGRESSPOLICYNAMES = _descriptor.Descriptor(
+  name='EgressPolicyNames',
+  full_name='hfc.protos.orderer.EgressPolicyNames',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='names', full_name='hfc.protos.orderer.EgressPolicyNames.names', index=0,
+      number=1, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=288,
+  serialized_end=322,
+)
+
+
+_CHAINCREATIONPOLICYNAMES = _descriptor.Descriptor(
+  name='ChainCreationPolicyNames',
+  full_name='hfc.protos.orderer.ChainCreationPolicyNames',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='names', full_name='hfc.protos.orderer.ChainCreationPolicyNames.names', index=0,
+      number=1, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=324,
+  serialized_end=365,
 )
 
 
@@ -278,17 +283,17 @@ _KAFKABROKERS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=342,
-  serialized_end=373,
+  serialized_start=367,
+  serialized_end=398,
 )
 
 DESCRIPTOR.message_types_by_name['ConsensusType'] = _CONSENSUSTYPE
 DESCRIPTOR.message_types_by_name['BatchSize'] = _BATCHSIZE
 DESCRIPTOR.message_types_by_name['BatchTimeout'] = _BATCHTIMEOUT
 DESCRIPTOR.message_types_by_name['CreationPolicy'] = _CREATIONPOLICY
-DESCRIPTOR.message_types_by_name['IngressPolicy'] = _INGRESSPOLICY
-DESCRIPTOR.message_types_by_name['EgressPolicy'] = _EGRESSPOLICY
-DESCRIPTOR.message_types_by_name['ChainCreators'] = _CHAINCREATORS
+DESCRIPTOR.message_types_by_name['IngressPolicyNames'] = _INGRESSPOLICYNAMES
+DESCRIPTOR.message_types_by_name['EgressPolicyNames'] = _EGRESSPOLICYNAMES
+DESCRIPTOR.message_types_by_name['ChainCreationPolicyNames'] = _CHAINCREATIONPOLICYNAMES
 DESCRIPTOR.message_types_by_name['KafkaBrokers'] = _KAFKABROKERS
 
 ConsensusType = _reflection.GeneratedProtocolMessageType('ConsensusType', (_message.Message,), dict(
@@ -319,26 +324,26 @@ CreationPolicy = _reflection.GeneratedProtocolMessageType('CreationPolicy', (_me
   ))
 _sym_db.RegisterMessage(CreationPolicy)
 
-IngressPolicy = _reflection.GeneratedProtocolMessageType('IngressPolicy', (_message.Message,), dict(
-  DESCRIPTOR = _INGRESSPOLICY,
+IngressPolicyNames = _reflection.GeneratedProtocolMessageType('IngressPolicyNames', (_message.Message,), dict(
+  DESCRIPTOR = _INGRESSPOLICYNAMES,
   __module__ = 'hfc.protos.orderer.configuration_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.orderer.IngressPolicy)
+  # @@protoc_insertion_point(class_scope:hfc.protos.orderer.IngressPolicyNames)
   ))
-_sym_db.RegisterMessage(IngressPolicy)
+_sym_db.RegisterMessage(IngressPolicyNames)
 
-EgressPolicy = _reflection.GeneratedProtocolMessageType('EgressPolicy', (_message.Message,), dict(
-  DESCRIPTOR = _EGRESSPOLICY,
+EgressPolicyNames = _reflection.GeneratedProtocolMessageType('EgressPolicyNames', (_message.Message,), dict(
+  DESCRIPTOR = _EGRESSPOLICYNAMES,
   __module__ = 'hfc.protos.orderer.configuration_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.orderer.EgressPolicy)
+  # @@protoc_insertion_point(class_scope:hfc.protos.orderer.EgressPolicyNames)
   ))
-_sym_db.RegisterMessage(EgressPolicy)
+_sym_db.RegisterMessage(EgressPolicyNames)
 
-ChainCreators = _reflection.GeneratedProtocolMessageType('ChainCreators', (_message.Message,), dict(
-  DESCRIPTOR = _CHAINCREATORS,
+ChainCreationPolicyNames = _reflection.GeneratedProtocolMessageType('ChainCreationPolicyNames', (_message.Message,), dict(
+  DESCRIPTOR = _CHAINCREATIONPOLICYNAMES,
   __module__ = 'hfc.protos.orderer.configuration_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.orderer.ChainCreators)
+  # @@protoc_insertion_point(class_scope:hfc.protos.orderer.ChainCreationPolicyNames)
   ))
-_sym_db.RegisterMessage(ChainCreators)
+_sym_db.RegisterMessage(ChainCreationPolicyNames)
 
 KafkaBrokers = _reflection.GeneratedProtocolMessageType('KafkaBrokers', (_message.Message,), dict(
   DESCRIPTOR = _KAFKABROKERS,

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/msp/mspconfig.proto',
   package='hfc.protos.msp',
   syntax='proto3',
-  serialized_pb=_b('\n\x1ehfc/protos/msp/mspconfig.proto\x12\x0ehfc.protos.msp\")\n\tMSPConfig\x12\x0c\n\x04Type\x18\x01 \x01(\x05\x12\x0e\n\x06\x43onfig\x18\x02 \x01(\x0c\"\x98\x01\n\x0f\x46\x61\x62ricMSPConfig\x12\x0c\n\x04Name\x18\x01 \x01(\t\x12\x11\n\tRootCerts\x18\x02 \x03(\x0c\x12\x0e\n\x06\x41\x64mins\x18\x03 \x03(\x0c\x12\x16\n\x0eRevocationList\x18\x04 \x03(\x0c\x12<\n\x0fSigningIdentity\x18\x05 \x01(\x0b\x32#.hfc.protos.msp.SigningIdentityInfo\"[\n\x13SigningIdentityInfo\x12\x14\n\x0cPublicSigner\x18\x01 \x01(\x0c\x12.\n\rPrivateSigner\x18\x02 \x01(\x0b\x32\x17.hfc.protos.msp.KeyInfo\"5\n\x07KeyInfo\x12\x15\n\rKeyIdentifier\x18\x01 \x01(\t\x12\x13\n\x0bKeyMaterial\x18\x02 \x01(\x0c\x42*Z(github.com/hyperledger/fabric/protos/mspb\x06proto3')
+  serialized_pb=_b('\n\x1ehfc/protos/msp/mspconfig.proto\x12\x0ehfc.protos.msp\")\n\tMSPConfig\x12\x0c\n\x04Type\x18\x01 \x01(\x05\x12\x0e\n\x06\x43onfig\x18\x02 \x01(\x0c\"\xb3\x01\n\x0f\x46\x61\x62ricMSPConfig\x12\x0c\n\x04Name\x18\x01 \x01(\t\x12\x11\n\tRootCerts\x18\x02 \x03(\x0c\x12\x19\n\x11IntermediateCerts\x18\x03 \x03(\x0c\x12\x0e\n\x06\x41\x64mins\x18\x04 \x03(\x0c\x12\x16\n\x0eRevocationList\x18\x05 \x03(\x0c\x12<\n\x0fSigningIdentity\x18\x06 \x01(\x0b\x32#.hfc.protos.msp.SigningIdentityInfo\"[\n\x13SigningIdentityInfo\x12\x14\n\x0cPublicSigner\x18\x01 \x01(\x0c\x12.\n\rPrivateSigner\x18\x02 \x01(\x0b\x32\x17.hfc.protos.msp.KeyInfo\"5\n\x07KeyInfo\x12\x15\n\rKeyIdentifier\x18\x01 \x01(\t\x12\x13\n\x0bKeyMaterial\x18\x02 \x01(\x0c\x42*Z(github.com/hyperledger/fabric/protos/mspb\x06proto3')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -86,22 +86,29 @@ _FABRICMSPCONFIG = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='Admins', full_name='hfc.protos.msp.FabricMSPConfig.Admins', index=2,
+      name='IntermediateCerts', full_name='hfc.protos.msp.FabricMSPConfig.IntermediateCerts', index=2,
       number=3, type=12, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='RevocationList', full_name='hfc.protos.msp.FabricMSPConfig.RevocationList', index=3,
+      name='Admins', full_name='hfc.protos.msp.FabricMSPConfig.Admins', index=3,
       number=4, type=12, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='SigningIdentity', full_name='hfc.protos.msp.FabricMSPConfig.SigningIdentity', index=4,
-      number=5, type=11, cpp_type=10, label=1,
+      name='RevocationList', full_name='hfc.protos.msp.FabricMSPConfig.RevocationList', index=4,
+      number=5, type=12, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='SigningIdentity', full_name='hfc.protos.msp.FabricMSPConfig.SigningIdentity', index=5,
+      number=6, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -119,7 +126,7 @@ _FABRICMSPCONFIG = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=94,
-  serialized_end=246,
+  serialized_end=273,
 )
 
 
@@ -156,8 +163,8 @@ _SIGNINGIDENTITYINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=248,
-  serialized_end=339,
+  serialized_start=275,
+  serialized_end=366,
 )
 
 
@@ -194,8 +201,8 @@ _KEYINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=341,
-  serialized_end=394,
+  serialized_start=368,
+  serialized_end=421,
 )
 
 _FABRICMSPCONFIG.fields_by_name['SigningIdentity'].message_type = _SIGNINGIDENTITYINFO
