@@ -1,5 +1,8 @@
-# This compose file will start a peer node, an orderer,
-# and an sdk environment for testing
+# This compose file will start a Hyperledger Fabric 1.0 MVE, including
+# * ca
+# * orderer
+# * peer
+# * sdk-py for testing
 
 version: '2'
 
@@ -22,6 +25,7 @@ services:
       - ORDERER_GENERAL_BATCHSIZE_MAXMESSAGECOUNT=10
       - ORDERER_GENERAL_MAXWINDOWSIZE=1000
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_LISTENPORT=7050
       - ORDERER_RAMLEDGER_HISTORY_SIZE=100
     ports:
       - "7050:7050"
@@ -32,7 +36,7 @@ services:
     container_name: fabric-peer
     image: hyperledger/fabric-peer
     environment:
-      - CORE_PEER_ID=vp0
+      - CORE_PEER_ID=peer0
       - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
       - CORE_PEER_ADDRESSAUTODETECT=true
       - CORE_LOGGING_LEVEL=DEBUG
