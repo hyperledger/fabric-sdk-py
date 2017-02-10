@@ -12,13 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from __future__ import print_function
+
 import os
+import sys
 import unittest
 from shutil import rmtree
-
-import rx
-
 from hfc.util.keyvaluestore import file_key_value_store
+
+if sys.version_info < (3, 0):
+    from Queue import Queue
+else:
+    from queue import Queue
 
 
 class KeyValueStoreTest(unittest.TestCase):
@@ -45,13 +50,24 @@ class KeyValueStoreTest(unittest.TestCase):
         key_value_store.set_value(self.key, self.value)
         self.assertEqual(key_value_store.get_value(self.key), self.value)
 
-    def test_async_write_and_read(self):
-        """Test for async setting and getting."""
+    def test_async_read(self):
+        """Test for async getting."""
         key_value_store = file_key_value_store(self.path)
+        key_value_store.set_value(self.key, self.value)
+        queue = Queue(1)
+        key_value_store.async_get_value(self.key) \
+            .subscribe(lambda x: queue.put(x))
+
+        self.assertEqual(queue.get(), self.value)
+
+    def test_async_write(self):
+        """Test for async setting."""
+        key_value_store = file_key_value_store(self.path)
+        queue = Queue(1)
         key_value_store.async_set_value(self.key, self.value) \
-            .flat_map(lambda x: key_value_store.async_get_value(self.key)) \
-            .subscribe(rx.AnonymousObserver(
-                lambda x: self.assertEqual(x, self.value)))
+            .subscribe(lambda x: queue.put(x))
+        queue = Queue(1)
+        self.assertTrue(queue.get())
 
 
 if __name__ == '__main__':

@@ -78,12 +78,18 @@ class FileKeyValueStore(KeyValueStore):
     def set_value(self, key, value):
         """Set a value with a specific key.
 
-        :param key: key
-        :param value: value
+        Args:
+            key: key
+            value: value
+
+        Returns: True when success
+        Raises: File manipulate exceptions
+
         """
         file_path = os.path.join(self.path, key)
         with open(file_path, 'w') as f:
             f.write(value)
+        return True
 
     def get_value(self, key):
         """Get a value with a specific key.
