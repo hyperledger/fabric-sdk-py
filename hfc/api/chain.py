@@ -16,12 +16,188 @@
 import logging
 import os
 
+import rx
+
 from .crypto import crypto
 from ..protos.common import common_pb2 as common_proto
 from ..protos.peer import chaincode_pb2 as chaincode_proto
 from ..protos.peer import proposal_pb2
 from ..util import utils
 from ..util.constants import dockerfile_contents
+
+
+class ChaincodeDeploymentRequest(object):
+    """Chaincode deployment request object."""
+
+    def __init__(self, chaincode_path, chaincode_id, fcn, args,
+                 chain_id, tx_id,
+                 nonce=crypto.generate_nonce(24),
+                 signer=None):
+        """Init chaincode deployment request.
+
+        Args:
+            chaincode_path: chaincode path
+            chaincode_id: chaincode id
+            fcn: function name
+            args: function args
+            chain_id: chain id
+            tx_id: tx id
+            nonce: nonce
+            signer: signer
+
+        """
+        self._chaincode_path = chaincode_path
+        self._chaincode_id = chaincode_id
+        self._fcn = fcn
+        self._args = args
+        self._chain_id = chain_id
+        self._tx_id = tx_id
+        self._nonce = nonce
+        self._signer = signer
+
+    @property
+    def chaincode_path(self):
+        """Get chaincode path.
+
+        Returns: chaincode path
+
+        """
+        return self._chaincode_path
+
+    @chaincode_path.setter
+    def chaincode_path(self, path):
+        """Set chaincode path.
+
+        Args: Set chaincode path
+
+        """
+        self._chaincode_path = path
+
+    @property
+    def chaincode_id(self):
+        """Get chaincode id.
+
+        Returns: chaincode name
+
+        """
+        return self._chaincode_id
+
+    @chaincode_id.setter
+    def chaincode_id(self, id):
+        """Set chaincode id.
+
+        Args: Set chaincode id
+
+        """
+        self._chaincode_id = id
+
+    @property
+    def fcn(self):
+        """Get function name.
+
+        Returns: function name
+
+        """
+        return self._fcn
+
+    @fcn.setter
+    def fcn(self, fcn):
+        """Set function name.
+
+        Args: Set function name
+
+        """
+        self._fcn = fcn
+
+    @property
+    def args(self):
+        """Get args.
+
+        Returns: args
+
+        """
+        return self._args
+
+    @args.setter
+    def args(self, args):
+        """Set args.
+
+        Args: Set args
+
+        """
+        self._args = args
+
+    @property
+    def chain_id(self):
+        """Get chain id.
+
+        Returns: chain id
+
+        """
+        return self._chain_id
+
+    @chain_id.setter
+    def chain_id(self, chain_id):
+        """Set chain id.
+
+        Args: Set chain id
+
+        """
+        self._chain_id = chain_id
+
+    @property
+    def tx_id(self):
+        """Get tx id.
+
+        Returns: tx id
+
+        """
+        return self._tx_id
+
+    @tx_id.setter
+    def tx_id(self, tx_id):
+        """Set tx id.
+
+        Args: Set tx id
+
+        """
+        self._tx_id = tx_id
+
+    @property
+    def nonce(self):
+        """Get nonce.
+
+        Returns: nonce
+
+        """
+        return self._nonce
+
+    @nonce.setter
+    def nonce(self, nonce):
+        """Set nonce.
+
+        Args: Set nonce
+
+        """
+        self._nonce = nonce
+
+    @property
+    def signer(self):
+        """Get signer.
+
+        Returns: signer
+
+        """
+        return self._signer
+
+    @signer.setter
+    def signer(self, signer):
+        """Set signer.
+
+        Args: Set signer
+
+        """
+        self._signer = signer
 
 
 class Chain(object):
@@ -372,11 +548,26 @@ class Chain(object):
         # TODO: will signed the proposal object
         return proposal
 
-    def send_deploy_proposal(self):
-        # TODO: will fillup this function later
+    def send_deployment_proposal(self, chaincode_deployment_request):
+        """Send deployment proposal.
+
+        Args:
+            chaincode_deployment_request: see ChaincodeDeploymentRequest
+
+        Returns: An rx.Observable of deployment result
+
+        """
         if len(self.peers) < 1:
-            self.logger.warning('No peer to send deploy proposal')
-            return False
+            self.logger.warning('Missing peer objects'
+                                ' in Deployment proposal chain')
+            return rx.Observable.just(ValueError(
+                "Missing peer objects in Deployment proposal chain"))
+
+        # TODO:
+        # rx.Observable.just(chaincode_deployment_request) \
+        #     .filter(_check_chaincode_deployment_request)\
+        #     .map()
+
         return True
 
     def create_transaction_proposal(self, chaincode_name, args, sign=True):
@@ -448,3 +639,33 @@ class Chain(object):
 
         """
         return None
+
+
+def _check_chaincode_deployment_request(chaincode_deployment_request):
+    """Check chaincode_deployment_request
+
+    Args:
+        chaincode_deployment_request: see ChaincodeDeploymentRequest
+
+    Returns: Tuple of (boolean, error message)
+
+    """
+    if not chaincode_deployment_request:
+        raise ValueError("Missing input request"
+                         " object on the proposal request")
+
+    if not chaincode_deployment_request.chaincode_id:
+        raise ValueError("Missing 'chaincode_id' parameter"
+                         " in the proposal request")
+
+    if not chaincode_deployment_request.chain_id:
+        raise ValueError("Missing 'chain_id' parameter"
+                         " in the proposal request")
+
+    if not chaincode_deployment_request.tx_id:
+        raise ValueError("Missing 'tx_id' parameter in the proposal request")
+
+    if not chaincode_deployment_request.signer:
+        raise ValueError("Missing 'signer' parameter in the proposal request")
+
+    return True
