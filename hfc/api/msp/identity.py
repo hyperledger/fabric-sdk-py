@@ -39,6 +39,9 @@ class Identity(object):
         """
         return self.msp.crypto_suite.verify(self.public_key, signature, msg)
 
+    def serialize(self):
+        return b""
+
 
 class Signer(object):
     """ To help sign with crypto algorithms.
@@ -99,5 +102,6 @@ class SigningIdentity(Identity):
 
         Returns: signed results
         """
-        digest = self.msp.crypto_suite.hash(msg)
-        return self.signer.sign(digest)
+        # digest = self.msp.crypto_suite.hash(msg)
+        # return self.signer.sign(digest)
+        return b""
