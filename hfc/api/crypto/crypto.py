@@ -47,6 +47,59 @@ IV_LENGTH = 16
 
 
 @six.add_metaclass(ABCMeta)
+class Key(object):
+    """ An abstract base class for Key.
+
+    Key represents a base cryptographic key. It can be symmetric or asymmetric.
+    In asymmetric case, the private key can retrieve public key with the
+    corresponding method.
+
+    A key can be referenced via the Subject Key Identifier (SKI) with DER or
+    PEM encoding.
+    """
+
+    @abstractmethod
+    def is_symmetric(self):
+        """ Return if this key is with symmetric crypt, i.e. whether it's a
+        symmetric key.
+
+        :Returns: True or False
+        """
+
+    @abstractmethod
+    def get_SKI(self):
+        """ Return the SKI string
+
+        :Returns: string represent the SKI
+        """
+
+
+@six.add_metaclass(ABCMeta)
+class AsymmetricKey(Key):
+    """ An asymmetric key.
+
+    Can be a public key or private key, the private key can retrieve public
+    key with the corresponding method.
+    """
+
+    @abstractmethod
+    def is_private(self):
+        """ Return if this key is private key
+
+        :Returns: True or False
+        """
+
+    @abstractmethod
+    def get_public_key(self):
+        """ Get the corresponding public key for this private key.
+
+        If this key is already a public one, then return itself.
+
+        :Returns: Public key
+        """
+
+
+@six.add_metaclass(ABCMeta)
 class Crypto(object):
     """ An abstract base class for crypto. """
 
@@ -54,7 +107,7 @@ class Crypto(object):
     def generate_private_key(self):
         """ Generate asymmetric key pair.
 
-        :return: An private key object which include public key object.
+        :Returns: An private key object which include public key object.
         """
 
     @abstractmethod
@@ -64,7 +117,7 @@ class Crypto(object):
         :param public_key: Encryption public key
         :param message: message need encrypt
 
-        :return: An object including secure context
+        :Returns: An object including secure context
         """
 
     @abstractmethod
@@ -74,7 +127,7 @@ class Crypto(object):
         :param private_key: Encryption private key
         :param cipher_text: Cipher text received
 
-        :return: An object including secure context
+        :Returns: An object including secure context
         """
 
     @abstractmethod
@@ -84,7 +137,7 @@ class Crypto(object):
         :param private_key: Signing private key
         :param message: Origin message
 
-        :return: An object including secure context
+        :Returns: An object including secure context
         """
 
     @abstractmethod
@@ -95,7 +148,7 @@ class Crypto(object):
         :param message: Origin message
         :param signature: Signature of message
 
-        :return: A boolean True as valid
+        :Returns: A boolean True as valid
         """
 
 
@@ -138,7 +191,7 @@ class Ecies(Crypto):
 
         :param private_key: private key
         :param message: message to sign
-        :return: signature
+        :Returns: signature
         """
         signer = private_key.signer(ec.ECDSA(self.sign_hash_algorithm))
         signer.update(message)
@@ -150,7 +203,7 @@ class Ecies(Crypto):
         :param public_key: Signing public key
         :param message: Origin message
         :param signature: Signature of message
-        :return: verify result boolean, True means valid
+        :Returns: verify result boolean, True means valid
         """
         verifier = public_key.verifier(signature,
                                        ec.ECDSA(self.sign_hash_algorithm))
@@ -166,7 +219,7 @@ class Ecies(Crypto):
     def generate_private_key(self):
         """ECDSA key pair generation by current curve.
 
-        :return: A private key object which include public key object.
+        :Returns: A private key object which include public key object.
         """
         return ec.generate_private_key(self.curve, default_backend())
 
@@ -182,7 +235,7 @@ class Ecies(Crypto):
 
         :param private_key: private key
         :param cipher_text: cipher text
-        :return: plain text
+        :Returns: plain text
         """
         key_len = private_key.curve.key_size
         if key_len != self.curve.key_size:
@@ -238,7 +291,7 @@ class Ecies(Crypto):
 
         :param public_key: public key
         :param plain_text: plain text
-        :return: cipher text
+        :Returns: cipher text
         """
         ephemeral_private_key = self.generate_private_key()
         rb = ephemeral_private_key.public_key().public_numbers().encode_point()
