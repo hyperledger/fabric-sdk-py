@@ -49,7 +49,7 @@ class ChaincodeTest(unittest.TestCase):
         grpc_addr = os.environ.get('GRPC_ADDR', 'localhost:7050')
         client = Client()
         chain = client.new_chain(CHAIN_ID)
-        client.set_kv_store('test_store')
+        client.set_state_store('test_store')
         chain.add_peer(Peer(endpoint=grpc_addr))
         proposal = chain.create_deploy_proposal(chaincode_path=CHAINCODE_PATH,
                                                 chaincode_name=CHAINCODE_NAME,

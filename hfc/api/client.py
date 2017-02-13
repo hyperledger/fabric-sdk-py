@@ -26,7 +26,7 @@ class Client(object):
 
     def __init__(self):
         self.chains = {}
-        self.states = {}
+        self.state_store = None
         self.crypto_suite = None
         self.user_context = None
         self.logger = logging.getLogger(__name__)
@@ -39,20 +39,32 @@ class Client(object):
 
         :return: The inited chain instance
         """
+        self.logger.debug("New a chain with name = {}".format(name))
         if name not in self.chains:
             self.chains[name] = Chain(name)
         return self.chains[name]
 
-    def get_chain(self, chain_name):
+    def get_chain(self, name):
         """ Get a chain instance
 
-        :param chain_name: the name of the chain
+        :param name: the name of the chain
 
         :return: Get the chain instance with the name or None
         """
-        pass
+        return self.chains.get(name, None)
 
-    def set_kv_store(self, store):
+    def set_crypto_suite(self, crypto_suite):
+        """Set the crypto suite to given one.
+
+        Args:
+            crypto_suite: The crypto_suite to use.
+
+        Returns: None
+
+        """
+        self.crypto_suite = crypto_suite
+
+    def set_state_store(self, store):
         """store user enrollment materials. The SDK should make this
         pluggable so that different store implementations can be
         selected by the application. For instance, in some cases
@@ -65,8 +77,7 @@ class Client(object):
 
         :return: None
         """
-
-        pass
+        self.state_store = store
 
     def set_logger(self, logger):
         """Sets an instance of a logger used by the consuming application.
@@ -85,10 +96,10 @@ class Client(object):
 
         :return: None
         """
-        pass
+        self.logger = logger
 
-    def Key_related_process(self, name):
-        """TODO.
+    def new_state_store(self, **options):
+        """Create a state store with given parameters
         store or change persistent and private data
         Params
 

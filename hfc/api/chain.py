@@ -330,7 +330,7 @@ class Chain(object):
 
         Get chain status to see if the underlying channel has been
         terminated, making it a read-only chain, where information
-        (transactions and states) can be queried but no new transactions
+        (transactions and state_store) can be queried but no new transactions
         can be submitted.
 
         :return: True if the chain is read-only, False otherwise.
