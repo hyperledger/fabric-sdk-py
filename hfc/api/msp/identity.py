@@ -73,8 +73,7 @@ class Signer(object):
 
         Returns: The public key
         """
-        # TODO: use crypto_suite to help sign
-        return ""
+        return self.cryto_suite.sign(self.key, digest, opts)
 
 
 class SigningIdentity(Identity):
@@ -102,5 +101,5 @@ class SigningIdentity(Identity):
 
         Returns: signed results
         """
-        # TODO: implement with crypto_suite
-        return ""
+        digest = self.msp.crypto_suite.hash(msg)
+        return self.signer.sign(digest)

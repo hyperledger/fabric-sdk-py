@@ -439,7 +439,7 @@ class Chain(object):
         """ Create an invoke transaction proposal
         Args:
             invoke_spec: The spec
-            header: header of the proposl
+            header: header of the proposal
 
         Returns: The created proposal
 
@@ -470,8 +470,14 @@ class Chain(object):
         Returns: Signed proposal
 
         """
-        # proposal_bytes = json.dumps(proposal)
-        return None
+        proposal_bytes = proposal.SerializeToString()
+        sig = signing_identity.sign(proposal_bytes)
+
+        signed_proposal = proposal_pb2.SignedProposal()
+        signed_proposal.signature = sig
+        signed_proposal.proposalBytes = proposal_bytes
+
+        return signed_proposal
 
     def create_deploy_proposal(self, chaincode_path, chaincode_name, fcn, args,
                                chain_id, tx_id,
@@ -545,7 +551,10 @@ class Chain(object):
         header = self._build_header('admin', chain_id, 'lccc', tx_id, nonce)
         proposal = self._build_proposal(lccc_spec, header)
 
-        # TODO: will signed the proposal object
+        # TODO: get signing_identity
+        # signed_proposal = self._sign_proposal(signed_proposal, proposal)
+        # return signed_proposal
+
         return proposal
 
     def send_deployment_proposal(self, chaincode_deployment_request):
