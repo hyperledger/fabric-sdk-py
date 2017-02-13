@@ -23,7 +23,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/events.proto',
   package='hfc.protos.peer',
   syntax='proto3',
-  serialized_pb=_b('\n\x1chfc/protos/peer/events.proto\x12\x0fhfc.protos.peer\x1a\x1ehfc/protos/common/common.proto\x1a$hfc/protos/peer/chaincodeevent.proto\x1a!hfc/protos/peer/transaction.proto\"6\n\x0c\x43haincodeReg\x12\x13\n\x0b\x63haincodeID\x18\x01 \x01(\t\x12\x11\n\teventName\x18\x02 \x01(\t\"\x90\x01\n\x08Interest\x12-\n\teventType\x18\x01 \x01(\x0e\x32\x1a.hfc.protos.peer.EventType\x12\x39\n\x10\x63haincodeRegInfo\x18\x02 \x01(\x0b\x32\x1d.hfc.protos.peer.ChaincodeRegH\x00\x12\x0f\n\x07\x63hainID\x18\x03 \x01(\tB\t\n\x07RegInfo\"5\n\x08Register\x12)\n\x06\x65vents\x18\x01 \x03(\x0b\x32\x19.hfc.protos.peer.Interest\"G\n\tRejection\x12(\n\x02tx\x18\x01 \x01(\x0b\x32\x1c.hfc.protos.peer.Transaction\x12\x10\n\x08\x65rrorMsg\x18\x02 \x01(\t\"7\n\nUnregister\x12)\n\x06\x65vents\x18\x01 \x03(\x0b\x32\x19.hfc.protos.peer.Interest\"4\n\x0bSignedEvent\x12\x11\n\tsignature\x18\x01 \x01(\x0c\x12\x12\n\neventBytes\x18\x02 \x01(\x0c\"\x9a\x02\n\x05\x45vent\x12-\n\x08register\x18\x01 \x01(\x0b\x32\x19.hfc.protos.peer.RegisterH\x00\x12)\n\x05\x62lock\x18\x02 \x01(\x0b\x32\x18.hfc.protos.common.BlockH\x00\x12\x39\n\x0e\x63haincodeEvent\x18\x03 \x01(\x0b\x32\x1f.hfc.protos.peer.ChaincodeEventH\x00\x12/\n\trejection\x18\x04 \x01(\x0b\x32\x1a.hfc.protos.peer.RejectionH\x00\x12\x31\n\nunregister\x18\x05 \x01(\x0b\x32\x1b.hfc.protos.peer.UnregisterH\x00\x12\x0f\n\x07\x63reator\x18\x06 \x01(\x0c\x42\x07\n\x05\x45vent*B\n\tEventType\x12\x0c\n\x08REGISTER\x10\x00\x12\t\n\x05\x42LOCK\x10\x01\x12\r\n\tCHAINCODE\x10\x02\x12\r\n\tREJECTION\x10\x03\x32\x46\n\x06\x45vents\x12<\n\x04\x43hat\x12\x16.hfc.protos.peer.Event\x1a\x16.hfc.protos.peer.Event\"\x00(\x01\x30\x01\x42+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_pb=_b('\n\x1chfc/protos/peer/events.proto\x12\x0fhfc.protos.peer\x1a\x1ehfc/protos/common/common.proto\x1a$hfc/protos/peer/chaincodeevent.proto\x1a!hfc/protos/peer/transaction.proto\"8\n\x0c\x43haincodeReg\x12\x14\n\x0c\x63haincode_id\x18\x01 \x01(\t\x12\x12\n\nevent_name\x18\x02 \x01(\t\"\x93\x01\n\x08Interest\x12.\n\nevent_type\x18\x01 \x01(\x0e\x32\x1a.hfc.protos.peer.EventType\x12;\n\x12\x63haincode_reg_info\x18\x02 \x01(\x0b\x32\x1d.hfc.protos.peer.ChaincodeRegH\x00\x12\x0f\n\x07\x63hainID\x18\x03 \x01(\tB\t\n\x07RegInfo\"5\n\x08Register\x12)\n\x06\x65vents\x18\x01 \x03(\x0b\x32\x19.hfc.protos.peer.Interest\"H\n\tRejection\x12(\n\x02tx\x18\x01 \x01(\x0b\x32\x1c.hfc.protos.peer.Transaction\x12\x11\n\terror_msg\x18\x02 \x01(\t\"7\n\nUnregister\x12)\n\x06\x65vents\x18\x01 \x03(\x0b\x32\x19.hfc.protos.peer.Interest\"4\n\x0bSignedEvent\x12\x11\n\tsignature\x18\x01 \x01(\x0c\x12\x12\n\neventBytes\x18\x02 \x01(\x0c\"\x9b\x02\n\x05\x45vent\x12-\n\x08register\x18\x01 \x01(\x0b\x32\x19.hfc.protos.peer.RegisterH\x00\x12)\n\x05\x62lock\x18\x02 \x01(\x0b\x32\x18.hfc.protos.common.BlockH\x00\x12:\n\x0f\x63haincode_event\x18\x03 \x01(\x0b\x32\x1f.hfc.protos.peer.ChaincodeEventH\x00\x12/\n\trejection\x18\x04 \x01(\x0b\x32\x1a.hfc.protos.peer.RejectionH\x00\x12\x31\n\nunregister\x18\x05 \x01(\x0b\x32\x1b.hfc.protos.peer.UnregisterH\x00\x12\x0f\n\x07\x63reator\x18\x06 \x01(\x0c\x42\x07\n\x05\x45vent*B\n\tEventType\x12\x0c\n\x08REGISTER\x10\x00\x12\t\n\x05\x42LOCK\x10\x01\x12\r\n\tCHAINCODE\x10\x02\x12\r\n\tREJECTION\x10\x03\x32\x46\n\x06\x45vents\x12<\n\x04\x43hat\x12\x16.hfc.protos.peer.Event\x1a\x16.hfc.protos.peer.Event\"\x00(\x01\x30\x01\x42+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
   ,
   dependencies=[hfc_dot_protos_dot_common_dot_common__pb2.DESCRIPTOR,hfc_dot_protos_dot_peer_dot_chaincodeevent__pb2.DESCRIPTOR,hfc_dot_protos_dot_peer_dot_transaction__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -53,8 +53,8 @@ _EVENTTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=881,
-  serialized_end=947,
+  serialized_start=888,
+  serialized_end=954,
 )
 _sym_db.RegisterEnumDescriptor(_EVENTTYPE)
 
@@ -74,14 +74,14 @@ _CHAINCODEREG = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='chaincodeID', full_name='hfc.protos.peer.ChaincodeReg.chaincodeID', index=0,
+      name='chaincode_id', full_name='hfc.protos.peer.ChaincodeReg.chaincode_id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='eventName', full_name='hfc.protos.peer.ChaincodeReg.eventName', index=1,
+      name='event_name', full_name='hfc.protos.peer.ChaincodeReg.event_name', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -100,7 +100,7 @@ _CHAINCODEREG = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=154,
-  serialized_end=208,
+  serialized_end=210,
 )
 
 
@@ -112,14 +112,14 @@ _INTEREST = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='eventType', full_name='hfc.protos.peer.Interest.eventType', index=0,
+      name='event_type', full_name='hfc.protos.peer.Interest.event_type', index=0,
       number=1, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='chaincodeRegInfo', full_name='hfc.protos.peer.Interest.chaincodeRegInfo', index=1,
+      name='chaincode_reg_info', full_name='hfc.protos.peer.Interest.chaincode_reg_info', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -147,8 +147,8 @@ _INTEREST = _descriptor.Descriptor(
       name='RegInfo', full_name='hfc.protos.peer.Interest.RegInfo',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=211,
-  serialized_end=355,
+  serialized_start=213,
+  serialized_end=360,
 )
 
 
@@ -178,8 +178,8 @@ _REGISTER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=357,
-  serialized_end=410,
+  serialized_start=362,
+  serialized_end=415,
 )
 
 
@@ -198,7 +198,7 @@ _REJECTION = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='errorMsg', full_name='hfc.protos.peer.Rejection.errorMsg', index=1,
+      name='error_msg', full_name='hfc.protos.peer.Rejection.error_msg', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -216,8 +216,8 @@ _REJECTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=412,
-  serialized_end=483,
+  serialized_start=417,
+  serialized_end=489,
 )
 
 
@@ -247,8 +247,8 @@ _UNREGISTER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=485,
-  serialized_end=540,
+  serialized_start=491,
+  serialized_end=546,
 )
 
 
@@ -285,8 +285,8 @@ _SIGNEDEVENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=542,
-  serialized_end=594,
+  serialized_start=548,
+  serialized_end=600,
 )
 
 
@@ -312,7 +312,7 @@ _EVENT = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='chaincodeEvent', full_name='hfc.protos.peer.Event.chaincodeEvent', index=2,
+      name='chaincode_event', full_name='hfc.protos.peer.Event.chaincode_event', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -354,21 +354,21 @@ _EVENT = _descriptor.Descriptor(
       name='Event', full_name='hfc.protos.peer.Event.Event',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=597,
-  serialized_end=879,
+  serialized_start=603,
+  serialized_end=886,
 )
 
-_INTEREST.fields_by_name['eventType'].enum_type = _EVENTTYPE
-_INTEREST.fields_by_name['chaincodeRegInfo'].message_type = _CHAINCODEREG
+_INTEREST.fields_by_name['event_type'].enum_type = _EVENTTYPE
+_INTEREST.fields_by_name['chaincode_reg_info'].message_type = _CHAINCODEREG
 _INTEREST.oneofs_by_name['RegInfo'].fields.append(
-  _INTEREST.fields_by_name['chaincodeRegInfo'])
-_INTEREST.fields_by_name['chaincodeRegInfo'].containing_oneof = _INTEREST.oneofs_by_name['RegInfo']
+  _INTEREST.fields_by_name['chaincode_reg_info'])
+_INTEREST.fields_by_name['chaincode_reg_info'].containing_oneof = _INTEREST.oneofs_by_name['RegInfo']
 _REGISTER.fields_by_name['events'].message_type = _INTEREST
 _REJECTION.fields_by_name['tx'].message_type = hfc_dot_protos_dot_peer_dot_transaction__pb2._TRANSACTION
 _UNREGISTER.fields_by_name['events'].message_type = _INTEREST
 _EVENT.fields_by_name['register'].message_type = _REGISTER
 _EVENT.fields_by_name['block'].message_type = hfc_dot_protos_dot_common_dot_common__pb2._BLOCK
-_EVENT.fields_by_name['chaincodeEvent'].message_type = hfc_dot_protos_dot_peer_dot_chaincodeevent__pb2._CHAINCODEEVENT
+_EVENT.fields_by_name['chaincode_event'].message_type = hfc_dot_protos_dot_peer_dot_chaincodeevent__pb2._CHAINCODEEVENT
 _EVENT.fields_by_name['rejection'].message_type = _REJECTION
 _EVENT.fields_by_name['unregister'].message_type = _UNREGISTER
 _EVENT.oneofs_by_name['Event'].fields.append(
@@ -378,8 +378,8 @@ _EVENT.oneofs_by_name['Event'].fields.append(
   _EVENT.fields_by_name['block'])
 _EVENT.fields_by_name['block'].containing_oneof = _EVENT.oneofs_by_name['Event']
 _EVENT.oneofs_by_name['Event'].fields.append(
-  _EVENT.fields_by_name['chaincodeEvent'])
-_EVENT.fields_by_name['chaincodeEvent'].containing_oneof = _EVENT.oneofs_by_name['Event']
+  _EVENT.fields_by_name['chaincode_event'])
+_EVENT.fields_by_name['chaincode_event'].containing_oneof = _EVENT.oneofs_by_name['Event']
 _EVENT.oneofs_by_name['Event'].fields.append(
   _EVENT.fields_by_name['rejection'])
 _EVENT.fields_by_name['rejection'].containing_oneof = _EVENT.oneofs_by_name['Event']

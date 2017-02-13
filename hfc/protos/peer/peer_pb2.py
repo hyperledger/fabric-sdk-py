@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/peer.proto',
   package='hfc.protos.peer',
   syntax='proto3',
-  serialized_pb=_b('\n\x1ahfc/protos/peer/peer.proto\x12\x0fhfc.protos.peer\x1a\x1ehfc/protos/peer/proposal.proto\x1a\'hfc/protos/peer/proposal_response.proto\"\x16\n\x06PeerID\x12\x0c\n\x04name\x18\x01 \x01(\t\"D\n\x0cPeerEndpoint\x12#\n\x02ID\x18\x01 \x01(\x0b\x32\x17.hfc.protos.peer.PeerID\x12\x0f\n\x07\x61\x64\x64ress\x18\x02 \x01(\t2c\n\x08\x45ndorser\x12W\n\x0fProcessProposal\x12\x1f.hfc.protos.peer.SignedProposal\x1a!.hfc.protos.peer.ProposalResponse\"\x00\x42+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_pb=_b('\n\x1ahfc/protos/peer/peer.proto\x12\x0fhfc.protos.peer\x1a\x1ehfc/protos/peer/proposal.proto\x1a\'hfc/protos/peer/proposal_response.proto\"\x16\n\x06PeerID\x12\x0c\n\x04name\x18\x01 \x01(\t\"D\n\x0cPeerEndpoint\x12#\n\x02id\x18\x01 \x01(\x0b\x32\x17.hfc.protos.peer.PeerID\x12\x0f\n\x07\x61\x64\x64ress\x18\x02 \x01(\t2c\n\x08\x45ndorser\x12W\n\x0fProcessProposal\x12\x1f.hfc.protos.peer.SignedProposal\x1a!.hfc.protos.peer.ProposalResponse\"\x00\x42+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
   ,
   dependencies=[hfc_dot_protos_dot_peer_dot_proposal__pb2.DESCRIPTOR,hfc_dot_protos_dot_peer_dot_proposal__response__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -68,7 +68,7 @@ _PEERENDPOINT = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='ID', full_name='hfc.protos.peer.PeerEndpoint.ID', index=0,
+      name='id', full_name='hfc.protos.peer.PeerEndpoint.id', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -97,7 +97,7 @@ _PEERENDPOINT = _descriptor.Descriptor(
   serialized_end=212,
 )
 
-_PEERENDPOINT.fields_by_name['ID'].message_type = _PEERID
+_PEERENDPOINT.fields_by_name['id'].message_type = _PEERID
 DESCRIPTOR.message_types_by_name['PeerID'] = _PEERID
 DESCRIPTOR.message_types_by_name['PeerEndpoint'] = _PEERENDPOINT
 
@@ -129,9 +129,6 @@ try:
 
 
   class EndorserStub(object):
-    """-------- the Endorser service ------------
-
-    """
 
     def __init__(self, channel):
       """Constructor.
@@ -147,9 +144,6 @@ try:
 
 
   class EndorserServicer(object):
-    """-------- the Endorser service ------------
-
-    """
 
     def ProcessProposal(self, request, context):
       context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -176,9 +170,6 @@ try:
     It is recommended to use the GA API (classes and functions in this
     file not marked beta) for all further purposes. This class was generated
     only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0."""
-    """-------- the Endorser service ------------
-
-    """
     def ProcessProposal(self, request, context):
       context.code(beta_interfaces.StatusCode.UNIMPLEMENTED)
 
@@ -189,9 +180,6 @@ try:
     It is recommended to use the GA API (classes and functions in this
     file not marked beta) for all further purposes. This class was generated
     only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0."""
-    """-------- the Endorser service ------------
-
-    """
     def ProcessProposal(self, request, timeout, metadata=None, with_call=False, protocol_options=None):
       raise NotImplementedError()
     ProcessProposal.future = None

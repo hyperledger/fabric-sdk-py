@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/admin.proto',
   package='hfc.protos.peer',
   syntax='proto3',
-  serialized_pb=_b('\n\x1bhfc/protos/peer/admin.proto\x12\x0fhfc.protos.peer\x1a\x1bgoogle/protobuf/empty.proto\"\xa3\x01\n\x0cServerStatus\x12\x38\n\x06status\x18\x01 \x01(\x0e\x32(.hfc.protos.peer.ServerStatus.StatusCode\"Y\n\nStatusCode\x12\r\n\tUNDEFINED\x10\x00\x12\x0b\n\x07STARTED\x10\x01\x12\x0b\n\x07STOPPED\x10\x02\x12\n\n\x06PAUSED\x10\x03\x12\t\n\x05\x45RROR\x10\x04\x12\x0b\n\x07UNKNOWN\x10\x05\"6\n\x0fLogLevelRequest\x12\x11\n\tlogModule\x18\x01 \x01(\t\x12\x10\n\x08logLevel\x18\x02 \x01(\t\"7\n\x10LogLevelResponse\x12\x11\n\tlogModule\x18\x01 \x01(\t\x12\x10\n\x08logLevel\x18\x02 \x01(\t2\x94\x03\n\x05\x41\x64min\x12\x44\n\tGetStatus\x12\x16.google.protobuf.Empty\x1a\x1d.hfc.protos.peer.ServerStatus\"\x00\x12\x46\n\x0bStartServer\x12\x16.google.protobuf.Empty\x1a\x1d.hfc.protos.peer.ServerStatus\"\x00\x12\x45\n\nStopServer\x12\x16.google.protobuf.Empty\x1a\x1d.hfc.protos.peer.ServerStatus\"\x00\x12Z\n\x11GetModuleLogLevel\x12 .hfc.protos.peer.LogLevelRequest\x1a!.hfc.protos.peer.LogLevelResponse\"\x00\x12Z\n\x11SetModuleLogLevel\x12 .hfc.protos.peer.LogLevelRequest\x1a!.hfc.protos.peer.LogLevelResponse\"\x00\x42+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_pb=_b('\n\x1bhfc/protos/peer/admin.proto\x12\x0fhfc.protos.peer\x1a\x1bgoogle/protobuf/empty.proto\"\xa3\x01\n\x0cServerStatus\x12\x38\n\x06status\x18\x01 \x01(\x0e\x32(.hfc.protos.peer.ServerStatus.StatusCode\"Y\n\nStatusCode\x12\r\n\tUNDEFINED\x10\x00\x12\x0b\n\x07STARTED\x10\x01\x12\x0b\n\x07STOPPED\x10\x02\x12\n\n\x06PAUSED\x10\x03\x12\t\n\x05\x45RROR\x10\x04\x12\x0b\n\x07UNKNOWN\x10\x05\"8\n\x0fLogLevelRequest\x12\x12\n\nlog_module\x18\x01 \x01(\t\x12\x11\n\tlog_level\x18\x02 \x01(\t\"9\n\x10LogLevelResponse\x12\x12\n\nlog_module\x18\x01 \x01(\t\x12\x11\n\tlog_level\x18\x02 \x01(\t2\x94\x03\n\x05\x41\x64min\x12\x44\n\tGetStatus\x12\x16.google.protobuf.Empty\x1a\x1d.hfc.protos.peer.ServerStatus\"\x00\x12\x46\n\x0bStartServer\x12\x16.google.protobuf.Empty\x1a\x1d.hfc.protos.peer.ServerStatus\"\x00\x12\x45\n\nStopServer\x12\x16.google.protobuf.Empty\x1a\x1d.hfc.protos.peer.ServerStatus\"\x00\x12Z\n\x11GetModuleLogLevel\x12 .hfc.protos.peer.LogLevelRequest\x1a!.hfc.protos.peer.LogLevelResponse\"\x00\x12Z\n\x11SetModuleLogLevel\x12 .hfc.protos.peer.LogLevelRequest\x1a!.hfc.protos.peer.LogLevelResponse\"\x00\x42+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
   ,
   dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -106,14 +106,14 @@ _LOGLEVELREQUEST = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='logModule', full_name='hfc.protos.peer.LogLevelRequest.logModule', index=0,
+      name='log_module', full_name='hfc.protos.peer.LogLevelRequest.log_module', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='logLevel', full_name='hfc.protos.peer.LogLevelRequest.logLevel', index=1,
+      name='log_level', full_name='hfc.protos.peer.LogLevelRequest.log_level', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -132,7 +132,7 @@ _LOGLEVELREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=243,
-  serialized_end=297,
+  serialized_end=299,
 )
 
 
@@ -144,14 +144,14 @@ _LOGLEVELRESPONSE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='logModule', full_name='hfc.protos.peer.LogLevelResponse.logModule', index=0,
+      name='log_module', full_name='hfc.protos.peer.LogLevelResponse.log_module', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='logLevel', full_name='hfc.protos.peer.LogLevelResponse.logLevel', index=1,
+      name='log_level', full_name='hfc.protos.peer.LogLevelResponse.log_level', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -169,8 +169,8 @@ _LOGLEVELRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=299,
-  serialized_end=354,
+  serialized_start=301,
+  serialized_end=358,
 )
 
 _SERVERSTATUS.fields_by_name['status'].enum_type = _SERVERSTATUS_STATUSCODE

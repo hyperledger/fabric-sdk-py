@@ -15,40 +15,19 @@ _sym_db = _symbol_database.Default()
 
 from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 from hfc.protos.peer import proposal_response_pb2 as hfc_dot_protos_dot_peer_dot_proposal__response__pb2
+from hfc.protos.common import common_pb2 as hfc_dot_protos_dot_common_dot_common__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/transaction.proto',
   package='hfc.protos.peer',
   syntax='proto3',
-  serialized_pb=_b('\n!hfc/protos/peer/transaction.proto\x12\x0fhfc.protos.peer\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\'hfc/protos/peer/proposal_response.proto\"@\n\x11SignedTransaction\x12\x18\n\x10transactionBytes\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"\xbd\x01\n\x12InvalidTransaction\x12\x31\n\x0btransaction\x18\x01 \x01(\x0b\x32\x1c.hfc.protos.peer.Transaction\x12\x38\n\x05\x63\x61use\x18\x02 \x01(\x0e\x32).hfc.protos.peer.InvalidTransaction.Cause\":\n\x05\x43\x61use\x12\x15\n\x11TxIdAlreadyExists\x10\x00\x12\x1a\n\x16RWConflictDuringCommit\x10\x01\"\x82\x01\n\x0bTransaction\x12\x0f\n\x07version\x18\x01 \x01(\x05\x12-\n\ttimestamp\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x33\n\x07\x61\x63tions\x18\x03 \x03(\x0b\x32\".hfc.protos.peer.TransactionAction\"4\n\x11TransactionAction\x12\x0e\n\x06header\x18\x01 \x01(\x0c\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\"t\n\x16\x43haincodeActionPayload\x12 \n\x18\x63haincodeProposalPayload\x18\x01 \x01(\x0c\x12\x38\n\x06\x61\x63tion\x18\x02 \x01(\x0b\x32(.hfc.protos.peer.ChaincodeEndorsedAction\"n\n\x17\x43haincodeEndorsedAction\x12\x1f\n\x17proposalResponsePayload\x18\x01 \x01(\x0c\x12\x32\n\x0c\x65ndorsements\x18\x02 \x03(\x0b\x32\x1c.hfc.protos.peer.EndorsementB+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_pb=_b('\n!hfc/protos/peer/transaction.proto\x12\x0fhfc.protos.peer\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\'hfc/protos/peer/proposal_response.proto\x1a\x1ehfc/protos/common/common.proto\"A\n\x11SignedTransaction\x12\x19\n\x11transaction_bytes\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"_\n\x14ProcessedTransaction\x12\x38\n\x13transactionEnvelope\x18\x01 \x01(\x0b\x32\x1b.hfc.protos.common.Envelope\x12\r\n\x05valid\x18\x02 \x01(\x08\"\x82\x01\n\x0bTransaction\x12\x0f\n\x07version\x18\x01 \x01(\x05\x12-\n\ttimestamp\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x33\n\x07\x61\x63tions\x18\x03 \x03(\x0b\x32\".hfc.protos.peer.TransactionAction\"4\n\x11TransactionAction\x12\x0e\n\x06header\x18\x01 \x01(\x0c\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\"v\n\x16\x43haincodeActionPayload\x12\"\n\x1a\x63haincode_proposal_payload\x18\x01 \x01(\x0c\x12\x38\n\x06\x61\x63tion\x18\x02 \x01(\x0b\x32(.hfc.protos.peer.ChaincodeEndorsedAction\"p\n\x17\x43haincodeEndorsedAction\x12!\n\x19proposal_response_payload\x18\x01 \x01(\x0c\x12\x32\n\x0c\x65ndorsements\x18\x02 \x03(\x0b\x32\x1c.hfc.protos.peer.EndorsementB+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
   ,
-  dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,hfc_dot_protos_dot_peer_dot_proposal__response__pb2.DESCRIPTOR,])
+  dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,hfc_dot_protos_dot_peer_dot_proposal__response__pb2.DESCRIPTOR,hfc_dot_protos_dot_common_dot_common__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
-
-_INVALIDTRANSACTION_CAUSE = _descriptor.EnumDescriptor(
-  name='Cause',
-  full_name='hfc.protos.peer.InvalidTransaction.Cause',
-  filename=None,
-  file=DESCRIPTOR,
-  values=[
-    _descriptor.EnumValueDescriptor(
-      name='TxIdAlreadyExists', index=0, number=0,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='RWConflictDuringCommit', index=1, number=1,
-      options=None,
-      type=None),
-  ],
-  containing_type=None,
-  options=None,
-  serialized_start=326,
-  serialized_end=384,
-)
-_sym_db.RegisterEnumDescriptor(_INVALIDTRANSACTION_CAUSE)
 
 
 _SIGNEDTRANSACTION = _descriptor.Descriptor(
@@ -59,7 +38,7 @@ _SIGNEDTRANSACTION = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='transactionBytes', full_name='hfc.protos.peer.SignedTransaction.transactionBytes', index=0,
+      name='transaction_bytes', full_name='hfc.protos.peer.SignedTransaction.transaction_bytes', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -84,29 +63,29 @@ _SIGNEDTRANSACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=128,
-  serialized_end=192,
+  serialized_start=160,
+  serialized_end=225,
 )
 
 
-_INVALIDTRANSACTION = _descriptor.Descriptor(
-  name='InvalidTransaction',
-  full_name='hfc.protos.peer.InvalidTransaction',
+_PROCESSEDTRANSACTION = _descriptor.Descriptor(
+  name='ProcessedTransaction',
+  full_name='hfc.protos.peer.ProcessedTransaction',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='transaction', full_name='hfc.protos.peer.InvalidTransaction.transaction', index=0,
+      name='transactionEnvelope', full_name='hfc.protos.peer.ProcessedTransaction.transactionEnvelope', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='cause', full_name='hfc.protos.peer.InvalidTransaction.cause', index=1,
-      number=2, type=14, cpp_type=8, label=1,
-      has_default_value=False, default_value=0,
+      name='valid', full_name='hfc.protos.peer.ProcessedTransaction.valid', index=1,
+      number=2, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -115,7 +94,6 @@ _INVALIDTRANSACTION = _descriptor.Descriptor(
   ],
   nested_types=[],
   enum_types=[
-    _INVALIDTRANSACTION_CAUSE,
   ],
   options=None,
   is_extendable=False,
@@ -123,8 +101,8 @@ _INVALIDTRANSACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=195,
-  serialized_end=384,
+  serialized_start=227,
+  serialized_end=322,
 )
 
 
@@ -168,8 +146,8 @@ _TRANSACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=387,
-  serialized_end=517,
+  serialized_start=325,
+  serialized_end=455,
 )
 
 
@@ -206,8 +184,8 @@ _TRANSACTIONACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=519,
-  serialized_end=571,
+  serialized_start=457,
+  serialized_end=509,
 )
 
 
@@ -219,7 +197,7 @@ _CHAINCODEACTIONPAYLOAD = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='chaincodeProposalPayload', full_name='hfc.protos.peer.ChaincodeActionPayload.chaincodeProposalPayload', index=0,
+      name='chaincode_proposal_payload', full_name='hfc.protos.peer.ChaincodeActionPayload.chaincode_proposal_payload', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -244,8 +222,8 @@ _CHAINCODEACTIONPAYLOAD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=573,
-  serialized_end=689,
+  serialized_start=511,
+  serialized_end=629,
 )
 
 
@@ -257,7 +235,7 @@ _CHAINCODEENDORSEDACTION = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='proposalResponsePayload', full_name='hfc.protos.peer.ChaincodeEndorsedAction.proposalResponsePayload', index=0,
+      name='proposal_response_payload', full_name='hfc.protos.peer.ChaincodeEndorsedAction.proposal_response_payload', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -282,19 +260,17 @@ _CHAINCODEENDORSEDACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=691,
-  serialized_end=801,
+  serialized_start=631,
+  serialized_end=743,
 )
 
-_INVALIDTRANSACTION.fields_by_name['transaction'].message_type = _TRANSACTION
-_INVALIDTRANSACTION.fields_by_name['cause'].enum_type = _INVALIDTRANSACTION_CAUSE
-_INVALIDTRANSACTION_CAUSE.containing_type = _INVALIDTRANSACTION
+_PROCESSEDTRANSACTION.fields_by_name['transactionEnvelope'].message_type = hfc_dot_protos_dot_common_dot_common__pb2._ENVELOPE
 _TRANSACTION.fields_by_name['timestamp'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
 _TRANSACTION.fields_by_name['actions'].message_type = _TRANSACTIONACTION
 _CHAINCODEACTIONPAYLOAD.fields_by_name['action'].message_type = _CHAINCODEENDORSEDACTION
 _CHAINCODEENDORSEDACTION.fields_by_name['endorsements'].message_type = hfc_dot_protos_dot_peer_dot_proposal__response__pb2._ENDORSEMENT
 DESCRIPTOR.message_types_by_name['SignedTransaction'] = _SIGNEDTRANSACTION
-DESCRIPTOR.message_types_by_name['InvalidTransaction'] = _INVALIDTRANSACTION
+DESCRIPTOR.message_types_by_name['ProcessedTransaction'] = _PROCESSEDTRANSACTION
 DESCRIPTOR.message_types_by_name['Transaction'] = _TRANSACTION
 DESCRIPTOR.message_types_by_name['TransactionAction'] = _TRANSACTIONACTION
 DESCRIPTOR.message_types_by_name['ChaincodeActionPayload'] = _CHAINCODEACTIONPAYLOAD
@@ -307,12 +283,12 @@ SignedTransaction = _reflection.GeneratedProtocolMessageType('SignedTransaction'
   ))
 _sym_db.RegisterMessage(SignedTransaction)
 
-InvalidTransaction = _reflection.GeneratedProtocolMessageType('InvalidTransaction', (_message.Message,), dict(
-  DESCRIPTOR = _INVALIDTRANSACTION,
+ProcessedTransaction = _reflection.GeneratedProtocolMessageType('ProcessedTransaction', (_message.Message,), dict(
+  DESCRIPTOR = _PROCESSEDTRANSACTION,
   __module__ = 'hfc.protos.peer.transaction_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.peer.InvalidTransaction)
+  # @@protoc_insertion_point(class_scope:hfc.protos.peer.ProcessedTransaction)
   ))
-_sym_db.RegisterMessage(InvalidTransaction)
+_sym_db.RegisterMessage(ProcessedTransaction)
 
 Transaction = _reflection.GeneratedProtocolMessageType('Transaction', (_message.Message,), dict(
   DESCRIPTOR = _TRANSACTION,

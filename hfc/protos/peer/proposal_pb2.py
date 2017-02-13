@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/proposal.proto',
   package='hfc.protos.peer',
   syntax='proto3',
-  serialized_pb=_b('\n\x1ehfc/protos/peer/proposal.proto\x12\x0fhfc.protos.peer\x1a\x1fhfc/protos/peer/chaincode.proto\x1a\'hfc/protos/peer/proposal_response.proto\":\n\x0eSignedProposal\x12\x15\n\rproposalBytes\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\">\n\x08Proposal\x12\x0e\n\x06header\x18\x01 \x01(\x0c\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\x12\x11\n\textension\x18\x03 \x01(\x0c\"h\n\x18\x43haincodeHeaderExtension\x12\x19\n\x11payloadVisibility\x18\x01 \x01(\x0c\x12\x31\n\x0b\x63haincodeID\x18\x02 \x01(\x0b\x32\x1c.hfc.protos.peer.ChaincodeID\"<\n\x18\x43haincodeProposalPayload\x12\r\n\x05Input\x18\x01 \x01(\x0c\x12\x11\n\tTransient\x18\x02 \x01(\x0c\"_\n\x0f\x43haincodeAction\x12\x0f\n\x07results\x18\x01 \x01(\x0c\x12\x0e\n\x06\x65vents\x18\x02 \x01(\x0c\x12+\n\x08response\x18\x03 \x01(\x0b\x32\x19.hfc.protos.peer.ResponseB+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_pb=_b('\n\x1ehfc/protos/peer/proposal.proto\x12\x0fhfc.protos.peer\x1a\x1fhfc/protos/peer/chaincode.proto\x1a\'hfc/protos/peer/proposal_response.proto\";\n\x0eSignedProposal\x12\x16\n\x0eproposal_bytes\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\">\n\x08Proposal\x12\x0e\n\x06header\x18\x01 \x01(\x0c\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\x12\x11\n\textension\x18\x03 \x01(\x0c\"j\n\x18\x43haincodeHeaderExtension\x12\x1a\n\x12payload_visibility\x18\x01 \x01(\x0c\x12\x32\n\x0c\x63haincode_id\x18\x02 \x01(\x0b\x32\x1c.hfc.protos.peer.ChaincodeID\"<\n\x18\x43haincodeProposalPayload\x12\r\n\x05input\x18\x01 \x01(\x0c\x12\x11\n\ttransient\x18\x02 \x01(\x0c\"_\n\x0f\x43haincodeAction\x12\x0f\n\x07results\x18\x01 \x01(\x0c\x12\x0e\n\x06\x65vents\x18\x02 \x01(\x0c\x12+\n\x08response\x18\x03 \x01(\x0b\x32\x19.hfc.protos.peer.ResponseB+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
   ,
   dependencies=[hfc_dot_protos_dot_peer_dot_chaincode__pb2.DESCRIPTOR,hfc_dot_protos_dot_peer_dot_proposal__response__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -37,7 +37,7 @@ _SIGNEDPROPOSAL = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='proposalBytes', full_name='hfc.protos.peer.SignedProposal.proposalBytes', index=0,
+      name='proposal_bytes', full_name='hfc.protos.peer.SignedProposal.proposal_bytes', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -63,7 +63,7 @@ _SIGNEDPROPOSAL = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=125,
-  serialized_end=183,
+  serialized_end=184,
 )
 
 
@@ -107,8 +107,8 @@ _PROPOSAL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=185,
-  serialized_end=247,
+  serialized_start=186,
+  serialized_end=248,
 )
 
 
@@ -120,14 +120,14 @@ _CHAINCODEHEADEREXTENSION = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='payloadVisibility', full_name='hfc.protos.peer.ChaincodeHeaderExtension.payloadVisibility', index=0,
+      name='payload_visibility', full_name='hfc.protos.peer.ChaincodeHeaderExtension.payload_visibility', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='chaincodeID', full_name='hfc.protos.peer.ChaincodeHeaderExtension.chaincodeID', index=1,
+      name='chaincode_id', full_name='hfc.protos.peer.ChaincodeHeaderExtension.chaincode_id', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -145,8 +145,8 @@ _CHAINCODEHEADEREXTENSION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=249,
-  serialized_end=353,
+  serialized_start=250,
+  serialized_end=356,
 )
 
 
@@ -158,14 +158,14 @@ _CHAINCODEPROPOSALPAYLOAD = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='Input', full_name='hfc.protos.peer.ChaincodeProposalPayload.Input', index=0,
+      name='input', full_name='hfc.protos.peer.ChaincodeProposalPayload.input', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='Transient', full_name='hfc.protos.peer.ChaincodeProposalPayload.Transient', index=1,
+      name='transient', full_name='hfc.protos.peer.ChaincodeProposalPayload.transient', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -183,8 +183,8 @@ _CHAINCODEPROPOSALPAYLOAD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=355,
-  serialized_end=415,
+  serialized_start=358,
+  serialized_end=418,
 )
 
 
@@ -228,11 +228,11 @@ _CHAINCODEACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=417,
-  serialized_end=512,
+  serialized_start=420,
+  serialized_end=515,
 )
 
-_CHAINCODEHEADEREXTENSION.fields_by_name['chaincodeID'].message_type = hfc_dot_protos_dot_peer_dot_chaincode__pb2._CHAINCODEID
+_CHAINCODEHEADEREXTENSION.fields_by_name['chaincode_id'].message_type = hfc_dot_protos_dot_peer_dot_chaincode__pb2._CHAINCODEID
 _CHAINCODEACTION.fields_by_name['response'].message_type = hfc_dot_protos_dot_peer_dot_proposal__response__pb2._RESPONSE
 DESCRIPTOR.message_types_by_name['SignedProposal'] = _SIGNEDPROPOSAL
 DESCRIPTOR.message_types_by_name['Proposal'] = _PROPOSAL

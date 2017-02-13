@@ -22,7 +22,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/chaincode.proto',
   package='hfc.protos.peer',
   syntax='proto3',
-  serialized_pb=_b('\n\x1fhfc/protos/peer/chaincode.proto\x12\x0fhfc.protos.peer\x1a$hfc/protos/peer/chaincodeevent.proto\x1a\x1fgoogle/protobuf/timestamp.proto\")\n\x0b\x43haincodeID\x12\x0c\n\x04path\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\"\x1e\n\x0e\x43haincodeInput\x12\x0c\n\x04\x61rgs\x18\x01 \x03(\x0c\"\xf6\x01\n\rChaincodeSpec\x12\x31\n\x04type\x18\x01 \x01(\x0e\x32#.hfc.protos.peer.ChaincodeSpec.Type\x12\x31\n\x0b\x63haincodeID\x18\x02 \x01(\x0b\x32\x1c.hfc.protos.peer.ChaincodeID\x12.\n\x05input\x18\x03 \x01(\x0b\x32\x1f.hfc.protos.peer.ChaincodeInput\x12\x0f\n\x07timeout\x18\x04 \x01(\x05\">\n\x04Type\x12\r\n\tUNDEFINED\x10\x00\x12\n\n\x06GOLANG\x10\x01\x12\x08\n\x04NODE\x10\x02\x12\x07\n\x03\x43\x41R\x10\x03\x12\x08\n\x04JAVA\x10\x04\"\x98\x02\n\x17\x43haincodeDeploymentSpec\x12\x35\n\rchaincodeSpec\x18\x01 \x01(\x0b\x32\x1e.hfc.protos.peer.ChaincodeSpec\x12\x31\n\reffectiveDate\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x13\n\x0b\x63odePackage\x18\x03 \x01(\x0c\x12N\n\x07\x65xecEnv\x18\x04 \x01(\x0e\x32=.hfc.protos.peer.ChaincodeDeploymentSpec.ExecutionEnvironment\".\n\x14\x45xecutionEnvironment\x12\n\n\x06\x44OCKER\x10\x00\x12\n\n\x06SYSTEM\x10\x01\"i\n\x17\x43haincodeInvocationSpec\x12\x35\n\rchaincodeSpec\x18\x01 \x01(\x0b\x32\x1e.hfc.protos.peer.ChaincodeSpec\x12\x17\n\x0fidGenerationAlg\x18\x02 \x01(\t\">\n\x18\x43haincodeProposalContext\x12\x0f\n\x07\x63reator\x18\x01 \x01(\x0c\x12\x11\n\ttransient\x18\x02 \x01(\x0c\"\xc6\x04\n\x10\x43haincodeMessage\x12\x34\n\x04type\x18\x01 \x01(\x0e\x32&.hfc.protos.peer.ChaincodeMessage.Type\x12-\n\ttimestamp\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0f\n\x07payload\x18\x03 \x01(\x0c\x12\x0c\n\x04txid\x18\x04 \x01(\t\x12\x42\n\x0fproposalContext\x18\x05 \x01(\x0b\x32).hfc.protos.peer.ChaincodeProposalContext\x12\x37\n\x0e\x63haincodeEvent\x18\x06 \x01(\x0b\x32\x1f.hfc.protos.peer.ChaincodeEvent\"\xb0\x02\n\x04Type\x12\r\n\tUNDEFINED\x10\x00\x12\x0c\n\x08REGISTER\x10\x01\x12\x0e\n\nREGISTERED\x10\x02\x12\x08\n\x04INIT\x10\x03\x12\t\n\x05READY\x10\x04\x12\x0f\n\x0bTRANSACTION\x10\x05\x12\r\n\tCOMPLETED\x10\x06\x12\t\n\x05\x45RROR\x10\x07\x12\r\n\tGET_STATE\x10\x08\x12\r\n\tPUT_STATE\x10\t\x12\r\n\tDEL_STATE\x10\n\x12\x14\n\x10INVOKE_CHAINCODE\x10\x0b\x12\x0c\n\x08RESPONSE\x10\r\x12\x15\n\x11RANGE_QUERY_STATE\x10\x0e\x12\x17\n\x13\x45XECUTE_QUERY_STATE\x10\x0f\x12\x14\n\x10QUERY_STATE_NEXT\x10\x10\x12\x15\n\x11QUERY_STATE_CLOSE\x10\x11\x12\r\n\tKEEPALIVE\x10\x12\"*\n\x0cPutStateInfo\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x0c\"3\n\x0fRangeQueryState\x12\x10\n\x08startKey\x18\x01 \x01(\t\x12\x0e\n\x06\x65ndKey\x18\x02 \x01(\t\"\"\n\x11\x45xecuteQueryState\x12\r\n\x05query\x18\x01 \x01(\t\"\x1c\n\x0eQueryStateNext\x12\n\n\x02ID\x18\x01 \x01(\t\"\x1d\n\x0fQueryStateClose\x12\n\n\x02ID\x18\x01 \x01(\t\"0\n\x12QueryStateKeyValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x0c\"m\n\x12QueryStateResponse\x12:\n\rkeysAndValues\x18\x01 \x03(\x0b\x32#.hfc.protos.peer.QueryStateKeyValue\x12\x0f\n\x07hasMore\x18\x02 \x01(\x08\x12\n\n\x02ID\x18\x03 \x01(\t*4\n\x14\x43onfidentialityLevel\x12\n\n\x06PUBLIC\x10\x00\x12\x10\n\x0c\x43ONFIDENTIAL\x10\x01\x32j\n\x10\x43haincodeSupport\x12V\n\x08Register\x12!.hfc.protos.peer.ChaincodeMessage\x1a!.hfc.protos.peer.ChaincodeMessage\"\x00(\x01\x30\x01\x42\x43\n\x16org.hyperledger.protosZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_pb=_b('\n\x1fhfc/protos/peer/chaincode.proto\x12\x0fhfc.protos.peer\x1a$hfc/protos/peer/chaincodeevent.proto\x1a\x1fgoogle/protobuf/timestamp.proto\":\n\x0b\x43haincodeID\x12\x0c\n\x04path\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0f\n\x07version\x18\x03 \x01(\t\"\x1e\n\x0e\x43haincodeInput\x12\x0c\n\x04\x61rgs\x18\x01 \x03(\x0c\"\xf7\x01\n\rChaincodeSpec\x12\x31\n\x04type\x18\x01 \x01(\x0e\x32#.hfc.protos.peer.ChaincodeSpec.Type\x12\x32\n\x0c\x63haincode_id\x18\x02 \x01(\x0b\x32\x1c.hfc.protos.peer.ChaincodeID\x12.\n\x05input\x18\x03 \x01(\x0b\x32\x1f.hfc.protos.peer.ChaincodeInput\x12\x0f\n\x07timeout\x18\x04 \x01(\x05\">\n\x04Type\x12\r\n\tUNDEFINED\x10\x00\x12\n\n\x06GOLANG\x10\x01\x12\x08\n\x04NODE\x10\x02\x12\x07\n\x03\x43\x41R\x10\x03\x12\x08\n\x04JAVA\x10\x04\"\x9c\x02\n\x17\x43haincodeDeploymentSpec\x12\x36\n\x0e\x63haincode_spec\x18\x01 \x01(\x0b\x32\x1e.hfc.protos.peer.ChaincodeSpec\x12\x32\n\x0e\x65\x66\x66\x65\x63tive_date\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x14\n\x0c\x63ode_package\x18\x03 \x01(\x0c\x12O\n\x08\x65xec_env\x18\x04 \x01(\x0e\x32=.hfc.protos.peer.ChaincodeDeploymentSpec.ExecutionEnvironment\".\n\x14\x45xecutionEnvironment\x12\n\n\x06\x44OCKER\x10\x00\x12\n\n\x06SYSTEM\x10\x01\"l\n\x17\x43haincodeInvocationSpec\x12\x36\n\x0e\x63haincode_spec\x18\x01 \x01(\x0b\x32\x1e.hfc.protos.peer.ChaincodeSpec\x12\x19\n\x11id_generation_alg\x18\x02 \x01(\t\">\n\x18\x43haincodeProposalContext\x12\x0f\n\x07\x63reator\x18\x01 \x01(\x0c\x12\x11\n\ttransient\x18\x02 \x01(\x0c\"\xc6\x04\n\x10\x43haincodeMessage\x12\x34\n\x04type\x18\x01 \x01(\x0e\x32&.hfc.protos.peer.ChaincodeMessage.Type\x12-\n\ttimestamp\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0f\n\x07payload\x18\x03 \x01(\x0c\x12\x0c\n\x04txid\x18\x04 \x01(\t\x12\x43\n\x10proposal_context\x18\x05 \x01(\x0b\x32).hfc.protos.peer.ChaincodeProposalContext\x12\x38\n\x0f\x63haincode_event\x18\x06 \x01(\x0b\x32\x1f.hfc.protos.peer.ChaincodeEvent\"\xae\x02\n\x04Type\x12\r\n\tUNDEFINED\x10\x00\x12\x0c\n\x08REGISTER\x10\x01\x12\x0e\n\nREGISTERED\x10\x02\x12\x08\n\x04INIT\x10\x03\x12\t\n\x05READY\x10\x04\x12\x0f\n\x0bTRANSACTION\x10\x05\x12\r\n\tCOMPLETED\x10\x06\x12\t\n\x05\x45RROR\x10\x07\x12\r\n\tGET_STATE\x10\x08\x12\r\n\tPUT_STATE\x10\t\x12\r\n\tDEL_STATE\x10\n\x12\x14\n\x10INVOKE_CHAINCODE\x10\x0b\x12\x0c\n\x08RESPONSE\x10\r\x12\x16\n\x12GET_STATE_BY_RANGE\x10\x0e\x12\x14\n\x10GET_QUERY_RESULT\x10\x0f\x12\x14\n\x10QUERY_STATE_NEXT\x10\x10\x12\x15\n\x11QUERY_STATE_CLOSE\x10\x11\x12\r\n\tKEEPALIVE\x10\x12\"*\n\x0cPutStateInfo\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x0c\"3\n\x0fGetStateByRange\x12\x10\n\x08startKey\x18\x01 \x01(\t\x12\x0e\n\x06\x65ndKey\x18\x02 \x01(\t\"\x1f\n\x0eGetQueryResult\x12\r\n\x05query\x18\x01 \x01(\t\"\x1c\n\x0eQueryStateNext\x12\n\n\x02id\x18\x01 \x01(\t\"\x1d\n\x0fQueryStateClose\x12\n\n\x02id\x18\x01 \x01(\t\"0\n\x12QueryStateKeyValue\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x0c\"p\n\x12QueryStateResponse\x12<\n\x0fkeys_and_values\x18\x01 \x03(\x0b\x32#.hfc.protos.peer.QueryStateKeyValue\x12\x10\n\x08has_more\x18\x02 \x01(\x08\x12\n\n\x02id\x18\x03 \x01(\t*4\n\x14\x43onfidentialityLevel\x12\n\n\x06PUBLIC\x10\x00\x12\x10\n\x0c\x43ONFIDENTIAL\x10\x01\x32j\n\x10\x43haincodeSupport\x12V\n\x08Register\x12!.hfc.protos.peer.ChaincodeMessage\x1a!.hfc.protos.peer.ChaincodeMessage\"\x00(\x01\x30\x01\x42\x43\n\x16org.hyperledger.protosZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
   ,
   dependencies=[hfc_dot_protos_dot_peer_dot_chaincodeevent__pb2.DESCRIPTOR,google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -44,8 +44,8 @@ _CONFIDENTIALITYLEVEL = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1841,
-  serialized_end=1893,
+  serialized_start=1866,
+  serialized_end=1918,
 )
 _sym_db.RegisterEnumDescriptor(_CONFIDENTIALITYLEVEL)
 
@@ -83,8 +83,8 @@ _CHAINCODESPEC_TYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=383,
-  serialized_end=445,
+  serialized_start=401,
+  serialized_end=463,
 )
 _sym_db.RegisterEnumDescriptor(_CHAINCODESPEC_TYPE)
 
@@ -105,8 +105,8 @@ _CHAINCODEDEPLOYMENTSPEC_EXECUTIONENVIRONMENT = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=682,
-  serialized_end=728,
+  serialized_start=704,
+  serialized_end=750,
 )
 _sym_db.RegisterEnumDescriptor(_CHAINCODEDEPLOYMENTSPEC_EXECUTIONENVIRONMENT)
 
@@ -169,11 +169,11 @@ _CHAINCODEMESSAGE_TYPE = _descriptor.EnumDescriptor(
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='RANGE_QUERY_STATE', index=13, number=14,
+      name='GET_STATE_BY_RANGE', index=13, number=14,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='EXECUTE_QUERY_STATE', index=14, number=15,
+      name='GET_QUERY_RESULT', index=14, number=15,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
@@ -191,8 +191,8 @@ _CHAINCODEMESSAGE_TYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1180,
-  serialized_end=1484,
+  serialized_start=1207,
+  serialized_end=1509,
 )
 _sym_db.RegisterEnumDescriptor(_CHAINCODEMESSAGE_TYPE)
 
@@ -218,6 +218,13 @@ _CHAINCODEID = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='version', full_name='hfc.protos.peer.ChaincodeID.version', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -231,7 +238,7 @@ _CHAINCODEID = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=123,
-  serialized_end=164,
+  serialized_end=181,
 )
 
 
@@ -261,8 +268,8 @@ _CHAINCODEINPUT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=166,
-  serialized_end=196,
+  serialized_start=183,
+  serialized_end=213,
 )
 
 
@@ -281,7 +288,7 @@ _CHAINCODESPEC = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='chaincodeID', full_name='hfc.protos.peer.ChaincodeSpec.chaincodeID', index=1,
+      name='chaincode_id', full_name='hfc.protos.peer.ChaincodeSpec.chaincode_id', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -314,8 +321,8 @@ _CHAINCODESPEC = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=199,
-  serialized_end=445,
+  serialized_start=216,
+  serialized_end=463,
 )
 
 
@@ -327,28 +334,28 @@ _CHAINCODEDEPLOYMENTSPEC = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='chaincodeSpec', full_name='hfc.protos.peer.ChaincodeDeploymentSpec.chaincodeSpec', index=0,
+      name='chaincode_spec', full_name='hfc.protos.peer.ChaincodeDeploymentSpec.chaincode_spec', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='effectiveDate', full_name='hfc.protos.peer.ChaincodeDeploymentSpec.effectiveDate', index=1,
+      name='effective_date', full_name='hfc.protos.peer.ChaincodeDeploymentSpec.effective_date', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='codePackage', full_name='hfc.protos.peer.ChaincodeDeploymentSpec.codePackage', index=2,
+      name='code_package', full_name='hfc.protos.peer.ChaincodeDeploymentSpec.code_package', index=2,
       number=3, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='execEnv', full_name='hfc.protos.peer.ChaincodeDeploymentSpec.execEnv', index=3,
+      name='exec_env', full_name='hfc.protos.peer.ChaincodeDeploymentSpec.exec_env', index=3,
       number=4, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -367,8 +374,8 @@ _CHAINCODEDEPLOYMENTSPEC = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=448,
-  serialized_end=728,
+  serialized_start=466,
+  serialized_end=750,
 )
 
 
@@ -380,14 +387,14 @@ _CHAINCODEINVOCATIONSPEC = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='chaincodeSpec', full_name='hfc.protos.peer.ChaincodeInvocationSpec.chaincodeSpec', index=0,
+      name='chaincode_spec', full_name='hfc.protos.peer.ChaincodeInvocationSpec.chaincode_spec', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='idGenerationAlg', full_name='hfc.protos.peer.ChaincodeInvocationSpec.idGenerationAlg', index=1,
+      name='id_generation_alg', full_name='hfc.protos.peer.ChaincodeInvocationSpec.id_generation_alg', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -405,8 +412,8 @@ _CHAINCODEINVOCATIONSPEC = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=730,
-  serialized_end=835,
+  serialized_start=752,
+  serialized_end=860,
 )
 
 
@@ -443,8 +450,8 @@ _CHAINCODEPROPOSALCONTEXT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=837,
-  serialized_end=899,
+  serialized_start=862,
+  serialized_end=924,
 )
 
 
@@ -484,14 +491,14 @@ _CHAINCODEMESSAGE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='proposalContext', full_name='hfc.protos.peer.ChaincodeMessage.proposalContext', index=4,
+      name='proposal_context', full_name='hfc.protos.peer.ChaincodeMessage.proposal_context', index=4,
       number=5, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='chaincodeEvent', full_name='hfc.protos.peer.ChaincodeMessage.chaincodeEvent', index=5,
+      name='chaincode_event', full_name='hfc.protos.peer.ChaincodeMessage.chaincode_event', index=5,
       number=6, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -510,8 +517,8 @@ _CHAINCODEMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=902,
-  serialized_end=1484,
+  serialized_start=927,
+  serialized_end=1509,
 )
 
 
@@ -548,27 +555,27 @@ _PUTSTATEINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1486,
-  serialized_end=1528,
+  serialized_start=1511,
+  serialized_end=1553,
 )
 
 
-_RANGEQUERYSTATE = _descriptor.Descriptor(
-  name='RangeQueryState',
-  full_name='hfc.protos.peer.RangeQueryState',
+_GETSTATEBYRANGE = _descriptor.Descriptor(
+  name='GetStateByRange',
+  full_name='hfc.protos.peer.GetStateByRange',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='startKey', full_name='hfc.protos.peer.RangeQueryState.startKey', index=0,
+      name='startKey', full_name='hfc.protos.peer.GetStateByRange.startKey', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='endKey', full_name='hfc.protos.peer.RangeQueryState.endKey', index=1,
+      name='endKey', full_name='hfc.protos.peer.GetStateByRange.endKey', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -586,20 +593,20 @@ _RANGEQUERYSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1530,
-  serialized_end=1581,
+  serialized_start=1555,
+  serialized_end=1606,
 )
 
 
-_EXECUTEQUERYSTATE = _descriptor.Descriptor(
-  name='ExecuteQueryState',
-  full_name='hfc.protos.peer.ExecuteQueryState',
+_GETQUERYRESULT = _descriptor.Descriptor(
+  name='GetQueryResult',
+  full_name='hfc.protos.peer.GetQueryResult',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='query', full_name='hfc.protos.peer.ExecuteQueryState.query', index=0,
+      name='query', full_name='hfc.protos.peer.GetQueryResult.query', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -617,8 +624,8 @@ _EXECUTEQUERYSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1583,
-  serialized_end=1617,
+  serialized_start=1608,
+  serialized_end=1639,
 )
 
 
@@ -630,7 +637,7 @@ _QUERYSTATENEXT = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='ID', full_name='hfc.protos.peer.QueryStateNext.ID', index=0,
+      name='id', full_name='hfc.protos.peer.QueryStateNext.id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -648,8 +655,8 @@ _QUERYSTATENEXT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1619,
-  serialized_end=1647,
+  serialized_start=1641,
+  serialized_end=1669,
 )
 
 
@@ -661,7 +668,7 @@ _QUERYSTATECLOSE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='ID', full_name='hfc.protos.peer.QueryStateClose.ID', index=0,
+      name='id', full_name='hfc.protos.peer.QueryStateClose.id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -679,8 +686,8 @@ _QUERYSTATECLOSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1649,
-  serialized_end=1678,
+  serialized_start=1671,
+  serialized_end=1700,
 )
 
 
@@ -717,8 +724,8 @@ _QUERYSTATEKEYVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1680,
-  serialized_end=1728,
+  serialized_start=1702,
+  serialized_end=1750,
 )
 
 
@@ -730,21 +737,21 @@ _QUERYSTATERESPONSE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='keysAndValues', full_name='hfc.protos.peer.QueryStateResponse.keysAndValues', index=0,
+      name='keys_and_values', full_name='hfc.protos.peer.QueryStateResponse.keys_and_values', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='hasMore', full_name='hfc.protos.peer.QueryStateResponse.hasMore', index=1,
+      name='has_more', full_name='hfc.protos.peer.QueryStateResponse.has_more', index=1,
       number=2, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='ID', full_name='hfc.protos.peer.QueryStateResponse.ID', index=2,
+      name='id', full_name='hfc.protos.peer.QueryStateResponse.id', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -762,25 +769,25 @@ _QUERYSTATERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1730,
-  serialized_end=1839,
+  serialized_start=1752,
+  serialized_end=1864,
 )
 
 _CHAINCODESPEC.fields_by_name['type'].enum_type = _CHAINCODESPEC_TYPE
-_CHAINCODESPEC.fields_by_name['chaincodeID'].message_type = _CHAINCODEID
+_CHAINCODESPEC.fields_by_name['chaincode_id'].message_type = _CHAINCODEID
 _CHAINCODESPEC.fields_by_name['input'].message_type = _CHAINCODEINPUT
 _CHAINCODESPEC_TYPE.containing_type = _CHAINCODESPEC
-_CHAINCODEDEPLOYMENTSPEC.fields_by_name['chaincodeSpec'].message_type = _CHAINCODESPEC
-_CHAINCODEDEPLOYMENTSPEC.fields_by_name['effectiveDate'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
-_CHAINCODEDEPLOYMENTSPEC.fields_by_name['execEnv'].enum_type = _CHAINCODEDEPLOYMENTSPEC_EXECUTIONENVIRONMENT
+_CHAINCODEDEPLOYMENTSPEC.fields_by_name['chaincode_spec'].message_type = _CHAINCODESPEC
+_CHAINCODEDEPLOYMENTSPEC.fields_by_name['effective_date'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
+_CHAINCODEDEPLOYMENTSPEC.fields_by_name['exec_env'].enum_type = _CHAINCODEDEPLOYMENTSPEC_EXECUTIONENVIRONMENT
 _CHAINCODEDEPLOYMENTSPEC_EXECUTIONENVIRONMENT.containing_type = _CHAINCODEDEPLOYMENTSPEC
-_CHAINCODEINVOCATIONSPEC.fields_by_name['chaincodeSpec'].message_type = _CHAINCODESPEC
+_CHAINCODEINVOCATIONSPEC.fields_by_name['chaincode_spec'].message_type = _CHAINCODESPEC
 _CHAINCODEMESSAGE.fields_by_name['type'].enum_type = _CHAINCODEMESSAGE_TYPE
 _CHAINCODEMESSAGE.fields_by_name['timestamp'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
-_CHAINCODEMESSAGE.fields_by_name['proposalContext'].message_type = _CHAINCODEPROPOSALCONTEXT
-_CHAINCODEMESSAGE.fields_by_name['chaincodeEvent'].message_type = hfc_dot_protos_dot_peer_dot_chaincodeevent__pb2._CHAINCODEEVENT
+_CHAINCODEMESSAGE.fields_by_name['proposal_context'].message_type = _CHAINCODEPROPOSALCONTEXT
+_CHAINCODEMESSAGE.fields_by_name['chaincode_event'].message_type = hfc_dot_protos_dot_peer_dot_chaincodeevent__pb2._CHAINCODEEVENT
 _CHAINCODEMESSAGE_TYPE.containing_type = _CHAINCODEMESSAGE
-_QUERYSTATERESPONSE.fields_by_name['keysAndValues'].message_type = _QUERYSTATEKEYVALUE
+_QUERYSTATERESPONSE.fields_by_name['keys_and_values'].message_type = _QUERYSTATEKEYVALUE
 DESCRIPTOR.message_types_by_name['ChaincodeID'] = _CHAINCODEID
 DESCRIPTOR.message_types_by_name['ChaincodeInput'] = _CHAINCODEINPUT
 DESCRIPTOR.message_types_by_name['ChaincodeSpec'] = _CHAINCODESPEC
@@ -789,8 +796,8 @@ DESCRIPTOR.message_types_by_name['ChaincodeInvocationSpec'] = _CHAINCODEINVOCATI
 DESCRIPTOR.message_types_by_name['ChaincodeProposalContext'] = _CHAINCODEPROPOSALCONTEXT
 DESCRIPTOR.message_types_by_name['ChaincodeMessage'] = _CHAINCODEMESSAGE
 DESCRIPTOR.message_types_by_name['PutStateInfo'] = _PUTSTATEINFO
-DESCRIPTOR.message_types_by_name['RangeQueryState'] = _RANGEQUERYSTATE
-DESCRIPTOR.message_types_by_name['ExecuteQueryState'] = _EXECUTEQUERYSTATE
+DESCRIPTOR.message_types_by_name['GetStateByRange'] = _GETSTATEBYRANGE
+DESCRIPTOR.message_types_by_name['GetQueryResult'] = _GETQUERYRESULT
 DESCRIPTOR.message_types_by_name['QueryStateNext'] = _QUERYSTATENEXT
 DESCRIPTOR.message_types_by_name['QueryStateClose'] = _QUERYSTATECLOSE
 DESCRIPTOR.message_types_by_name['QueryStateKeyValue'] = _QUERYSTATEKEYVALUE
@@ -853,19 +860,19 @@ PutStateInfo = _reflection.GeneratedProtocolMessageType('PutStateInfo', (_messag
   ))
 _sym_db.RegisterMessage(PutStateInfo)
 
-RangeQueryState = _reflection.GeneratedProtocolMessageType('RangeQueryState', (_message.Message,), dict(
-  DESCRIPTOR = _RANGEQUERYSTATE,
+GetStateByRange = _reflection.GeneratedProtocolMessageType('GetStateByRange', (_message.Message,), dict(
+  DESCRIPTOR = _GETSTATEBYRANGE,
   __module__ = 'hfc.protos.peer.chaincode_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.peer.RangeQueryState)
+  # @@protoc_insertion_point(class_scope:hfc.protos.peer.GetStateByRange)
   ))
-_sym_db.RegisterMessage(RangeQueryState)
+_sym_db.RegisterMessage(GetStateByRange)
 
-ExecuteQueryState = _reflection.GeneratedProtocolMessageType('ExecuteQueryState', (_message.Message,), dict(
-  DESCRIPTOR = _EXECUTEQUERYSTATE,
+GetQueryResult = _reflection.GeneratedProtocolMessageType('GetQueryResult', (_message.Message,), dict(
+  DESCRIPTOR = _GETQUERYRESULT,
   __module__ = 'hfc.protos.peer.chaincode_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.peer.ExecuteQueryState)
+  # @@protoc_insertion_point(class_scope:hfc.protos.peer.GetQueryResult)
   ))
-_sym_db.RegisterMessage(ExecuteQueryState)
+_sym_db.RegisterMessage(GetQueryResult)
 
 QueryStateNext = _reflection.GeneratedProtocolMessageType('QueryStateNext', (_message.Message,), dict(
   DESCRIPTOR = _QUERYSTATENEXT,

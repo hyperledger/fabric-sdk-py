@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/common/policies.proto',
   package='hfc.protos.common',
   syntax='proto3',
-  serialized_pb=_b('\n hfc/protos/common/policies.proto\x12\x11hfc.protos.common\x1a%hfc/protos/common/msp_principal.proto\"Y\n\x06Policy\x12\x0c\n\x04type\x18\x01 \x01(\x05\x12\x0e\n\x06policy\x18\x02 \x01(\x0c\"1\n\nPolicyType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\r\n\tSIGNATURE\x10\x01\x12\x07\n\x03MSP\x10\x02\"\x93\x01\n\x17SignaturePolicyEnvelope\x12\x0f\n\x07Version\x18\x01 \x01(\x05\x12\x32\n\x06Policy\x18\x02 \x01(\x0b\x32\".hfc.protos.common.SignaturePolicy\x12\x33\n\nIdentities\x18\x03 \x03(\x0b\x32\x1f.hfc.protos.common.MSPPrincipal\"\xb3\x01\n\x0fSignaturePolicy\x12\x12\n\x08SignedBy\x18\x01 \x01(\x05H\x00\x12\x39\n\x04\x46rom\x18\x02 \x01(\x0b\x32).hfc.protos.common.SignaturePolicy.NOutOfH\x00\x1aI\n\x06NOutOf\x12\t\n\x01N\x18\x01 \x01(\x05\x12\x34\n\x08Policies\x18\x02 \x03(\x0b\x32\".hfc.protos.common.SignaturePolicyB\x06\n\x04TypeB-Z+github.com/hyperledger/fabric/protos/commonb\x06proto3')
+  serialized_pb=_b('\n hfc/protos/common/policies.proto\x12\x11hfc.protos.common\x1a%hfc/protos/common/msp_principal.proto\"Y\n\x06Policy\x12\x0c\n\x04type\x18\x01 \x01(\x05\x12\x0e\n\x06policy\x18\x02 \x01(\x0c\"1\n\nPolicyType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\r\n\tSIGNATURE\x10\x01\x12\x07\n\x03MSP\x10\x02\"\x93\x01\n\x17SignaturePolicyEnvelope\x12\x0f\n\x07version\x18\x01 \x01(\x05\x12\x32\n\x06policy\x18\x02 \x01(\x0b\x32\".hfc.protos.common.SignaturePolicy\x12\x33\n\nidentities\x18\x03 \x03(\x0b\x32\x1f.hfc.protos.common.MSPPrincipal\"\xb4\x01\n\x0fSignaturePolicy\x12\x13\n\tsigned_by\x18\x01 \x01(\x05H\x00\x12\x39\n\x04\x66rom\x18\x02 \x01(\x0b\x32).hfc.protos.common.SignaturePolicy.NOutOfH\x00\x1aI\n\x06NOutOf\x12\t\n\x01N\x18\x01 \x01(\x05\x12\x34\n\x08policies\x18\x02 \x03(\x0b\x32\".hfc.protos.common.SignaturePolicyB\x06\n\x04TypeB-Z+github.com/hyperledger/fabric/protos/commonb\x06proto3')
   ,
   dependencies=[hfc_dot_protos_dot_common_dot_msp__principal__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -101,21 +101,21 @@ _SIGNATUREPOLICYENVELOPE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='Version', full_name='hfc.protos.common.SignaturePolicyEnvelope.Version', index=0,
+      name='version', full_name='hfc.protos.common.SignaturePolicyEnvelope.version', index=0,
       number=1, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='Policy', full_name='hfc.protos.common.SignaturePolicyEnvelope.Policy', index=1,
+      name='policy', full_name='hfc.protos.common.SignaturePolicyEnvelope.policy', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='Identities', full_name='hfc.protos.common.SignaturePolicyEnvelope.Identities', index=2,
+      name='identities', full_name='hfc.protos.common.SignaturePolicyEnvelope.identities', index=2,
       number=3, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -153,7 +153,7 @@ _SIGNATUREPOLICY_NOUTOF = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='Policies', full_name='hfc.protos.common.SignaturePolicy.NOutOf.Policies', index=1,
+      name='policies', full_name='hfc.protos.common.SignaturePolicy.NOutOf.policies', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -171,8 +171,8 @@ _SIGNATUREPOLICY_NOUTOF = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=434,
-  serialized_end=507,
+  serialized_start=435,
+  serialized_end=508,
 )
 
 _SIGNATUREPOLICY = _descriptor.Descriptor(
@@ -183,14 +183,14 @@ _SIGNATUREPOLICY = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='SignedBy', full_name='hfc.protos.common.SignaturePolicy.SignedBy', index=0,
+      name='signed_by', full_name='hfc.protos.common.SignaturePolicy.signed_by', index=0,
       number=1, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='From', full_name='hfc.protos.common.SignaturePolicy.From', index=1,
+      name='from', full_name='hfc.protos.common.SignaturePolicy.from', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -212,21 +212,21 @@ _SIGNATUREPOLICY = _descriptor.Descriptor(
       index=0, containing_type=None, fields=[]),
   ],
   serialized_start=336,
-  serialized_end=515,
+  serialized_end=516,
 )
 
 _POLICY_POLICYTYPE.containing_type = _POLICY
-_SIGNATUREPOLICYENVELOPE.fields_by_name['Policy'].message_type = _SIGNATUREPOLICY
-_SIGNATUREPOLICYENVELOPE.fields_by_name['Identities'].message_type = hfc_dot_protos_dot_common_dot_msp__principal__pb2._MSPPRINCIPAL
-_SIGNATUREPOLICY_NOUTOF.fields_by_name['Policies'].message_type = _SIGNATUREPOLICY
+_SIGNATUREPOLICYENVELOPE.fields_by_name['policy'].message_type = _SIGNATUREPOLICY
+_SIGNATUREPOLICYENVELOPE.fields_by_name['identities'].message_type = hfc_dot_protos_dot_common_dot_msp__principal__pb2._MSPPRINCIPAL
+_SIGNATUREPOLICY_NOUTOF.fields_by_name['policies'].message_type = _SIGNATUREPOLICY
 _SIGNATUREPOLICY_NOUTOF.containing_type = _SIGNATUREPOLICY
-_SIGNATUREPOLICY.fields_by_name['From'].message_type = _SIGNATUREPOLICY_NOUTOF
+_SIGNATUREPOLICY.fields_by_name['from'].message_type = _SIGNATUREPOLICY_NOUTOF
 _SIGNATUREPOLICY.oneofs_by_name['Type'].fields.append(
-  _SIGNATUREPOLICY.fields_by_name['SignedBy'])
-_SIGNATUREPOLICY.fields_by_name['SignedBy'].containing_oneof = _SIGNATUREPOLICY.oneofs_by_name['Type']
+  _SIGNATUREPOLICY.fields_by_name['signed_by'])
+_SIGNATUREPOLICY.fields_by_name['signed_by'].containing_oneof = _SIGNATUREPOLICY.oneofs_by_name['Type']
 _SIGNATUREPOLICY.oneofs_by_name['Type'].fields.append(
-  _SIGNATUREPOLICY.fields_by_name['From'])
-_SIGNATUREPOLICY.fields_by_name['From'].containing_oneof = _SIGNATUREPOLICY.oneofs_by_name['Type']
+  _SIGNATUREPOLICY.fields_by_name['from'])
+_SIGNATUREPOLICY.fields_by_name['from'].containing_oneof = _SIGNATUREPOLICY.oneofs_by_name['Type']
 DESCRIPTOR.message_types_by_name['Policy'] = _POLICY
 DESCRIPTOR.message_types_by_name['SignaturePolicyEnvelope'] = _SIGNATUREPOLICYENVELOPE
 DESCRIPTOR.message_types_by_name['SignaturePolicy'] = _SIGNATUREPOLICY
