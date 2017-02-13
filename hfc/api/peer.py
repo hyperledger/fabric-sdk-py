@@ -1,5 +1,7 @@
 import logging
 
+import rx
+
 from hfc.protos.peer import peer_pb2_grpc
 from hfc.util.channel import channel
 
@@ -20,15 +22,16 @@ class Peer(object):
             channel(self.endpoint, pem, opts))
         _logger.info('Init peer with endpoint={}'.format(self.endpoint))
 
-    def send_proposal(self, proposal):
+    def send_proposal(self, proposal, scheduler=None):
         """ Send an endorsement proposal to endorser
 
         Args:
-            proposal: The endorsement proposal, see
-                      /protos/peer/fabric_proposal.proto
-        Return:
-            proposal_response
+            proposal: The endorsement proposal
+            scheduler: Scheduler, see rx.concurrency
+
+        Returns: An rx.Observable of proposal_response or exception
+
         """
         _logger.debug("Send proposal={}".format(proposal))
-        self._endorser_client.ProcessProposal(proposal)
-        return None
+        return rx.Observable.start(
+            self._endorser_client.ProcessProposal(proposal), scheduler)
