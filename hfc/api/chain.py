@@ -411,27 +411,27 @@ class Chain(object):
         Returns: the generated header
 
         """
-        chain_header = common_proto.ChainHeader()
-        chain_header.type = common_proto.HeaderType.Value(
+        channel_header = common_proto.ChannelHeader()
+        channel_header.type = common_proto.HeaderType.Value(
             'ENDORSER_TRANSACTION')
-        chain_header.txID = str(tx_id)
-        chain_header.chainID = chain_id
+        channel_header.tx_id = str(tx_id)
+        channel_header.channel_id = chain_id
         if chaincode_name:
             chaincode_id = chaincode_proto.ChaincodeID()
             chaincode_id.name = chaincode_name
             header_ext = proposal_pb2.ChaincodeHeaderExtension()
-            header_ext.chaincodeID.name = chaincode_id.name
-            chain_header.extension = header_ext.SerializeToString()
+            header_ext.chaincode_id.name = chaincode_id.name
+            channel_header.extension = header_ext.SerializeToString()
         signature_header = common_proto.SignatureHeader()
         signature_header.creator = creator.encode()
         signature_header.nonce = nonce
 
         header = common_proto.Header()
-        header.signatureHeader.creator = signature_header.creator
-        header.signatureHeader.nonce = signature_header.nonce
-        header.chainHeader.type = chain_header.type
-        header.chainHeader.txID = chain_header.txID
-        header.chainHeader.chainID = chain_header.chainID
+        header.signature_header.creator = signature_header.creator
+        header.signature_header.nonce = signature_header.nonce
+        header.channel_header.type = channel_header.type
+        header.channel_header.tx_id = channel_header.tx_id
+        header.channel_header.channel_id = channel_header.channel_id
         return header
 
     @staticmethod
@@ -445,14 +445,14 @@ class Chain(object):
 
         """
         cci_spec = chaincode_proto.ChaincodeInvocationSpec()
-        cci_spec.chaincodeSpec.type = invoke_spec['type']
-        cci_spec.chaincodeSpec.chaincodeID.name = \
+        cci_spec.chaincode_spec.type = invoke_spec['type']
+        cci_spec.chaincode_spec.chaincode_id.name = \
             invoke_spec['chaincodeID']['name']
-        cci_spec.chaincodeSpec.input.args.extend(
+        cci_spec.chaincode_spec.input.args.extend(
             invoke_spec['input']['args'])
 
         cc_payload = proposal_pb2.ChaincodeProposalPayload()
-        cc_payload.Input = cci_spec.SerializeToString()
+        cc_payload.input = cci_spec.SerializeToString()
 
         proposal = proposal_pb2.Proposal()
         proposal.header = header.SerializeToString()
@@ -513,18 +513,19 @@ class Chain(object):
 
         # step 2: construct a chaincodedeployment spec
         cc_deployment_spec = chaincode_proto.ChaincodeDeploymentSpec()
-        assert not cc_deployment_spec.HasField('chaincodeSpec')
-        cc_deployment_spec.chaincodeSpec.type = \
+        assert not cc_deployment_spec.HasField('chaincode_spec')
+        cc_deployment_spec.chaincode_spec.type = \
             chaincode_proto.ChaincodeSpec.Type.Value('GOLANG')
-        cc_deployment_spec.chaincodeSpec.chaincodeID.name = chaincode_name
-        cc_deployment_spec.chaincodeSpec.chaincodeID.path = chaincode_path
-        cc_deployment_spec.chaincodeSpec.input.args.extend(
+
+        cc_deployment_spec.chaincode_spec.chaincode_id.name = chaincode_name
+        cc_deployment_spec.chaincode_spec.chaincode_id.path = chaincode_path
+        cc_deployment_spec.chaincode_spec.input.args.extend(
             list(map(lambda x: x.encode(), args_str)))
 
         try:
             with open(tz_file_path, 'rb') as f:
                 pkg_content = f.read()
-                cc_deployment_spec.codePackage = pkg_content
+                cc_deployment_spec.code_package = pkg_content
         except Exception as e:
             self.logger.error('Failed to read {}'.format(tz_file_path))
             self.logger.error(e)
@@ -558,8 +559,9 @@ class Chain(object):
 
         """
         if len(self.peers) < 1:
-            self.logger.warning('Missing peer objects'
-                                ' in Deployment proposal chain')
+            self.logger.warning('Missing peer objects '
+                                'in Deployment proposal chain')
+
             return rx.Observable.just(ValueError(
                 "Missing peer objects in Deployment proposal chain"))
 

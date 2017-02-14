@@ -8,9 +8,6 @@ import hfc.protos.peer.proposal_response_pb2 as hfc_dot_protos_dot_peer_dot_prop
 
 
 class EndorserStub(object):
-  """-------- the Endorser service ------------
-
-  """
 
   def __init__(self, channel):
     """Constructor.
@@ -26,9 +23,6 @@ class EndorserStub(object):
 
 
 class EndorserServicer(object):
-  """-------- the Endorser service ------------
-
-  """
 
   def ProcessProposal(self, request, context):
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
