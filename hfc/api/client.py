@@ -64,6 +64,14 @@ class Client(object):
         """
         self.crypto_suite = crypto_suite
 
+    def get_crypto_suite(self):
+        """Get the crypto suite.
+
+        Returns: The crypto_suite instance or None
+
+        """
+        return self.crypto_suite
+
     def set_state_store(self, store):
         """store user enrollment materials. The SDK should make this
         pluggable so that different store implementations can be

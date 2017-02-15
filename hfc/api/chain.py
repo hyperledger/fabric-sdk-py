@@ -475,7 +475,7 @@ class Chain(object):
 
         signed_proposal = proposal_pb2.SignedProposal()
         signed_proposal.signature = sig
-        signed_proposal.proposalBytes = proposal_bytes
+        signed_proposal.proposal_bytes = proposal_bytes
 
         return signed_proposal
 
@@ -553,7 +553,7 @@ class Chain(object):
         proposal = self._build_proposal(lccc_spec, header)
 
         # TODO: get signing_identity
-        # signed_proposal = self._sign_proposal(signed_proposal, proposal)
+        # signed_proposal = self._sign_proposal(signing_identity, proposal)
         # return signed_proposal
 
         return proposal

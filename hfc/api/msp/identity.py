@@ -37,8 +37,7 @@ class Identity(object):
         Returns: Boolean
 
         """
-        # TODO: imlement with crypto_suite's verify
-        return True
+        return self.msp.crypto_suite.verify(self.public_key, signature, msg)
 
 
 class Signer(object):
@@ -61,8 +60,7 @@ class Signer(object):
         Returns: The public key
 
         """
-        # TODO: imeplement with crypto algorithms
-        return ""
+        return self.key.get_public_key()
 
     def sign(self, digest, opts={}):
         """ sign a digest
