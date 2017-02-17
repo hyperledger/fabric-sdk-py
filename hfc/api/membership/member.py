@@ -43,9 +43,9 @@ class Member(object):
             self.affiliation = kwargs['affiliation']
 
         self.chain = chain
-        self.keyValStore = chain.getKeyValueStore()
+        self.keyValStore = chain.get_key_value_store()
         self.keyValStoreName = toKeyValueStoreName(self.name)
-        self.tcertBatchSize = chain.getTCertBatchSize()
+        self.tcertBatchSize = chain.get_tcert_batch_size()
 
         self.enrollmentSecret = ''
         self.enrollment = None

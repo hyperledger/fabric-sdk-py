@@ -73,7 +73,7 @@ class FileKeyValueStore(KeyValueStore):
         :return:
         """
         self.path = path
-        self._make_dir(path)
+        _make_dir(path)
 
     def set_value(self, key, value):
         """Set a value with a specific key.
@@ -123,13 +123,13 @@ class FileKeyValueStore(KeyValueStore):
         return rx.Observable.start(lambda: self.set_value(key, value),
                                    scheduler)
 
-    @staticmethod
-    def _make_dir(path):
-        try:
-            os.makedirs(path)
-        except OSError:
-            if not os.path.isdir(path):
-                raise
+
+def _make_dir(path):
+    try:
+        os.makedirs(path)
+    except OSError:
+        if not os.path.isdir(path):
+            raise
 
 
 def file_key_value_store(path):
