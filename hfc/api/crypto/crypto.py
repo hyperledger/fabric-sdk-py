@@ -309,16 +309,16 @@ class Ecies(Crypto):
 
         return rb + em + d
 
-    def generate_csr(self, subject_name, extensions=None):
+    def generate_csr(self, private_key, subject_name, extensions=None):
         """Generate certificate signing request.
 
         Args:
+            private_key: Private key
             subject_name (x509.Name): Subject name
             extensions
         Returns: x509.CertificateSigningRequest
 
         """
-        private_key = self.generate_private_key()
         builder = x509.CertificateSigningRequestBuilder(
             subject_name, [] if extensions is None else extensions)
 

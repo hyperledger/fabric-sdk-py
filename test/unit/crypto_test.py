@@ -95,7 +95,8 @@ class CryptoTest(unittest.TestCase):
     def test_ecies_generate_csr(self):
         """Test case for generate certificate signing request."""
         ecies256 = ecies()
-        csr = ecies256.generate_csr(x509.Name(
+        private_key = ecies256.generate_private_key()
+        csr = ecies256.generate_csr(private_key, x509.Name(
             [x509.NameAttribute(NameOID.COMMON_NAME, u"test")]))
         csr_pem = csr.public_bytes(Encoding.PEM)
         self.assertTrue(csr_pem.startswith(
