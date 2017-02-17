@@ -37,7 +37,7 @@ class Identity(object):
         Returns: Boolean
 
         """
-        return self.msp.crypto_suite.verify(self.public_key, signature, msg)
+        return self.msp.crypto_suite.verify(self.public_key, msg, signature)
 
     def serialize(self):
         return b""
@@ -74,7 +74,7 @@ class Signer(object):
 
         Returns: The public key
         """
-        return self.cryto_suite.sign(self.key, digest, opts)
+        return self.cryto_suite.sign(self.key, digest)
 
 
 class SigningIdentity(Identity):
@@ -102,6 +102,5 @@ class SigningIdentity(Identity):
 
         Returns: signed results
         """
-        # digest = self.msp.crypto_suite.hash(msg)
-        # return self.signer.sign(digest)
-        return b""
+        digest = self.msp.crypto_suite.hash(msg)
+        return self.signer.sign(str.encode(digest.hexdigest()))

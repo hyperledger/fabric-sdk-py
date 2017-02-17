@@ -1,6 +1,8 @@
 import logging
 
+from .msp.identity import Identity, Signer, SigningIdentity
 from .msp.msp import MSP
+from .crypto.crypto import Ecies
 
 
 class User(object):
@@ -40,7 +42,7 @@ class User(object):
             self.crypto_primitives = client.get_crypto_suite()
         else:
             # TODO: get crypto_suite from config
-            self.crypto_primitives = None
+            self.crypto_primitives = Ecies()
 
         msp = MSP(trusted_certs=[], signer="blah", admins=[],
                   crypto_suite=self.crypto_primitives, id="DEFAULT")
@@ -108,7 +110,16 @@ class User(object):
             private_key: the private key object
             certificate: the PEM-encoded string of certificate
         """
-        pass
+        public_key = private_key.public_key()
+        identity = Identity('testIdentity',
+                            certificate,
+                            public_key,
+                            self.msp_impl)
+        self.identity = identity
+        signer = Signer(self.msp_impl.crypto_suite, private_key)
+        self.signing_identity = SigningIdentity('testSigningIdentity',
+                                                certificate, public_key,
+                                                self.msp_impl, signer)
 
     def is_enrolled(self):
         """Determine if this name has been enrolled.

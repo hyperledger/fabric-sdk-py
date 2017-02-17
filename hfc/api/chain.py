@@ -608,10 +608,9 @@ def _create_deployment_proposal(cc_deployment_req):
         [b'deploy', b'default', cc_deployment_spec.SerializeToString()])
     proposal = _build_proposal(cci_spec, header)
 
-    # TODO: get signing_identity
-    # signed_proposal = _sign_proposal(
-    #     cc_deployment_req.signing_identity, proposal)
-    return proposal
+    signed_proposal = _sign_proposal(
+        cc_deployment_req.signing_identity, proposal)
+    return signed_proposal
 
 
 def _package_chaincode(cc_path):

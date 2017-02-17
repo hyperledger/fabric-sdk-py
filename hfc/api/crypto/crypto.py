@@ -193,6 +193,7 @@ class Ecies(Crypto):
         :param message: message to sign
         :Returns: signature
         """
+        # TODO: preventMalleability
         signer = private_key.signer(ec.ECDSA(self.sign_hash_algorithm))
         signer.update(message)
         return signer.finalize()
