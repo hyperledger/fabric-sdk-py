@@ -6,13 +6,18 @@ docker version
 docker-compose -v
 
 # pull fabric images
-echo "===Pulling fabric images..."
-docker pull yeasy/hyperledger-fabric-ca
-docker pull yeasy/hyperledger-fabric-peer
-docker pull yeasy/hyperledger-fabric-orderer
-docker tag yeasy/hyperledger-fabric-ca:latest hyperledger/fabric-ca:latest
-docker tag yeasy/hyperledger-fabric-peer:latest hyperledger/fabric-peer:latest
-docker tag yeasy/hyperledger-fabric-orderer:latest hyperledger/fabric-orderer:latest
+IMG_TAG=0.8.2
+echo "===Pulling fabric images... with tag = ${IMG_TAG}"
+docker pull yeasy/hyperledger-fabric-base:$IMG_TAG
+docker pull yeasy/hyperledger-fabric-peer:$IMG_TAG
+docker pull yeasy/hyperledger-fabric-orderer:$IMG_TAG
+docker pull yeasy/hyperledger-fabric-ca:$IMG_TAG
+
+docker tag yeasy/hyperledger-fabric-base:$IMG_TAG hyperledger/fabric-baseimage
+docker tag yeasy/hyperledger-fabric-base:$IMG_TAG hyperledger/fabric-ccenv:x86_64-1.0.0-snapshot-preview
+docker tag yeasy/hyperledger-fabric-peer:$IMG_TAG hyperledger/fabric-peer
+docker tag yeasy/hyperledger-fabric-orderer:$IMG_TAG hyperledger/fabric-orderer
+docker tag yeasy/hyperledger-fabric-ca:$IMG_TAG hyperledger/fabric-ca
 
 # run tests
 echo "===Starting test..."
