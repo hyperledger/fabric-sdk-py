@@ -32,8 +32,8 @@ class CATest(unittest.TestCase):
     def setUp(self):
         self._enrollment_id = "testUser"
         self._enrollment_secret = "user1"
-        if os.getenv("COP_ADDR"):
-            self._ca_server_address = os.getenv("COP_ADDR")
+        if os.getenv("CA_ADDR"):
+            self._ca_server_address = os.getenv("CA_ADDR")
         else:
             self._ca_server_address = "localhost:7054"
 
@@ -116,8 +116,8 @@ class CATest(unittest.TestCase):
         self.start_test_env()
         time.sleep(5)
         ca_service = CAService("http://" + self._ca_server_address)
-        ecert = ca_service.enroll(self._enrollment_id,
-                                  self._enrollment_secret)
+        key, ecert = ca_service.enroll(self._enrollment_id,
+                                       self._enrollment_secret)
         self.assertTrue(ecert.startswith(b"-----BEGIN CERTIFICATE-----"))
         self.shutdown_test_env()
 

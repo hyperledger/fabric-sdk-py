@@ -105,8 +105,11 @@ class CAService(object):
             ValueError: Failed response, json parse error, args missing
 
         """
-        csr = self._crypto.generate_csr(x509.Name(
+        private_key = self._crypto.generate_private_key()
+        csr = self._crypto.generate_csr(private_key, x509.Name(
             [x509.NameAttribute(NameOID.COMMON_NAME, six.u(enrollment_id))]))
-        return self._ca_client.enroll(
+        cert = self._ca_client.enroll(
             enrollment_id, enrollment_secret,
             csr.public_bytes(Encoding.PEM).decode("utf-8"))
+
+        return private_key, cert
