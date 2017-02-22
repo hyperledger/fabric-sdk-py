@@ -24,6 +24,7 @@ from hfc.util.utils import current_timestamp, proto_str
 
 CC_INSTALL = "install"
 CC_INSTANTIATE = "deploy"
+CC_INVOKE = "invoke"
 
 
 @six.add_metaclass(ABCMeta)
@@ -63,14 +64,18 @@ class TransactionProposalRequest(object):
                  prop_type,
                  chaincode_path=None,
                  chaincode_version=None,
+                 chaincode_package=None,
                  fcn=None,
                  args=None,
+                 bytes_args=None,
                  nonce=crypto.generate_nonce(24),
                  targets=None,
                  effective_date=current_timestamp()):
         """Init transaction proposal request.
 
         Args:
+            chaincode_package: chaincode package bytes
+            effective_date: effective date
             chaincode_path: chaincode path
             chaincode_id: chaincode id
             chaincode_version: chaincode version
@@ -91,6 +96,44 @@ class TransactionProposalRequest(object):
         self._targets = {} if targets is None else targets
         self._prop_type = prop_type
         self._effective_date = effective_date
+        self._chaincode_package = chaincode_package
+        self._bytes_args = bytes_args
+
+    @property
+    def bytes_args(self):
+        """Get bytes args.
+
+        Returns: bytes args
+
+        """
+        return self._bytes_args
+
+    @bytes_args.setter
+    def bytes_args(self, bytes_args):
+        """Set bytes args.
+
+        Args: Set bytes args
+
+        """
+        self._bytes_args = bytes_args
+
+    @property
+    def chaincode_package(self):
+        """Get chaincode package.
+
+        Returns: chaincode package
+
+        """
+        return self._chaincode_package
+
+    @chaincode_package.setter
+    def chaincode_package(self, chaincode_package):
+        """Set chaincode package.
+
+        Args: Set chaincode package
+
+        """
+        self._chaincode_package = chaincode_package
 
     @property
     def effective_date(self):
@@ -291,9 +334,11 @@ def check_tran_prop_request(tran_prop_req):
         raise ValueError("Missing 'chaincode_id' parameter "
                          "in the proposal request")
 
-    if not tran_prop_req.chaincode_path:
-        raise ValueError("Missing 'chaincode_path' parameter "
-                         "in the proposal request")
+    if tran_prop_req.prop_type == CC_INSTANTIATE \
+            or tran_prop_req.prop_type == CC_INSTALL:
+        if not tran_prop_req.chaincode_path:
+            raise ValueError("Missing 'chaincode_path' parameter "
+                             "in the proposal request")
 
     if not tran_prop_req.chaincode_version:
         raise ValueError("Missing 'chaincode_version' parameter "
@@ -303,10 +348,14 @@ def check_tran_prop_request(tran_prop_req):
         raise ValueError("Missing 'signing_identity' parameter "
                          "in the proposal request")
 
-    if tran_prop_req.prop_type != CC_INSTALL \
-            and tran_prop_req.prop_type != CC_INSTANTIATE:
+    if tran_prop_req.prop_type != CC_INSTALL:
         if not tran_prop_req.fcn:
             raise ValueError("Missing 'fcn' parameter "
+                             "in the proposal request")
+
+    if tran_prop_req.prop_type == CC_INVOKE:
+        if not tran_prop_req.args:
+            raise ValueError("Missing 'args' parameter "
                              "in the proposal request")
     return tran_prop_req
 

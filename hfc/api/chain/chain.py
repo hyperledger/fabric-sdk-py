@@ -14,8 +14,9 @@
 #
 import logging
 
-from hfc.api.chain.install import chaincode_installment
-from hfc.api.chain.instantiate import chaincode_instantiate
+from hfc.api.chain.installment import chaincode_installment
+from hfc.api.chain.instantiation import chaincode_instantiation
+from hfc.api.chain.invocation import chaincode_invocation
 from hfc.api.crypto.crypto import ecies
 
 _logger = logging.getLogger(__name__ + ".chain")
@@ -255,8 +256,21 @@ class Chain(object):
         Returns: An rx.Observable of instantiate result
 
         """
-        return chaincode_instantiate(self).handle(
+        return chaincode_instantiation(self).handle(
             cc_instantiate_request, scheduler)
+
+    def invoke_chaincode(self, cc_invoke_request, scheduler=None):
+        """Invoke chaincode.
+
+        Args:
+            cc_invoke_request: see TransactionProposalRequest
+            scheduler: see rx.Scheduler
+
+        Returns: An rx.Observable of instantiate result
+
+        """
+        return chaincode_invocation(self).handle(
+            cc_invoke_request, scheduler)
 
     def create_transaction(self, proposal_responses):
         """Create a transaction with proposal response.

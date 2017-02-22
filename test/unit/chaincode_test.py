@@ -6,9 +6,10 @@ import time
 import unittest
 
 from hfc.api.ca.caservice import CAService
-from hfc.api.chain.install import create_installment_proposal_req
-from hfc.api.chain.instantiate import create_instantiate_proposal_req
+from hfc.api.chain.installment import create_installment_proposal_req
+from hfc.api.chain.instantiation import create_instantiation_proposal_req
 
+from hfc.api.chain.invocation import create_invocation_proposal_req
 from hfc.api.client import Client
 from hfc.api.peer import Peer
 from hfc.api.user import User
@@ -84,12 +85,44 @@ class ChaincodeTest(unittest.TestCase):
 
         submitter = get_submitter()
         signing_identity = submitter.get_signing_identity()
-        cc_instantiate_req = create_instantiate_proposal_req(
+        cc_instantiate_req = create_instantiation_proposal_req(
             CHAINCODE_NAME, CHAINCODE_PATH,
-            CHAINCODE_VERSION, signing_identity)
+            CHAINCODE_VERSION, signing_identity,
+            args=['a', '100', 'b', '200'])
         queue = Queue(1)
 
         chain.instantiate_chaincode(cc_instantiate_req) \
+            .subscribe(lambda x: queue.put(x))
+
+        prop = queue.get()
+        proposal_bytes = prop.proposal_bytes
+        sig = prop.signature
+
+        # verify the signature against the hash of proposal_bytes
+        digest = signing_identity.msp.crypto_suite.hash(proposal_bytes)
+        self.assertEqual(
+            signing_identity.verify(str.encode(digest.hexdigest()),
+                                    sig),
+            True)
+        shutdown_test_env()
+
+    def test_invoke(self):
+        start_test_env()
+        time.sleep(5)
+        grpc_addr = os.environ.get('GRPC_ADDR', 'localhost:7050')
+        client = Client()
+        chain = client.new_chain(CHAIN_ID)
+        client.set_state_store('test_store')
+        chain.add_peer(Peer(endpoint=grpc_addr))
+
+        submitter = get_submitter()
+        signing_identity = submitter.get_signing_identity()
+        cc_invoke_req = create_invocation_proposal_req(
+            CHAINCODE_NAME, CHAINCODE_VERSION, signing_identity,
+            args=['move', 'a', 'b', '100'])
+        queue = Queue(1)
+
+        chain.invoke_chaincode(cc_invoke_req) \
             .subscribe(lambda x: queue.put(x))
 
         prop = queue.get()
