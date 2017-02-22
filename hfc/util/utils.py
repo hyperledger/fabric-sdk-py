@@ -14,6 +14,8 @@
 #
 import sys
 
+from google.protobuf.timestamp_pb2 import Timestamp
+
 
 def proto_str(x):
     return proto_b(x).decode("utf-8")
@@ -21,3 +23,14 @@ def proto_str(x):
 
 proto_b = \
     sys.version_info[0] < 3 and (lambda x: x) or (lambda x: x.encode('latin1'))
+
+
+def current_timestamp():
+    """Get current timestamp
+
+    Returns: current timestamp
+
+    """
+    timestamp = Timestamp()
+    timestamp.GetCurrentTime()
+    return timestamp

@@ -17,10 +17,9 @@ class Peer(object):
     """
 
     def __init__(self, endpoint=DEFAULT_PEER_ENDPOINT, pem=None, opts=None):
-        self.endpoint = endpoint
+        self._endpoint = endpoint
         self._endorser_client = peer_pb2_grpc.EndorserStub(
-            channel(self.endpoint, pem, opts))
-        _logger.info('Init peer with endpoint={}'.format(self.endpoint))
+            channel(self._endpoint, pem, opts))
 
     def send_proposal(self, proposal, scheduler=None):
         """ Send an endorsement proposal to endorser
@@ -35,3 +34,12 @@ class Peer(object):
         _logger.debug("Send proposal={}".format(proposal))
         return rx.Observable.start(
             self._endorser_client.ProcessProposal(proposal), scheduler)
+
+    @property
+    def endpoint(self):
+        """Return the endpoint of the peer.
+
+        Returns: endpoint
+
+        """
+        return self._endpoint
