@@ -102,6 +102,34 @@ class CryptoTest(unittest.TestCase):
         self.assertTrue(csr_pem.startswith(
             b"-----BEGIN CERTIFICATE REQUEST-----"))
 
+    def test_secp256r1_check_malleability_and_check_prevent_malleability(self):
+        """Test case for check_malleability and prevent_malleability."""
+        ecies256 = ecies(CURVE_P_256_Size, SHA2)
+        private_key = ecies256.generate_private_key()
+        signature = ecies256.sign(private_key,
+                                  self.plain_text)
+
+        self.assertEqual(ecies256._check_malleability(signature),
+                         True)
+
+        self.assertEqual(ecies256._check_malleability(
+            ecies256._prevent_malleability(signature)),
+                         True)
+
+    def test_secp384r1_check_malleability_and_check_prevent_malleability(self):
+        """Test case for check_malleability and prevent_malleability."""
+        ecies384 = ecies(CURVE_P_384_Size, SHA2)
+        private_key = ecies384.generate_private_key()
+        signature = ecies384.sign(private_key,
+                                  self.plain_text)
+
+        self.assertEqual(ecies384._check_malleability(signature),
+                         True)
+
+        self.assertEqual(ecies384._check_malleability(
+            ecies384._prevent_malleability(signature)),
+                         True)
+
 
 if __name__ == '__main__':
     unittest.main()

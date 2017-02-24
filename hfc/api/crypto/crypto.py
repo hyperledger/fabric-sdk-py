@@ -21,12 +21,15 @@ import six
 from Cryptodome import Random
 from Cryptodome.Cipher import AES
 from cryptography import x509
-from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.backends \
+    import default_backend, openssl
 from cryptography.hazmat.primitives import constant_time
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric.ec \
     import EllipticCurvePublicNumbers
+from cryptography.hazmat.primitives.asymmetric.utils \
+    import decode_dss_signature, encode_dss_signature
 from cryptography.exceptions import InvalidSignature
 from hkdf import Hkdf
 
@@ -173,9 +176,23 @@ class Ecies(Crypto):
         :param hash_algorithm: hash function
         """
         if security_level == CURVE_P_256_Size:
+            order = openssl.backend._lib.BN_new()
+            curve = openssl.backend._lib.EC_GROUP_new_by_curve_name(
+                openssl.backend._lib.NID_X9_62_prime256v1)
+            openssl.backend._lib.EC_GROUP_get_order(
+                curve, order, openssl.backend._ffi.NULL)
+            self.order = openssl.backend._bn_to_int(order)
+            self.half_order = self.order / 2
             self.curve = ec.SECP256R1
             self.sign_hash_algorithm = hashes.SHA256()
         else:
+            order = openssl.backend._lib.BN_new()
+            curve = openssl.backend._lib.EC_GROUP_new_by_curve_name(
+                openssl.backend._lib.NID_secp384r1)
+            openssl.backend._lib.EC_GROUP_get_order(
+                curve, order, openssl.backend._ffi.NULL)
+            self.order = openssl.backend._bn_to_int(order)
+            self.half_order = self.order / 2
             self.curve = ec.SECP384R1
             self.sign_hash_algorithm = hashes.SHA384()
 
@@ -196,7 +213,7 @@ class Ecies(Crypto):
         # TODO: preventMalleability
         signer = private_key.signer(ec.ECDSA(self.sign_hash_algorithm))
         signer.update(message)
-        return signer.finalize()
+        return self._prevent_malleability(signer.finalize())
 
     def verify(self, public_key, message, signature):
         """ECDSA verify signature.
@@ -206,6 +223,8 @@ class Ecies(Crypto):
         :param signature: Signature of message
         :Returns: verify result boolean, True means valid
         """
+        if not(self._check_malleability(signature)):
+            return False
         verifier = public_key.verifier(signature,
                                        ec.ECDSA(self.sign_hash_algorithm))
         verifier.update(message)
@@ -215,6 +234,18 @@ class Ecies(Crypto):
             return False
         except Exception as e:
             raise e
+        return True
+
+    def _prevent_malleability(self, sig):
+        r, s = decode_dss_signature(sig)
+        if s > self.half_order:
+            s = self.order - s
+        return encode_dss_signature(r, s)
+
+    def _check_malleability(self, sig):
+        r, s = decode_dss_signature(sig)
+        if s > self.half_order:
+            return False
         return True
 
     def generate_private_key(self):
