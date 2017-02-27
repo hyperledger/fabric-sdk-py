@@ -1,3 +1,6 @@
+from hfc.protos.msp import identities_pb2
+
+
 class Identity(object):
     """ MSP Identity.
 
@@ -40,7 +43,15 @@ class Identity(object):
         return self.msp.crypto_suite.verify(self.public_key, msg, signature)
 
     def serialize(self):
-        return b""
+        """Serialize this identity to a binary string.
+
+        Returns:
+            A binary string representation of this identity.
+        """
+        serialized_identity = identities_pb2.SerializedIdentity()
+        serialized_identity.Mspid = self.get_msp_id()
+        serialized_identity.IdBytes = self.certificate
+        return serialized_identity.SerializeToString()
 
 
 class Signer(object):
