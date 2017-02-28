@@ -12,24 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import logging
+import gzip
+import os
+import tarfile
+import tempfile
 
+import logging
 import rx
 
 from hfc.api.chain.transactionproposals \
-    import TransactionProposalHandler, TransactionProposalRequest, \
-    CC_INSTANTIATE, check_tran_prop_request, \
+    import TransactionProposalHandler, CC_INSTALL, \
+    TransactionProposalRequest, check_tran_prop_request, \
     build_header, build_proposal, sign_proposal
 from hfc.api.crypto import crypto
 from hfc.protos.common import common_pb2
 from hfc.protos.peer import chaincode_pb2
-from hfc.util.utils import proto_str, proto_b
+from hfc.util.utils import proto_str, proto_b, current_timestamp
 
-_logger = logging.getLogger(__name__ + ".instantiate")
+_logger = logging.getLogger(__name__ + ".installment")
 
 
-class Instantiate(TransactionProposalHandler):
-    """Chaincode instantiate transaction proposal handler. """
+class Installment(TransactionProposalHandler):
+    """Chaincode installment transaction proposal handler. """
 
     def handle(self, tran_prop_req, scheduler=None):
         """Execute chaincode install transaction proposal request.
@@ -41,11 +45,11 @@ class Instantiate(TransactionProposalHandler):
         Returns: An rx.Observer wrapper of chaincode install response
 
         """
-        return _instantiate_chaincode(self._chain, tran_prop_req, scheduler)
+        return _install_chaincode(self._chain, tran_prop_req, scheduler)
 
 
-def _create_instantiate_proposal(tran_prop_req, chain):
-    """Create a chaincode instantiate proposal
+def _create_installment_proposal(tran_prop_req, chain):
+    """Create a chaincode install proposal
 
     This involves assembling the proposal with the data (chaincodeID,
     chaincode invocation spec, etc.) and signing it using the private key
@@ -57,7 +61,6 @@ def _create_instantiate_proposal(tran_prop_req, chain):
     Returns: (Proposal): The created Proposal instance or None.
 
     """
-    args = [tran_prop_req.fcn] + tran_prop_req.args
 
     cc_deployment_spec = chaincode_pb2.ChaincodeDeploymentSpec()
     cc_deployment_spec.chaincode_spec.type = \
@@ -68,8 +71,15 @@ def _create_instantiate_proposal(tran_prop_req, chain):
         proto_str(tran_prop_req.chaincode_path)
     cc_deployment_spec.chaincode_spec.chaincode_id.version = \
         proto_str(tran_prop_req.chaincode_version)
-    cc_deployment_spec.chaincode_spec.input.args.extend(list(map(
-        lambda x: proto_b(x), args)))
+    if not chain.is_dev_mode:
+        cc_deployment_spec.code_package = _package_chaincode(
+            tran_prop_req.chaincode_path) if not \
+            tran_prop_req.chaincode_package else \
+            tran_prop_req.chaincode_package
+    cc_deployment_spec.effective_date.seconds = \
+        tran_prop_req.effective_date.seconds
+    cc_deployment_spec.effective_date.nanos = \
+        tran_prop_req.effective_date.nanos
 
     header = build_header(tran_prop_req.signing_identity,
                           tran_prop_req.nonce,
@@ -84,8 +94,7 @@ def _create_instantiate_proposal(tran_prop_req, chain):
         chaincode_pb2.ChaincodeSpec.Type.Value('GOLANG')
     cci_spec.chaincode_spec.chaincode_id.name = proto_str("lccc")
     cci_spec.chaincode_spec.input.args.extend(
-        [proto_b(CC_INSTANTIATE), proto_b('default'),
-         cc_deployment_spec.SerializeToString()])
+        [proto_b(CC_INSTALL), cc_deployment_spec.SerializeToString()])
     proposal = build_proposal(cci_spec, header)
 
     signed_proposal = sign_proposal(
@@ -93,13 +102,47 @@ def _create_instantiate_proposal(tran_prop_req, chain):
     return signed_proposal
 
 
-def _instantiate_chaincode(chain, cc_install_request, scheduler=None):
+def _package_chaincode(cc_path):
+    """ Package all chaincode env into a tar.gz file
+
+    Args:
+        cc_path: path to the chaincode
+
+    Returns: The chaincode pkg path or None
+
+    """
+    _logger.debug('Packaging chaincode path={}'.format(
+        cc_path))
+
+    go_path = os.environ['GOPATH']
+    if not cc_path:
+        raise ValueError("Missing chaincode path parameter "
+                         "in Deployment proposal request")
+
+    if not go_path:
+        raise ValueError("No GOPATH env variable is found")
+
+    proj_path = go_path + '/src/' + cc_path
+    _logger.debug('Project path={}'.format(proj_path))
+
+    with tempfile.NamedTemporaryFile() as temp:
+        with tarfile.open(fileobj=temp, mode='w:gz') as code_writer:
+            code_writer.add(proj_path)
+        temp.flush()
+
+        with gzip.open(temp.name, 'rb') as code_reader:
+            code_content = code_reader.read()
+
+    return code_content
+
+
+def _install_chaincode(chain, cc_installment_request, scheduler=None):
     """Install chaincode.
 
     Args:
         chain: chain instance
         scheduler: see rx.Scheduler
-        cc_install_request: see TransactionProposalRequest
+        cc_installment_request: see TransactionProposalRequest
 
     Returns: An rx.Observable of installment response
 
@@ -110,8 +153,8 @@ def _instantiate_chaincode(chain, cc_install_request, scheduler=None):
         ))
 
     peers = {}
-    if cc_install_request and cc_install_request.targets:
-        peers = cc_install_request.targets
+    if cc_installment_request and cc_installment_request.targets:
+        peers = cc_installment_request.targets
         for peer in peers:
             if not chain.is_valid_peer(peer):
                 return rx.Observable.just(ValueError(
@@ -122,23 +165,22 @@ def _instantiate_chaincode(chain, cc_install_request, scheduler=None):
         peers = chain.peers
 
     return rx.Observable \
-        .just(cc_install_request) \
+        .just(cc_installment_request) \
         .map(check_tran_prop_request) \
-        .map(lambda req, idx: _create_instantiate_proposal(req, chain))
+        .map(lambda req, idx: _create_installment_proposal(req, chain))
     # .flatmap(lambda proposal, idx:
     #          send_transaction_proposal(proposal, peers, scheduler))
 
 
-def create_instantiate_proposal_req(chaincode_id, chaincode_path,
+def create_installment_proposal_req(chaincode_id, chaincode_path,
                                     chaincode_version, creator,
-                                    fcn='init', args=None,
                                     nonce=crypto.generate_nonce(24),
-                                    targets=None):
+                                    targets=None,
+                                    effective_date=current_timestamp()):
     """Create installment proposal request.
 
     Args:
-        fcn: chaincode init function
-        args: init function args
+        effective_date: effective date
         targets: peers
         nonce: nonce
         chaincode_id: chaincode_id
@@ -149,18 +191,19 @@ def create_instantiate_proposal_req(chaincode_id, chaincode_path,
     Returns: see TransactionProposalRequest
 
     """
-    return TransactionProposalRequest(chaincode_id, creator, CC_INSTANTIATE,
+    return TransactionProposalRequest(chaincode_id, creator, CC_INSTALL,
                                       chaincode_path, chaincode_version,
-                                      fcn, args, nonce=nonce, targets=targets)
+                                      nonce=nonce, targets=targets,
+                                      effective_date=effective_date)
 
 
-def chaincode_instantiate(chain):
-    """Create instantiate.
+def chaincode_installment(chain):
+    """Create installment.
 
     Args:
         chain: chain instance
 
-    Returns: Instantiate instance
+    Returns: Installment instance
 
     """
-    return Instantiate(chain)
+    return Installment(chain)
