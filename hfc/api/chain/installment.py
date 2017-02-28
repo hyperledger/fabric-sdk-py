@@ -31,6 +31,8 @@ from hfc.util.utils import proto_str, proto_b, current_timestamp
 
 _logger = logging.getLogger(__name__ + ".installment")
 
+KEEP = ['.go', '.c', '.h']
+
 
 class Installment(TransactionProposalHandler):
     """Chaincode installment transaction proposal handler. """
@@ -127,7 +129,13 @@ def _package_chaincode(cc_path):
 
     with tempfile.NamedTemporaryFile() as temp:
         with tarfile.open(fileobj=temp, mode='w:gz') as code_writer:
-            code_writer.add(proj_path)
+            for dir_path, _, file_names in os.walk(proj_path):
+                for filename in file_names:
+                    file_path = os.path.join(dir_path, filename)
+                    if _is_source(file_path):
+                        code_writer \
+                            .add(file_path,
+                                 arcname=os.path.relpath(file_path, go_path))
         temp.flush()
 
         with gzip.open(temp.name, 'rb') as code_reader:
@@ -207,3 +215,19 @@ def chaincode_installment(chain):
 
     """
     return Installment(chain)
+
+
+def _is_source(file_path):
+    """Predicate function for determining whether a given path should be
+    considered valid source code, based entirely on the extension. It is
+    assumed that other checks for file type (e.g. ISREG) have already been
+    performed.
+
+    Args:
+        file_path: file path
+
+    Returns: true/false
+
+    """
+    _, ext = os.path.splitext(file_path)
+    return ext in KEEP

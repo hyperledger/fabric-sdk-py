@@ -23,13 +23,15 @@ from cryptography.x509 import NameOID
 
 from hfc.api.crypto.crypto import ecies
 
+DEFAULT_CA_ENDPOINT = 'http://localhost:7054'
+
 _logger = logging.getLogger(__name__)
 
 
 class CAClient(object):
     """Client for communicating with the Fabric CA APIs."""
 
-    def __init__(self, target, ca_certs_path=None):
+    def __init__(self, target=DEFAULT_CA_ENDPOINT, ca_certs_path=None):
         """ Init CA client.
 
         Args:
@@ -79,7 +81,8 @@ class CAClient(object):
 class CAService(object):
     """This is a ca server delegate."""
 
-    def __init__(self, target, ca_certs_path=None, crypto=ecies()):
+    def __init__(self, target=DEFAULT_CA_ENDPOINT,
+                 ca_certs_path=None, crypto=ecies()):
         """ Init CA service.
 
         Args:
@@ -113,3 +116,18 @@ class CAService(object):
             csr.public_bytes(Encoding.PEM).decode("utf-8"))
 
         return private_key, cert
+
+
+def ca_service(target=DEFAULT_CA_ENDPOINT,
+               ca_certs_path=None, crypto=ecies()):
+    """Create ca service
+
+    Args:
+        target: url
+        ca_certs_path: certs path
+        crypto: crypto
+
+    Returns: ca service instance
+
+    """
+    return CAService(target, ca_certs_path, crypto)

@@ -197,11 +197,20 @@ class Ecies(Crypto):
             self.sign_hash_algorithm = hashes.SHA384()
 
         if hash_algorithm == SHA2:
-            self.hash = hashlib.sha256
+            self._hash = hashlib.sha256
         elif hash_algorithm == SHA3 and security_level == CURVE_P_256_Size:
-            self.hash = hashlib.sha3_256
+            self._hash = hashlib.sha3_256
         else:
-            self.hash = hashlib.sha3_384
+            self._hash = hashlib.sha3_384
+
+    @property
+    def hash(self):
+        """Get hash function
+
+        Returns: hash function
+
+        """
+        return self._hash
 
     def sign(self, private_key, message):
         """ECDSA sign message.
@@ -210,7 +219,6 @@ class Ecies(Crypto):
         :param message: message to sign
         :Returns: signature
         """
-        # TODO: preventMalleability
         signer = private_key.signer(ec.ECDSA(self.sign_hash_algorithm))
         signer.update(message)
         return self._prevent_malleability(signer.finalize())
@@ -223,7 +231,7 @@ class Ecies(Crypto):
         :param signature: Signature of message
         :Returns: verify result boolean, True means valid
         """
-        if not(self._check_malleability(signature)):
+        if not (self._check_malleability(signature)):
             return False
         verifier = public_key.verifier(signature,
                                        ec.ECDSA(self.sign_hash_algorithm))
@@ -295,12 +303,12 @@ class Ecies(Crypto):
             .from_encoded_point(self.curve(), rb) \
             .public_key(default_backend())
         z = private_key.exchange(ec.ECDH(), ephemeral_public_key)
-        hkdf_output = Hkdf(salt=None, input_key_material=z, hash=self.hash) \
+        hkdf_output = Hkdf(salt=None, input_key_material=z, hash=self._hash) \
             .expand(length=AES_KEY_LENGTH + HMAC_KEY_LENGTH)
         aes_key = hkdf_output[:AES_KEY_LENGTH]
         hmac_key = hkdf_output[AES_KEY_LENGTH:AES_KEY_LENGTH + HMAC_KEY_LENGTH]
 
-        mac = hmac.new(hmac_key, em, self.hash)
+        mac = hmac.new(hmac_key, em, self._hash)
         recovered_d = mac.digest()
         if not constant_time.bytes_eq(recovered_d, d):
             raise ValueError("Hmac verify failed.")
@@ -329,14 +337,14 @@ class Ecies(Crypto):
         rb = ephemeral_private_key.public_key().public_numbers().encode_point()
 
         z = ephemeral_private_key.exchange(ec.ECDH(), public_key)
-        hkdf_output = Hkdf(salt=None, input_key_material=z, hash=self.hash) \
+        hkdf_output = Hkdf(salt=None, input_key_material=z, hash=self._hash) \
             .expand(length=AES_KEY_LENGTH + HMAC_KEY_LENGTH)
         aes_key = hkdf_output[:AES_KEY_LENGTH]
         hmac_key = hkdf_output[AES_KEY_LENGTH:AES_KEY_LENGTH + HMAC_KEY_LENGTH]
 
         aes_cipher = AES.new(aes_key, AES.MODE_CFB)
         em = aes_cipher.iv + aes_cipher.encrypt(plain_text)
-        mac = hmac.new(hmac_key, em, self.hash)
+        mac = hmac.new(hmac_key, em, self._hash)
         d = mac.digest()
 
         return rb + em + d

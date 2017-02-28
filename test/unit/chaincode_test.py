@@ -4,15 +4,18 @@ import os
 import sys
 import time
 import unittest
+from shutil import rmtree
 
-from hfc.api.ca.caservice import CAService
+from hfc.api.ca.caservice import ca_service
 from hfc.api.chain.installment import create_installment_proposal_req
 from hfc.api.chain.instantiation import create_instantiation_proposal_req
-
 from hfc.api.chain.invocation import create_invocation_proposal_req
 from hfc.api.client import Client
+from hfc.api.crypto.crypto import ecies
+from hfc.api.msp.msp import msp
 from hfc.api.peer import Peer
 from hfc.api.user import User
+from hfc.util.keyvaluestore import file_key_value_store
 from test.unit.util import cli_call
 
 if sys.version_info < (3, 0):
@@ -38,22 +41,24 @@ class ChaincodeTest(unittest.TestCase):
         gopath = os.path.join(os.path.dirname(__file__),
                               "../fixtures/chaincode")
         os.environ['GOPATH'] = os.path.abspath(gopath)
+        self.base_path = '/tmp/fabric-sdk-py'
+        self.kv_store_path = os.path.join(self.base_path, 'key-value-store')
 
     def tearDown(self):
         if self.gopath_bak:
             os.environ['GOPATH'] = self.gopath_bak
+        rmtree(self.base_path)
 
     def test_install(self):
         start_test_env()
         time.sleep(5)
-        grpc_addr = os.environ.get('GRPC_ADDR', 'localhost:7050')
         client = Client()
         chain = client.new_chain(CHAIN_ID)
-        client.set_state_store('test_store')
-        chain.add_peer(Peer(endpoint=grpc_addr))
+        client.set_state_store(file_key_value_store(self.kv_store_path))
+        chain.add_peer(Peer())
 
         submitter = get_submitter()
-        signing_identity = submitter.get_signing_identity()
+        signing_identity = submitter.signing_identity
         cc_install_req = create_installment_proposal_req(
             CHAINCODE_NAME, CHAINCODE_PATH,
             CHAINCODE_VERSION, signing_identity)
@@ -77,14 +82,13 @@ class ChaincodeTest(unittest.TestCase):
     def test_instantiate(self):
         start_test_env()
         time.sleep(5)
-        grpc_addr = os.environ.get('GRPC_ADDR', 'localhost:7050')
         client = Client()
         chain = client.new_chain(CHAIN_ID)
-        client.set_state_store('test_store')
-        chain.add_peer(Peer(endpoint=grpc_addr))
+        client.set_state_store(file_key_value_store(self.kv_store_path))
+        chain.add_peer(Peer())
 
         submitter = get_submitter()
-        signing_identity = submitter.get_signing_identity()
+        signing_identity = submitter.signing_identity
         cc_instantiate_req = create_instantiation_proposal_req(
             CHAINCODE_NAME, CHAINCODE_PATH,
             CHAINCODE_VERSION, signing_identity,
@@ -109,14 +113,13 @@ class ChaincodeTest(unittest.TestCase):
     def test_invoke(self):
         start_test_env()
         time.sleep(5)
-        grpc_addr = os.environ.get('GRPC_ADDR', 'localhost:7050')
         client = Client()
         chain = client.new_chain(CHAIN_ID)
-        client.set_state_store('test_store')
-        chain.add_peer(Peer(endpoint=grpc_addr))
+        client.set_state_store(file_key_value_store(self.kv_store_path))
+        chain.add_peer(Peer())
 
         submitter = get_submitter()
-        signing_identity = submitter.get_signing_identity()
+        signing_identity = submitter.signing_identity
         cc_invoke_req = create_invocation_proposal_req(
             CHAINCODE_NAME, CHAINCODE_VERSION, signing_identity,
             args=['move', 'a', 'b', '100'])
@@ -139,12 +142,10 @@ class ChaincodeTest(unittest.TestCase):
 
 
 def get_submitter():
-    ca_server_address = os.getenv("CA_ADDR", 'localhost:7054')
-    ca_service = CAService("http://" + ca_server_address)
-    private_key, cert = ca_service.enroll(enrollment_id=USER_ID,
-                                          enrollment_secret=USER_PASSWD)
-    user = User(None)
-    user.set_enrollment(private_key, cert)
+    ca = ca_service()
+    user = User(USER_ID, USER_PASSWD, msp_impl=msp('DEFAULT', ecies()), ca=ca)
+    user.enroll()
+
     return user
 
 
