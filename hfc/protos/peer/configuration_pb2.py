@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/configuration.proto',
   package='hfc.protos.peer',
   syntax='proto3',
-  serialized_pb=_b('\n#hfc/protos/peer/configuration.proto\x12\x0fhfc.protos.peer\"@\n\x0b\x41nchorPeers\x12\x31\n\x0c\x61nchor_peers\x18\x01 \x03(\x0b\x32\x1b.hfc.protos.peer.AnchorPeer\"6\n\nAnchorPeer\x12\x0c\n\x04host\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\x05\x12\x0c\n\x04\x63\x65rt\x18\x03 \x01(\x0c\x42+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_pb=_b('\n#hfc/protos/peer/configuration.proto\x12\x0fhfc.protos.peer\"@\n\x0b\x41nchorPeers\x12\x31\n\x0c\x61nchor_peers\x18\x01 \x03(\x0b\x32\x1b.hfc.protos.peer.AnchorPeer\"(\n\nAnchorPeer\x12\x0c\n\x04host\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\x05\x42+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -78,13 +78,6 @@ _ANCHORPEER = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
-    _descriptor.FieldDescriptor(
-      name='cert', full_name='hfc.protos.peer.AnchorPeer.cert', index=2,
-      number=3, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b(""),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
   ],
   extensions=[
   ],
@@ -98,7 +91,7 @@ _ANCHORPEER = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=122,
-  serialized_end=176,
+  serialized_end=162,
 )
 
 _ANCHORPEERS.fields_by_name['anchor_peers'].message_type = _ANCHORPEER

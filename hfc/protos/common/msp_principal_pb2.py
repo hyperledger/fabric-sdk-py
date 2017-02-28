@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/common/msp_principal.proto',
   package='hfc.protos.common',
   syntax='proto3',
-  serialized_pb=_b('\n%hfc/protos/common/msp_principal.proto\x12\x11hfc.protos.common\"\xb4\x01\n\x0cMSPPrincipal\x12P\n\x18principal_classification\x18\x01 \x01(\x0e\x32..hfc.protos.common.MSPPrincipal.Classification\x12\x11\n\tprincipal\x18\x02 \x01(\x0c\"?\n\x0e\x43lassification\x12\x08\n\x04ROLE\x10\x00\x12\x15\n\x11ORGANIZATION_UNIT\x10\x01\x12\x0c\n\x08IDENTITY\x10\x02\"R\n\x10OrganizationUnit\x12\x16\n\x0emsp_identifier\x18\x01 \x01(\t\x12&\n\x1eorganizational_unit_identifier\x18\x02 \x01(\t\"}\n\x07MSPRole\x12\x16\n\x0emsp_identifier\x18\x01 \x01(\t\x12\x34\n\x04Role\x18\x02 \x01(\x0e\x32&.hfc.protos.common.MSPRole.MSPRoleType\"$\n\x0bMSPRoleType\x12\n\n\x06MEMBER\x10\x00\x12\t\n\x05\x41\x44MIN\x10\x01\x42-Z+github.com/hyperledger/fabric/protos/commonb\x06proto3')
+  serialized_pb=_b('\n%hfc/protos/common/msp_principal.proto\x12\x11hfc.protos.common\"\xb4\x01\n\x0cMSPPrincipal\x12P\n\x18principal_classification\x18\x01 \x01(\x0e\x32..hfc.protos.common.MSPPrincipal.Classification\x12\x11\n\tprincipal\x18\x02 \x01(\x0c\"?\n\x0e\x43lassification\x12\x08\n\x04ROLE\x10\x00\x12\x15\n\x11ORGANIZATION_UNIT\x10\x01\x12\x0c\n\x08IDENTITY\x10\x02\"q\n\x10OrganizationUnit\x12\x16\n\x0emsp_identifier\x18\x01 \x01(\t\x12&\n\x1eorganizational_unit_identifier\x18\x02 \x01(\t\x12\x1d\n\x15\x63\x65rtifiers_identifier\x18\x03 \x01(\x0c\"}\n\x07MSPRole\x12\x16\n\x0emsp_identifier\x18\x01 \x01(\t\x12\x34\n\x04Role\x18\x02 \x01(\x0e\x32&.hfc.protos.common.MSPRole.MSPRoleType\"$\n\x0bMSPRoleType\x12\n\n\x06MEMBER\x10\x00\x12\t\n\x05\x41\x44MIN\x10\x01\x42-Z+github.com/hyperledger/fabric/protos/commonb\x06proto3')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -68,8 +68,8 @@ _MSPROLE_MSPROLETYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=416,
-  serialized_end=452,
+  serialized_start=447,
+  serialized_end=483,
 )
 _sym_db.RegisterEnumDescriptor(_MSPROLE_MSPROLETYPE)
 
@@ -134,6 +134,13 @@ _ORGANIZATIONUNIT = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='certifiers_identifier', full_name='hfc.protos.common.OrganizationUnit.certifiers_identifier', index=2,
+      number=3, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -147,7 +154,7 @@ _ORGANIZATIONUNIT = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=243,
-  serialized_end=325,
+  serialized_end=356,
 )
 
 
@@ -185,8 +192,8 @@ _MSPROLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=327,
-  serialized_end=452,
+  serialized_start=358,
+  serialized_end=483,
 )
 
 _MSPPRINCIPAL.fields_by_name['principal_classification'].enum_type = _MSPPRINCIPAL_CLASSIFICATION

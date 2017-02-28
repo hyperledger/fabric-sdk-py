@@ -377,20 +377,26 @@ def build_header(creator, nonce, tran_prop_type,
 
     """
     header = common_pb2.Header()
-    header.signature_header.creator = creator.serialize()
-    header.signature_header.nonce = nonce
 
-    header.channel_header.type = tran_prop_type
-    header.channel_header.version = 1
+    signature_header = common_pb2.SignatureHeader()
+    signature_header.creator = creator.serialize()
+    signature_header.nonce = nonce
+    header.signature_header = signature_header.SerializeToString()
+
+    channel_header = common_pb2.ChannelHeader()
+    channel_header.type = tran_prop_type
+    channel_header.version = 1
     if prop_type != CC_INSTALL:
-        header.channel_header.channel_id = proto_str(chain.name)
-    header.channel_header.tx_id = proto_str(
+        channel_header.channel_id = proto_str(chain.name)
+    channel_header.tx_id = proto_str(
         chain.generate_tx_id(nonce, creator))
-    header.channel_header.epoch = epoch
+    channel_header.epoch = epoch
     if chaincode_id:
         header_ext = proposal_pb2.ChaincodeHeaderExtension()
         header_ext.chaincode_id.name = proto_str(chaincode_id)
-        header.channel_header.extension = header_ext.SerializeToString()
+        channel_header.extension = header_ext.SerializeToString()
+    header.channel_header = channel_header.SerializeToString()
+
     return header
 
 

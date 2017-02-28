@@ -31,32 +31,26 @@ package hfc.protos.common;
 //
 // It is generated with the following scheme:
 //   1. Retrieve the existing configuration
-//   2. Note the highest configuration sequence number, store it and increment it by one
-//   3. Modify desired ConfigItems, setting each LastModified to the stored and incremented sequence number
-//     a) Note that the ConfigItem has a ChannelHeader header attached to it, who's type is set to CONFIGURATION_ITEM
-//   4. Create Config message containing the new configuration, marshal it into ConfigEnvelope.config and encode the required signatures
+//   2. Note the config properties (ConfigValue, ConfigPolicy, ConfigGroup) to be modified
+//   3. Add any intermediate ConfigGroups to the ConfigUpdate.read_set (sparsely)
+//   4. Add any additional desired dependencies to ConfigUpdate.read_set (sparsely)
+//   5. Modify the config properties, incrementing each version by 1, set them in the ConfigUpdate.write_set
+//      Note: any element not modified but specified should already be in the read_set, so may be specified sparsely
+//   6. Create ConfigUpdate message and marshal it into ConfigUpdateEnvelope.update and encode the required signatures
 //     a) Each signature is of type ConfigSignature
-//     b) The ConfigSignature signature is over the concatenation of signatureHeader and the Config bytes (which includes a ChannelHeader)
+//     b) The ConfigSignature signature is over the concatenation of signature_header and the ConfigUpdate bytes (which includes a ChainHeader)
 //   5. Submit new Config for ordering in Envelope signed by submitter
 //     a) The Envelope Payload has data set to the marshaled ConfigEnvelope
-//     b) The Envelope Payload has a header of type Header.Type.CONFIGURATION_TRANSACTION
+//     b) The Envelope Payload has a header of type Header.Type.CONFIG_UPDATE
 //
 // The configuration manager will verify:
-//   1. All configuration items and the envelope refer to the correct chain
-//   2. Some configuration item has been added or modified
-//   3. No existing configuration item has been ommitted
-//   4. All configuration changes have a LastModification of one more than the last configuration's highest LastModification number
-//   5. All configuration changes satisfy the corresponding modification policy
+//   1. All items in the read_set exist at the read versions
+//   2. All items in the write_set at a different version than, or not in, the read_set have been appropriately signed according to their mod_policy
+//   3. The new configuration satisfies the ConfigSchema
 message ConfigEnvelope {
-    bytes config = 1;                        // A marshaled ConfigNext structure
-    repeated ConfigSignature signatures = 2; // Signatures over the config
-}
-
-// ConfigTemplate is used as a serialization format to share configuration templates
-// The orderer supplies a configuration template to the user to use when constructing a new
-// chain creation transaction, so this is used to facilitate that.
-message ConfigTemplate {
-    repeated ConfigItem items = 1;
+    Config config = 1;        // A marshaled Config structure
+    Envelope last_update = 2; // The last CONFIG_UPDATE message which generated this current configuration
+                              // Note that CONFIG_UPDATE has a Payload.Data of a Marshaled ConfigUpdate
 }
 
 message ConfigGroupSchema {
@@ -69,17 +63,30 @@ message ConfigValueSchema {}
 
 message ConfigPolicySchema {}
 
-// This message may change slightly depending on the finalization of signature schemes for transactions
+// Config represents the config for a particular channel
 message Config {
     ChannelHeader header = 1;
-    repeated ConfigItem items = 2;
+    ConfigGroup channel = 2;
 }
 
-// XXX this structure is to allow us to minimize the diffs in this change series
-// it will be renamed Config once the original is ready to be removed
-message ConfigNext {
-    ChannelHeader header = 1;
-    ConfigGroup channel = 2;
+message ConfigUpdateEnvelope {
+    bytes config_update = 1;                 // A marshaled ConfigUpdate structure
+    repeated ConfigSignature signatures = 2; // Signatures over the config_update
+}
+
+// ConfigUpdate is used to submit a subset of config and to have the orderer apply to Config
+// it is always submitted inside a ConfigUpdateEnvelope which allows the addition of signatures
+// resulting in a new total configuration.  The update is applied as follows:
+// 1. The versions from all of the elements in the read_set is verified against the versions in the existing config.
+//    If there is a mismatch in the read versions, then the config update fails and is rejected.
+// 2. Any elements in the write_set with the same version as the read_set are ignored.
+// 3. The corresponding mod_policy for every remaining element in the write_set is collected.
+// 4. Each policy is checked against the signatures from the ConfigUpdateEnvelope, any failing to verify are rejected
+// 5. The write_set is applied to the Config and the ConfigGroupSchema verifies that the updates were legal
+message ConfigUpdate {
+    ChannelHeader header = 1;    // Header scopes the update to a particular Channel
+    ConfigGroup read_set = 2;  // ReadSet explicitly lists the portion of the config which was read, this should be sparse with only Version set
+    ConfigGroup write_set = 3; // WriteSet lists the portion of the config which was written, this should included updated Versions
 }
 
 // ConfigGroup is the hierarchical data structure for holding config
@@ -102,21 +109,6 @@ message ConfigPolicy {
     uint64 version = 1;
     Policy policy = 2;
     string mod_policy = 3;
-}
-
-message ConfigItem {
-    enum ConfigType {
-        POLICY = 0;   // Implies that the Value is a marshaled Policy message, and may be referred to by Key as a ModificationPolicy
-        CHAIN = 1;    // Marshaled format for this type is yet to be determined
-        ORDERER = 2;  // Marshaled format for this type is yet to be determined
-        PEER = 3;     // Marshaled format for this type is yet to be determined
-        MSP = 4;      // Marshaled MSPConfig proto
-    }
-    ConfigType type = 1;            // The type of configuration this is.
-    uint64 last_modified = 2;       // The Sequence number in the ConfigEnvelope this item was last modified
-    string modification_policy = 3; // What policy to check before allowing modification
-    string key = 4;                 // A unique ID, unique scoped by Type, to reference the value by
-    bytes value = 5;                // The byte representation of this configuration, usually a marshaled message
 }
 
 message ConfigSignature {

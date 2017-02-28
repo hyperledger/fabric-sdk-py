@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/common/policies.proto',
   package='hfc.protos.common',
   syntax='proto3',
-  serialized_pb=_b('\n hfc/protos/common/policies.proto\x12\x11hfc.protos.common\x1a%hfc/protos/common/msp_principal.proto\"Y\n\x06Policy\x12\x0c\n\x04type\x18\x01 \x01(\x05\x12\x0e\n\x06policy\x18\x02 \x01(\x0c\"1\n\nPolicyType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\r\n\tSIGNATURE\x10\x01\x12\x07\n\x03MSP\x10\x02\"\x93\x01\n\x17SignaturePolicyEnvelope\x12\x0f\n\x07version\x18\x01 \x01(\x05\x12\x32\n\x06policy\x18\x02 \x01(\x0b\x32\".hfc.protos.common.SignaturePolicy\x12\x33\n\nidentities\x18\x03 \x03(\x0b\x32\x1f.hfc.protos.common.MSPPrincipal\"\xb4\x01\n\x0fSignaturePolicy\x12\x13\n\tsigned_by\x18\x01 \x01(\x05H\x00\x12\x39\n\x04\x66rom\x18\x02 \x01(\x0b\x32).hfc.protos.common.SignaturePolicy.NOutOfH\x00\x1aI\n\x06NOutOf\x12\t\n\x01N\x18\x01 \x01(\x05\x12\x34\n\x08policies\x18\x02 \x03(\x0b\x32\".hfc.protos.common.SignaturePolicyB\x06\n\x04TypeB-Z+github.com/hyperledger/fabric/protos/commonb\x06proto3')
+  serialized_pb=_b('\n hfc/protos/common/policies.proto\x12\x11hfc.protos.common\x1a%hfc/protos/common/msp_principal.proto\"l\n\x06Policy\x12\x0c\n\x04type\x18\x01 \x01(\x05\x12\x0e\n\x06policy\x18\x02 \x01(\x0c\"D\n\nPolicyType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\r\n\tSIGNATURE\x10\x01\x12\x07\n\x03MSP\x10\x02\x12\x11\n\rIMPLICIT_META\x10\x03\"\x93\x01\n\x17SignaturePolicyEnvelope\x12\x0f\n\x07version\x18\x01 \x01(\x05\x12\x32\n\x06policy\x18\x02 \x01(\x0b\x32\".hfc.protos.common.SignaturePolicy\x12\x33\n\nidentities\x18\x03 \x03(\x0b\x32\x1f.hfc.protos.common.MSPPrincipal\"\xb8\x01\n\x0fSignaturePolicy\x12\x13\n\tsigned_by\x18\x01 \x01(\x05H\x00\x12=\n\x08n_out_of\x18\x02 \x01(\x0b\x32).hfc.protos.common.SignaturePolicy.NOutOfH\x00\x1aI\n\x06NOutOf\x12\t\n\x01N\x18\x01 \x01(\x05\x12\x34\n\x08policies\x18\x02 \x03(\x0b\x32\".hfc.protos.common.SignaturePolicyB\x06\n\x04Type\"\x8a\x01\n\x12ImplicitMetaPolicy\x12\x12\n\nsub_policy\x18\x01 \x01(\t\x12\x38\n\x04rule\x18\x02 \x01(\x0e\x32*.hfc.protos.common.ImplicitMetaPolicy.Rule\"&\n\x04Rule\x12\x07\n\x03\x41NY\x10\x00\x12\x07\n\x03\x41LL\x10\x01\x12\x0c\n\x08MAJORITY\x10\x02\x42-Z+github.com/hyperledger/fabric/protos/commonb\x06proto3')
   ,
   dependencies=[hfc_dot_protos_dot_common_dot_msp__principal__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -45,13 +45,43 @@ _POLICY_POLICYTYPE = _descriptor.EnumDescriptor(
       name='MSP', index=2, number=2,
       options=None,
       type=None),
+    _descriptor.EnumValueDescriptor(
+      name='IMPLICIT_META', index=3, number=3,
+      options=None,
+      type=None),
   ],
   containing_type=None,
   options=None,
   serialized_start=134,
-  serialized_end=183,
+  serialized_end=202,
 )
 _sym_db.RegisterEnumDescriptor(_POLICY_POLICYTYPE)
+
+_IMPLICITMETAPOLICY_RULE = _descriptor.EnumDescriptor(
+  name='Rule',
+  full_name='hfc.protos.common.ImplicitMetaPolicy.Rule',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ANY', index=0, number=0,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='ALL', index=1, number=1,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='MAJORITY', index=2, number=2,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=642,
+  serialized_end=680,
+)
+_sym_db.RegisterEnumDescriptor(_IMPLICITMETAPOLICY_RULE)
 
 
 _POLICY = _descriptor.Descriptor(
@@ -89,7 +119,7 @@ _POLICY = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=94,
-  serialized_end=183,
+  serialized_end=202,
 )
 
 
@@ -133,8 +163,8 @@ _SIGNATUREPOLICYENVELOPE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=186,
-  serialized_end=333,
+  serialized_start=205,
+  serialized_end=352,
 )
 
 
@@ -171,8 +201,8 @@ _SIGNATUREPOLICY_NOUTOF = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=435,
-  serialized_end=508,
+  serialized_start=458,
+  serialized_end=531,
 )
 
 _SIGNATUREPOLICY = _descriptor.Descriptor(
@@ -190,7 +220,7 @@ _SIGNATUREPOLICY = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='from', full_name='hfc.protos.common.SignaturePolicy.from', index=1,
+      name='n_out_of', full_name='hfc.protos.common.SignaturePolicy.n_out_of', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -211,8 +241,47 @@ _SIGNATUREPOLICY = _descriptor.Descriptor(
       name='Type', full_name='hfc.protos.common.SignaturePolicy.Type',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=336,
-  serialized_end=516,
+  serialized_start=355,
+  serialized_end=539,
+)
+
+
+_IMPLICITMETAPOLICY = _descriptor.Descriptor(
+  name='ImplicitMetaPolicy',
+  full_name='hfc.protos.common.ImplicitMetaPolicy',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='sub_policy', full_name='hfc.protos.common.ImplicitMetaPolicy.sub_policy', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='rule', full_name='hfc.protos.common.ImplicitMetaPolicy.rule', index=1,
+      number=2, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _IMPLICITMETAPOLICY_RULE,
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=542,
+  serialized_end=680,
 )
 
 _POLICY_POLICYTYPE.containing_type = _POLICY
@@ -220,16 +289,19 @@ _SIGNATUREPOLICYENVELOPE.fields_by_name['policy'].message_type = _SIGNATUREPOLIC
 _SIGNATUREPOLICYENVELOPE.fields_by_name['identities'].message_type = hfc_dot_protos_dot_common_dot_msp__principal__pb2._MSPPRINCIPAL
 _SIGNATUREPOLICY_NOUTOF.fields_by_name['policies'].message_type = _SIGNATUREPOLICY
 _SIGNATUREPOLICY_NOUTOF.containing_type = _SIGNATUREPOLICY
-_SIGNATUREPOLICY.fields_by_name['from'].message_type = _SIGNATUREPOLICY_NOUTOF
+_SIGNATUREPOLICY.fields_by_name['n_out_of'].message_type = _SIGNATUREPOLICY_NOUTOF
 _SIGNATUREPOLICY.oneofs_by_name['Type'].fields.append(
   _SIGNATUREPOLICY.fields_by_name['signed_by'])
 _SIGNATUREPOLICY.fields_by_name['signed_by'].containing_oneof = _SIGNATUREPOLICY.oneofs_by_name['Type']
 _SIGNATUREPOLICY.oneofs_by_name['Type'].fields.append(
-  _SIGNATUREPOLICY.fields_by_name['from'])
-_SIGNATUREPOLICY.fields_by_name['from'].containing_oneof = _SIGNATUREPOLICY.oneofs_by_name['Type']
+  _SIGNATUREPOLICY.fields_by_name['n_out_of'])
+_SIGNATUREPOLICY.fields_by_name['n_out_of'].containing_oneof = _SIGNATUREPOLICY.oneofs_by_name['Type']
+_IMPLICITMETAPOLICY.fields_by_name['rule'].enum_type = _IMPLICITMETAPOLICY_RULE
+_IMPLICITMETAPOLICY_RULE.containing_type = _IMPLICITMETAPOLICY
 DESCRIPTOR.message_types_by_name['Policy'] = _POLICY
 DESCRIPTOR.message_types_by_name['SignaturePolicyEnvelope'] = _SIGNATUREPOLICYENVELOPE
 DESCRIPTOR.message_types_by_name['SignaturePolicy'] = _SIGNATUREPOLICY
+DESCRIPTOR.message_types_by_name['ImplicitMetaPolicy'] = _IMPLICITMETAPOLICY
 
 Policy = _reflection.GeneratedProtocolMessageType('Policy', (_message.Message,), dict(
   DESCRIPTOR = _POLICY,
@@ -259,6 +331,13 @@ SignaturePolicy = _reflection.GeneratedProtocolMessageType('SignaturePolicy', (_
   ))
 _sym_db.RegisterMessage(SignaturePolicy)
 _sym_db.RegisterMessage(SignaturePolicy.NOutOf)
+
+ImplicitMetaPolicy = _reflection.GeneratedProtocolMessageType('ImplicitMetaPolicy', (_message.Message,), dict(
+  DESCRIPTOR = _IMPLICITMETAPOLICY,
+  __module__ = 'hfc.protos.common.policies_pb2'
+  # @@protoc_insertion_point(class_scope:hfc.protos.common.ImplicitMetaPolicy)
+  ))
+_sym_db.RegisterMessage(ImplicitMetaPolicy)
 
 
 DESCRIPTOR.has_options = True

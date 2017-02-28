@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/common/common.proto',
   package='hfc.protos.common',
   syntax='proto3',
-  serialized_pb=_b('\n\x1ehfc/protos/common/common.proto\x12\x11hfc.protos.common\x1a\x1fgoogle/protobuf/timestamp.proto\"\x1b\n\nLastConfig\x12\r\n\x05index\x18\x01 \x01(\x04\"S\n\x08Metadata\x12\r\n\x05value\x18\x01 \x01(\x0c\x12\x38\n\nsignatures\x18\x02 \x03(\x0b\x32$.hfc.protos.common.MetadataSignature\"@\n\x11MetadataSignature\x12\x18\n\x10signature_header\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"\x80\x01\n\x06Header\x12\x38\n\x0e\x63hannel_header\x18\x01 \x01(\x0b\x32 .hfc.protos.common.ChannelHeader\x12<\n\x10signature_header\x18\x02 \x01(\x0b\x32\".hfc.protos.common.SignatureHeader\"\xa2\x01\n\rChannelHeader\x12\x0c\n\x04type\x18\x01 \x01(\x05\x12\x0f\n\x07version\x18\x02 \x01(\x05\x12-\n\ttimestamp\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x12\n\nchannel_id\x18\x04 \x01(\t\x12\r\n\x05tx_id\x18\x05 \x01(\t\x12\r\n\x05\x65poch\x18\x06 \x01(\x04\x12\x11\n\textension\x18\x07 \x01(\x0c\"1\n\x0fSignatureHeader\x12\x0f\n\x07\x63reator\x18\x01 \x01(\x0c\x12\r\n\x05nonce\x18\x02 \x01(\x0c\"B\n\x07Payload\x12)\n\x06header\x18\x01 \x01(\x0b\x32\x19.hfc.protos.common.Header\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\".\n\x08\x45nvelope\x12\x0f\n\x07payload\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"\x97\x01\n\x05\x42lock\x12.\n\x06header\x18\x01 \x01(\x0b\x32\x1e.hfc.protos.common.BlockHeader\x12*\n\x04\x64\x61ta\x18\x02 \x01(\x0b\x32\x1c.hfc.protos.common.BlockData\x12\x32\n\x08metadata\x18\x03 \x01(\x0b\x32 .hfc.protos.common.BlockMetadata\"G\n\x0b\x42lockHeader\x12\x0e\n\x06number\x18\x01 \x01(\x04\x12\x15\n\rprevious_hash\x18\x02 \x01(\x0c\x12\x11\n\tdata_hash\x18\x03 \x01(\x0c\"\x19\n\tBlockData\x12\x0c\n\x04\x64\x61ta\x18\x01 \x03(\x0c\"!\n\rBlockMetadata\x12\x10\n\x08metadata\x18\x01 \x03(\x0c*\xaa\x01\n\x06Status\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0c\n\x07SUCCESS\x10\xc8\x01\x12\x10\n\x0b\x42\x41\x44_REQUEST\x10\x90\x03\x12\x0e\n\tFORBIDDEN\x10\x93\x03\x12\x0e\n\tNOT_FOUND\x10\x94\x03\x12\x1d\n\x18REQUEST_ENTITY_TOO_LARGE\x10\x9d\x03\x12\x1a\n\x15INTERNAL_SERVER_ERROR\x10\xf4\x03\x12\x18\n\x13SERVICE_UNAVAILABLE\x10\xf7\x03*\x9a\x01\n\nHeaderType\x12\x0b\n\x07MESSAGE\x10\x00\x12\x1d\n\x19\x43ONFIGURATION_TRANSACTION\x10\x01\x12\x16\n\x12\x43ONFIGURATION_ITEM\x10\x02\x12\x18\n\x14\x45NDORSER_TRANSACTION\x10\x03\x12\x17\n\x13ORDERER_TRANSACTION\x10\x04\x12\x15\n\x11\x44\x45LIVER_SEEK_INFO\x10\x05*b\n\x12\x42lockMetadataIndex\x12\x0e\n\nSIGNATURES\x10\x00\x12\x16\n\x12LAST_CONFIGURATION\x10\x01\x12\x17\n\x13TRANSACTIONS_FILTER\x10\x02\x12\x0b\n\x07ORDERER\x10\x03\x42-Z+github.com/hyperledger/fabric/protos/commonb\x06proto3')
+  serialized_pb=_b('\n\x1ehfc/protos/common/common.proto\x12\x11hfc.protos.common\x1a\x1fgoogle/protobuf/timestamp.proto\"\x1b\n\nLastConfig\x12\r\n\x05index\x18\x01 \x01(\x04\"S\n\x08Metadata\x12\r\n\x05value\x18\x01 \x01(\x0c\x12\x38\n\nsignatures\x18\x02 \x03(\x0b\x32$.hfc.protos.common.MetadataSignature\"@\n\x11MetadataSignature\x12\x18\n\x10signature_header\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\":\n\x06Header\x12\x16\n\x0e\x63hannel_header\x18\x01 \x01(\x0c\x12\x18\n\x10signature_header\x18\x02 \x01(\x0c\"\xa2\x01\n\rChannelHeader\x12\x0c\n\x04type\x18\x01 \x01(\x05\x12\x0f\n\x07version\x18\x02 \x01(\x05\x12-\n\ttimestamp\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x12\n\nchannel_id\x18\x04 \x01(\t\x12\r\n\x05tx_id\x18\x05 \x01(\t\x12\r\n\x05\x65poch\x18\x06 \x01(\x04\x12\x11\n\textension\x18\x07 \x01(\x0c\"1\n\x0fSignatureHeader\x12\x0f\n\x07\x63reator\x18\x01 \x01(\x0c\x12\r\n\x05nonce\x18\x02 \x01(\x0c\"B\n\x07Payload\x12)\n\x06header\x18\x01 \x01(\x0b\x32\x19.hfc.protos.common.Header\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\".\n\x08\x45nvelope\x12\x0f\n\x07payload\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"\x97\x01\n\x05\x42lock\x12.\n\x06header\x18\x01 \x01(\x0b\x32\x1e.hfc.protos.common.BlockHeader\x12*\n\x04\x64\x61ta\x18\x02 \x01(\x0b\x32\x1c.hfc.protos.common.BlockData\x12\x32\n\x08metadata\x18\x03 \x01(\x0b\x32 .hfc.protos.common.BlockMetadata\"G\n\x0b\x42lockHeader\x12\x0e\n\x06number\x18\x01 \x01(\x04\x12\x15\n\rprevious_hash\x18\x02 \x01(\x0c\x12\x11\n\tdata_hash\x18\x03 \x01(\x0c\"\x19\n\tBlockData\x12\x0c\n\x04\x64\x61ta\x18\x01 \x03(\x0c\"!\n\rBlockMetadata\x12\x10\n\x08metadata\x18\x01 \x03(\x0c*\xaa\x01\n\x06Status\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0c\n\x07SUCCESS\x10\xc8\x01\x12\x10\n\x0b\x42\x41\x44_REQUEST\x10\x90\x03\x12\x0e\n\tFORBIDDEN\x10\x93\x03\x12\x0e\n\tNOT_FOUND\x10\x94\x03\x12\x1d\n\x18REQUEST_ENTITY_TOO_LARGE\x10\x9d\x03\x12\x1a\n\x15INTERNAL_SERVER_ERROR\x10\xf4\x03\x12\x18\n\x13SERVICE_UNAVAILABLE\x10\xf7\x03*\x82\x01\n\nHeaderType\x12\x0b\n\x07MESSAGE\x10\x00\x12\n\n\x06\x43ONFIG\x10\x01\x12\x11\n\rCONFIG_UPDATE\x10\x02\x12\x18\n\x14\x45NDORSER_TRANSACTION\x10\x03\x12\x17\n\x13ORDERER_TRANSACTION\x10\x04\x12\x15\n\x11\x44\x45LIVER_SEEK_INFO\x10\x05*[\n\x12\x42lockMetadataIndex\x12\x0e\n\nSIGNATURES\x10\x00\x12\x0f\n\x0bLAST_CONFIG\x10\x01\x12\x17\n\x13TRANSACTIONS_FILTER\x10\x02\x12\x0b\n\x07ORDERER\x10\x03\x42-Z+github.com/hyperledger/fabric/protos/commonb\x06proto3')
   ,
   dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -67,8 +67,8 @@ _STATUS = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1019,
-  serialized_end=1189,
+  serialized_start=948,
+  serialized_end=1118,
 )
 _sym_db.RegisterEnumDescriptor(_STATUS)
 
@@ -84,11 +84,11 @@ _HEADERTYPE = _descriptor.EnumDescriptor(
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='CONFIGURATION_TRANSACTION', index=1, number=1,
+      name='CONFIG', index=1, number=1,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='CONFIGURATION_ITEM', index=2, number=2,
+      name='CONFIG_UPDATE', index=2, number=2,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
@@ -106,8 +106,8 @@ _HEADERTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1192,
-  serialized_end=1346,
+  serialized_start=1121,
+  serialized_end=1251,
 )
 _sym_db.RegisterEnumDescriptor(_HEADERTYPE)
 
@@ -123,7 +123,7 @@ _BLOCKMETADATAINDEX = _descriptor.EnumDescriptor(
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='LAST_CONFIGURATION', index=1, number=1,
+      name='LAST_CONFIG', index=1, number=1,
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
@@ -137,8 +137,8 @@ _BLOCKMETADATAINDEX = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1348,
-  serialized_end=1446,
+  serialized_start=1253,
+  serialized_end=1344,
 )
 _sym_db.RegisterEnumDescriptor(_BLOCKMETADATAINDEX)
 
@@ -152,13 +152,13 @@ REQUEST_ENTITY_TOO_LARGE = 413
 INTERNAL_SERVER_ERROR = 500
 SERVICE_UNAVAILABLE = 503
 MESSAGE = 0
-CONFIGURATION_TRANSACTION = 1
-CONFIGURATION_ITEM = 2
+CONFIG = 1
+CONFIG_UPDATE = 2
 ENDORSER_TRANSACTION = 3
 ORDERER_TRANSACTION = 4
 DELIVER_SEEK_INFO = 5
 SIGNATURES = 0
-LAST_CONFIGURATION = 1
+LAST_CONFIG = 1
 TRANSACTIONS_FILTER = 2
 ORDERER = 3
 
@@ -280,15 +280,15 @@ _HEADER = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='channel_header', full_name='hfc.protos.common.Header.channel_header', index=0,
-      number=1, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      number=1, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='signature_header', full_name='hfc.protos.common.Header.signature_header', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -304,8 +304,8 @@ _HEADER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=267,
-  serialized_end=395,
+  serialized_start=266,
+  serialized_end=324,
 )
 
 
@@ -377,8 +377,8 @@ _CHANNELHEADER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=398,
-  serialized_end=560,
+  serialized_start=327,
+  serialized_end=489,
 )
 
 
@@ -415,8 +415,8 @@ _SIGNATUREHEADER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=562,
-  serialized_end=611,
+  serialized_start=491,
+  serialized_end=540,
 )
 
 
@@ -453,8 +453,8 @@ _PAYLOAD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=613,
-  serialized_end=679,
+  serialized_start=542,
+  serialized_end=608,
 )
 
 
@@ -491,8 +491,8 @@ _ENVELOPE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=681,
-  serialized_end=727,
+  serialized_start=610,
+  serialized_end=656,
 )
 
 
@@ -536,8 +536,8 @@ _BLOCK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=730,
-  serialized_end=881,
+  serialized_start=659,
+  serialized_end=810,
 )
 
 
@@ -581,8 +581,8 @@ _BLOCKHEADER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=883,
-  serialized_end=954,
+  serialized_start=812,
+  serialized_end=883,
 )
 
 
@@ -612,8 +612,8 @@ _BLOCKDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=956,
-  serialized_end=981,
+  serialized_start=885,
+  serialized_end=910,
 )
 
 
@@ -643,13 +643,11 @@ _BLOCKMETADATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=983,
-  serialized_end=1016,
+  serialized_start=912,
+  serialized_end=945,
 )
 
 _METADATA.fields_by_name['signatures'].message_type = _METADATASIGNATURE
-_HEADER.fields_by_name['channel_header'].message_type = _CHANNELHEADER
-_HEADER.fields_by_name['signature_header'].message_type = _SIGNATUREHEADER
 _CHANNELHEADER.fields_by_name['timestamp'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
 _PAYLOAD.fields_by_name['header'].message_type = _HEADER
 _BLOCK.fields_by_name['header'].message_type = _BLOCKHEADER
