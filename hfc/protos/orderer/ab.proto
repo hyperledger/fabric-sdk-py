@@ -20,7 +20,7 @@ import "hfc/protos/common/common.proto";
 
 option go_package = "github.com/hyperledger/fabric/protos/orderer";
 
-package hfc.protos.orderer;
+package orderer;
 
 message BroadcastResponse {
     common.Status status = 1;

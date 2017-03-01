@@ -17,7 +17,7 @@ class EventsStub(object):
       channel: A grpc.Channel.
     """
     self.Chat = channel.stream_stream(
-        '/hfc.protos.peer.Events/Chat',
+        '/protos.Events/Chat',
         request_serializer=hfc_dot_protos_dot_peer_dot_events__pb2.Event.SerializeToString,
         response_deserializer=hfc_dot_protos_dot_peer_dot_events__pb2.Event.FromString,
         )
@@ -44,5 +44,5 @@ def add_EventsServicer_to_server(servicer, server):
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
-      'hfc.protos.peer.Events', rpc_method_handlers)
+      'protos.Events', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))

@@ -17,9 +17,9 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/query.proto',
-  package='hfc.protos.peer',
+  package='protos',
   syntax='proto3',
-  serialized_pb=_b('\n\x1bhfc/protos/peer/query.proto\x12\x0fhfc.protos.peer\"L\n\x16\x43haincodeQueryResponse\x12\x32\n\nchaincodes\x18\x01 \x03(\x0b\x32\x1e.hfc.protos.peer.ChaincodeInfo\"g\n\rChaincodeInfo\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x0c\n\x04path\x18\x03 \x01(\t\x12\r\n\x05input\x18\x04 \x01(\t\x12\x0c\n\x04\x65scc\x18\x05 \x01(\t\x12\x0c\n\x04vscc\x18\x06 \x01(\t\"F\n\x14\x43hannelQueryResponse\x12.\n\x08\x63hannels\x18\x01 \x03(\x0b\x32\x1c.hfc.protos.peer.ChannelInfo\"!\n\x0b\x43hannelInfo\x12\x12\n\nchannel_id\x18\x01 \x01(\tB+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_pb=_b('\n\x1bhfc/protos/peer/query.proto\x12\x06protos\"C\n\x16\x43haincodeQueryResponse\x12)\n\nchaincodes\x18\x01 \x03(\x0b\x32\x15.protos.ChaincodeInfo\"g\n\rChaincodeInfo\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x0c\n\x04path\x18\x03 \x01(\t\x12\r\n\x05input\x18\x04 \x01(\t\x12\x0c\n\x04\x65scc\x18\x05 \x01(\t\x12\x0c\n\x04vscc\x18\x06 \x01(\t\"=\n\x14\x43hannelQueryResponse\x12%\n\x08\x63hannels\x18\x01 \x03(\x0b\x32\x13.protos.ChannelInfo\"!\n\x0b\x43hannelInfo\x12\x12\n\nchannel_id\x18\x01 \x01(\tB+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -28,13 +28,13 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _CHAINCODEQUERYRESPONSE = _descriptor.Descriptor(
   name='ChaincodeQueryResponse',
-  full_name='hfc.protos.peer.ChaincodeQueryResponse',
+  full_name='protos.ChaincodeQueryResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='chaincodes', full_name='hfc.protos.peer.ChaincodeQueryResponse.chaincodes', index=0,
+      name='chaincodes', full_name='protos.ChaincodeQueryResponse.chaincodes', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -52,55 +52,55 @@ _CHAINCODEQUERYRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=48,
-  serialized_end=124,
+  serialized_start=39,
+  serialized_end=106,
 )
 
 
 _CHAINCODEINFO = _descriptor.Descriptor(
   name='ChaincodeInfo',
-  full_name='hfc.protos.peer.ChaincodeInfo',
+  full_name='protos.ChaincodeInfo',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='hfc.protos.peer.ChaincodeInfo.name', index=0,
+      name='name', full_name='protos.ChaincodeInfo.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='version', full_name='hfc.protos.peer.ChaincodeInfo.version', index=1,
+      name='version', full_name='protos.ChaincodeInfo.version', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='path', full_name='hfc.protos.peer.ChaincodeInfo.path', index=2,
+      name='path', full_name='protos.ChaincodeInfo.path', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='input', full_name='hfc.protos.peer.ChaincodeInfo.input', index=3,
+      name='input', full_name='protos.ChaincodeInfo.input', index=3,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='escc', full_name='hfc.protos.peer.ChaincodeInfo.escc', index=4,
+      name='escc', full_name='protos.ChaincodeInfo.escc', index=4,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='vscc', full_name='hfc.protos.peer.ChaincodeInfo.vscc', index=5,
+      name='vscc', full_name='protos.ChaincodeInfo.vscc', index=5,
       number=6, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -118,20 +118,20 @@ _CHAINCODEINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=126,
-  serialized_end=229,
+  serialized_start=108,
+  serialized_end=211,
 )
 
 
 _CHANNELQUERYRESPONSE = _descriptor.Descriptor(
   name='ChannelQueryResponse',
-  full_name='hfc.protos.peer.ChannelQueryResponse',
+  full_name='protos.ChannelQueryResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='channels', full_name='hfc.protos.peer.ChannelQueryResponse.channels', index=0,
+      name='channels', full_name='protos.ChannelQueryResponse.channels', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -149,20 +149,20 @@ _CHANNELQUERYRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=231,
-  serialized_end=301,
+  serialized_start=213,
+  serialized_end=274,
 )
 
 
 _CHANNELINFO = _descriptor.Descriptor(
   name='ChannelInfo',
-  full_name='hfc.protos.peer.ChannelInfo',
+  full_name='protos.ChannelInfo',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='channel_id', full_name='hfc.protos.peer.ChannelInfo.channel_id', index=0,
+      name='channel_id', full_name='protos.ChannelInfo.channel_id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -180,8 +180,8 @@ _CHANNELINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=303,
-  serialized_end=336,
+  serialized_start=276,
+  serialized_end=309,
 )
 
 _CHAINCODEQUERYRESPONSE.fields_by_name['chaincodes'].message_type = _CHAINCODEINFO
@@ -194,28 +194,28 @@ DESCRIPTOR.message_types_by_name['ChannelInfo'] = _CHANNELINFO
 ChaincodeQueryResponse = _reflection.GeneratedProtocolMessageType('ChaincodeQueryResponse', (_message.Message,), dict(
   DESCRIPTOR = _CHAINCODEQUERYRESPONSE,
   __module__ = 'hfc.protos.peer.query_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.peer.ChaincodeQueryResponse)
+  # @@protoc_insertion_point(class_scope:protos.ChaincodeQueryResponse)
   ))
 _sym_db.RegisterMessage(ChaincodeQueryResponse)
 
 ChaincodeInfo = _reflection.GeneratedProtocolMessageType('ChaincodeInfo', (_message.Message,), dict(
   DESCRIPTOR = _CHAINCODEINFO,
   __module__ = 'hfc.protos.peer.query_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.peer.ChaincodeInfo)
+  # @@protoc_insertion_point(class_scope:protos.ChaincodeInfo)
   ))
 _sym_db.RegisterMessage(ChaincodeInfo)
 
 ChannelQueryResponse = _reflection.GeneratedProtocolMessageType('ChannelQueryResponse', (_message.Message,), dict(
   DESCRIPTOR = _CHANNELQUERYRESPONSE,
   __module__ = 'hfc.protos.peer.query_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.peer.ChannelQueryResponse)
+  # @@protoc_insertion_point(class_scope:protos.ChannelQueryResponse)
   ))
 _sym_db.RegisterMessage(ChannelQueryResponse)
 
 ChannelInfo = _reflection.GeneratedProtocolMessageType('ChannelInfo', (_message.Message,), dict(
   DESCRIPTOR = _CHANNELINFO,
   __module__ = 'hfc.protos.peer.query_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.peer.ChannelInfo)
+  # @@protoc_insertion_point(class_scope:protos.ChannelInfo)
   ))
 _sym_db.RegisterMessage(ChannelInfo)
 

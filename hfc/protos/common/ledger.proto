@@ -17,7 +17,7 @@ syntax = "proto3";
 
 option go_package = "github.com/hyperledger/fabric/protos/common";
 
-package hfc.protos.common;
+package common;
 
 // Contains information about the blockchain ledger such as height, current
 // block hash, and previous block hash.

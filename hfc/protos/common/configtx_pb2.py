@@ -19,9 +19,9 @@ from hfc.protos.common import policies_pb2 as hfc_dot_protos_dot_common_dot_poli
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/common/configtx.proto',
-  package='hfc.protos.common',
+  package='common',
   syntax='proto3',
-  serialized_pb=_b('\n hfc/protos/common/configtx.proto\x12\x11hfc.protos.common\x1a\x1ehfc/protos/common/common.proto\x1a hfc/protos/common/policies.proto\"m\n\x0e\x43onfigEnvelope\x12)\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x19.hfc.protos.common.Config\x12\x30\n\x0blast_update\x18\x02 \x01(\x0b\x32\x1b.hfc.protos.common.Envelope\"\xdf\x03\n\x11\x43onfigGroupSchema\x12@\n\x06groups\x18\x01 \x03(\x0b\x32\x30.hfc.protos.common.ConfigGroupSchema.GroupsEntry\x12@\n\x06values\x18\x02 \x03(\x0b\x32\x30.hfc.protos.common.ConfigGroupSchema.ValuesEntry\x12\x44\n\x08policies\x18\x03 \x03(\x0b\x32\x32.hfc.protos.common.ConfigGroupSchema.PoliciesEntry\x1aS\n\x0bGroupsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x33\n\x05value\x18\x02 \x01(\x0b\x32$.hfc.protos.common.ConfigGroupSchema:\x02\x38\x01\x1aS\n\x0bValuesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x33\n\x05value\x18\x02 \x01(\x0b\x32$.hfc.protos.common.ConfigValueSchema:\x02\x38\x01\x1aV\n\rPoliciesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x34\n\x05value\x18\x02 \x01(\x0b\x32%.hfc.protos.common.ConfigPolicySchema:\x02\x38\x01\"\x13\n\x11\x43onfigValueSchema\"\x14\n\x12\x43onfigPolicySchema\"k\n\x06\x43onfig\x12\x30\n\x06header\x18\x01 \x01(\x0b\x32 .hfc.protos.common.ChannelHeader\x12/\n\x07\x63hannel\x18\x02 \x01(\x0b\x32\x1e.hfc.protos.common.ConfigGroup\"e\n\x14\x43onfigUpdateEnvelope\x12\x15\n\rconfig_update\x18\x01 \x01(\x0c\x12\x36\n\nsignatures\x18\x02 \x03(\x0b\x32\".hfc.protos.common.ConfigSignature\"\xa5\x01\n\x0c\x43onfigUpdate\x12\x30\n\x06header\x18\x01 \x01(\x0b\x32 .hfc.protos.common.ChannelHeader\x12\x30\n\x08read_set\x18\x02 \x01(\x0b\x32\x1e.hfc.protos.common.ConfigGroup\x12\x31\n\twrite_set\x18\x03 \x01(\x0b\x32\x1e.hfc.protos.common.ConfigGroup\"\xda\x03\n\x0b\x43onfigGroup\x12\x0f\n\x07version\x18\x01 \x01(\x04\x12:\n\x06groups\x18\x02 \x03(\x0b\x32*.hfc.protos.common.ConfigGroup.GroupsEntry\x12:\n\x06values\x18\x03 \x03(\x0b\x32*.hfc.protos.common.ConfigGroup.ValuesEntry\x12>\n\x08policies\x18\x04 \x03(\x0b\x32,.hfc.protos.common.ConfigGroup.PoliciesEntry\x12\x12\n\nmod_policy\x18\x05 \x01(\t\x1aM\n\x0bGroupsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12-\n\x05value\x18\x02 \x01(\x0b\x32\x1e.hfc.protos.common.ConfigGroup:\x02\x38\x01\x1aM\n\x0bValuesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12-\n\x05value\x18\x02 \x01(\x0b\x32\x1e.hfc.protos.common.ConfigValue:\x02\x38\x01\x1aP\n\rPoliciesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12.\n\x05value\x18\x02 \x01(\x0b\x32\x1f.hfc.protos.common.ConfigPolicy:\x02\x38\x01\"A\n\x0b\x43onfigValue\x12\x0f\n\x07version\x18\x01 \x01(\x04\x12\r\n\x05value\x18\x02 \x01(\x0c\x12\x12\n\nmod_policy\x18\x03 \x01(\t\"^\n\x0c\x43onfigPolicy\x12\x0f\n\x07version\x18\x01 \x01(\x04\x12)\n\x06policy\x18\x02 \x01(\x0b\x32\x19.hfc.protos.common.Policy\x12\x12\n\nmod_policy\x18\x03 \x01(\t\">\n\x0f\x43onfigSignature\x12\x18\n\x10signature_header\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\x42-Z+github.com/hyperledger/fabric/protos/commonb\x06proto3')
+  serialized_pb=_b('\n hfc/protos/common/configtx.proto\x12\x06\x63ommon\x1a\x1ehfc/protos/common/common.proto\x1a hfc/protos/common/policies.proto\"W\n\x0e\x43onfigEnvelope\x12\x1e\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x0e.common.Config\x12%\n\x0blast_update\x18\x02 \x01(\x0b\x32\x10.common.Envelope\"\x9d\x03\n\x11\x43onfigGroupSchema\x12\x35\n\x06groups\x18\x01 \x03(\x0b\x32%.common.ConfigGroupSchema.GroupsEntry\x12\x35\n\x06values\x18\x02 \x03(\x0b\x32%.common.ConfigGroupSchema.ValuesEntry\x12\x39\n\x08policies\x18\x03 \x03(\x0b\x32\'.common.ConfigGroupSchema.PoliciesEntry\x1aH\n\x0bGroupsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.common.ConfigGroupSchema:\x02\x38\x01\x1aH\n\x0bValuesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.common.ConfigValueSchema:\x02\x38\x01\x1aK\n\rPoliciesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12)\n\x05value\x18\x02 \x01(\x0b\x32\x1a.common.ConfigPolicySchema:\x02\x38\x01\"\x13\n\x11\x43onfigValueSchema\"\x14\n\x12\x43onfigPolicySchema\"U\n\x06\x43onfig\x12%\n\x06header\x18\x01 \x01(\x0b\x32\x15.common.ChannelHeader\x12$\n\x07\x63hannel\x18\x02 \x01(\x0b\x32\x13.common.ConfigGroup\"Z\n\x14\x43onfigUpdateEnvelope\x12\x15\n\rconfig_update\x18\x01 \x01(\x0c\x12+\n\nsignatures\x18\x02 \x03(\x0b\x32\x17.common.ConfigSignature\"\x84\x01\n\x0c\x43onfigUpdate\x12%\n\x06header\x18\x01 \x01(\x0b\x32\x15.common.ChannelHeader\x12%\n\x08read_set\x18\x02 \x01(\x0b\x32\x13.common.ConfigGroup\x12&\n\twrite_set\x18\x03 \x01(\x0b\x32\x13.common.ConfigGroup\"\x98\x03\n\x0b\x43onfigGroup\x12\x0f\n\x07version\x18\x01 \x01(\x04\x12/\n\x06groups\x18\x02 \x03(\x0b\x32\x1f.common.ConfigGroup.GroupsEntry\x12/\n\x06values\x18\x03 \x03(\x0b\x32\x1f.common.ConfigGroup.ValuesEntry\x12\x33\n\x08policies\x18\x04 \x03(\x0b\x32!.common.ConfigGroup.PoliciesEntry\x12\x12\n\nmod_policy\x18\x05 \x01(\t\x1a\x42\n\x0bGroupsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\"\n\x05value\x18\x02 \x01(\x0b\x32\x13.common.ConfigGroup:\x02\x38\x01\x1a\x42\n\x0bValuesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\"\n\x05value\x18\x02 \x01(\x0b\x32\x13.common.ConfigValue:\x02\x38\x01\x1a\x45\n\rPoliciesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12#\n\x05value\x18\x02 \x01(\x0b\x32\x14.common.ConfigPolicy:\x02\x38\x01\"A\n\x0b\x43onfigValue\x12\x0f\n\x07version\x18\x01 \x01(\x04\x12\r\n\x05value\x18\x02 \x01(\x0c\x12\x12\n\nmod_policy\x18\x03 \x01(\t\"S\n\x0c\x43onfigPolicy\x12\x0f\n\x07version\x18\x01 \x01(\x04\x12\x1e\n\x06policy\x18\x02 \x01(\x0b\x32\x0e.common.Policy\x12\x12\n\nmod_policy\x18\x03 \x01(\t\">\n\x0f\x43onfigSignature\x12\x18\n\x10signature_header\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\x42-Z+github.com/hyperledger/fabric/protos/commonb\x06proto3')
   ,
   dependencies=[hfc_dot_protos_dot_common_dot_common__pb2.DESCRIPTOR,hfc_dot_protos_dot_common_dot_policies__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -31,20 +31,20 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _CONFIGENVELOPE = _descriptor.Descriptor(
   name='ConfigEnvelope',
-  full_name='hfc.protos.common.ConfigEnvelope',
+  full_name='common.ConfigEnvelope',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='config', full_name='hfc.protos.common.ConfigEnvelope.config', index=0,
+      name='config', full_name='common.ConfigEnvelope.config', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='last_update', full_name='hfc.protos.common.ConfigEnvelope.last_update', index=1,
+      name='last_update', full_name='common.ConfigEnvelope.last_update', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -62,27 +62,27 @@ _CONFIGENVELOPE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=121,
-  serialized_end=230,
+  serialized_start=110,
+  serialized_end=197,
 )
 
 
 _CONFIGGROUPSCHEMA_GROUPSENTRY = _descriptor.Descriptor(
   name='GroupsEntry',
-  full_name='hfc.protos.common.ConfigGroupSchema.GroupsEntry',
+  full_name='common.ConfigGroupSchema.GroupsEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='hfc.protos.common.ConfigGroupSchema.GroupsEntry.key', index=0,
+      name='key', full_name='common.ConfigGroupSchema.GroupsEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='value', full_name='hfc.protos.common.ConfigGroupSchema.GroupsEntry.value', index=1,
+      name='value', full_name='common.ConfigGroupSchema.GroupsEntry.value', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -100,26 +100,26 @@ _CONFIGGROUPSCHEMA_GROUPSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=456,
-  serialized_end=539,
+  serialized_start=390,
+  serialized_end=462,
 )
 
 _CONFIGGROUPSCHEMA_VALUESENTRY = _descriptor.Descriptor(
   name='ValuesEntry',
-  full_name='hfc.protos.common.ConfigGroupSchema.ValuesEntry',
+  full_name='common.ConfigGroupSchema.ValuesEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='hfc.protos.common.ConfigGroupSchema.ValuesEntry.key', index=0,
+      name='key', full_name='common.ConfigGroupSchema.ValuesEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='value', full_name='hfc.protos.common.ConfigGroupSchema.ValuesEntry.value', index=1,
+      name='value', full_name='common.ConfigGroupSchema.ValuesEntry.value', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -137,26 +137,26 @@ _CONFIGGROUPSCHEMA_VALUESENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=541,
-  serialized_end=624,
+  serialized_start=464,
+  serialized_end=536,
 )
 
 _CONFIGGROUPSCHEMA_POLICIESENTRY = _descriptor.Descriptor(
   name='PoliciesEntry',
-  full_name='hfc.protos.common.ConfigGroupSchema.PoliciesEntry',
+  full_name='common.ConfigGroupSchema.PoliciesEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='hfc.protos.common.ConfigGroupSchema.PoliciesEntry.key', index=0,
+      name='key', full_name='common.ConfigGroupSchema.PoliciesEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='value', full_name='hfc.protos.common.ConfigGroupSchema.PoliciesEntry.value', index=1,
+      name='value', full_name='common.ConfigGroupSchema.PoliciesEntry.value', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -174,33 +174,33 @@ _CONFIGGROUPSCHEMA_POLICIESENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=626,
-  serialized_end=712,
+  serialized_start=538,
+  serialized_end=613,
 )
 
 _CONFIGGROUPSCHEMA = _descriptor.Descriptor(
   name='ConfigGroupSchema',
-  full_name='hfc.protos.common.ConfigGroupSchema',
+  full_name='common.ConfigGroupSchema',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='groups', full_name='hfc.protos.common.ConfigGroupSchema.groups', index=0,
+      name='groups', full_name='common.ConfigGroupSchema.groups', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='values', full_name='hfc.protos.common.ConfigGroupSchema.values', index=1,
+      name='values', full_name='common.ConfigGroupSchema.values', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='policies', full_name='hfc.protos.common.ConfigGroupSchema.policies', index=2,
+      name='policies', full_name='common.ConfigGroupSchema.policies', index=2,
       number=3, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -218,14 +218,14 @@ _CONFIGGROUPSCHEMA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=233,
-  serialized_end=712,
+  serialized_start=200,
+  serialized_end=613,
 )
 
 
 _CONFIGVALUESCHEMA = _descriptor.Descriptor(
   name='ConfigValueSchema',
-  full_name='hfc.protos.common.ConfigValueSchema',
+  full_name='common.ConfigValueSchema',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -242,14 +242,14 @@ _CONFIGVALUESCHEMA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=714,
-  serialized_end=733,
+  serialized_start=615,
+  serialized_end=634,
 )
 
 
 _CONFIGPOLICYSCHEMA = _descriptor.Descriptor(
   name='ConfigPolicySchema',
-  full_name='hfc.protos.common.ConfigPolicySchema',
+  full_name='common.ConfigPolicySchema',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -266,27 +266,27 @@ _CONFIGPOLICYSCHEMA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=735,
-  serialized_end=755,
+  serialized_start=636,
+  serialized_end=656,
 )
 
 
 _CONFIG = _descriptor.Descriptor(
   name='Config',
-  full_name='hfc.protos.common.Config',
+  full_name='common.Config',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='header', full_name='hfc.protos.common.Config.header', index=0,
+      name='header', full_name='common.Config.header', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='channel', full_name='hfc.protos.common.Config.channel', index=1,
+      name='channel', full_name='common.Config.channel', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -304,27 +304,27 @@ _CONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=757,
-  serialized_end=864,
+  serialized_start=658,
+  serialized_end=743,
 )
 
 
 _CONFIGUPDATEENVELOPE = _descriptor.Descriptor(
   name='ConfigUpdateEnvelope',
-  full_name='hfc.protos.common.ConfigUpdateEnvelope',
+  full_name='common.ConfigUpdateEnvelope',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='config_update', full_name='hfc.protos.common.ConfigUpdateEnvelope.config_update', index=0,
+      name='config_update', full_name='common.ConfigUpdateEnvelope.config_update', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='signatures', full_name='hfc.protos.common.ConfigUpdateEnvelope.signatures', index=1,
+      name='signatures', full_name='common.ConfigUpdateEnvelope.signatures', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -342,34 +342,34 @@ _CONFIGUPDATEENVELOPE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=866,
-  serialized_end=967,
+  serialized_start=745,
+  serialized_end=835,
 )
 
 
 _CONFIGUPDATE = _descriptor.Descriptor(
   name='ConfigUpdate',
-  full_name='hfc.protos.common.ConfigUpdate',
+  full_name='common.ConfigUpdate',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='header', full_name='hfc.protos.common.ConfigUpdate.header', index=0,
+      name='header', full_name='common.ConfigUpdate.header', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='read_set', full_name='hfc.protos.common.ConfigUpdate.read_set', index=1,
+      name='read_set', full_name='common.ConfigUpdate.read_set', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='write_set', full_name='hfc.protos.common.ConfigUpdate.write_set', index=2,
+      name='write_set', full_name='common.ConfigUpdate.write_set', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -387,27 +387,27 @@ _CONFIGUPDATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=970,
-  serialized_end=1135,
+  serialized_start=838,
+  serialized_end=970,
 )
 
 
 _CONFIGGROUP_GROUPSENTRY = _descriptor.Descriptor(
   name='GroupsEntry',
-  full_name='hfc.protos.common.ConfigGroup.GroupsEntry',
+  full_name='common.ConfigGroup.GroupsEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='hfc.protos.common.ConfigGroup.GroupsEntry.key', index=0,
+      name='key', full_name='common.ConfigGroup.GroupsEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='value', full_name='hfc.protos.common.ConfigGroup.GroupsEntry.value', index=1,
+      name='value', full_name='common.ConfigGroup.GroupsEntry.value', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -425,26 +425,26 @@ _CONFIGGROUP_GROUPSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1374,
-  serialized_end=1451,
+  serialized_start=1176,
+  serialized_end=1242,
 )
 
 _CONFIGGROUP_VALUESENTRY = _descriptor.Descriptor(
   name='ValuesEntry',
-  full_name='hfc.protos.common.ConfigGroup.ValuesEntry',
+  full_name='common.ConfigGroup.ValuesEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='hfc.protos.common.ConfigGroup.ValuesEntry.key', index=0,
+      name='key', full_name='common.ConfigGroup.ValuesEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='value', full_name='hfc.protos.common.ConfigGroup.ValuesEntry.value', index=1,
+      name='value', full_name='common.ConfigGroup.ValuesEntry.value', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -462,26 +462,26 @@ _CONFIGGROUP_VALUESENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1453,
-  serialized_end=1530,
+  serialized_start=1244,
+  serialized_end=1310,
 )
 
 _CONFIGGROUP_POLICIESENTRY = _descriptor.Descriptor(
   name='PoliciesEntry',
-  full_name='hfc.protos.common.ConfigGroup.PoliciesEntry',
+  full_name='common.ConfigGroup.PoliciesEntry',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='hfc.protos.common.ConfigGroup.PoliciesEntry.key', index=0,
+      name='key', full_name='common.ConfigGroup.PoliciesEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='value', full_name='hfc.protos.common.ConfigGroup.PoliciesEntry.value', index=1,
+      name='value', full_name='common.ConfigGroup.PoliciesEntry.value', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -499,47 +499,47 @@ _CONFIGGROUP_POLICIESENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1532,
-  serialized_end=1612,
+  serialized_start=1312,
+  serialized_end=1381,
 )
 
 _CONFIGGROUP = _descriptor.Descriptor(
   name='ConfigGroup',
-  full_name='hfc.protos.common.ConfigGroup',
+  full_name='common.ConfigGroup',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='version', full_name='hfc.protos.common.ConfigGroup.version', index=0,
+      name='version', full_name='common.ConfigGroup.version', index=0,
       number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='groups', full_name='hfc.protos.common.ConfigGroup.groups', index=1,
+      name='groups', full_name='common.ConfigGroup.groups', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='values', full_name='hfc.protos.common.ConfigGroup.values', index=2,
+      name='values', full_name='common.ConfigGroup.values', index=2,
       number=3, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='policies', full_name='hfc.protos.common.ConfigGroup.policies', index=3,
+      name='policies', full_name='common.ConfigGroup.policies', index=3,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='mod_policy', full_name='hfc.protos.common.ConfigGroup.mod_policy', index=4,
+      name='mod_policy', full_name='common.ConfigGroup.mod_policy', index=4,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -557,34 +557,34 @@ _CONFIGGROUP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1138,
-  serialized_end=1612,
+  serialized_start=973,
+  serialized_end=1381,
 )
 
 
 _CONFIGVALUE = _descriptor.Descriptor(
   name='ConfigValue',
-  full_name='hfc.protos.common.ConfigValue',
+  full_name='common.ConfigValue',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='version', full_name='hfc.protos.common.ConfigValue.version', index=0,
+      name='version', full_name='common.ConfigValue.version', index=0,
       number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='value', full_name='hfc.protos.common.ConfigValue.value', index=1,
+      name='value', full_name='common.ConfigValue.value', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='mod_policy', full_name='hfc.protos.common.ConfigValue.mod_policy', index=2,
+      name='mod_policy', full_name='common.ConfigValue.mod_policy', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -602,34 +602,34 @@ _CONFIGVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1614,
-  serialized_end=1679,
+  serialized_start=1383,
+  serialized_end=1448,
 )
 
 
 _CONFIGPOLICY = _descriptor.Descriptor(
   name='ConfigPolicy',
-  full_name='hfc.protos.common.ConfigPolicy',
+  full_name='common.ConfigPolicy',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='version', full_name='hfc.protos.common.ConfigPolicy.version', index=0,
+      name='version', full_name='common.ConfigPolicy.version', index=0,
       number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='policy', full_name='hfc.protos.common.ConfigPolicy.policy', index=1,
+      name='policy', full_name='common.ConfigPolicy.policy', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='mod_policy', full_name='hfc.protos.common.ConfigPolicy.mod_policy', index=2,
+      name='mod_policy', full_name='common.ConfigPolicy.mod_policy', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -647,27 +647,27 @@ _CONFIGPOLICY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1681,
-  serialized_end=1775,
+  serialized_start=1450,
+  serialized_end=1533,
 )
 
 
 _CONFIGSIGNATURE = _descriptor.Descriptor(
   name='ConfigSignature',
-  full_name='hfc.protos.common.ConfigSignature',
+  full_name='common.ConfigSignature',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='signature_header', full_name='hfc.protos.common.ConfigSignature.signature_header', index=0,
+      name='signature_header', full_name='common.ConfigSignature.signature_header', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='signature', full_name='hfc.protos.common.ConfigSignature.signature', index=1,
+      name='signature', full_name='common.ConfigSignature.signature', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -685,8 +685,8 @@ _CONFIGSIGNATURE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1777,
-  serialized_end=1839,
+  serialized_start=1535,
+  serialized_end=1597,
 )
 
 _CONFIGENVELOPE.fields_by_name['config'].message_type = _CONFIG
@@ -731,7 +731,7 @@ DESCRIPTOR.message_types_by_name['ConfigSignature'] = _CONFIGSIGNATURE
 ConfigEnvelope = _reflection.GeneratedProtocolMessageType('ConfigEnvelope', (_message.Message,), dict(
   DESCRIPTOR = _CONFIGENVELOPE,
   __module__ = 'hfc.protos.common.configtx_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigEnvelope)
+  # @@protoc_insertion_point(class_scope:common.ConfigEnvelope)
   ))
 _sym_db.RegisterMessage(ConfigEnvelope)
 
@@ -740,26 +740,26 @@ ConfigGroupSchema = _reflection.GeneratedProtocolMessageType('ConfigGroupSchema'
   GroupsEntry = _reflection.GeneratedProtocolMessageType('GroupsEntry', (_message.Message,), dict(
     DESCRIPTOR = _CONFIGGROUPSCHEMA_GROUPSENTRY,
     __module__ = 'hfc.protos.common.configtx_pb2'
-    # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigGroupSchema.GroupsEntry)
+    # @@protoc_insertion_point(class_scope:common.ConfigGroupSchema.GroupsEntry)
     ))
   ,
 
   ValuesEntry = _reflection.GeneratedProtocolMessageType('ValuesEntry', (_message.Message,), dict(
     DESCRIPTOR = _CONFIGGROUPSCHEMA_VALUESENTRY,
     __module__ = 'hfc.protos.common.configtx_pb2'
-    # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigGroupSchema.ValuesEntry)
+    # @@protoc_insertion_point(class_scope:common.ConfigGroupSchema.ValuesEntry)
     ))
   ,
 
   PoliciesEntry = _reflection.GeneratedProtocolMessageType('PoliciesEntry', (_message.Message,), dict(
     DESCRIPTOR = _CONFIGGROUPSCHEMA_POLICIESENTRY,
     __module__ = 'hfc.protos.common.configtx_pb2'
-    # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigGroupSchema.PoliciesEntry)
+    # @@protoc_insertion_point(class_scope:common.ConfigGroupSchema.PoliciesEntry)
     ))
   ,
   DESCRIPTOR = _CONFIGGROUPSCHEMA,
   __module__ = 'hfc.protos.common.configtx_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigGroupSchema)
+  # @@protoc_insertion_point(class_scope:common.ConfigGroupSchema)
   ))
 _sym_db.RegisterMessage(ConfigGroupSchema)
 _sym_db.RegisterMessage(ConfigGroupSchema.GroupsEntry)
@@ -769,35 +769,35 @@ _sym_db.RegisterMessage(ConfigGroupSchema.PoliciesEntry)
 ConfigValueSchema = _reflection.GeneratedProtocolMessageType('ConfigValueSchema', (_message.Message,), dict(
   DESCRIPTOR = _CONFIGVALUESCHEMA,
   __module__ = 'hfc.protos.common.configtx_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigValueSchema)
+  # @@protoc_insertion_point(class_scope:common.ConfigValueSchema)
   ))
 _sym_db.RegisterMessage(ConfigValueSchema)
 
 ConfigPolicySchema = _reflection.GeneratedProtocolMessageType('ConfigPolicySchema', (_message.Message,), dict(
   DESCRIPTOR = _CONFIGPOLICYSCHEMA,
   __module__ = 'hfc.protos.common.configtx_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigPolicySchema)
+  # @@protoc_insertion_point(class_scope:common.ConfigPolicySchema)
   ))
 _sym_db.RegisterMessage(ConfigPolicySchema)
 
 Config = _reflection.GeneratedProtocolMessageType('Config', (_message.Message,), dict(
   DESCRIPTOR = _CONFIG,
   __module__ = 'hfc.protos.common.configtx_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.Config)
+  # @@protoc_insertion_point(class_scope:common.Config)
   ))
 _sym_db.RegisterMessage(Config)
 
 ConfigUpdateEnvelope = _reflection.GeneratedProtocolMessageType('ConfigUpdateEnvelope', (_message.Message,), dict(
   DESCRIPTOR = _CONFIGUPDATEENVELOPE,
   __module__ = 'hfc.protos.common.configtx_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigUpdateEnvelope)
+  # @@protoc_insertion_point(class_scope:common.ConfigUpdateEnvelope)
   ))
 _sym_db.RegisterMessage(ConfigUpdateEnvelope)
 
 ConfigUpdate = _reflection.GeneratedProtocolMessageType('ConfigUpdate', (_message.Message,), dict(
   DESCRIPTOR = _CONFIGUPDATE,
   __module__ = 'hfc.protos.common.configtx_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigUpdate)
+  # @@protoc_insertion_point(class_scope:common.ConfigUpdate)
   ))
 _sym_db.RegisterMessage(ConfigUpdate)
 
@@ -806,26 +806,26 @@ ConfigGroup = _reflection.GeneratedProtocolMessageType('ConfigGroup', (_message.
   GroupsEntry = _reflection.GeneratedProtocolMessageType('GroupsEntry', (_message.Message,), dict(
     DESCRIPTOR = _CONFIGGROUP_GROUPSENTRY,
     __module__ = 'hfc.protos.common.configtx_pb2'
-    # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigGroup.GroupsEntry)
+    # @@protoc_insertion_point(class_scope:common.ConfigGroup.GroupsEntry)
     ))
   ,
 
   ValuesEntry = _reflection.GeneratedProtocolMessageType('ValuesEntry', (_message.Message,), dict(
     DESCRIPTOR = _CONFIGGROUP_VALUESENTRY,
     __module__ = 'hfc.protos.common.configtx_pb2'
-    # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigGroup.ValuesEntry)
+    # @@protoc_insertion_point(class_scope:common.ConfigGroup.ValuesEntry)
     ))
   ,
 
   PoliciesEntry = _reflection.GeneratedProtocolMessageType('PoliciesEntry', (_message.Message,), dict(
     DESCRIPTOR = _CONFIGGROUP_POLICIESENTRY,
     __module__ = 'hfc.protos.common.configtx_pb2'
-    # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigGroup.PoliciesEntry)
+    # @@protoc_insertion_point(class_scope:common.ConfigGroup.PoliciesEntry)
     ))
   ,
   DESCRIPTOR = _CONFIGGROUP,
   __module__ = 'hfc.protos.common.configtx_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigGroup)
+  # @@protoc_insertion_point(class_scope:common.ConfigGroup)
   ))
 _sym_db.RegisterMessage(ConfigGroup)
 _sym_db.RegisterMessage(ConfigGroup.GroupsEntry)
@@ -835,21 +835,21 @@ _sym_db.RegisterMessage(ConfigGroup.PoliciesEntry)
 ConfigValue = _reflection.GeneratedProtocolMessageType('ConfigValue', (_message.Message,), dict(
   DESCRIPTOR = _CONFIGVALUE,
   __module__ = 'hfc.protos.common.configtx_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigValue)
+  # @@protoc_insertion_point(class_scope:common.ConfigValue)
   ))
 _sym_db.RegisterMessage(ConfigValue)
 
 ConfigPolicy = _reflection.GeneratedProtocolMessageType('ConfigPolicy', (_message.Message,), dict(
   DESCRIPTOR = _CONFIGPOLICY,
   __module__ = 'hfc.protos.common.configtx_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigPolicy)
+  # @@protoc_insertion_point(class_scope:common.ConfigPolicy)
   ))
 _sym_db.RegisterMessage(ConfigPolicy)
 
 ConfigSignature = _reflection.GeneratedProtocolMessageType('ConfigSignature', (_message.Message,), dict(
   DESCRIPTOR = _CONFIGSIGNATURE,
   __module__ = 'hfc.protos.common.configtx_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.ConfigSignature)
+  # @@protoc_insertion_point(class_scope:common.ConfigSignature)
   ))
 _sym_db.RegisterMessage(ConfigSignature)
 

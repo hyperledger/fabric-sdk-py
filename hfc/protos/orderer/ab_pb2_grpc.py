@@ -16,12 +16,12 @@ class AtomicBroadcastStub(object):
       channel: A grpc.Channel.
     """
     self.Broadcast = channel.stream_stream(
-        '/hfc.protos.orderer.AtomicBroadcast/Broadcast',
+        '/orderer.AtomicBroadcast/Broadcast',
         request_serializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.SerializeToString,
         response_deserializer=hfc_dot_protos_dot_orderer_dot_ab__pb2.BroadcastResponse.FromString,
         )
     self.Deliver = channel.stream_stream(
-        '/hfc.protos.orderer.AtomicBroadcast/Deliver',
+        '/orderer.AtomicBroadcast/Deliver',
         request_serializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.SerializeToString,
         response_deserializer=hfc_dot_protos_dot_orderer_dot_ab__pb2.DeliverResponse.FromString,
         )
@@ -58,5 +58,5 @@ def add_AtomicBroadcastServicer_to_server(servicer, server):
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
-      'hfc.protos.orderer.AtomicBroadcast', rpc_method_handlers)
+      'orderer.AtomicBroadcast', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))

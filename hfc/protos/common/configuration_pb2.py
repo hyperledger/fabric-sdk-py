@@ -17,9 +17,9 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/common/configuration.proto',
-  package='hfc.protos.common',
+  package='common',
   syntax='proto3',
-  serialized_pb=_b('\n%hfc/protos/common/configuration.proto\x12\x11hfc.protos.common\" \n\x10HashingAlgorithm\x12\x0c\n\x04name\x18\x01 \x01(\t\"*\n\x19\x42lockDataHashingStructure\x12\r\n\x05width\x18\x01 \x01(\r\"%\n\x10OrdererAddresses\x12\x11\n\taddresses\x18\x01 \x03(\tB-Z+github.com/hyperledger/fabric/protos/commonb\x06proto3')
+  serialized_pb=_b('\n%hfc/protos/common/configuration.proto\x12\x06\x63ommon\" \n\x10HashingAlgorithm\x12\x0c\n\x04name\x18\x01 \x01(\t\"*\n\x19\x42lockDataHashingStructure\x12\r\n\x05width\x18\x01 \x01(\r\"%\n\x10OrdererAddresses\x12\x11\n\taddresses\x18\x01 \x03(\tB-Z+github.com/hyperledger/fabric/protos/commonb\x06proto3')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -28,13 +28,13 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _HASHINGALGORITHM = _descriptor.Descriptor(
   name='HashingAlgorithm',
-  full_name='hfc.protos.common.HashingAlgorithm',
+  full_name='common.HashingAlgorithm',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='name', full_name='hfc.protos.common.HashingAlgorithm.name', index=0,
+      name='name', full_name='common.HashingAlgorithm.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -52,20 +52,20 @@ _HASHINGALGORITHM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=60,
-  serialized_end=92,
+  serialized_start=49,
+  serialized_end=81,
 )
 
 
 _BLOCKDATAHASHINGSTRUCTURE = _descriptor.Descriptor(
   name='BlockDataHashingStructure',
-  full_name='hfc.protos.common.BlockDataHashingStructure',
+  full_name='common.BlockDataHashingStructure',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='width', full_name='hfc.protos.common.BlockDataHashingStructure.width', index=0,
+      name='width', full_name='common.BlockDataHashingStructure.width', index=0,
       number=1, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -83,20 +83,20 @@ _BLOCKDATAHASHINGSTRUCTURE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=94,
-  serialized_end=136,
+  serialized_start=83,
+  serialized_end=125,
 )
 
 
 _ORDERERADDRESSES = _descriptor.Descriptor(
   name='OrdererAddresses',
-  full_name='hfc.protos.common.OrdererAddresses',
+  full_name='common.OrdererAddresses',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='addresses', full_name='hfc.protos.common.OrdererAddresses.addresses', index=0,
+      name='addresses', full_name='common.OrdererAddresses.addresses', index=0,
       number=1, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -114,8 +114,8 @@ _ORDERERADDRESSES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=138,
-  serialized_end=175,
+  serialized_start=127,
+  serialized_end=164,
 )
 
 DESCRIPTOR.message_types_by_name['HashingAlgorithm'] = _HASHINGALGORITHM
@@ -125,21 +125,21 @@ DESCRIPTOR.message_types_by_name['OrdererAddresses'] = _ORDERERADDRESSES
 HashingAlgorithm = _reflection.GeneratedProtocolMessageType('HashingAlgorithm', (_message.Message,), dict(
   DESCRIPTOR = _HASHINGALGORITHM,
   __module__ = 'hfc.protos.common.configuration_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.HashingAlgorithm)
+  # @@protoc_insertion_point(class_scope:common.HashingAlgorithm)
   ))
 _sym_db.RegisterMessage(HashingAlgorithm)
 
 BlockDataHashingStructure = _reflection.GeneratedProtocolMessageType('BlockDataHashingStructure', (_message.Message,), dict(
   DESCRIPTOR = _BLOCKDATAHASHINGSTRUCTURE,
   __module__ = 'hfc.protos.common.configuration_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.BlockDataHashingStructure)
+  # @@protoc_insertion_point(class_scope:common.BlockDataHashingStructure)
   ))
 _sym_db.RegisterMessage(BlockDataHashingStructure)
 
 OrdererAddresses = _reflection.GeneratedProtocolMessageType('OrdererAddresses', (_message.Message,), dict(
   DESCRIPTOR = _ORDERERADDRESSES,
   __module__ = 'hfc.protos.common.configuration_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.OrdererAddresses)
+  # @@protoc_insertion_point(class_scope:common.OrdererAddresses)
   ))
 _sym_db.RegisterMessage(OrdererAddresses)
 

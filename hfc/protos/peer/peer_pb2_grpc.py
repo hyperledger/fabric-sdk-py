@@ -16,7 +16,7 @@ class EndorserStub(object):
       channel: A grpc.Channel.
     """
     self.ProcessProposal = channel.unary_unary(
-        '/hfc.protos.peer.Endorser/ProcessProposal',
+        '/protos.Endorser/ProcessProposal',
         request_serializer=hfc_dot_protos_dot_peer_dot_proposal__pb2.SignedProposal.SerializeToString,
         response_deserializer=hfc_dot_protos_dot_peer_dot_proposal__response__pb2.ProposalResponse.FromString,
         )
@@ -39,5 +39,5 @@ def add_EndorserServicer_to_server(servicer, server):
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
-      'hfc.protos.peer.Endorser', rpc_method_handlers)
+      'protos.Endorser', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))

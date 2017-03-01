@@ -18,9 +18,9 @@ from hfc.protos.common import common_pb2 as hfc_dot_protos_dot_common_dot_common
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/orderer/ab.proto',
-  package='hfc.protos.orderer',
+  package='orderer',
   syntax='proto3',
-  serialized_pb=_b('\n\x1bhfc/protos/orderer/ab.proto\x12\x12hfc.protos.orderer\x1a\x1ehfc/protos/common/common.proto\">\n\x11\x42roadcastResponse\x12)\n\x06status\x18\x01 \x01(\x0e\x32\x19.hfc.protos.common.Status\"\x0c\n\nSeekNewest\"\x0c\n\nSeekOldest\"\x1f\n\rSeekSpecified\x12\x0e\n\x06number\x18\x01 \x01(\x04\"\xb2\x01\n\x0cSeekPosition\x12\x30\n\x06newest\x18\x01 \x01(\x0b\x32\x1e.hfc.protos.orderer.SeekNewestH\x00\x12\x30\n\x06oldest\x18\x02 \x01(\x0b\x32\x1e.hfc.protos.orderer.SeekOldestH\x00\x12\x36\n\tspecified\x18\x03 \x01(\x0b\x32!.hfc.protos.orderer.SeekSpecifiedH\x00\x42\x06\n\x04Type\"\xe6\x01\n\x08SeekInfo\x12/\n\x05start\x18\x01 \x01(\x0b\x32 .hfc.protos.orderer.SeekPosition\x12.\n\x04stop\x18\x02 \x01(\x0b\x32 .hfc.protos.orderer.SeekPosition\x12;\n\x08\x62\x65havior\x18\x03 \x01(\x0e\x32).hfc.protos.orderer.SeekInfo.SeekBehavior\"<\n\x0cSeekBehavior\x12\x15\n\x11\x42LOCK_UNTIL_READY\x10\x00\x12\x15\n\x11\x46\x41IL_IF_NOT_READY\x10\x01\"q\n\x0f\x44\x65liverResponse\x12+\n\x06status\x18\x01 \x01(\x0e\x32\x19.hfc.protos.common.StatusH\x00\x12)\n\x05\x62lock\x18\x02 \x01(\x0b\x32\x18.hfc.protos.common.BlockH\x00\x42\x06\n\x04Type2\xbb\x01\n\x0f\x41tomicBroadcast\x12U\n\tBroadcast\x12\x1b.hfc.protos.common.Envelope\x1a%.hfc.protos.orderer.BroadcastResponse\"\x00(\x01\x30\x01\x12Q\n\x07\x44\x65liver\x12\x1b.hfc.protos.common.Envelope\x1a#.hfc.protos.orderer.DeliverResponse\"\x00(\x01\x30\x01\x42.Z,github.com/hyperledger/fabric/protos/ordererb\x06proto3')
+  serialized_pb=_b('\n\x1bhfc/protos/orderer/ab.proto\x12\x07orderer\x1a\x1ehfc/protos/common/common.proto\"3\n\x11\x42roadcastResponse\x12\x1e\n\x06status\x18\x01 \x01(\x0e\x32\x0e.common.Status\"\x0c\n\nSeekNewest\"\x0c\n\nSeekOldest\"\x1f\n\rSeekSpecified\x12\x0e\n\x06number\x18\x01 \x01(\x04\"\x91\x01\n\x0cSeekPosition\x12%\n\x06newest\x18\x01 \x01(\x0b\x32\x13.orderer.SeekNewestH\x00\x12%\n\x06oldest\x18\x02 \x01(\x0b\x32\x13.orderer.SeekOldestH\x00\x12+\n\tspecified\x18\x03 \x01(\x0b\x32\x16.orderer.SeekSpecifiedH\x00\x42\x06\n\x04Type\"\xc5\x01\n\x08SeekInfo\x12$\n\x05start\x18\x01 \x01(\x0b\x32\x15.orderer.SeekPosition\x12#\n\x04stop\x18\x02 \x01(\x0b\x32\x15.orderer.SeekPosition\x12\x30\n\x08\x62\x65havior\x18\x03 \x01(\x0e\x32\x1e.orderer.SeekInfo.SeekBehavior\"<\n\x0cSeekBehavior\x12\x15\n\x11\x42LOCK_UNTIL_READY\x10\x00\x12\x15\n\x11\x46\x41IL_IF_NOT_READY\x10\x01\"[\n\x0f\x44\x65liverResponse\x12 \n\x06status\x18\x01 \x01(\x0e\x32\x0e.common.StatusH\x00\x12\x1e\n\x05\x62lock\x18\x02 \x01(\x0b\x32\r.common.BlockH\x00\x42\x06\n\x04Type2\x8f\x01\n\x0f\x41tomicBroadcast\x12?\n\tBroadcast\x12\x10.common.Envelope\x1a\x1a.orderer.BroadcastResponse\"\x00(\x01\x30\x01\x12;\n\x07\x44\x65liver\x12\x10.common.Envelope\x1a\x18.orderer.DeliverResponse\"\x00(\x01\x30\x01\x42.Z,github.com/hyperledger/fabric/protos/ordererb\x06proto3')
   ,
   dependencies=[hfc_dot_protos_dot_common_dot_common__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -29,7 +29,7 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _SEEKINFO_SEEKBEHAVIOR = _descriptor.EnumDescriptor(
   name='SeekBehavior',
-  full_name='hfc.protos.orderer.SeekInfo.SeekBehavior',
+  full_name='orderer.SeekInfo.SeekBehavior',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -44,21 +44,21 @@ _SEEKINFO_SEEKBEHAVIOR = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=560,
-  serialized_end=620,
+  serialized_start=472,
+  serialized_end=532,
 )
 _sym_db.RegisterEnumDescriptor(_SEEKINFO_SEEKBEHAVIOR)
 
 
 _BROADCASTRESPONSE = _descriptor.Descriptor(
   name='BroadcastResponse',
-  full_name='hfc.protos.orderer.BroadcastResponse',
+  full_name='orderer.BroadcastResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='status', full_name='hfc.protos.orderer.BroadcastResponse.status', index=0,
+      name='status', full_name='orderer.BroadcastResponse.status', index=0,
       number=1, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -76,14 +76,14 @@ _BROADCASTRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=83,
-  serialized_end=145,
+  serialized_start=72,
+  serialized_end=123,
 )
 
 
 _SEEKNEWEST = _descriptor.Descriptor(
   name='SeekNewest',
-  full_name='hfc.protos.orderer.SeekNewest',
+  full_name='orderer.SeekNewest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -100,14 +100,14 @@ _SEEKNEWEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=147,
-  serialized_end=159,
+  serialized_start=125,
+  serialized_end=137,
 )
 
 
 _SEEKOLDEST = _descriptor.Descriptor(
   name='SeekOldest',
-  full_name='hfc.protos.orderer.SeekOldest',
+  full_name='orderer.SeekOldest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -124,20 +124,20 @@ _SEEKOLDEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=161,
-  serialized_end=173,
+  serialized_start=139,
+  serialized_end=151,
 )
 
 
 _SEEKSPECIFIED = _descriptor.Descriptor(
   name='SeekSpecified',
-  full_name='hfc.protos.orderer.SeekSpecified',
+  full_name='orderer.SeekSpecified',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='number', full_name='hfc.protos.orderer.SeekSpecified.number', index=0,
+      name='number', full_name='orderer.SeekSpecified.number', index=0,
       number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -155,34 +155,34 @@ _SEEKSPECIFIED = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=175,
-  serialized_end=206,
+  serialized_start=153,
+  serialized_end=184,
 )
 
 
 _SEEKPOSITION = _descriptor.Descriptor(
   name='SeekPosition',
-  full_name='hfc.protos.orderer.SeekPosition',
+  full_name='orderer.SeekPosition',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='newest', full_name='hfc.protos.orderer.SeekPosition.newest', index=0,
+      name='newest', full_name='orderer.SeekPosition.newest', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='oldest', full_name='hfc.protos.orderer.SeekPosition.oldest', index=1,
+      name='oldest', full_name='orderer.SeekPosition.oldest', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='specified', full_name='hfc.protos.orderer.SeekPosition.specified', index=2,
+      name='specified', full_name='orderer.SeekPosition.specified', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -200,37 +200,37 @@ _SEEKPOSITION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
     _descriptor.OneofDescriptor(
-      name='Type', full_name='hfc.protos.orderer.SeekPosition.Type',
+      name='Type', full_name='orderer.SeekPosition.Type',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=209,
-  serialized_end=387,
+  serialized_start=187,
+  serialized_end=332,
 )
 
 
 _SEEKINFO = _descriptor.Descriptor(
   name='SeekInfo',
-  full_name='hfc.protos.orderer.SeekInfo',
+  full_name='orderer.SeekInfo',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='start', full_name='hfc.protos.orderer.SeekInfo.start', index=0,
+      name='start', full_name='orderer.SeekInfo.start', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='stop', full_name='hfc.protos.orderer.SeekInfo.stop', index=1,
+      name='stop', full_name='orderer.SeekInfo.stop', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='behavior', full_name='hfc.protos.orderer.SeekInfo.behavior', index=2,
+      name='behavior', full_name='orderer.SeekInfo.behavior', index=2,
       number=3, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -249,27 +249,27 @@ _SEEKINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=390,
-  serialized_end=620,
+  serialized_start=335,
+  serialized_end=532,
 )
 
 
 _DELIVERRESPONSE = _descriptor.Descriptor(
   name='DeliverResponse',
-  full_name='hfc.protos.orderer.DeliverResponse',
+  full_name='orderer.DeliverResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='status', full_name='hfc.protos.orderer.DeliverResponse.status', index=0,
+      name='status', full_name='orderer.DeliverResponse.status', index=0,
       number=1, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='block', full_name='hfc.protos.orderer.DeliverResponse.block', index=1,
+      name='block', full_name='orderer.DeliverResponse.block', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -287,11 +287,11 @@ _DELIVERRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
     _descriptor.OneofDescriptor(
-      name='Type', full_name='hfc.protos.orderer.DeliverResponse.Type',
+      name='Type', full_name='orderer.DeliverResponse.Type',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=622,
-  serialized_end=735,
+  serialized_start=534,
+  serialized_end=625,
 )
 
 _BROADCASTRESPONSE.fields_by_name['status'].enum_type = hfc_dot_protos_dot_common_dot_common__pb2._STATUS
@@ -330,49 +330,49 @@ DESCRIPTOR.message_types_by_name['DeliverResponse'] = _DELIVERRESPONSE
 BroadcastResponse = _reflection.GeneratedProtocolMessageType('BroadcastResponse', (_message.Message,), dict(
   DESCRIPTOR = _BROADCASTRESPONSE,
   __module__ = 'hfc.protos.orderer.ab_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.orderer.BroadcastResponse)
+  # @@protoc_insertion_point(class_scope:orderer.BroadcastResponse)
   ))
 _sym_db.RegisterMessage(BroadcastResponse)
 
 SeekNewest = _reflection.GeneratedProtocolMessageType('SeekNewest', (_message.Message,), dict(
   DESCRIPTOR = _SEEKNEWEST,
   __module__ = 'hfc.protos.orderer.ab_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.orderer.SeekNewest)
+  # @@protoc_insertion_point(class_scope:orderer.SeekNewest)
   ))
 _sym_db.RegisterMessage(SeekNewest)
 
 SeekOldest = _reflection.GeneratedProtocolMessageType('SeekOldest', (_message.Message,), dict(
   DESCRIPTOR = _SEEKOLDEST,
   __module__ = 'hfc.protos.orderer.ab_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.orderer.SeekOldest)
+  # @@protoc_insertion_point(class_scope:orderer.SeekOldest)
   ))
 _sym_db.RegisterMessage(SeekOldest)
 
 SeekSpecified = _reflection.GeneratedProtocolMessageType('SeekSpecified', (_message.Message,), dict(
   DESCRIPTOR = _SEEKSPECIFIED,
   __module__ = 'hfc.protos.orderer.ab_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.orderer.SeekSpecified)
+  # @@protoc_insertion_point(class_scope:orderer.SeekSpecified)
   ))
 _sym_db.RegisterMessage(SeekSpecified)
 
 SeekPosition = _reflection.GeneratedProtocolMessageType('SeekPosition', (_message.Message,), dict(
   DESCRIPTOR = _SEEKPOSITION,
   __module__ = 'hfc.protos.orderer.ab_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.orderer.SeekPosition)
+  # @@protoc_insertion_point(class_scope:orderer.SeekPosition)
   ))
 _sym_db.RegisterMessage(SeekPosition)
 
 SeekInfo = _reflection.GeneratedProtocolMessageType('SeekInfo', (_message.Message,), dict(
   DESCRIPTOR = _SEEKINFO,
   __module__ = 'hfc.protos.orderer.ab_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.orderer.SeekInfo)
+  # @@protoc_insertion_point(class_scope:orderer.SeekInfo)
   ))
 _sym_db.RegisterMessage(SeekInfo)
 
 DeliverResponse = _reflection.GeneratedProtocolMessageType('DeliverResponse', (_message.Message,), dict(
   DESCRIPTOR = _DELIVERRESPONSE,
   __module__ = 'hfc.protos.orderer.ab_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.orderer.DeliverResponse)
+  # @@protoc_insertion_point(class_scope:orderer.DeliverResponse)
   ))
 _sym_db.RegisterMessage(DeliverResponse)
 
@@ -398,12 +398,12 @@ try:
         channel: A grpc.Channel.
       """
       self.Broadcast = channel.stream_stream(
-          '/hfc.protos.orderer.AtomicBroadcast/Broadcast',
+          '/orderer.AtomicBroadcast/Broadcast',
           request_serializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.SerializeToString,
           response_deserializer=BroadcastResponse.FromString,
           )
       self.Deliver = channel.stream_stream(
-          '/hfc.protos.orderer.AtomicBroadcast/Deliver',
+          '/orderer.AtomicBroadcast/Deliver',
           request_serializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.SerializeToString,
           response_deserializer=DeliverResponse.FromString,
           )
@@ -440,7 +440,7 @@ try:
         ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        'hfc.protos.orderer.AtomicBroadcast', rpc_method_handlers)
+        'orderer.AtomicBroadcast', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -483,16 +483,16 @@ try:
     file not marked beta) for all further purposes. This function was
     generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
     request_deserializers = {
-      ('hfc.protos.orderer.AtomicBroadcast', 'Broadcast'): hfc_dot_protos_dot_common_dot_common__pb2.Envelope.FromString,
-      ('hfc.protos.orderer.AtomicBroadcast', 'Deliver'): hfc_dot_protos_dot_common_dot_common__pb2.Envelope.FromString,
+      ('orderer.AtomicBroadcast', 'Broadcast'): hfc_dot_protos_dot_common_dot_common__pb2.Envelope.FromString,
+      ('orderer.AtomicBroadcast', 'Deliver'): hfc_dot_protos_dot_common_dot_common__pb2.Envelope.FromString,
     }
     response_serializers = {
-      ('hfc.protos.orderer.AtomicBroadcast', 'Broadcast'): BroadcastResponse.SerializeToString,
-      ('hfc.protos.orderer.AtomicBroadcast', 'Deliver'): DeliverResponse.SerializeToString,
+      ('orderer.AtomicBroadcast', 'Broadcast'): BroadcastResponse.SerializeToString,
+      ('orderer.AtomicBroadcast', 'Deliver'): DeliverResponse.SerializeToString,
     }
     method_implementations = {
-      ('hfc.protos.orderer.AtomicBroadcast', 'Broadcast'): face_utilities.stream_stream_inline(servicer.Broadcast),
-      ('hfc.protos.orderer.AtomicBroadcast', 'Deliver'): face_utilities.stream_stream_inline(servicer.Deliver),
+      ('orderer.AtomicBroadcast', 'Broadcast'): face_utilities.stream_stream_inline(servicer.Broadcast),
+      ('orderer.AtomicBroadcast', 'Deliver'): face_utilities.stream_stream_inline(servicer.Deliver),
     }
     server_options = beta_implementations.server_options(request_deserializers=request_deserializers, response_serializers=response_serializers, thread_pool=pool, thread_pool_size=pool_size, default_timeout=default_timeout, maximum_timeout=maximum_timeout)
     return beta_implementations.server(method_implementations, options=server_options)
@@ -505,19 +505,19 @@ try:
     file not marked beta) for all further purposes. This function was
     generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
     request_serializers = {
-      ('hfc.protos.orderer.AtomicBroadcast', 'Broadcast'): hfc_dot_protos_dot_common_dot_common__pb2.Envelope.SerializeToString,
-      ('hfc.protos.orderer.AtomicBroadcast', 'Deliver'): hfc_dot_protos_dot_common_dot_common__pb2.Envelope.SerializeToString,
+      ('orderer.AtomicBroadcast', 'Broadcast'): hfc_dot_protos_dot_common_dot_common__pb2.Envelope.SerializeToString,
+      ('orderer.AtomicBroadcast', 'Deliver'): hfc_dot_protos_dot_common_dot_common__pb2.Envelope.SerializeToString,
     }
     response_deserializers = {
-      ('hfc.protos.orderer.AtomicBroadcast', 'Broadcast'): BroadcastResponse.FromString,
-      ('hfc.protos.orderer.AtomicBroadcast', 'Deliver'): DeliverResponse.FromString,
+      ('orderer.AtomicBroadcast', 'Broadcast'): BroadcastResponse.FromString,
+      ('orderer.AtomicBroadcast', 'Deliver'): DeliverResponse.FromString,
     }
     cardinalities = {
       'Broadcast': cardinality.Cardinality.STREAM_STREAM,
       'Deliver': cardinality.Cardinality.STREAM_STREAM,
     }
     stub_options = beta_implementations.stub_options(host=host, metadata_transformer=metadata_transformer, request_serializers=request_serializers, response_deserializers=response_deserializers, thread_pool=pool, thread_pool_size=pool_size)
-    return beta_implementations.dynamic_stub(channel, 'hfc.protos.orderer.AtomicBroadcast', cardinalities, options=stub_options)
+    return beta_implementations.dynamic_stub(channel, 'orderer.AtomicBroadcast', cardinalities, options=stub_options)
 except ImportError:
   pass
 # @@protoc_insertion_point(module_scope)

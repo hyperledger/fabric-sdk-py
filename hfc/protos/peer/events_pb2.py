@@ -21,16 +21,16 @@ from hfc.protos.peer import transaction_pb2 as hfc_dot_protos_dot_peer_dot_trans
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/events.proto',
-  package='hfc.protos.peer',
+  package='protos',
   syntax='proto3',
-  serialized_pb=_b('\n\x1chfc/protos/peer/events.proto\x12\x0fhfc.protos.peer\x1a\x1ehfc/protos/common/common.proto\x1a$hfc/protos/peer/chaincodeevent.proto\x1a!hfc/protos/peer/transaction.proto\"8\n\x0c\x43haincodeReg\x12\x14\n\x0c\x63haincode_id\x18\x01 \x01(\t\x12\x12\n\nevent_name\x18\x02 \x01(\t\"\x93\x01\n\x08Interest\x12.\n\nevent_type\x18\x01 \x01(\x0e\x32\x1a.hfc.protos.peer.EventType\x12;\n\x12\x63haincode_reg_info\x18\x02 \x01(\x0b\x32\x1d.hfc.protos.peer.ChaincodeRegH\x00\x12\x0f\n\x07\x63hainID\x18\x03 \x01(\tB\t\n\x07RegInfo\"5\n\x08Register\x12)\n\x06\x65vents\x18\x01 \x03(\x0b\x32\x19.hfc.protos.peer.Interest\"H\n\tRejection\x12(\n\x02tx\x18\x01 \x01(\x0b\x32\x1c.hfc.protos.peer.Transaction\x12\x11\n\terror_msg\x18\x02 \x01(\t\"7\n\nUnregister\x12)\n\x06\x65vents\x18\x01 \x03(\x0b\x32\x19.hfc.protos.peer.Interest\"4\n\x0bSignedEvent\x12\x11\n\tsignature\x18\x01 \x01(\x0c\x12\x12\n\neventBytes\x18\x02 \x01(\x0c\"\x9b\x02\n\x05\x45vent\x12-\n\x08register\x18\x01 \x01(\x0b\x32\x19.hfc.protos.peer.RegisterH\x00\x12)\n\x05\x62lock\x18\x02 \x01(\x0b\x32\x18.hfc.protos.common.BlockH\x00\x12:\n\x0f\x63haincode_event\x18\x03 \x01(\x0b\x32\x1f.hfc.protos.peer.ChaincodeEventH\x00\x12/\n\trejection\x18\x04 \x01(\x0b\x32\x1a.hfc.protos.peer.RejectionH\x00\x12\x31\n\nunregister\x18\x05 \x01(\x0b\x32\x1b.hfc.protos.peer.UnregisterH\x00\x12\x0f\n\x07\x63reator\x18\x06 \x01(\x0c\x42\x07\n\x05\x45vent*B\n\tEventType\x12\x0c\n\x08REGISTER\x10\x00\x12\t\n\x05\x42LOCK\x10\x01\x12\r\n\tCHAINCODE\x10\x02\x12\r\n\tREJECTION\x10\x03\x32\x46\n\x06\x45vents\x12<\n\x04\x43hat\x12\x16.hfc.protos.peer.Event\x1a\x16.hfc.protos.peer.Event\"\x00(\x01\x30\x01\x42+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_pb=_b('\n\x1chfc/protos/peer/events.proto\x12\x06protos\x1a\x1ehfc/protos/common/common.proto\x1a$hfc/protos/peer/chaincodeevent.proto\x1a!hfc/protos/peer/transaction.proto\"8\n\x0c\x43haincodeReg\x12\x14\n\x0c\x63haincode_id\x18\x01 \x01(\t\x12\x12\n\nevent_name\x18\x02 \x01(\t\"\x81\x01\n\x08Interest\x12%\n\nevent_type\x18\x01 \x01(\x0e\x32\x11.protos.EventType\x12\x32\n\x12\x63haincode_reg_info\x18\x02 \x01(\x0b\x32\x14.protos.ChaincodeRegH\x00\x12\x0f\n\x07\x63hainID\x18\x03 \x01(\tB\t\n\x07RegInfo\",\n\x08Register\x12 \n\x06\x65vents\x18\x01 \x03(\x0b\x32\x10.protos.Interest\"?\n\tRejection\x12\x1f\n\x02tx\x18\x01 \x01(\x0b\x32\x13.protos.Transaction\x12\x11\n\terror_msg\x18\x02 \x01(\t\".\n\nUnregister\x12 \n\x06\x65vents\x18\x01 \x03(\x0b\x32\x10.protos.Interest\"4\n\x0bSignedEvent\x12\x11\n\tsignature\x18\x01 \x01(\x0c\x12\x12\n\neventBytes\x18\x02 \x01(\x0c\"\xec\x01\n\x05\x45vent\x12$\n\x08register\x18\x01 \x01(\x0b\x32\x10.protos.RegisterH\x00\x12\x1e\n\x05\x62lock\x18\x02 \x01(\x0b\x32\r.common.BlockH\x00\x12\x31\n\x0f\x63haincode_event\x18\x03 \x01(\x0b\x32\x16.protos.ChaincodeEventH\x00\x12&\n\trejection\x18\x04 \x01(\x0b\x32\x11.protos.RejectionH\x00\x12(\n\nunregister\x18\x05 \x01(\x0b\x32\x12.protos.UnregisterH\x00\x12\x0f\n\x07\x63reator\x18\x06 \x01(\x0c\x42\x07\n\x05\x45vent*B\n\tEventType\x12\x0c\n\x08REGISTER\x10\x00\x12\t\n\x05\x42LOCK\x10\x01\x12\r\n\tCHAINCODE\x10\x02\x12\r\n\tREJECTION\x10\x03\x32\x34\n\x06\x45vents\x12*\n\x04\x43hat\x12\r.protos.Event\x1a\r.protos.Event\"\x00(\x01\x30\x01\x42+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
   ,
   dependencies=[hfc_dot_protos_dot_common_dot_common__pb2.DESCRIPTOR,hfc_dot_protos_dot_peer_dot_chaincodeevent__pb2.DESCRIPTOR,hfc_dot_protos_dot_peer_dot_transaction__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _EVENTTYPE = _descriptor.EnumDescriptor(
   name='EventType',
-  full_name='hfc.protos.peer.EventType',
+  full_name='protos.EventType',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -53,8 +53,8 @@ _EVENTTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=888,
-  serialized_end=954,
+  serialized_start=787,
+  serialized_end=853,
 )
 _sym_db.RegisterEnumDescriptor(_EVENTTYPE)
 
@@ -68,20 +68,20 @@ REJECTION = 3
 
 _CHAINCODEREG = _descriptor.Descriptor(
   name='ChaincodeReg',
-  full_name='hfc.protos.peer.ChaincodeReg',
+  full_name='protos.ChaincodeReg',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='chaincode_id', full_name='hfc.protos.peer.ChaincodeReg.chaincode_id', index=0,
+      name='chaincode_id', full_name='protos.ChaincodeReg.chaincode_id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='event_name', full_name='hfc.protos.peer.ChaincodeReg.event_name', index=1,
+      name='event_name', full_name='protos.ChaincodeReg.event_name', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -99,34 +99,34 @@ _CHAINCODEREG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=154,
-  serialized_end=210,
+  serialized_start=145,
+  serialized_end=201,
 )
 
 
 _INTEREST = _descriptor.Descriptor(
   name='Interest',
-  full_name='hfc.protos.peer.Interest',
+  full_name='protos.Interest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='event_type', full_name='hfc.protos.peer.Interest.event_type', index=0,
+      name='event_type', full_name='protos.Interest.event_type', index=0,
       number=1, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='chaincode_reg_info', full_name='hfc.protos.peer.Interest.chaincode_reg_info', index=1,
+      name='chaincode_reg_info', full_name='protos.Interest.chaincode_reg_info', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='chainID', full_name='hfc.protos.peer.Interest.chainID', index=2,
+      name='chainID', full_name='protos.Interest.chainID', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -144,23 +144,23 @@ _INTEREST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
     _descriptor.OneofDescriptor(
-      name='RegInfo', full_name='hfc.protos.peer.Interest.RegInfo',
+      name='RegInfo', full_name='protos.Interest.RegInfo',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=213,
-  serialized_end=360,
+  serialized_start=204,
+  serialized_end=333,
 )
 
 
 _REGISTER = _descriptor.Descriptor(
   name='Register',
-  full_name='hfc.protos.peer.Register',
+  full_name='protos.Register',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='events', full_name='hfc.protos.peer.Register.events', index=0,
+      name='events', full_name='protos.Register.events', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -178,27 +178,27 @@ _REGISTER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=362,
-  serialized_end=415,
+  serialized_start=335,
+  serialized_end=379,
 )
 
 
 _REJECTION = _descriptor.Descriptor(
   name='Rejection',
-  full_name='hfc.protos.peer.Rejection',
+  full_name='protos.Rejection',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='tx', full_name='hfc.protos.peer.Rejection.tx', index=0,
+      name='tx', full_name='protos.Rejection.tx', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='error_msg', full_name='hfc.protos.peer.Rejection.error_msg', index=1,
+      name='error_msg', full_name='protos.Rejection.error_msg', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -216,20 +216,20 @@ _REJECTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=417,
-  serialized_end=489,
+  serialized_start=381,
+  serialized_end=444,
 )
 
 
 _UNREGISTER = _descriptor.Descriptor(
   name='Unregister',
-  full_name='hfc.protos.peer.Unregister',
+  full_name='protos.Unregister',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='events', full_name='hfc.protos.peer.Unregister.events', index=0,
+      name='events', full_name='protos.Unregister.events', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -247,27 +247,27 @@ _UNREGISTER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=491,
-  serialized_end=546,
+  serialized_start=446,
+  serialized_end=492,
 )
 
 
 _SIGNEDEVENT = _descriptor.Descriptor(
   name='SignedEvent',
-  full_name='hfc.protos.peer.SignedEvent',
+  full_name='protos.SignedEvent',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='signature', full_name='hfc.protos.peer.SignedEvent.signature', index=0,
+      name='signature', full_name='protos.SignedEvent.signature', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='eventBytes', full_name='hfc.protos.peer.SignedEvent.eventBytes', index=1,
+      name='eventBytes', full_name='protos.SignedEvent.eventBytes', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -285,55 +285,55 @@ _SIGNEDEVENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=548,
-  serialized_end=600,
+  serialized_start=494,
+  serialized_end=546,
 )
 
 
 _EVENT = _descriptor.Descriptor(
   name='Event',
-  full_name='hfc.protos.peer.Event',
+  full_name='protos.Event',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='register', full_name='hfc.protos.peer.Event.register', index=0,
+      name='register', full_name='protos.Event.register', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='block', full_name='hfc.protos.peer.Event.block', index=1,
+      name='block', full_name='protos.Event.block', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='chaincode_event', full_name='hfc.protos.peer.Event.chaincode_event', index=2,
+      name='chaincode_event', full_name='protos.Event.chaincode_event', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='rejection', full_name='hfc.protos.peer.Event.rejection', index=3,
+      name='rejection', full_name='protos.Event.rejection', index=3,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='unregister', full_name='hfc.protos.peer.Event.unregister', index=4,
+      name='unregister', full_name='protos.Event.unregister', index=4,
       number=5, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='creator', full_name='hfc.protos.peer.Event.creator', index=5,
+      name='creator', full_name='protos.Event.creator', index=5,
       number=6, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -351,11 +351,11 @@ _EVENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
     _descriptor.OneofDescriptor(
-      name='Event', full_name='hfc.protos.peer.Event.Event',
+      name='Event', full_name='protos.Event.Event',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=603,
-  serialized_end=886,
+  serialized_start=549,
+  serialized_end=785,
 )
 
 _INTEREST.fields_by_name['event_type'].enum_type = _EVENTTYPE
@@ -398,49 +398,49 @@ DESCRIPTOR.enum_types_by_name['EventType'] = _EVENTTYPE
 ChaincodeReg = _reflection.GeneratedProtocolMessageType('ChaincodeReg', (_message.Message,), dict(
   DESCRIPTOR = _CHAINCODEREG,
   __module__ = 'hfc.protos.peer.events_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.peer.ChaincodeReg)
+  # @@protoc_insertion_point(class_scope:protos.ChaincodeReg)
   ))
 _sym_db.RegisterMessage(ChaincodeReg)
 
 Interest = _reflection.GeneratedProtocolMessageType('Interest', (_message.Message,), dict(
   DESCRIPTOR = _INTEREST,
   __module__ = 'hfc.protos.peer.events_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.peer.Interest)
+  # @@protoc_insertion_point(class_scope:protos.Interest)
   ))
 _sym_db.RegisterMessage(Interest)
 
 Register = _reflection.GeneratedProtocolMessageType('Register', (_message.Message,), dict(
   DESCRIPTOR = _REGISTER,
   __module__ = 'hfc.protos.peer.events_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.peer.Register)
+  # @@protoc_insertion_point(class_scope:protos.Register)
   ))
 _sym_db.RegisterMessage(Register)
 
 Rejection = _reflection.GeneratedProtocolMessageType('Rejection', (_message.Message,), dict(
   DESCRIPTOR = _REJECTION,
   __module__ = 'hfc.protos.peer.events_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.peer.Rejection)
+  # @@protoc_insertion_point(class_scope:protos.Rejection)
   ))
 _sym_db.RegisterMessage(Rejection)
 
 Unregister = _reflection.GeneratedProtocolMessageType('Unregister', (_message.Message,), dict(
   DESCRIPTOR = _UNREGISTER,
   __module__ = 'hfc.protos.peer.events_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.peer.Unregister)
+  # @@protoc_insertion_point(class_scope:protos.Unregister)
   ))
 _sym_db.RegisterMessage(Unregister)
 
 SignedEvent = _reflection.GeneratedProtocolMessageType('SignedEvent', (_message.Message,), dict(
   DESCRIPTOR = _SIGNEDEVENT,
   __module__ = 'hfc.protos.peer.events_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.peer.SignedEvent)
+  # @@protoc_insertion_point(class_scope:protos.SignedEvent)
   ))
 _sym_db.RegisterMessage(SignedEvent)
 
 Event = _reflection.GeneratedProtocolMessageType('Event', (_message.Message,), dict(
   DESCRIPTOR = _EVENT,
   __module__ = 'hfc.protos.peer.events_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.peer.Event)
+  # @@protoc_insertion_point(class_scope:protos.Event)
   ))
 _sym_db.RegisterMessage(Event)
 
@@ -468,7 +468,7 @@ try:
         channel: A grpc.Channel.
       """
       self.Chat = channel.stream_stream(
-          '/hfc.protos.peer.Events/Chat',
+          '/protos.Events/Chat',
           request_serializer=Event.SerializeToString,
           response_deserializer=Event.FromString,
           )
@@ -495,7 +495,7 @@ try:
         ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        'hfc.protos.peer.Events', rpc_method_handlers)
+        'protos.Events', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -534,13 +534,13 @@ try:
     file not marked beta) for all further purposes. This function was
     generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
     request_deserializers = {
-      ('hfc.protos.peer.Events', 'Chat'): Event.FromString,
+      ('protos.Events', 'Chat'): Event.FromString,
     }
     response_serializers = {
-      ('hfc.protos.peer.Events', 'Chat'): Event.SerializeToString,
+      ('protos.Events', 'Chat'): Event.SerializeToString,
     }
     method_implementations = {
-      ('hfc.protos.peer.Events', 'Chat'): face_utilities.stream_stream_inline(servicer.Chat),
+      ('protos.Events', 'Chat'): face_utilities.stream_stream_inline(servicer.Chat),
     }
     server_options = beta_implementations.server_options(request_deserializers=request_deserializers, response_serializers=response_serializers, thread_pool=pool, thread_pool_size=pool_size, default_timeout=default_timeout, maximum_timeout=maximum_timeout)
     return beta_implementations.server(method_implementations, options=server_options)
@@ -553,16 +553,16 @@ try:
     file not marked beta) for all further purposes. This function was
     generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
     request_serializers = {
-      ('hfc.protos.peer.Events', 'Chat'): Event.SerializeToString,
+      ('protos.Events', 'Chat'): Event.SerializeToString,
     }
     response_deserializers = {
-      ('hfc.protos.peer.Events', 'Chat'): Event.FromString,
+      ('protos.Events', 'Chat'): Event.FromString,
     }
     cardinalities = {
       'Chat': cardinality.Cardinality.STREAM_STREAM,
     }
     stub_options = beta_implementations.stub_options(host=host, metadata_transformer=metadata_transformer, request_serializers=request_serializers, response_deserializers=response_deserializers, thread_pool=pool, thread_pool_size=pool_size)
-    return beta_implementations.dynamic_stub(channel, 'hfc.protos.peer.Events', cardinalities, options=stub_options)
+    return beta_implementations.dynamic_stub(channel, 'protos.Events', cardinalities, options=stub_options)
 except ImportError:
   pass
 # @@protoc_insertion_point(module_scope)
