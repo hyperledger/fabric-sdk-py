@@ -18,9 +18,9 @@ from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/admin.proto',
-  package='hfc.protos.peer',
+  package='protos',
   syntax='proto3',
-  serialized_pb=_b('\n\x1bhfc/protos/peer/admin.proto\x12\x0fhfc.protos.peer\x1a\x1bgoogle/protobuf/empty.proto\"\xa3\x01\n\x0cServerStatus\x12\x38\n\x06status\x18\x01 \x01(\x0e\x32(.hfc.protos.peer.ServerStatus.StatusCode\"Y\n\nStatusCode\x12\r\n\tUNDEFINED\x10\x00\x12\x0b\n\x07STARTED\x10\x01\x12\x0b\n\x07STOPPED\x10\x02\x12\n\n\x06PAUSED\x10\x03\x12\t\n\x05\x45RROR\x10\x04\x12\x0b\n\x07UNKNOWN\x10\x05\"8\n\x0fLogLevelRequest\x12\x12\n\nlog_module\x18\x01 \x01(\t\x12\x11\n\tlog_level\x18\x02 \x01(\t\"9\n\x10LogLevelResponse\x12\x12\n\nlog_module\x18\x01 \x01(\t\x12\x11\n\tlog_level\x18\x02 \x01(\t2\x94\x03\n\x05\x41\x64min\x12\x44\n\tGetStatus\x12\x16.google.protobuf.Empty\x1a\x1d.hfc.protos.peer.ServerStatus\"\x00\x12\x46\n\x0bStartServer\x12\x16.google.protobuf.Empty\x1a\x1d.hfc.protos.peer.ServerStatus\"\x00\x12\x45\n\nStopServer\x12\x16.google.protobuf.Empty\x1a\x1d.hfc.protos.peer.ServerStatus\"\x00\x12Z\n\x11GetModuleLogLevel\x12 .hfc.protos.peer.LogLevelRequest\x1a!.hfc.protos.peer.LogLevelResponse\"\x00\x12Z\n\x11SetModuleLogLevel\x12 .hfc.protos.peer.LogLevelRequest\x1a!.hfc.protos.peer.LogLevelResponse\"\x00\x42+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_pb=_b('\n\x1bhfc/protos/peer/admin.proto\x12\x06protos\x1a\x1bgoogle/protobuf/empty.proto\"\x9a\x01\n\x0cServerStatus\x12/\n\x06status\x18\x01 \x01(\x0e\x32\x1f.protos.ServerStatus.StatusCode\"Y\n\nStatusCode\x12\r\n\tUNDEFINED\x10\x00\x12\x0b\n\x07STARTED\x10\x01\x12\x0b\n\x07STOPPED\x10\x02\x12\n\n\x06PAUSED\x10\x03\x12\t\n\x05\x45RROR\x10\x04\x12\x0b\n\x07UNKNOWN\x10\x05\"8\n\x0fLogLevelRequest\x12\x12\n\nlog_module\x18\x01 \x01(\t\x12\x11\n\tlog_level\x18\x02 \x01(\t\"9\n\x10LogLevelResponse\x12\x12\n\nlog_module\x18\x01 \x01(\t\x12\x11\n\tlog_level\x18\x02 \x01(\t2\xd5\x02\n\x05\x41\x64min\x12;\n\tGetStatus\x12\x16.google.protobuf.Empty\x1a\x14.protos.ServerStatus\"\x00\x12=\n\x0bStartServer\x12\x16.google.protobuf.Empty\x1a\x14.protos.ServerStatus\"\x00\x12<\n\nStopServer\x12\x16.google.protobuf.Empty\x1a\x14.protos.ServerStatus\"\x00\x12H\n\x11GetModuleLogLevel\x12\x17.protos.LogLevelRequest\x1a\x18.protos.LogLevelResponse\"\x00\x12H\n\x11SetModuleLogLevel\x12\x17.protos.LogLevelRequest\x1a\x18.protos.LogLevelResponse\"\x00\x42+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
   ,
   dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -29,7 +29,7 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _SERVERSTATUS_STATUSCODE = _descriptor.EnumDescriptor(
   name='StatusCode',
-  full_name='hfc.protos.peer.ServerStatus.StatusCode',
+  full_name='protos.ServerStatus.StatusCode',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -60,21 +60,21 @@ _SERVERSTATUS_STATUSCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=152,
-  serialized_end=241,
+  serialized_start=134,
+  serialized_end=223,
 )
 _sym_db.RegisterEnumDescriptor(_SERVERSTATUS_STATUSCODE)
 
 
 _SERVERSTATUS = _descriptor.Descriptor(
   name='ServerStatus',
-  full_name='hfc.protos.peer.ServerStatus',
+  full_name='protos.ServerStatus',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='status', full_name='hfc.protos.peer.ServerStatus.status', index=0,
+      name='status', full_name='protos.ServerStatus.status', index=0,
       number=1, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -93,27 +93,27 @@ _SERVERSTATUS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=78,
-  serialized_end=241,
+  serialized_start=69,
+  serialized_end=223,
 )
 
 
 _LOGLEVELREQUEST = _descriptor.Descriptor(
   name='LogLevelRequest',
-  full_name='hfc.protos.peer.LogLevelRequest',
+  full_name='protos.LogLevelRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='log_module', full_name='hfc.protos.peer.LogLevelRequest.log_module', index=0,
+      name='log_module', full_name='protos.LogLevelRequest.log_module', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='log_level', full_name='hfc.protos.peer.LogLevelRequest.log_level', index=1,
+      name='log_level', full_name='protos.LogLevelRequest.log_level', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -131,27 +131,27 @@ _LOGLEVELREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=243,
-  serialized_end=299,
+  serialized_start=225,
+  serialized_end=281,
 )
 
 
 _LOGLEVELRESPONSE = _descriptor.Descriptor(
   name='LogLevelResponse',
-  full_name='hfc.protos.peer.LogLevelResponse',
+  full_name='protos.LogLevelResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='log_module', full_name='hfc.protos.peer.LogLevelResponse.log_module', index=0,
+      name='log_module', full_name='protos.LogLevelResponse.log_module', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='log_level', full_name='hfc.protos.peer.LogLevelResponse.log_level', index=1,
+      name='log_level', full_name='protos.LogLevelResponse.log_level', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -169,8 +169,8 @@ _LOGLEVELRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=301,
-  serialized_end=358,
+  serialized_start=283,
+  serialized_end=340,
 )
 
 _SERVERSTATUS.fields_by_name['status'].enum_type = _SERVERSTATUS_STATUSCODE
@@ -182,21 +182,21 @@ DESCRIPTOR.message_types_by_name['LogLevelResponse'] = _LOGLEVELRESPONSE
 ServerStatus = _reflection.GeneratedProtocolMessageType('ServerStatus', (_message.Message,), dict(
   DESCRIPTOR = _SERVERSTATUS,
   __module__ = 'hfc.protos.peer.admin_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.peer.ServerStatus)
+  # @@protoc_insertion_point(class_scope:protos.ServerStatus)
   ))
 _sym_db.RegisterMessage(ServerStatus)
 
 LogLevelRequest = _reflection.GeneratedProtocolMessageType('LogLevelRequest', (_message.Message,), dict(
   DESCRIPTOR = _LOGLEVELREQUEST,
   __module__ = 'hfc.protos.peer.admin_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.peer.LogLevelRequest)
+  # @@protoc_insertion_point(class_scope:protos.LogLevelRequest)
   ))
 _sym_db.RegisterMessage(LogLevelRequest)
 
 LogLevelResponse = _reflection.GeneratedProtocolMessageType('LogLevelResponse', (_message.Message,), dict(
   DESCRIPTOR = _LOGLEVELRESPONSE,
   __module__ = 'hfc.protos.peer.admin_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.peer.LogLevelResponse)
+  # @@protoc_insertion_point(class_scope:protos.LogLevelResponse)
   ))
 _sym_db.RegisterMessage(LogLevelResponse)
 
@@ -224,27 +224,27 @@ try:
         channel: A grpc.Channel.
       """
       self.GetStatus = channel.unary_unary(
-          '/hfc.protos.peer.Admin/GetStatus',
+          '/protos.Admin/GetStatus',
           request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
           response_deserializer=ServerStatus.FromString,
           )
       self.StartServer = channel.unary_unary(
-          '/hfc.protos.peer.Admin/StartServer',
+          '/protos.Admin/StartServer',
           request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
           response_deserializer=ServerStatus.FromString,
           )
       self.StopServer = channel.unary_unary(
-          '/hfc.protos.peer.Admin/StopServer',
+          '/protos.Admin/StopServer',
           request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
           response_deserializer=ServerStatus.FromString,
           )
       self.GetModuleLogLevel = channel.unary_unary(
-          '/hfc.protos.peer.Admin/GetModuleLogLevel',
+          '/protos.Admin/GetModuleLogLevel',
           request_serializer=LogLevelRequest.SerializeToString,
           response_deserializer=LogLevelResponse.FromString,
           )
       self.SetModuleLogLevel = channel.unary_unary(
-          '/hfc.protos.peer.Admin/SetModuleLogLevel',
+          '/protos.Admin/SetModuleLogLevel',
           request_serializer=LogLevelRequest.SerializeToString,
           response_deserializer=LogLevelResponse.FromString,
           )
@@ -311,7 +311,7 @@ try:
         ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-        'hfc.protos.peer.Admin', rpc_method_handlers)
+        'protos.Admin', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -371,25 +371,25 @@ try:
     file not marked beta) for all further purposes. This function was
     generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
     request_deserializers = {
-      ('hfc.protos.peer.Admin', 'GetModuleLogLevel'): LogLevelRequest.FromString,
-      ('hfc.protos.peer.Admin', 'GetStatus'): google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-      ('hfc.protos.peer.Admin', 'SetModuleLogLevel'): LogLevelRequest.FromString,
-      ('hfc.protos.peer.Admin', 'StartServer'): google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-      ('hfc.protos.peer.Admin', 'StopServer'): google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+      ('protos.Admin', 'GetModuleLogLevel'): LogLevelRequest.FromString,
+      ('protos.Admin', 'GetStatus'): google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+      ('protos.Admin', 'SetModuleLogLevel'): LogLevelRequest.FromString,
+      ('protos.Admin', 'StartServer'): google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+      ('protos.Admin', 'StopServer'): google_dot_protobuf_dot_empty__pb2.Empty.FromString,
     }
     response_serializers = {
-      ('hfc.protos.peer.Admin', 'GetModuleLogLevel'): LogLevelResponse.SerializeToString,
-      ('hfc.protos.peer.Admin', 'GetStatus'): ServerStatus.SerializeToString,
-      ('hfc.protos.peer.Admin', 'SetModuleLogLevel'): LogLevelResponse.SerializeToString,
-      ('hfc.protos.peer.Admin', 'StartServer'): ServerStatus.SerializeToString,
-      ('hfc.protos.peer.Admin', 'StopServer'): ServerStatus.SerializeToString,
+      ('protos.Admin', 'GetModuleLogLevel'): LogLevelResponse.SerializeToString,
+      ('protos.Admin', 'GetStatus'): ServerStatus.SerializeToString,
+      ('protos.Admin', 'SetModuleLogLevel'): LogLevelResponse.SerializeToString,
+      ('protos.Admin', 'StartServer'): ServerStatus.SerializeToString,
+      ('protos.Admin', 'StopServer'): ServerStatus.SerializeToString,
     }
     method_implementations = {
-      ('hfc.protos.peer.Admin', 'GetModuleLogLevel'): face_utilities.unary_unary_inline(servicer.GetModuleLogLevel),
-      ('hfc.protos.peer.Admin', 'GetStatus'): face_utilities.unary_unary_inline(servicer.GetStatus),
-      ('hfc.protos.peer.Admin', 'SetModuleLogLevel'): face_utilities.unary_unary_inline(servicer.SetModuleLogLevel),
-      ('hfc.protos.peer.Admin', 'StartServer'): face_utilities.unary_unary_inline(servicer.StartServer),
-      ('hfc.protos.peer.Admin', 'StopServer'): face_utilities.unary_unary_inline(servicer.StopServer),
+      ('protos.Admin', 'GetModuleLogLevel'): face_utilities.unary_unary_inline(servicer.GetModuleLogLevel),
+      ('protos.Admin', 'GetStatus'): face_utilities.unary_unary_inline(servicer.GetStatus),
+      ('protos.Admin', 'SetModuleLogLevel'): face_utilities.unary_unary_inline(servicer.SetModuleLogLevel),
+      ('protos.Admin', 'StartServer'): face_utilities.unary_unary_inline(servicer.StartServer),
+      ('protos.Admin', 'StopServer'): face_utilities.unary_unary_inline(servicer.StopServer),
     }
     server_options = beta_implementations.server_options(request_deserializers=request_deserializers, response_serializers=response_serializers, thread_pool=pool, thread_pool_size=pool_size, default_timeout=default_timeout, maximum_timeout=maximum_timeout)
     return beta_implementations.server(method_implementations, options=server_options)
@@ -402,18 +402,18 @@ try:
     file not marked beta) for all further purposes. This function was
     generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
     request_serializers = {
-      ('hfc.protos.peer.Admin', 'GetModuleLogLevel'): LogLevelRequest.SerializeToString,
-      ('hfc.protos.peer.Admin', 'GetStatus'): google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-      ('hfc.protos.peer.Admin', 'SetModuleLogLevel'): LogLevelRequest.SerializeToString,
-      ('hfc.protos.peer.Admin', 'StartServer'): google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-      ('hfc.protos.peer.Admin', 'StopServer'): google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ('protos.Admin', 'GetModuleLogLevel'): LogLevelRequest.SerializeToString,
+      ('protos.Admin', 'GetStatus'): google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ('protos.Admin', 'SetModuleLogLevel'): LogLevelRequest.SerializeToString,
+      ('protos.Admin', 'StartServer'): google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ('protos.Admin', 'StopServer'): google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
     }
     response_deserializers = {
-      ('hfc.protos.peer.Admin', 'GetModuleLogLevel'): LogLevelResponse.FromString,
-      ('hfc.protos.peer.Admin', 'GetStatus'): ServerStatus.FromString,
-      ('hfc.protos.peer.Admin', 'SetModuleLogLevel'): LogLevelResponse.FromString,
-      ('hfc.protos.peer.Admin', 'StartServer'): ServerStatus.FromString,
-      ('hfc.protos.peer.Admin', 'StopServer'): ServerStatus.FromString,
+      ('protos.Admin', 'GetModuleLogLevel'): LogLevelResponse.FromString,
+      ('protos.Admin', 'GetStatus'): ServerStatus.FromString,
+      ('protos.Admin', 'SetModuleLogLevel'): LogLevelResponse.FromString,
+      ('protos.Admin', 'StartServer'): ServerStatus.FromString,
+      ('protos.Admin', 'StopServer'): ServerStatus.FromString,
     }
     cardinalities = {
       'GetModuleLogLevel': cardinality.Cardinality.UNARY_UNARY,
@@ -423,7 +423,7 @@ try:
       'StopServer': cardinality.Cardinality.UNARY_UNARY,
     }
     stub_options = beta_implementations.stub_options(host=host, metadata_transformer=metadata_transformer, request_serializers=request_serializers, response_deserializers=response_deserializers, thread_pool=pool, thread_pool_size=pool_size)
-    return beta_implementations.dynamic_stub(channel, 'hfc.protos.peer.Admin', cardinalities, options=stub_options)
+    return beta_implementations.dynamic_stub(channel, 'protos.Admin', cardinalities, options=stub_options)
 except ImportError:
   pass
 # @@protoc_insertion_point(module_scope)

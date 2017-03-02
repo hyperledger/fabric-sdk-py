@@ -18,7 +18,7 @@ syntax = "proto3";
 
 option go_package = "github.com/hyperledger/fabric/protos/orderer";
 
-package hfc.protos.orderer;
+package orderer;
 
 
 // The orderer config is specified by the following convention:

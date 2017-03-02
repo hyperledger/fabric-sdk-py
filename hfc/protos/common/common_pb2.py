@@ -19,16 +19,16 @@ from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/common/common.proto',
-  package='hfc.protos.common',
+  package='common',
   syntax='proto3',
-  serialized_pb=_b('\n\x1ehfc/protos/common/common.proto\x12\x11hfc.protos.common\x1a\x1fgoogle/protobuf/timestamp.proto\"\x1b\n\nLastConfig\x12\r\n\x05index\x18\x01 \x01(\x04\"S\n\x08Metadata\x12\r\n\x05value\x18\x01 \x01(\x0c\x12\x38\n\nsignatures\x18\x02 \x03(\x0b\x32$.hfc.protos.common.MetadataSignature\"@\n\x11MetadataSignature\x12\x18\n\x10signature_header\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\":\n\x06Header\x12\x16\n\x0e\x63hannel_header\x18\x01 \x01(\x0c\x12\x18\n\x10signature_header\x18\x02 \x01(\x0c\"\xa2\x01\n\rChannelHeader\x12\x0c\n\x04type\x18\x01 \x01(\x05\x12\x0f\n\x07version\x18\x02 \x01(\x05\x12-\n\ttimestamp\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x12\n\nchannel_id\x18\x04 \x01(\t\x12\r\n\x05tx_id\x18\x05 \x01(\t\x12\r\n\x05\x65poch\x18\x06 \x01(\x04\x12\x11\n\textension\x18\x07 \x01(\x0c\"1\n\x0fSignatureHeader\x12\x0f\n\x07\x63reator\x18\x01 \x01(\x0c\x12\r\n\x05nonce\x18\x02 \x01(\x0c\"B\n\x07Payload\x12)\n\x06header\x18\x01 \x01(\x0b\x32\x19.hfc.protos.common.Header\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\".\n\x08\x45nvelope\x12\x0f\n\x07payload\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"\x97\x01\n\x05\x42lock\x12.\n\x06header\x18\x01 \x01(\x0b\x32\x1e.hfc.protos.common.BlockHeader\x12*\n\x04\x64\x61ta\x18\x02 \x01(\x0b\x32\x1c.hfc.protos.common.BlockData\x12\x32\n\x08metadata\x18\x03 \x01(\x0b\x32 .hfc.protos.common.BlockMetadata\"G\n\x0b\x42lockHeader\x12\x0e\n\x06number\x18\x01 \x01(\x04\x12\x15\n\rprevious_hash\x18\x02 \x01(\x0c\x12\x11\n\tdata_hash\x18\x03 \x01(\x0c\"\x19\n\tBlockData\x12\x0c\n\x04\x64\x61ta\x18\x01 \x03(\x0c\"!\n\rBlockMetadata\x12\x10\n\x08metadata\x18\x01 \x03(\x0c*\xaa\x01\n\x06Status\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0c\n\x07SUCCESS\x10\xc8\x01\x12\x10\n\x0b\x42\x41\x44_REQUEST\x10\x90\x03\x12\x0e\n\tFORBIDDEN\x10\x93\x03\x12\x0e\n\tNOT_FOUND\x10\x94\x03\x12\x1d\n\x18REQUEST_ENTITY_TOO_LARGE\x10\x9d\x03\x12\x1a\n\x15INTERNAL_SERVER_ERROR\x10\xf4\x03\x12\x18\n\x13SERVICE_UNAVAILABLE\x10\xf7\x03*\x82\x01\n\nHeaderType\x12\x0b\n\x07MESSAGE\x10\x00\x12\n\n\x06\x43ONFIG\x10\x01\x12\x11\n\rCONFIG_UPDATE\x10\x02\x12\x18\n\x14\x45NDORSER_TRANSACTION\x10\x03\x12\x17\n\x13ORDERER_TRANSACTION\x10\x04\x12\x15\n\x11\x44\x45LIVER_SEEK_INFO\x10\x05*[\n\x12\x42lockMetadataIndex\x12\x0e\n\nSIGNATURES\x10\x00\x12\x0f\n\x0bLAST_CONFIG\x10\x01\x12\x17\n\x13TRANSACTIONS_FILTER\x10\x02\x12\x0b\n\x07ORDERER\x10\x03\x42-Z+github.com/hyperledger/fabric/protos/commonb\x06proto3')
+  serialized_pb=_b('\n\x1ehfc/protos/common/common.proto\x12\x06\x63ommon\x1a\x1fgoogle/protobuf/timestamp.proto\"\x1b\n\nLastConfig\x12\r\n\x05index\x18\x01 \x01(\x04\"H\n\x08Metadata\x12\r\n\x05value\x18\x01 \x01(\x0c\x12-\n\nsignatures\x18\x02 \x03(\x0b\x32\x19.common.MetadataSignature\"@\n\x11MetadataSignature\x12\x18\n\x10signature_header\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\":\n\x06Header\x12\x16\n\x0e\x63hannel_header\x18\x01 \x01(\x0c\x12\x18\n\x10signature_header\x18\x02 \x01(\x0c\"\xa2\x01\n\rChannelHeader\x12\x0c\n\x04type\x18\x01 \x01(\x05\x12\x0f\n\x07version\x18\x02 \x01(\x05\x12-\n\ttimestamp\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x12\n\nchannel_id\x18\x04 \x01(\t\x12\r\n\x05tx_id\x18\x05 \x01(\t\x12\r\n\x05\x65poch\x18\x06 \x01(\x04\x12\x11\n\textension\x18\x07 \x01(\x0c\"1\n\x0fSignatureHeader\x12\x0f\n\x07\x63reator\x18\x01 \x01(\x0c\x12\r\n\x05nonce\x18\x02 \x01(\x0c\"7\n\x07Payload\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\".\n\x08\x45nvelope\x12\x0f\n\x07payload\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"v\n\x05\x42lock\x12#\n\x06header\x18\x01 \x01(\x0b\x32\x13.common.BlockHeader\x12\x1f\n\x04\x64\x61ta\x18\x02 \x01(\x0b\x32\x11.common.BlockData\x12\'\n\x08metadata\x18\x03 \x01(\x0b\x32\x15.common.BlockMetadata\"G\n\x0b\x42lockHeader\x12\x0e\n\x06number\x18\x01 \x01(\x04\x12\x15\n\rprevious_hash\x18\x02 \x01(\x0c\x12\x11\n\tdata_hash\x18\x03 \x01(\x0c\"\x19\n\tBlockData\x12\x0c\n\x04\x64\x61ta\x18\x01 \x03(\x0c\"!\n\rBlockMetadata\x12\x10\n\x08metadata\x18\x01 \x03(\x0c*\xaa\x01\n\x06Status\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0c\n\x07SUCCESS\x10\xc8\x01\x12\x10\n\x0b\x42\x41\x44_REQUEST\x10\x90\x03\x12\x0e\n\tFORBIDDEN\x10\x93\x03\x12\x0e\n\tNOT_FOUND\x10\x94\x03\x12\x1d\n\x18REQUEST_ENTITY_TOO_LARGE\x10\x9d\x03\x12\x1a\n\x15INTERNAL_SERVER_ERROR\x10\xf4\x03\x12\x18\n\x13SERVICE_UNAVAILABLE\x10\xf7\x03*\x82\x01\n\nHeaderType\x12\x0b\n\x07MESSAGE\x10\x00\x12\n\n\x06\x43ONFIG\x10\x01\x12\x11\n\rCONFIG_UPDATE\x10\x02\x12\x18\n\x14\x45NDORSER_TRANSACTION\x10\x03\x12\x17\n\x13ORDERER_TRANSACTION\x10\x04\x12\x15\n\x11\x44\x45LIVER_SEEK_INFO\x10\x05*[\n\x12\x42lockMetadataIndex\x12\x0e\n\nSIGNATURES\x10\x00\x12\x0f\n\x0bLAST_CONFIG\x10\x01\x12\x17\n\x13TRANSACTIONS_FILTER\x10\x02\x12\x0b\n\x07ORDERER\x10\x03\x42-Z+github.com/hyperledger/fabric/protos/commonb\x06proto3')
   ,
   dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _STATUS = _descriptor.EnumDescriptor(
   name='Status',
-  full_name='hfc.protos.common.Status',
+  full_name='common.Status',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -67,15 +67,15 @@ _STATUS = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=948,
-  serialized_end=1118,
+  serialized_start=881,
+  serialized_end=1051,
 )
 _sym_db.RegisterEnumDescriptor(_STATUS)
 
 Status = enum_type_wrapper.EnumTypeWrapper(_STATUS)
 _HEADERTYPE = _descriptor.EnumDescriptor(
   name='HeaderType',
-  full_name='hfc.protos.common.HeaderType',
+  full_name='common.HeaderType',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -106,15 +106,15 @@ _HEADERTYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1121,
-  serialized_end=1251,
+  serialized_start=1054,
+  serialized_end=1184,
 )
 _sym_db.RegisterEnumDescriptor(_HEADERTYPE)
 
 HeaderType = enum_type_wrapper.EnumTypeWrapper(_HEADERTYPE)
 _BLOCKMETADATAINDEX = _descriptor.EnumDescriptor(
   name='BlockMetadataIndex',
-  full_name='hfc.protos.common.BlockMetadataIndex',
+  full_name='common.BlockMetadataIndex',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -137,8 +137,8 @@ _BLOCKMETADATAINDEX = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1253,
-  serialized_end=1344,
+  serialized_start=1186,
+  serialized_end=1277,
 )
 _sym_db.RegisterEnumDescriptor(_BLOCKMETADATAINDEX)
 
@@ -166,13 +166,13 @@ ORDERER = 3
 
 _LASTCONFIG = _descriptor.Descriptor(
   name='LastConfig',
-  full_name='hfc.protos.common.LastConfig',
+  full_name='common.LastConfig',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='index', full_name='hfc.protos.common.LastConfig.index', index=0,
+      name='index', full_name='common.LastConfig.index', index=0,
       number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -190,27 +190,27 @@ _LASTCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=86,
-  serialized_end=113,
+  serialized_start=75,
+  serialized_end=102,
 )
 
 
 _METADATA = _descriptor.Descriptor(
   name='Metadata',
-  full_name='hfc.protos.common.Metadata',
+  full_name='common.Metadata',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='value', full_name='hfc.protos.common.Metadata.value', index=0,
+      name='value', full_name='common.Metadata.value', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='signatures', full_name='hfc.protos.common.Metadata.signatures', index=1,
+      name='signatures', full_name='common.Metadata.signatures', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -228,27 +228,27 @@ _METADATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=115,
-  serialized_end=198,
+  serialized_start=104,
+  serialized_end=176,
 )
 
 
 _METADATASIGNATURE = _descriptor.Descriptor(
   name='MetadataSignature',
-  full_name='hfc.protos.common.MetadataSignature',
+  full_name='common.MetadataSignature',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='signature_header', full_name='hfc.protos.common.MetadataSignature.signature_header', index=0,
+      name='signature_header', full_name='common.MetadataSignature.signature_header', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='signature', full_name='hfc.protos.common.MetadataSignature.signature', index=1,
+      name='signature', full_name='common.MetadataSignature.signature', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -266,27 +266,27 @@ _METADATASIGNATURE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=200,
-  serialized_end=264,
+  serialized_start=178,
+  serialized_end=242,
 )
 
 
 _HEADER = _descriptor.Descriptor(
   name='Header',
-  full_name='hfc.protos.common.Header',
+  full_name='common.Header',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='channel_header', full_name='hfc.protos.common.Header.channel_header', index=0,
+      name='channel_header', full_name='common.Header.channel_header', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='signature_header', full_name='hfc.protos.common.Header.signature_header', index=1,
+      name='signature_header', full_name='common.Header.signature_header', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -304,62 +304,62 @@ _HEADER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=266,
-  serialized_end=324,
+  serialized_start=244,
+  serialized_end=302,
 )
 
 
 _CHANNELHEADER = _descriptor.Descriptor(
   name='ChannelHeader',
-  full_name='hfc.protos.common.ChannelHeader',
+  full_name='common.ChannelHeader',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='type', full_name='hfc.protos.common.ChannelHeader.type', index=0,
+      name='type', full_name='common.ChannelHeader.type', index=0,
       number=1, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='version', full_name='hfc.protos.common.ChannelHeader.version', index=1,
+      name='version', full_name='common.ChannelHeader.version', index=1,
       number=2, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='timestamp', full_name='hfc.protos.common.ChannelHeader.timestamp', index=2,
+      name='timestamp', full_name='common.ChannelHeader.timestamp', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='channel_id', full_name='hfc.protos.common.ChannelHeader.channel_id', index=3,
+      name='channel_id', full_name='common.ChannelHeader.channel_id', index=3,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='tx_id', full_name='hfc.protos.common.ChannelHeader.tx_id', index=4,
+      name='tx_id', full_name='common.ChannelHeader.tx_id', index=4,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='epoch', full_name='hfc.protos.common.ChannelHeader.epoch', index=5,
+      name='epoch', full_name='common.ChannelHeader.epoch', index=5,
       number=6, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='extension', full_name='hfc.protos.common.ChannelHeader.extension', index=6,
+      name='extension', full_name='common.ChannelHeader.extension', index=6,
       number=7, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -377,27 +377,27 @@ _CHANNELHEADER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=327,
-  serialized_end=489,
+  serialized_start=305,
+  serialized_end=467,
 )
 
 
 _SIGNATUREHEADER = _descriptor.Descriptor(
   name='SignatureHeader',
-  full_name='hfc.protos.common.SignatureHeader',
+  full_name='common.SignatureHeader',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='creator', full_name='hfc.protos.common.SignatureHeader.creator', index=0,
+      name='creator', full_name='common.SignatureHeader.creator', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='nonce', full_name='hfc.protos.common.SignatureHeader.nonce', index=1,
+      name='nonce', full_name='common.SignatureHeader.nonce', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -415,27 +415,27 @@ _SIGNATUREHEADER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=491,
-  serialized_end=540,
+  serialized_start=469,
+  serialized_end=518,
 )
 
 
 _PAYLOAD = _descriptor.Descriptor(
   name='Payload',
-  full_name='hfc.protos.common.Payload',
+  full_name='common.Payload',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='header', full_name='hfc.protos.common.Payload.header', index=0,
+      name='header', full_name='common.Payload.header', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='data', full_name='hfc.protos.common.Payload.data', index=1,
+      name='data', full_name='common.Payload.data', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -453,27 +453,27 @@ _PAYLOAD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=542,
-  serialized_end=608,
+  serialized_start=520,
+  serialized_end=575,
 )
 
 
 _ENVELOPE = _descriptor.Descriptor(
   name='Envelope',
-  full_name='hfc.protos.common.Envelope',
+  full_name='common.Envelope',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='payload', full_name='hfc.protos.common.Envelope.payload', index=0,
+      name='payload', full_name='common.Envelope.payload', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='signature', full_name='hfc.protos.common.Envelope.signature', index=1,
+      name='signature', full_name='common.Envelope.signature', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -491,34 +491,34 @@ _ENVELOPE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=610,
-  serialized_end=656,
+  serialized_start=577,
+  serialized_end=623,
 )
 
 
 _BLOCK = _descriptor.Descriptor(
   name='Block',
-  full_name='hfc.protos.common.Block',
+  full_name='common.Block',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='header', full_name='hfc.protos.common.Block.header', index=0,
+      name='header', full_name='common.Block.header', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='data', full_name='hfc.protos.common.Block.data', index=1,
+      name='data', full_name='common.Block.data', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='metadata', full_name='hfc.protos.common.Block.metadata', index=2,
+      name='metadata', full_name='common.Block.metadata', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -536,34 +536,34 @@ _BLOCK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=659,
-  serialized_end=810,
+  serialized_start=625,
+  serialized_end=743,
 )
 
 
 _BLOCKHEADER = _descriptor.Descriptor(
   name='BlockHeader',
-  full_name='hfc.protos.common.BlockHeader',
+  full_name='common.BlockHeader',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='number', full_name='hfc.protos.common.BlockHeader.number', index=0,
+      name='number', full_name='common.BlockHeader.number', index=0,
       number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='previous_hash', full_name='hfc.protos.common.BlockHeader.previous_hash', index=1,
+      name='previous_hash', full_name='common.BlockHeader.previous_hash', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='data_hash', full_name='hfc.protos.common.BlockHeader.data_hash', index=2,
+      name='data_hash', full_name='common.BlockHeader.data_hash', index=2,
       number=3, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -581,20 +581,20 @@ _BLOCKHEADER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=812,
-  serialized_end=883,
+  serialized_start=745,
+  serialized_end=816,
 )
 
 
 _BLOCKDATA = _descriptor.Descriptor(
   name='BlockData',
-  full_name='hfc.protos.common.BlockData',
+  full_name='common.BlockData',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='data', full_name='hfc.protos.common.BlockData.data', index=0,
+      name='data', full_name='common.BlockData.data', index=0,
       number=1, type=12, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -612,20 +612,20 @@ _BLOCKDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=885,
-  serialized_end=910,
+  serialized_start=818,
+  serialized_end=843,
 )
 
 
 _BLOCKMETADATA = _descriptor.Descriptor(
   name='BlockMetadata',
-  full_name='hfc.protos.common.BlockMetadata',
+  full_name='common.BlockMetadata',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='metadata', full_name='hfc.protos.common.BlockMetadata.metadata', index=0,
+      name='metadata', full_name='common.BlockMetadata.metadata', index=0,
       number=1, type=12, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -643,8 +643,8 @@ _BLOCKMETADATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=912,
-  serialized_end=945,
+  serialized_start=845,
+  serialized_end=878,
 )
 
 _METADATA.fields_by_name['signatures'].message_type = _METADATASIGNATURE
@@ -672,84 +672,84 @@ DESCRIPTOR.enum_types_by_name['BlockMetadataIndex'] = _BLOCKMETADATAINDEX
 LastConfig = _reflection.GeneratedProtocolMessageType('LastConfig', (_message.Message,), dict(
   DESCRIPTOR = _LASTCONFIG,
   __module__ = 'hfc.protos.common.common_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.LastConfig)
+  # @@protoc_insertion_point(class_scope:common.LastConfig)
   ))
 _sym_db.RegisterMessage(LastConfig)
 
 Metadata = _reflection.GeneratedProtocolMessageType('Metadata', (_message.Message,), dict(
   DESCRIPTOR = _METADATA,
   __module__ = 'hfc.protos.common.common_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.Metadata)
+  # @@protoc_insertion_point(class_scope:common.Metadata)
   ))
 _sym_db.RegisterMessage(Metadata)
 
 MetadataSignature = _reflection.GeneratedProtocolMessageType('MetadataSignature', (_message.Message,), dict(
   DESCRIPTOR = _METADATASIGNATURE,
   __module__ = 'hfc.protos.common.common_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.MetadataSignature)
+  # @@protoc_insertion_point(class_scope:common.MetadataSignature)
   ))
 _sym_db.RegisterMessage(MetadataSignature)
 
 Header = _reflection.GeneratedProtocolMessageType('Header', (_message.Message,), dict(
   DESCRIPTOR = _HEADER,
   __module__ = 'hfc.protos.common.common_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.Header)
+  # @@protoc_insertion_point(class_scope:common.Header)
   ))
 _sym_db.RegisterMessage(Header)
 
 ChannelHeader = _reflection.GeneratedProtocolMessageType('ChannelHeader', (_message.Message,), dict(
   DESCRIPTOR = _CHANNELHEADER,
   __module__ = 'hfc.protos.common.common_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.ChannelHeader)
+  # @@protoc_insertion_point(class_scope:common.ChannelHeader)
   ))
 _sym_db.RegisterMessage(ChannelHeader)
 
 SignatureHeader = _reflection.GeneratedProtocolMessageType('SignatureHeader', (_message.Message,), dict(
   DESCRIPTOR = _SIGNATUREHEADER,
   __module__ = 'hfc.protos.common.common_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.SignatureHeader)
+  # @@protoc_insertion_point(class_scope:common.SignatureHeader)
   ))
 _sym_db.RegisterMessage(SignatureHeader)
 
 Payload = _reflection.GeneratedProtocolMessageType('Payload', (_message.Message,), dict(
   DESCRIPTOR = _PAYLOAD,
   __module__ = 'hfc.protos.common.common_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.Payload)
+  # @@protoc_insertion_point(class_scope:common.Payload)
   ))
 _sym_db.RegisterMessage(Payload)
 
 Envelope = _reflection.GeneratedProtocolMessageType('Envelope', (_message.Message,), dict(
   DESCRIPTOR = _ENVELOPE,
   __module__ = 'hfc.protos.common.common_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.Envelope)
+  # @@protoc_insertion_point(class_scope:common.Envelope)
   ))
 _sym_db.RegisterMessage(Envelope)
 
 Block = _reflection.GeneratedProtocolMessageType('Block', (_message.Message,), dict(
   DESCRIPTOR = _BLOCK,
   __module__ = 'hfc.protos.common.common_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.Block)
+  # @@protoc_insertion_point(class_scope:common.Block)
   ))
 _sym_db.RegisterMessage(Block)
 
 BlockHeader = _reflection.GeneratedProtocolMessageType('BlockHeader', (_message.Message,), dict(
   DESCRIPTOR = _BLOCKHEADER,
   __module__ = 'hfc.protos.common.common_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.BlockHeader)
+  # @@protoc_insertion_point(class_scope:common.BlockHeader)
   ))
 _sym_db.RegisterMessage(BlockHeader)
 
 BlockData = _reflection.GeneratedProtocolMessageType('BlockData', (_message.Message,), dict(
   DESCRIPTOR = _BLOCKDATA,
   __module__ = 'hfc.protos.common.common_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.BlockData)
+  # @@protoc_insertion_point(class_scope:common.BlockData)
   ))
 _sym_db.RegisterMessage(BlockData)
 
 BlockMetadata = _reflection.GeneratedProtocolMessageType('BlockMetadata', (_message.Message,), dict(
   DESCRIPTOR = _BLOCKMETADATA,
   __module__ = 'hfc.protos.common.common_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.BlockMetadata)
+  # @@protoc_insertion_point(class_scope:common.BlockMetadata)
   ))
 _sym_db.RegisterMessage(BlockMetadata)
 

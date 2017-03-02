@@ -20,7 +20,7 @@ import "hfc/protos/common/msp_principal.proto";
 
 option go_package = "github.com/hyperledger/fabric/protos/common";
 
-package hfc.protos.common;
+package common;
 
 // Policy expresses a policy which the orderer can evaluate, because there has been some desire expressed to support
 // multiple policy engines, this is typed as a oneof for now

@@ -17,9 +17,9 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/chaincodeevent.proto',
-  package='hfc.protos.peer',
+  package='protos',
   syntax='proto3',
-  serialized_pb=_b('\n$hfc/protos/peer/chaincodeevent.proto\x12\x0fhfc.protos.peer\"Z\n\x0e\x43haincodeEvent\x12\x14\n\x0c\x63haincode_id\x18\x01 \x01(\t\x12\r\n\x05tx_id\x18\x02 \x01(\t\x12\x12\n\nevent_name\x18\x03 \x01(\t\x12\x0f\n\x07payload\x18\x04 \x01(\x0c\x42\x43\n\x16org.hyperledger.protosZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_pb=_b('\n$hfc/protos/peer/chaincodeevent.proto\x12\x06protos\"Z\n\x0e\x43haincodeEvent\x12\x14\n\x0c\x63haincode_id\x18\x01 \x01(\t\x12\r\n\x05tx_id\x18\x02 \x01(\t\x12\x12\n\nevent_name\x18\x03 \x01(\t\x12\x0f\n\x07payload\x18\x04 \x01(\x0c\x42\x43\n\x16org.hyperledger.protosZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -28,34 +28,34 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _CHAINCODEEVENT = _descriptor.Descriptor(
   name='ChaincodeEvent',
-  full_name='hfc.protos.peer.ChaincodeEvent',
+  full_name='protos.ChaincodeEvent',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='chaincode_id', full_name='hfc.protos.peer.ChaincodeEvent.chaincode_id', index=0,
+      name='chaincode_id', full_name='protos.ChaincodeEvent.chaincode_id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='tx_id', full_name='hfc.protos.peer.ChaincodeEvent.tx_id', index=1,
+      name='tx_id', full_name='protos.ChaincodeEvent.tx_id', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='event_name', full_name='hfc.protos.peer.ChaincodeEvent.event_name', index=2,
+      name='event_name', full_name='protos.ChaincodeEvent.event_name', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='payload', full_name='hfc.protos.peer.ChaincodeEvent.payload', index=3,
+      name='payload', full_name='protos.ChaincodeEvent.payload', index=3,
       number=4, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -73,8 +73,8 @@ _CHAINCODEEVENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=57,
-  serialized_end=147,
+  serialized_start=48,
+  serialized_end=138,
 )
 
 DESCRIPTOR.message_types_by_name['ChaincodeEvent'] = _CHAINCODEEVENT
@@ -82,7 +82,7 @@ DESCRIPTOR.message_types_by_name['ChaincodeEvent'] = _CHAINCODEEVENT
 ChaincodeEvent = _reflection.GeneratedProtocolMessageType('ChaincodeEvent', (_message.Message,), dict(
   DESCRIPTOR = _CHAINCODEEVENT,
   __module__ = 'hfc.protos.peer.chaincodeevent_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.peer.ChaincodeEvent)
+  # @@protoc_insertion_point(class_scope:protos.ChaincodeEvent)
   ))
 _sym_db.RegisterMessage(ChaincodeEvent)
 

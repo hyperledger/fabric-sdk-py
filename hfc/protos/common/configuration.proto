@@ -18,7 +18,7 @@ syntax = "proto3";
 
 option go_package = "github.com/hyperledger/fabric/protos/common";
 
-package hfc.protos.common;
+package common;
 
 // HashingAlgorithm is encoded into the configuration transaction as  a configuration item of type Chain
 // with a Key of "HashingAlgorithm" and a Value of  HashingAlgorithm as marshaled protobuf bytes

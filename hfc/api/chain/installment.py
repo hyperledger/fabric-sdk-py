@@ -23,7 +23,7 @@ import rx
 from hfc.api.chain.transactionproposals \
     import TransactionProposalHandler, CC_INSTALL, \
     TransactionProposalRequest, check_tran_prop_request, \
-    build_header, build_proposal, sign_proposal
+    build_header, build_proposal, sign_proposal, send_transaction_proposal
 from hfc.api.crypto import crypto
 from hfc.protos.common import common_pb2
 from hfc.protos.peer import chaincode_pb2
@@ -175,9 +175,10 @@ def _install_chaincode(chain, cc_installment_request, scheduler=None):
     return rx.Observable \
         .just(cc_installment_request) \
         .map(check_tran_prop_request) \
-        .map(lambda req, idx: _create_installment_proposal(req, chain))
-    # .flatmap(lambda proposal, idx:
-    #          send_transaction_proposal(proposal, peers, scheduler))
+        .map(lambda req, _: _create_installment_proposal(req, chain)) \
+        .flat_map(lambda proposal, _:
+                  send_transaction_proposal(
+                      proposal, peers, scheduler))
 
 
 def create_installment_proposal_req(chaincode_id, chaincode_path,

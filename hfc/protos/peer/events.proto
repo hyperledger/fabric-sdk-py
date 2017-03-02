@@ -22,7 +22,7 @@ import "hfc/protos/peer/transaction.proto";
 
 option go_package = "github.com/hyperledger/fabric/protos/peer";
 
-package hfc.protos.peer;
+package protos;
 
 
 //----Event objects----

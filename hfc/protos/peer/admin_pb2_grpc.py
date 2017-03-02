@@ -18,27 +18,27 @@ class AdminStub(object):
       channel: A grpc.Channel.
     """
     self.GetStatus = channel.unary_unary(
-        '/hfc.protos.peer.Admin/GetStatus',
+        '/protos.Admin/GetStatus',
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
         response_deserializer=hfc_dot_protos_dot_peer_dot_admin__pb2.ServerStatus.FromString,
         )
     self.StartServer = channel.unary_unary(
-        '/hfc.protos.peer.Admin/StartServer',
+        '/protos.Admin/StartServer',
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
         response_deserializer=hfc_dot_protos_dot_peer_dot_admin__pb2.ServerStatus.FromString,
         )
     self.StopServer = channel.unary_unary(
-        '/hfc.protos.peer.Admin/StopServer',
+        '/protos.Admin/StopServer',
         request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
         response_deserializer=hfc_dot_protos_dot_peer_dot_admin__pb2.ServerStatus.FromString,
         )
     self.GetModuleLogLevel = channel.unary_unary(
-        '/hfc.protos.peer.Admin/GetModuleLogLevel',
+        '/protos.Admin/GetModuleLogLevel',
         request_serializer=hfc_dot_protos_dot_peer_dot_admin__pb2.LogLevelRequest.SerializeToString,
         response_deserializer=hfc_dot_protos_dot_peer_dot_admin__pb2.LogLevelResponse.FromString,
         )
     self.SetModuleLogLevel = channel.unary_unary(
-        '/hfc.protos.peer.Admin/SetModuleLogLevel',
+        '/protos.Admin/SetModuleLogLevel',
         request_serializer=hfc_dot_protos_dot_peer_dot_admin__pb2.LogLevelRequest.SerializeToString,
         response_deserializer=hfc_dot_protos_dot_peer_dot_admin__pb2.LogLevelResponse.FromString,
         )
@@ -105,5 +105,5 @@ def add_AdminServicer_to_server(servicer, server):
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
-      'hfc.protos.peer.Admin', rpc_method_handlers)
+      'protos.Admin', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))

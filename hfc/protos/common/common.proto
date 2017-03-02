@@ -20,7 +20,7 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/hyperledger/fabric/protos/common";
 
-package hfc.protos.common;
+package common;
 
 // These status codes are intended to resemble selected HTTP status codes
 enum Status {

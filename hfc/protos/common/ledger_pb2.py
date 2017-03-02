@@ -17,9 +17,9 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/common/ledger.proto',
-  package='hfc.protos.common',
+  package='common',
   syntax='proto3',
-  serialized_pb=_b('\n\x1ehfc/protos/common/ledger.proto\x12\x11hfc.protos.common\"U\n\x0e\x42lockchainInfo\x12\x0e\n\x06height\x18\x01 \x01(\x04\x12\x18\n\x10\x63urrentBlockHash\x18\x02 \x01(\x0c\x12\x19\n\x11previousBlockHash\x18\x03 \x01(\x0c\x42-Z+github.com/hyperledger/fabric/protos/commonb\x06proto3')
+  serialized_pb=_b('\n\x1ehfc/protos/common/ledger.proto\x12\x06\x63ommon\"U\n\x0e\x42lockchainInfo\x12\x0e\n\x06height\x18\x01 \x01(\x04\x12\x18\n\x10\x63urrentBlockHash\x18\x02 \x01(\x0c\x12\x19\n\x11previousBlockHash\x18\x03 \x01(\x0c\x42-Z+github.com/hyperledger/fabric/protos/commonb\x06proto3')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -28,27 +28,27 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _BLOCKCHAININFO = _descriptor.Descriptor(
   name='BlockchainInfo',
-  full_name='hfc.protos.common.BlockchainInfo',
+  full_name='common.BlockchainInfo',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='height', full_name='hfc.protos.common.BlockchainInfo.height', index=0,
+      name='height', full_name='common.BlockchainInfo.height', index=0,
       number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='currentBlockHash', full_name='hfc.protos.common.BlockchainInfo.currentBlockHash', index=1,
+      name='currentBlockHash', full_name='common.BlockchainInfo.currentBlockHash', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='previousBlockHash', full_name='hfc.protos.common.BlockchainInfo.previousBlockHash', index=2,
+      name='previousBlockHash', full_name='common.BlockchainInfo.previousBlockHash', index=2,
       number=3, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -66,8 +66,8 @@ _BLOCKCHAININFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=53,
-  serialized_end=138,
+  serialized_start=42,
+  serialized_end=127,
 )
 
 DESCRIPTOR.message_types_by_name['BlockchainInfo'] = _BLOCKCHAININFO
@@ -75,7 +75,7 @@ DESCRIPTOR.message_types_by_name['BlockchainInfo'] = _BLOCKCHAININFO
 BlockchainInfo = _reflection.GeneratedProtocolMessageType('BlockchainInfo', (_message.Message,), dict(
   DESCRIPTOR = _BLOCKCHAININFO,
   __module__ = 'hfc.protos.common.ledger_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.common.BlockchainInfo)
+  # @@protoc_insertion_point(class_scope:common.BlockchainInfo)
   ))
 _sym_db.RegisterMessage(BlockchainInfo)
 

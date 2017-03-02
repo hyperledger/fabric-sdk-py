@@ -17,9 +17,9 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/msp/identities.proto',
-  package='hfc.protos.msp',
+  package='msp',
   syntax='proto3',
-  serialized_pb=_b('\n\x1fhfc/protos/msp/identities.proto\x12\x0ehfc.protos.msp\"4\n\x12SerializedIdentity\x12\r\n\x05Mspid\x18\x01 \x01(\t\x12\x0f\n\x07IdBytes\x18\x02 \x01(\x0c\x42#Z!github.com/hyperledger/fabric/mspb\x06proto3')
+  serialized_pb=_b('\n\x1fhfc/protos/msp/identities.proto\x12\x03msp\"4\n\x12SerializedIdentity\x12\r\n\x05Mspid\x18\x01 \x01(\t\x12\x0f\n\x07IdBytes\x18\x02 \x01(\x0c\x42#Z!github.com/hyperledger/fabric/mspb\x06proto3')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -28,20 +28,20 @@ _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 _SERIALIZEDIDENTITY = _descriptor.Descriptor(
   name='SerializedIdentity',
-  full_name='hfc.protos.msp.SerializedIdentity',
+  full_name='msp.SerializedIdentity',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='Mspid', full_name='hfc.protos.msp.SerializedIdentity.Mspid', index=0,
+      name='Mspid', full_name='msp.SerializedIdentity.Mspid', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='IdBytes', full_name='hfc.protos.msp.SerializedIdentity.IdBytes', index=1,
+      name='IdBytes', full_name='msp.SerializedIdentity.IdBytes', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -59,8 +59,8 @@ _SERIALIZEDIDENTITY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=51,
-  serialized_end=103,
+  serialized_start=40,
+  serialized_end=92,
 )
 
 DESCRIPTOR.message_types_by_name['SerializedIdentity'] = _SERIALIZEDIDENTITY
@@ -68,7 +68,7 @@ DESCRIPTOR.message_types_by_name['SerializedIdentity'] = _SERIALIZEDIDENTITY
 SerializedIdentity = _reflection.GeneratedProtocolMessageType('SerializedIdentity', (_message.Message,), dict(
   DESCRIPTOR = _SERIALIZEDIDENTITY,
   __module__ = 'hfc.protos.msp.identities_pb2'
-  # @@protoc_insertion_point(class_scope:hfc.protos.msp.SerializedIdentity)
+  # @@protoc_insertion_point(class_scope:msp.SerializedIdentity)
   ))
 _sym_db.RegisterMessage(SerializedIdentity)
 

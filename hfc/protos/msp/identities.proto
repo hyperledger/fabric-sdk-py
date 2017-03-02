@@ -18,7 +18,7 @@ syntax = "proto3";
 
 option go_package = "github.com/hyperledger/fabric/msp";
 
-package hfc.protos.msp;
+package msp;
 
 // This struct represents an Identity
 // (with its MSP identifier) to be used
