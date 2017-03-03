@@ -450,5 +450,7 @@ def send_transaction_proposal(proposal, peers, scheduler=None):
     Returns: a rx.Observer wrapper of response
 
     """
-    return rx.Observable.from_list(peers.values()) \
-        .flat_map(lambda peer: peer.send_proposal(proposal, scheduler))
+    send_executions = [peer.send_proposal(proposal, scheduler)
+                       for peer in peers.values()]
+
+    return rx.Observable.zip_array(rx.Observable.from_list(send_executions))

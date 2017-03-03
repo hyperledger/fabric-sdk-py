@@ -4,7 +4,6 @@ import os
 import sys
 import time
 import unittest
-# from shutil import rmtree
 
 from hfc.api.ca.caservice import ca_service
 from hfc.api.chain.installment import create_installment_proposal_req
@@ -47,9 +46,7 @@ class ChaincodeTest(unittest.TestCase):
     def tearDown(self):
         if self.gopath_bak:
             os.environ['GOPATH'] = self.gopath_bak
-        # rmtree(self.base_path)
 
-    @unittest.skip
     def test_install(self):
         start_test_env()
         time.sleep(5)
@@ -68,8 +65,7 @@ class ChaincodeTest(unittest.TestCase):
         chain.install_chaincode(cc_install_req) \
             .subscribe(lambda x: queue.put(x))
 
-        prop = queue.get()
-        print(prop)
+        self.assertEqual(200, queue.get()[0].response.status)
         shutdown_test_env()
 
     @unittest.skip

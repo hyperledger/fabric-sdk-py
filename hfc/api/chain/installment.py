@@ -12,12 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import gzip
+import io
+import logging
 import os
 import tarfile
-import tempfile
 
-import logging
 import rx
 
 from hfc.api.chain.transactionproposals \
@@ -88,7 +87,7 @@ def _create_installment_proposal(tran_prop_req, chain):
                           common_pb2.ENDORSER_TRANSACTION,
                           chain,
                           tran_prop_req.prop_type,
-                          chaincode_id=tran_prop_req.chaincode_id
+                          chaincode_id="lccc"
                           )
 
     cci_spec = chaincode_pb2.ChaincodeInvocationSpec()
@@ -127,8 +126,8 @@ def _package_chaincode(cc_path):
     proj_path = go_path + '/src/' + cc_path
     _logger.debug('Project path={}'.format(proj_path))
 
-    with tempfile.NamedTemporaryFile() as temp:
-        with tarfile.open(fileobj=temp, mode='w:gz') as code_writer:
+    with io.BytesIO() as temp:
+        with tarfile.open(fileobj=temp, mode='w|gz') as code_writer:
             for dir_path, _, file_names in os.walk(proj_path):
                 for filename in file_names:
                     file_path = os.path.join(dir_path, filename)
@@ -137,9 +136,7 @@ def _package_chaincode(cc_path):
                             .add(file_path,
                                  arcname=os.path.relpath(file_path, go_path))
         temp.flush()
-
-        with gzip.open(temp.name, 'rb') as code_reader:
-            code_content = code_reader.read()
+        code_content = temp.read()
 
     return code_content
 

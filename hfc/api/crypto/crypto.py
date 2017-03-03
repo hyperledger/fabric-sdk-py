@@ -22,7 +22,7 @@ from Cryptodome import Random
 from Cryptodome.Cipher import AES
 from cryptography import x509
 from cryptography.hazmat.backends \
-    import default_backend, openssl
+    import default_backend
 from cryptography.hazmat.primitives import constant_time
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec
@@ -176,23 +176,27 @@ class Ecies(Crypto):
         :param hash_algorithm: hash function
         """
         if security_level == CURVE_P_256_Size:
-            order = openssl.backend._lib.BN_new()
-            curve = openssl.backend._lib.EC_GROUP_new_by_curve_name(
-                openssl.backend._lib.NID_X9_62_prime256v1)
-            openssl.backend._lib.EC_GROUP_get_order(
-                curve, order, openssl.backend._ffi.NULL)
-            self.order = openssl.backend._bn_to_int(order)
-            self.half_order = self.order / 2
+            # order = openssl.backend._lib.BN_new()
+            # curve = openssl.backend._lib.EC_GROUP_new_by_curve_name(
+            #     openssl.backend._lib.NID_X9_62_prime256v1)
+            # openssl.backend._lib.EC_GROUP_get_order(
+            #     curve, order, openssl.backend._ffi.NULL)
+            self.order = int("115792089210356248762697446949407573529"
+                             "996955224135760342422259061068512044369")
+            self.half_order = self.order >> 1
             self.curve = ec.SECP256R1
             self.sign_hash_algorithm = hashes.SHA256()
         else:
-            order = openssl.backend._lib.BN_new()
-            curve = openssl.backend._lib.EC_GROUP_new_by_curve_name(
-                openssl.backend._lib.NID_secp384r1)
-            openssl.backend._lib.EC_GROUP_get_order(
-                curve, order, openssl.backend._ffi.NULL)
-            self.order = openssl.backend._bn_to_int(order)
-            self.half_order = self.order / 2
+            # order = openssl.backend._lib.BN_new()
+            # curve = openssl.backend._lib.EC_GROUP_new_by_curve_name(
+            #     openssl.backend._lib.NID_secp384r1)
+            # openssl.backend._lib.EC_GROUP_get_order(
+            #     curve, order, openssl.backend._ffi.NULL)
+            self.order = int("39402006196394479212279040100"
+                             "14361380507973927046544666794"
+                             "69052796276593991132635693989"
+                             "56308152294913554433653942643")
+            self.half_order = self.order >> 1
             self.curve = ec.SECP384R1
             self.sign_hash_algorithm = hashes.SHA384()
 

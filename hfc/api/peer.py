@@ -1,7 +1,5 @@
 import logging
 
-import rx
-
 from hfc.protos.peer import peer_pb2_grpc
 from hfc.util.channel import channel
 
@@ -32,8 +30,7 @@ class Peer(object):
 
         """
         _logger.debug("Send proposal={}".format(proposal))
-        return rx.Observable.start(
-            self._endorser_client.ProcessProposal(proposal), scheduler)
+        return self._endorser_client.ProcessProposal(proposal)
 
     @property
     def endpoint(self):

@@ -182,5 +182,4 @@ class SigningIdentity(Identity):
         Returns: signed results
         """
 
-        digest = self._msp.crypto_suite.hash(msg)
-        return self.signer.sign(digest.hexdigest().encode('utf-8'))
+        return self.signer.sign(msg)

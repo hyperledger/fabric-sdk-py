@@ -114,7 +114,7 @@ class CryptoTest(unittest.TestCase):
 
         self.assertEqual(ecies256._check_malleability(
             ecies256._prevent_malleability(signature)),
-                         True)
+            True)
 
     def test_secp384r1_check_malleability_and_check_prevent_malleability(self):
         """Test case for check_malleability and prevent_malleability."""
@@ -128,7 +128,7 @@ class CryptoTest(unittest.TestCase):
 
         self.assertEqual(ecies384._check_malleability(
             ecies384._prevent_malleability(signature)),
-                         True)
+            True)
 
 
 if __name__ == '__main__':
