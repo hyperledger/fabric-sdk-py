@@ -5,6 +5,9 @@ echo "===Checking Docker and Docker-Compose version"
 docker version
 docker-compose -v
 
+# install tox
+pip install tox
+
 # pull fabric images
 IMG_TAG=0.8.5
 echo "===Pulling fabric images... with tag = ${IMG_TAG}"
