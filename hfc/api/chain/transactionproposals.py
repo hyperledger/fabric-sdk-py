@@ -453,4 +453,4 @@ def send_transaction_proposal(proposal, peers, scheduler=None):
     send_executions = [peer.send_proposal(proposal, scheduler)
                        for peer in peers.values()]
 
-    return rx.Observable.zip_array(rx.Observable.from_list(send_executions))
+    return rx.Observable.merge(send_executions)

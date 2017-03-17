@@ -65,7 +65,8 @@ class ChaincodeTest(unittest.TestCase):
         chain.install_chaincode(cc_install_req) \
             .subscribe(lambda x: queue.put(x))
 
-        self.assertEqual(200, queue.get()[0].response.status)
+        response, _ = queue.get()
+        self.assertEqual(200, response.response.status)
         shutdown_test_env()
 
     @unittest.skip

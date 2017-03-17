@@ -31,7 +31,8 @@ class Chain(object):
     on channel.
     """
 
-    def __init__(self, name, crypto_suite=ecies(), peers=None, orderers=None,
+    def __init__(self, name="testchainid", crypto_suite=ecies(),
+                 peers=None, orderers=None,
                  key_value_store=None, tcert_batch_size=0,
                  is_dev_mode=False, is_pre_fetch_mode=False):
         """
