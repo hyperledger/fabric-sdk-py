@@ -43,3 +43,9 @@ proto:
 		--python_out=./ \
 		--grpc_python_out=./ \
 		hfc/protos/**/*.proto
+
+# Clean temporary files
+.PHONY: clean
+clean:
+	rm -rf .cache *.egg-info .tox
+	find . -name "*.pyc" -exec rm -rf "{}" \;

@@ -36,20 +36,17 @@ class CATest(unittest.TestCase):
             self._ca_server_address = os.getenv("CA_ADDR")
         else:
             self._ca_server_address = "localhost:7054"
+        self.compose_file_path = os.path.normpath(
+            os.path.join(os.path.dirname(__file__),
+                         "../fixtures/ca/docker-compose.yml")
+        )
 
-    @staticmethod
-    def start_test_env():
-        cli_call(["docker-compose", "-f",
-                  os.path.join(os.path.dirname(__file__),
-                               "../fixtures/ca/docker-compose.yml"),
-                  "up", "-d"])
+    def start_test_env(self):
+        cli_call(["docker-compose", "-f", self.compose_file_path, "up", "-d"])
 
-    @staticmethod
-    def shutdown_test_env():
-        cli_call(["docker-compose", "-f",
-                  os.path.join(os.path.dirname(__file__),
-                               "../fixtures/ca/docker-compose.yml"),
-                  "down"])
+    # @staticmethod
+    def shutdown_test_env(self):
+        cli_call(["docker-compose", "-f", self.compose_file_path, "down"])
 
     def test_enroll_missing_enrollment_id(self):
         """Test enroll missing enrollment id.
