@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/orderer/configuration.proto',
   package='orderer',
   syntax='proto3',
-  serialized_pb=_b('\n&hfc/protos/orderer/configuration.proto\x12\x07orderer\"\x1d\n\rConsensusType\x12\x0c\n\x04type\x18\x01 \x01(\t\"Y\n\tBatchSize\x12\x17\n\x0fmaxMessageCount\x18\x01 \x01(\r\x12\x18\n\x10\x61\x62soluteMaxBytes\x18\x02 \x01(\r\x12\x19\n\x11preferredMaxBytes\x18\x03 \x01(\r\"\x1f\n\x0c\x42\x61tchTimeout\x12\x0f\n\x07timeout\x18\x01 \x01(\t\" \n\x0e\x43reationPolicy\x12\x0e\n\x06policy\x18\x01 \x01(\t\"#\n\x12IngressPolicyNames\x12\r\n\x05names\x18\x01 \x03(\t\"\"\n\x11\x45gressPolicyNames\x12\r\n\x05names\x18\x01 \x03(\t\")\n\x18\x43hainCreationPolicyNames\x12\r\n\x05names\x18\x01 \x03(\t\"\x1f\n\x0cKafkaBrokers\x12\x0f\n\x07\x62rokers\x18\x01 \x03(\tB.Z,github.com/hyperledger/fabric/protos/ordererb\x06proto3')
+  serialized_pb=_b('\n&hfc/protos/orderer/configuration.proto\x12\x07orderer\"\x1d\n\rConsensusType\x12\x0c\n\x04type\x18\x01 \x01(\t\"Y\n\tBatchSize\x12\x17\n\x0fmaxMessageCount\x18\x01 \x01(\r\x12\x18\n\x10\x61\x62soluteMaxBytes\x18\x02 \x01(\r\x12\x19\n\x11preferredMaxBytes\x18\x03 \x01(\r\"\x1f\n\x0c\x42\x61tchTimeout\x12\x0f\n\x07timeout\x18\x01 \x01(\t\" \n\x0e\x43reationPolicy\x12\x0e\n\x06policy\x18\x01 \x01(\t\")\n\x18\x43hainCreationPolicyNames\x12\r\n\x05names\x18\x01 \x03(\t\"\x1f\n\x0cKafkaBrokers\x12\x0f\n\x07\x62rokers\x18\x01 \x03(\t\"(\n\x13\x43hannelRestrictions\x12\x11\n\tmax_count\x18\x01 \x01(\x04\x42.Z,github.com/hyperledger/fabric/protos/ordererb\x06proto3')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -164,68 +164,6 @@ _CREATIONPOLICY = _descriptor.Descriptor(
 )
 
 
-_INGRESSPOLICYNAMES = _descriptor.Descriptor(
-  name='IngressPolicyNames',
-  full_name='orderer.IngressPolicyNames',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='names', full_name='orderer.IngressPolicyNames.names', index=0,
-      number=1, type=9, cpp_type=9, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=240,
-  serialized_end=275,
-)
-
-
-_EGRESSPOLICYNAMES = _descriptor.Descriptor(
-  name='EgressPolicyNames',
-  full_name='orderer.EgressPolicyNames',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='names', full_name='orderer.EgressPolicyNames.names', index=0,
-      number=1, type=9, cpp_type=9, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=277,
-  serialized_end=311,
-)
-
-
 _CHAINCREATIONPOLICYNAMES = _descriptor.Descriptor(
   name='ChainCreationPolicyNames',
   full_name='orderer.ChainCreationPolicyNames',
@@ -252,8 +190,8 @@ _CHAINCREATIONPOLICYNAMES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=313,
-  serialized_end=354,
+  serialized_start=240,
+  serialized_end=281,
 )
 
 
@@ -283,18 +221,48 @@ _KAFKABROKERS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=356,
-  serialized_end=387,
+  serialized_start=283,
+  serialized_end=314,
+)
+
+
+_CHANNELRESTRICTIONS = _descriptor.Descriptor(
+  name='ChannelRestrictions',
+  full_name='orderer.ChannelRestrictions',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='max_count', full_name='orderer.ChannelRestrictions.max_count', index=0,
+      number=1, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=316,
+  serialized_end=356,
 )
 
 DESCRIPTOR.message_types_by_name['ConsensusType'] = _CONSENSUSTYPE
 DESCRIPTOR.message_types_by_name['BatchSize'] = _BATCHSIZE
 DESCRIPTOR.message_types_by_name['BatchTimeout'] = _BATCHTIMEOUT
 DESCRIPTOR.message_types_by_name['CreationPolicy'] = _CREATIONPOLICY
-DESCRIPTOR.message_types_by_name['IngressPolicyNames'] = _INGRESSPOLICYNAMES
-DESCRIPTOR.message_types_by_name['EgressPolicyNames'] = _EGRESSPOLICYNAMES
 DESCRIPTOR.message_types_by_name['ChainCreationPolicyNames'] = _CHAINCREATIONPOLICYNAMES
 DESCRIPTOR.message_types_by_name['KafkaBrokers'] = _KAFKABROKERS
+DESCRIPTOR.message_types_by_name['ChannelRestrictions'] = _CHANNELRESTRICTIONS
 
 ConsensusType = _reflection.GeneratedProtocolMessageType('ConsensusType', (_message.Message,), dict(
   DESCRIPTOR = _CONSENSUSTYPE,
@@ -324,20 +292,6 @@ CreationPolicy = _reflection.GeneratedProtocolMessageType('CreationPolicy', (_me
   ))
 _sym_db.RegisterMessage(CreationPolicy)
 
-IngressPolicyNames = _reflection.GeneratedProtocolMessageType('IngressPolicyNames', (_message.Message,), dict(
-  DESCRIPTOR = _INGRESSPOLICYNAMES,
-  __module__ = 'hfc.protos.orderer.configuration_pb2'
-  # @@protoc_insertion_point(class_scope:orderer.IngressPolicyNames)
-  ))
-_sym_db.RegisterMessage(IngressPolicyNames)
-
-EgressPolicyNames = _reflection.GeneratedProtocolMessageType('EgressPolicyNames', (_message.Message,), dict(
-  DESCRIPTOR = _EGRESSPOLICYNAMES,
-  __module__ = 'hfc.protos.orderer.configuration_pb2'
-  # @@protoc_insertion_point(class_scope:orderer.EgressPolicyNames)
-  ))
-_sym_db.RegisterMessage(EgressPolicyNames)
-
 ChainCreationPolicyNames = _reflection.GeneratedProtocolMessageType('ChainCreationPolicyNames', (_message.Message,), dict(
   DESCRIPTOR = _CHAINCREATIONPOLICYNAMES,
   __module__ = 'hfc.protos.orderer.configuration_pb2'
@@ -351,6 +305,13 @@ KafkaBrokers = _reflection.GeneratedProtocolMessageType('KafkaBrokers', (_messag
   # @@protoc_insertion_point(class_scope:orderer.KafkaBrokers)
   ))
 _sym_db.RegisterMessage(KafkaBrokers)
+
+ChannelRestrictions = _reflection.GeneratedProtocolMessageType('ChannelRestrictions', (_message.Message,), dict(
+  DESCRIPTOR = _CHANNELRESTRICTIONS,
+  __module__ = 'hfc.protos.orderer.configuration_pb2'
+  # @@protoc_insertion_point(class_scope:orderer.ChannelRestrictions)
+  ))
+_sym_db.RegisterMessage(ChannelRestrictions)
 
 
 DESCRIPTOR.has_options = True

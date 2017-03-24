@@ -3,6 +3,7 @@
 
 import sys
 _b=sys.version_info[0]<3 and (lambda x:x) or (lambda x:x.encode('latin1'))
+from google.protobuf.internal import enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
@@ -22,11 +23,116 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/transaction.proto',
   package='protos',
   syntax='proto3',
-  serialized_pb=_b('\n!hfc/protos/peer/transaction.proto\x12\x06protos\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\'hfc/protos/peer/proposal_response.proto\x1a\x1ehfc/protos/common/common.proto\"A\n\x11SignedTransaction\x12\x19\n\x11transaction_bytes\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"T\n\x14ProcessedTransaction\x12-\n\x13transactionEnvelope\x18\x01 \x01(\x0b\x32\x10.common.Envelope\x12\r\n\x05valid\x18\x02 \x01(\x08\"9\n\x0bTransaction\x12*\n\x07\x61\x63tions\x18\x01 \x03(\x0b\x32\x19.protos.TransactionAction\"4\n\x11TransactionAction\x12\x0e\n\x06header\x18\x01 \x01(\x0c\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\"m\n\x16\x43haincodeActionPayload\x12\"\n\x1a\x63haincode_proposal_payload\x18\x01 \x01(\x0c\x12/\n\x06\x61\x63tion\x18\x02 \x01(\x0b\x32\x1f.protos.ChaincodeEndorsedAction\"g\n\x17\x43haincodeEndorsedAction\x12!\n\x19proposal_response_payload\x18\x01 \x01(\x0c\x12)\n\x0c\x65ndorsements\x18\x02 \x03(\x0b\x32\x13.protos.EndorsementB+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_pb=_b('\n!hfc/protos/peer/transaction.proto\x12\x06protos\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\'hfc/protos/peer/proposal_response.proto\x1a\x1ehfc/protos/common/common.proto\"A\n\x11SignedTransaction\x12\x19\n\x11transaction_bytes\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"]\n\x14ProcessedTransaction\x12-\n\x13transactionEnvelope\x18\x01 \x01(\x0b\x32\x10.common.Envelope\x12\x16\n\x0evalidationCode\x18\x02 \x01(\x05\"9\n\x0bTransaction\x12*\n\x07\x61\x63tions\x18\x01 \x03(\x0b\x32\x19.protos.TransactionAction\"4\n\x11TransactionAction\x12\x0e\n\x06header\x18\x01 \x01(\x0c\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\"m\n\x16\x43haincodeActionPayload\x12\"\n\x1a\x63haincode_proposal_payload\x18\x01 \x01(\x0c\x12/\n\x06\x61\x63tion\x18\x02 \x01(\x0b\x32\x1f.protos.ChaincodeEndorsedAction\"g\n\x17\x43haincodeEndorsedAction\x12!\n\x19proposal_response_payload\x18\x01 \x01(\x0c\x12)\n\x0c\x65ndorsements\x18\x02 \x03(\x0b\x32\x13.protos.Endorsement*\xc2\x03\n\x10TxValidationCode\x12\t\n\x05VALID\x10\x00\x12\x10\n\x0cNIL_ENVELOPE\x10\x01\x12\x0f\n\x0b\x42\x41\x44_PAYLOAD\x10\x02\x12\x15\n\x11\x42\x41\x44_COMMON_HEADER\x10\x03\x12\x19\n\x15\x42\x41\x44_CREATOR_SIGNATURE\x10\x04\x12 \n\x1cINVALID_ENDORSER_TRANSACTION\x10\x05\x12\x1e\n\x1aINVALID_CONFIG_TRANSACTION\x10\x06\x12\x1a\n\x16UNSUPPORTED_TX_PAYLOAD\x10\x07\x12\x15\n\x11\x42\x41\x44_PROPOSAL_TXID\x10\x08\x12\x12\n\x0e\x44UPLICATE_TXID\x10\t\x12\x1e\n\x1a\x45NDORSEMENT_POLICY_FAILURE\x10\n\x12\x16\n\x12MVCC_READ_CONFLICT\x10\x0b\x12\x19\n\x15PHANTOM_READ_CONFLICT\x10\x0c\x12\x13\n\x0fUNKNOWN_TX_TYPE\x10\r\x12\x1a\n\x16TARGET_CHAIN_NOT_FOUND\x10\x0e\x12\x14\n\x10MARSHAL_TX_ERROR\x10\x0f\x12\x10\n\x0cNIL_TXACTION\x10\x10\x12\x19\n\x14INVALID_OTHER_REASON\x10\xff\x01\x42+Z)github.com/hyperledger/fabric/protos/peerb\x06proto3')
   ,
   dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,hfc_dot_protos_dot_peer_dot_proposal__response__pb2.DESCRIPTOR,hfc_dot_protos_dot_common_dot_common__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
+_TXVALIDATIONCODE = _descriptor.EnumDescriptor(
+  name='TxValidationCode',
+  full_name='protos.TxValidationCode',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='VALID', index=0, number=0,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='NIL_ENVELOPE', index=1, number=1,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='BAD_PAYLOAD', index=2, number=2,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='BAD_COMMON_HEADER', index=3, number=3,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='BAD_CREATOR_SIGNATURE', index=4, number=4,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='INVALID_ENDORSER_TRANSACTION', index=5, number=5,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='INVALID_CONFIG_TRANSACTION', index=6, number=6,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='UNSUPPORTED_TX_PAYLOAD', index=7, number=7,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='BAD_PROPOSAL_TXID', index=8, number=8,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='DUPLICATE_TXID', index=9, number=9,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='ENDORSEMENT_POLICY_FAILURE', index=10, number=10,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='MVCC_READ_CONFLICT', index=11, number=11,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PHANTOM_READ_CONFLICT', index=12, number=12,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='UNKNOWN_TX_TYPE', index=13, number=13,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='TARGET_CHAIN_NOT_FOUND', index=14, number=14,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='MARSHAL_TX_ERROR', index=15, number=15,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='NIL_TXACTION', index=16, number=16,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='INVALID_OTHER_REASON', index=17, number=255,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=643,
+  serialized_end=1093,
+)
+_sym_db.RegisterEnumDescriptor(_TXVALIDATIONCODE)
+
+TxValidationCode = enum_type_wrapper.EnumTypeWrapper(_TXVALIDATIONCODE)
+VALID = 0
+NIL_ENVELOPE = 1
+BAD_PAYLOAD = 2
+BAD_COMMON_HEADER = 3
+BAD_CREATOR_SIGNATURE = 4
+INVALID_ENDORSER_TRANSACTION = 5
+INVALID_CONFIG_TRANSACTION = 6
+UNSUPPORTED_TX_PAYLOAD = 7
+BAD_PROPOSAL_TXID = 8
+DUPLICATE_TXID = 9
+ENDORSEMENT_POLICY_FAILURE = 10
+MVCC_READ_CONFLICT = 11
+PHANTOM_READ_CONFLICT = 12
+UNKNOWN_TX_TYPE = 13
+TARGET_CHAIN_NOT_FOUND = 14
+MARSHAL_TX_ERROR = 15
+NIL_TXACTION = 16
+INVALID_OTHER_REASON = 255
 
 
 
@@ -83,9 +189,9 @@ _PROCESSEDTRANSACTION = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='valid', full_name='protos.ProcessedTransaction.valid', index=1,
-      number=2, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
+      name='validationCode', full_name='protos.ProcessedTransaction.validationCode', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -102,7 +208,7 @@ _PROCESSEDTRANSACTION = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=218,
-  serialized_end=302,
+  serialized_end=311,
 )
 
 
@@ -132,8 +238,8 @@ _TRANSACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=304,
-  serialized_end=361,
+  serialized_start=313,
+  serialized_end=370,
 )
 
 
@@ -170,8 +276,8 @@ _TRANSACTIONACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=363,
-  serialized_end=415,
+  serialized_start=372,
+  serialized_end=424,
 )
 
 
@@ -208,8 +314,8 @@ _CHAINCODEACTIONPAYLOAD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=417,
-  serialized_end=526,
+  serialized_start=426,
+  serialized_end=535,
 )
 
 
@@ -246,8 +352,8 @@ _CHAINCODEENDORSEDACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=528,
-  serialized_end=631,
+  serialized_start=537,
+  serialized_end=640,
 )
 
 _PROCESSEDTRANSACTION.fields_by_name['transactionEnvelope'].message_type = hfc_dot_protos_dot_common_dot_common__pb2._ENVELOPE
@@ -260,6 +366,7 @@ DESCRIPTOR.message_types_by_name['Transaction'] = _TRANSACTION
 DESCRIPTOR.message_types_by_name['TransactionAction'] = _TRANSACTIONACTION
 DESCRIPTOR.message_types_by_name['ChaincodeActionPayload'] = _CHAINCODEACTIONPAYLOAD
 DESCRIPTOR.message_types_by_name['ChaincodeEndorsedAction'] = _CHAINCODEENDORSEDACTION
+DESCRIPTOR.enum_types_by_name['TxValidationCode'] = _TXVALIDATIONCODE
 
 SignedTransaction = _reflection.GeneratedProtocolMessageType('SignedTransaction', (_message.Message,), dict(
   DESCRIPTOR = _SIGNEDTRANSACTION,
