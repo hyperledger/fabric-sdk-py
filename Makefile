@@ -13,7 +13,10 @@ check:
 	bash check.sh
 
 # Run all unit test cases
-unittest: pylint flake8 py27 py35
+unittest: cov-init pylint flake8 py27 py35 cov-report
+
+cov-init:
+	$(call run-py-tox)
 
 pylint:
 	$(call run-py-tox)
@@ -28,6 +31,9 @@ py35:
 	$(call run-py-tox)
 
 flake8:
+	$(call run-py-tox)
+
+cov-report:
 	$(call run-py-tox)
 
 # Generate the hyperledger/fabric-sdk-py image

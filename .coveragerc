@@ -1,0 +1,7 @@
+[run]
+branch = True
+omit = */protos/*
+
+[report]
+precision = 2
+show_missing = True
