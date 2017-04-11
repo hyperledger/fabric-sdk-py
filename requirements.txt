@@ -1,8 +1,8 @@
-requests >= 2.12.4
-six >= 1.4.0
-pycryptodomex >= 3.4.2
 cryptography >= 1.5.2
-pysha3 == 1.0b1
-hkdf >= 0.0.3
-rx >= 1.5.3
 grpcio >= 1.0.1
+hkdf >= 0.0.3
+pycryptodomex >= 3.4.2
+pysha3 == 1.0b1
+requests >= 2.12.4
+rx >= 1.5.3
+six >= 1.4.0

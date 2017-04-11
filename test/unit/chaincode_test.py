@@ -37,18 +37,31 @@ class ChaincodeTest(unittest.TestCase):
 
     def setUp(self):
         self.gopath_bak = os.environ.get('GOPATH', '')
-        gopath = os.path.join(os.path.dirname(__file__),
-                              "../fixtures/chaincode")
+        gopath = os.path.normpath(os.path.join(os.path.dirname(__file__),
+                                               "../fixtures/chaincode"))
         os.environ['GOPATH'] = os.path.abspath(gopath)
         self.base_path = '/tmp/fabric-sdk-py'
         self.kv_store_path = os.path.join(self.base_path, 'key-value-store')
+        self.compose_file_path = os.path.normpath(
+            os.path.join(os.path.dirname(__file__),
+                         "../fixtures/ca/docker-compose.yml")
+        )
 
     def tearDown(self):
         if self.gopath_bak:
             os.environ['GOPATH'] = self.gopath_bak
+        self.shutdown_test_env()
 
+    def start_test_env(self):
+        cli_call(["docker-compose", "-f", self.compose_file_path, "up", "-d"])
+
+    def shutdown_test_env(self):
+        cli_call(["docker-compose", "-f", self.compose_file_path, "down"])
+
+    @unittest.skip
     def test_install(self):
-        start_test_env()
+        self.shutdown_test_env()
+        self.start_test_env()
         time.sleep(5)
         client = Client()
         chain = client.new_chain(CHAIN_ID)
@@ -67,11 +80,12 @@ class ChaincodeTest(unittest.TestCase):
 
         response, _ = queue.get()
         self.assertEqual(200, response.response.status)
-        shutdown_test_env()
+        self.shutdown_test_env()
 
     @unittest.skip
     def test_instantiate(self):
-        start_test_env()
+        self.shutdown_test_env()
+        self.start_test_env()
         time.sleep(5)
         client = Client()
         chain = client.new_chain(CHAIN_ID)
@@ -99,11 +113,12 @@ class ChaincodeTest(unittest.TestCase):
             signing_identity.verify(str.encode(digest.hexdigest()),
                                     sig),
             True)
-        shutdown_test_env()
+        self.shutdown_test_env()
 
     @unittest.skip
     def test_invoke(self):
-        start_test_env()
+        self.shutdown_test_env()
+        self.start_test_env()
         time.sleep(5)
         client = Client()
         chain = client.new_chain(CHAIN_ID)
@@ -130,7 +145,7 @@ class ChaincodeTest(unittest.TestCase):
             signing_identity.verify(str.encode(digest.hexdigest()),
                                     sig),
             True)
-        shutdown_test_env()
+        self.shutdown_test_env()
 
 
 def get_submitter():
@@ -139,20 +154,6 @@ def get_submitter():
     user.enroll()
 
     return user
-
-
-def shutdown_test_env():
-    cli_call(["docker-compose", "-f",
-              os.path.join(os.path.dirname(__file__),
-                           "../fixtures/chaincode/docker-compose.yml"),
-              "down"])
-
-
-def start_test_env():
-    cli_call(["docker-compose", "-f",
-              os.path.join(os.path.dirname(__file__),
-                           "../fixtures/chaincode/docker-compose.yml"),
-              "up", "-d"])
 
 
 if __name__ == '__main__':
