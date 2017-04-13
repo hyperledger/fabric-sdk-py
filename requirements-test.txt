@@ -1,6 +1,6 @@
 coverage
+docker-compose >= 1.7.0
 flake8
 mock
 pytest
-docker-compose >= 1.7.0
 pytest-cov

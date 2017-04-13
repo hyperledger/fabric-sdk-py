@@ -116,8 +116,8 @@ class Identity(object):
             A binary string representation of this identity.
         """
         serialized_identity = identities_pb2.SerializedIdentity()
-        serialized_identity.Mspid = self._msp.identity
-        serialized_identity.IdBytes = self._certificate
+        serialized_identity.mspid = self._msp.identity
+        serialized_identity.id_bytes = self._certificate
         return serialized_identity.SerializeToString()
 
 

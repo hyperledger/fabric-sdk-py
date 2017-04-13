@@ -1,7 +1,8 @@
 ca:
   container_name: fabric-ca
   image: hyperledger/fabric-ca
-  command: fabric-ca server start -ca testdata/ec.pem -ca-key testdata/ec-key.pem -config ./testdata/testconfig-sdk.json -address "0.0.0.0"
+  #command: fabric-ca-server start -c ./testdata/testconfig-sdk.json
+  command: fabric-ca-server start -b admin:adminpw
   volumes:
     - ./testconfig-sdk.json:/go/src/github.com/hyperledger/fabric-ca/testdata/testconfig-sdk.json
   ports:

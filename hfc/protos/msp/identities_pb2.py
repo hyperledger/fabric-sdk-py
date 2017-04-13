@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/msp/identities.proto',
   package='msp',
   syntax='proto3',
-  serialized_pb=_b('\n\x1fhfc/protos/msp/identities.proto\x12\x03msp\"4\n\x12SerializedIdentity\x12\r\n\x05Mspid\x18\x01 \x01(\t\x12\x0f\n\x07IdBytes\x18\x02 \x01(\x0c\x42#Z!github.com/hyperledger/fabric/mspb\x06proto3')
+  serialized_pb=_b('\n\x1fhfc/protos/msp/identities.proto\x12\x03msp\"5\n\x12SerializedIdentity\x12\r\n\x05mspid\x18\x01 \x01(\t\x12\x10\n\x08id_bytes\x18\x02 \x01(\x0c\x42M\n!org.hyperledger.fabric.protos.mspZ(github.com/hyperledger/fabric/protos/mspb\x06proto3')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -34,14 +34,14 @@ _SERIALIZEDIDENTITY = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='Mspid', full_name='msp.SerializedIdentity.Mspid', index=0,
+      name='mspid', full_name='msp.SerializedIdentity.mspid', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='IdBytes', full_name='msp.SerializedIdentity.IdBytes', index=1,
+      name='id_bytes', full_name='msp.SerializedIdentity.id_bytes', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -60,7 +60,7 @@ _SERIALIZEDIDENTITY = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=40,
-  serialized_end=92,
+  serialized_end=93,
 )
 
 DESCRIPTOR.message_types_by_name['SerializedIdentity'] = _SERIALIZEDIDENTITY
@@ -74,7 +74,7 @@ _sym_db.RegisterMessage(SerializedIdentity)
 
 
 DESCRIPTOR.has_options = True
-DESCRIPTOR._options = _descriptor._ParseOptions(descriptor_pb2.FileOptions(), _b('Z!github.com/hyperledger/fabric/msp'))
+DESCRIPTOR._options = _descriptor._ParseOptions(descriptor_pb2.FileOptions(), _b('\n!org.hyperledger.fabric.protos.mspZ(github.com/hyperledger/fabric/protos/msp'))
 try:
   # THESE ELEMENTS WILL BE DEPRECATED.
   # Please use the generated *_pb2_grpc.py files instead.

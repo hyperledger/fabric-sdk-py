@@ -72,7 +72,7 @@ class CAClient(object):
         _logger.debug("Raw response json {0}".format(enrollment_response))
 
         if enrollment_response['success']:
-            return base64.b64decode(enrollment_response['result'])
+            return base64.b64decode(enrollment_response['result']['Cert'])
         else:
             raise ValueError("Enrollment failed with errors {0}"
                              .format(enrollment_response['errors']))

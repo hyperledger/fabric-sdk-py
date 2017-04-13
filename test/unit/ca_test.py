@@ -30,8 +30,10 @@ class CATest(unittest.TestCase):
     """Test for ca module. """
 
     def setUp(self):
-        self._enrollment_id = "testUser"
-        self._enrollment_secret = "user1"
+        self._enrollment_id = "admin"
+        self._enrollment_secret = "adminpw"
+        # self._enrollment_id = "testUser"
+        # self._enrollment_secret = "user1"
         if os.getenv("CA_ADDR"):
             self._ca_server_address = os.getenv("CA_ADDR")
         else:
@@ -40,6 +42,9 @@ class CATest(unittest.TestCase):
             os.path.join(os.path.dirname(__file__),
                          "../fixtures/ca/docker-compose.yml")
         )
+
+    def tearDown(self):
+        self.shutdown_test_env()
 
     def start_test_env(self):
         cli_call(["docker-compose", "-f", self.compose_file_path, "up", "-d"])
