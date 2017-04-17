@@ -58,7 +58,7 @@ class KeyValueStoreTest(unittest.TestCase):
         key_value_store.async_get_value(self.key) \
             .subscribe(lambda x: queue.put(x))
 
-        self.assertEqual(queue.get(), self.value)
+        self.assertEqual(queue.get(5), self.value)
 
     def test_async_write(self):
         """Test for async setting."""
@@ -66,8 +66,7 @@ class KeyValueStoreTest(unittest.TestCase):
         queue = Queue(1)
         key_value_store.async_set_value(self.key, self.value) \
             .subscribe(lambda x: queue.put(x))
-        queue = Queue(1)
-        self.assertTrue(queue.get())
+        self.assertTrue(queue.get(5))
 
 
 if __name__ == '__main__':

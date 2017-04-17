@@ -46,9 +46,10 @@ class Orderer(object):
 
         """
         _logger.debug("Send envelope={}".format(envelope))
+
         return rx.Observable.start(
-            self._orderer_client.Broadcast(envelope),
-            scheduler).map(lambda response: (response, self))
+            lambda: self._orderer_client.Broadcast(iter([envelope])),
+            scheduler).map(self._handle_response_stream)
 
     def delivery(self, envelope, scheduler=None):
         """ Send an delivery envelop to orderer
@@ -61,8 +62,8 @@ class Orderer(object):
         """
         _logger.debug("Send envelope={}".format(envelope))
         return rx.Observable.start(
-            self._orderer_client.Deliver(envelope),
-            scheduler).map(lambda response: (response, self))
+            lambda: self._orderer_client.Deliver(iter([envelope])),
+            scheduler).map(self._handle_response_stream)
 
     @property
     def endpoint(self):
@@ -72,3 +73,15 @@ class Orderer(object):
 
         """
         return self._endpoint
+
+    def _handle_response_stream(self, responses):
+        """Handle response stream
+
+        Args:
+            responses: responses
+
+        Returns: a (response,self) tuple
+
+        """
+        for response in responses:
+            return response, self

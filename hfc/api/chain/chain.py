@@ -115,14 +115,14 @@ class Chain(object):
         """
         self._peers[peer.endpoint] = peer
 
-    def remove_peer(self, endpoint):
+    def remove_peer(self, peer):
         """Remove peer endpoint from a chain object
 
         Args:
-            endpoint(string): grpc address of the peer to remove
+            peer: peer
         """
-        if endpoint in self._peers:
-            self._peers.pop(endpoint, None)
+        if peer.endpoint in self._peers:
+            self._peers.pop(peer.endpoint, None)
 
     @property
     def peers(self):
@@ -154,7 +154,7 @@ class Chain(object):
         Args:
              orderer: an instance of the Orderer class
         """
-        pass
+        self._orderers[orderer.endpoint] = orderer
 
     def remove_orderer(self, orderer):
         """Remove orderer endpoint from a chain object.
@@ -162,14 +162,16 @@ class Chain(object):
         Args:
             orderer: an instance of the Orderer class
         """
-        pass
+        if orderer.endpoint in self._orderers:
+            self._orderers.pop(orderer.endpoint, None)
 
-    def get_orderers(self):
+    @property
+    def orderers(self):
         """Get orderers of a chain.
 
         Returns: The orderer list on the chain
         """
-        pass
+        return self._orderers
 
     def initialize_chain(self):
         """Initialize a new chain
@@ -235,10 +237,12 @@ class Chain(object):
         """
         pass
 
-    def install_chaincode(self, cc_install_request, scheduler=None):
+    def install_chaincode(self, cc_install_request,
+                          signing_identity, scheduler=None):
         """Install chaincode.
 
         Args:
+            signing_identity: signing identity
             scheduler: see rx.Scheduler
             cc_install_request: see TransactionProposalRequest
 
@@ -246,12 +250,14 @@ class Chain(object):
 
         """
         return chaincode_installment(self).handle(
-            cc_install_request, scheduler)
+            cc_install_request, signing_identity, scheduler)
 
-    def instantiate_chaincode(self, cc_instantiate_request, scheduler=None):
+    def instantiate_chaincode(self, cc_instantiate_request,
+                              signing_identity, scheduler=None):
         """Instantiate chaincode.
 
         Args:
+            signing_identity: signing identity
             scheduler: see rx.Scheduler
             cc_instantiate_request: see TransactionProposalRequest
 
@@ -259,12 +265,14 @@ class Chain(object):
 
         """
         return chaincode_instantiation(self).handle(
-            cc_instantiate_request, scheduler)
+            cc_instantiate_request, signing_identity, scheduler)
 
-    def invoke_chaincode(self, cc_invoke_request, scheduler=None):
+    def invoke_chaincode(self, cc_invoke_request,
+                         signing_identity, scheduler=None):
         """Invoke chaincode.
 
         Args:
+            signing_identity: signing identity
             cc_invoke_request: see TransactionProposalRequest
             scheduler: see rx.Scheduler
 
@@ -272,42 +280,7 @@ class Chain(object):
 
         """
         return chaincode_invocation(self).handle(
-            cc_invoke_request, scheduler)
-
-    def create_transaction(self, proposal_responses):
-        """Create a transaction with proposal response.
-
-        Following the endorsement policy.
-
-        Args:
-            proposal_responses ([Transaction_Proposal_Response]):
-                The array of proposal responses received in the proposal call.
-
-
-        Returns:
-            (Transaction instance): The created transaction object instance.
-
-        """
-        return None
-
-    def send_transaction(self, transaction):
-        """Send a transaction to the chain's orderer service (one or more
-        orderer endpoints) for consensus and committing to the ledger.
-
-        This call is asynchronous and the successful transaction commit is
-        notified via a BLOCK or CHAINCODE event. This method must provide a
-        mechanism for applications to attach event listeners to handle
-        'transaction submitted', 'transaction complete' and 'error' events.
-
-        Args:
-            transaction (Transaction): The transaction object constructed above
-
-        Returns:
-            result (EventEmitter): an handle to allow the application to
-            attach event handlers on 'submitted', 'complete', and 'error'.
-
-        """
-        return None
+            cc_invoke_request, signing_identity, scheduler)
 
     def generate_tx_id(self, nonce, creator):
         """Generate transaction id by nonce and creator.

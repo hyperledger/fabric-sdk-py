@@ -57,19 +57,3 @@ services:
       - orderer
       - ca
     command: peer node start
-
-  sdk-py:
-    container_name: fabric-sdk-py
-    build: ../../..
-    image: hyperledger/fabric-sdk-py
-    environment:
-      - ORDERER_ADDR=orderer:7050
-      - PEER_ADDR=peer:7051
-      - CA_ADDR=ca:7054
-    links:
-      - orderer
-      - peer
-      - ca
-    command: sh -c "while true; do sleep 1000; done"
-    expose:
-      - "80"

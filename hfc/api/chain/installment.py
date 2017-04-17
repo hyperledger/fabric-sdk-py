@@ -22,7 +22,7 @@ import rx
 from hfc.api.chain.transactionproposals \
     import TransactionProposalHandler, CC_INSTALL, \
     TransactionProposalRequest, check_tran_prop_request, \
-    build_header, build_proposal, sign_proposal, send_transaction_proposal
+    build_header, build_proposal, send_transaction_proposal, send_transaction
 from hfc.api.crypto import crypto
 from hfc.protos.common import common_pb2
 from hfc.protos.peer import chaincode_pb2
@@ -36,20 +36,22 @@ KEEP = ['.go', '.c', '.h']
 class Installment(TransactionProposalHandler):
     """Chaincode installment transaction proposal handler. """
 
-    def handle(self, tran_prop_req, scheduler=None):
+    def handle(self, tran_prop_req, signing_identity, scheduler=None):
         """Execute chaincode install transaction proposal request.
 
         Args:
+            signing_identity: signing_identity
             scheduler: see rx.Scheduler
             tran_prop_req: chaincode install transaction proposal request
 
         Returns: An rx.Observer wrapper of chaincode install response
 
         """
-        return _install_chaincode(self._chain, tran_prop_req, scheduler)
+        return _install_chaincode(self._chain, tran_prop_req,
+                                  signing_identity, scheduler)
 
 
-def _create_installment_proposal(tran_prop_req, chain):
+def _create_installment_proposal(tran_prop_req, signing_identity, chain):
     """Create a chaincode install proposal
 
     This involves assembling the proposal with the data (chaincodeID,
@@ -57,6 +59,8 @@ def _create_installment_proposal(tran_prop_req, chain):
     corresponding to the ECert to sign.
 
     Args:
+        chain: chain
+        signing_identity: signing_identity
         tran_prop_req: see TransactionProposalRequest
 
     Returns: (Proposal): The created Proposal instance or None.
@@ -82,7 +86,7 @@ def _create_installment_proposal(tran_prop_req, chain):
     cc_deployment_spec.effective_date.nanos = \
         tran_prop_req.effective_date.nanos
 
-    header = build_header(tran_prop_req.signing_identity,
+    header = build_header(signing_identity,
                           tran_prop_req.nonce,
                           common_pb2.ENDORSER_TRANSACTION,
                           chain,
@@ -98,9 +102,7 @@ def _create_installment_proposal(tran_prop_req, chain):
         [proto_b(CC_INSTALL), cc_deployment_spec.SerializeToString()])
     proposal = build_proposal(cci_spec, header)
 
-    signed_proposal = sign_proposal(
-        tran_prop_req.signing_identity, proposal)
-    return signed_proposal
+    return proposal, header
 
 
 def _package_chaincode(cc_path):
@@ -141,10 +143,12 @@ def _package_chaincode(cc_path):
     return code_content
 
 
-def _install_chaincode(chain, cc_installment_request, scheduler=None):
+def _install_chaincode(chain, cc_installment_request,
+                       signing_identity, scheduler=None):
     """Install chaincode.
 
     Args:
+        signing_identity: see signing identity
         chain: chain instance
         scheduler: see rx.Scheduler
         cc_installment_request: see TransactionProposalRequest
@@ -152,6 +156,9 @@ def _install_chaincode(chain, cc_installment_request, scheduler=None):
     Returns: An rx.Observable of installment response
 
     """
+    if not signing_identity:
+        raise ValueError("Missing 'signing_identity' parameter")
+
     if len(chain.peers) < 1:
         return rx.Observable.just(ValueError(
             "Missing peer objects on this chain"
@@ -169,17 +176,24 @@ def _install_chaincode(chain, cc_installment_request, scheduler=None):
     if len(peers) < 1:
         peers = chain.peers
 
+    # TODO:check proposal response
     return rx.Observable \
         .just(cc_installment_request) \
         .map(check_tran_prop_request) \
-        .map(lambda req, _: _create_installment_proposal(req, chain)) \
-        .flat_map(lambda proposal, _:
-                  send_transaction_proposal(
-                      proposal, peers, scheduler))
+        .map(lambda req, _:
+             _create_installment_proposal(req, signing_identity, chain)) \
+        .flat_map(lambda proposal_header, _:
+                  send_transaction_proposal(proposal_header[0],
+                                            proposal_header[1],
+                                            signing_identity,
+                                            peers, scheduler))\
+        .flat_map(lambda tran_req:
+                  send_transaction(chain.orderers, tran_req,
+                                   signing_identity, scheduler))
 
 
 def create_installment_proposal_req(chaincode_id, chaincode_path,
-                                    chaincode_version, creator,
+                                    chaincode_version,
                                     nonce=crypto.generate_nonce(24),
                                     targets=None,
                                     effective_date=current_timestamp()):
@@ -192,12 +206,11 @@ def create_installment_proposal_req(chaincode_id, chaincode_path,
         chaincode_id: chaincode_id
         chaincode_path: chaincode_path
         chaincode_version: chaincode_version
-        creator: user
 
     Returns: see TransactionProposalRequest
 
     """
-    return TransactionProposalRequest(chaincode_id, creator, CC_INSTALL,
+    return TransactionProposalRequest(chaincode_id, CC_INSTALL,
                                       chaincode_path, chaincode_version,
                                       nonce=nonce, targets=targets,
                                       effective_date=effective_date)
