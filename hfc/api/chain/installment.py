@@ -87,13 +87,13 @@ def _create_installment_proposal(tran_prop_req, chain):
                           common_pb2.ENDORSER_TRANSACTION,
                           chain,
                           tran_prop_req.prop_type,
-                          chaincode_id="lccc"
+                          chaincode_id="lscc"
                           )
 
     cci_spec = chaincode_pb2.ChaincodeInvocationSpec()
     cci_spec.chaincode_spec.type = \
         chaincode_pb2.ChaincodeSpec.Type.Value('GOLANG')
-    cci_spec.chaincode_spec.chaincode_id.name = proto_str("lccc")
+    cci_spec.chaincode_spec.chaincode_id.name = proto_str("lscc")
     cci_spec.chaincode_spec.input.args.extend(
         [proto_b(CC_INSTALL), cc_deployment_spec.SerializeToString()])
     proposal = build_proposal(cci_spec, header)

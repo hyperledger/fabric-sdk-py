@@ -114,6 +114,8 @@ class User(object):
                                   public_key,
                                   self._msp)
         signer = Signer(self._msp.crypto_suite, priv_key)
+        print("cert={}".format(cert))
+        print("public_key={}".format(public_key))
         self._signing_identity = SigningIdentity(
             self._name + '_signingIdentity',
             cert, public_key,

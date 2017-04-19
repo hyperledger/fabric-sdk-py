@@ -2,8 +2,8 @@ ca:
   container_name: fabric-ca
   image: hyperledger/fabric-ca
   #command: fabric-ca-server start -c ./testdata/testconfig-sdk.json
-  command: fabric-ca-server start -b admin:adminpw
   volumes:
-    - ./testconfig-sdk.json:/go/src/github.com/hyperledger/fabric-ca/testdata/testconfig-sdk.json
+    - ../ca/fabric-ca-server:/etc/hyperledger/fabric-ca-server
   ports:
     - "7054:7054"
+  command: bash -c "fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server/ca-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server/ca-key.pem -c /etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml -b admin:adminpw"

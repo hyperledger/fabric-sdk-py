@@ -83,7 +83,7 @@ def _create_instantiation_proposal(tran_prop_req, chain):
     cci_spec = chaincode_pb2.ChaincodeInvocationSpec()
     cci_spec.chaincode_spec.type = \
         chaincode_pb2.ChaincodeSpec.Type.Value('GOLANG')
-    cci_spec.chaincode_spec.chaincode_id.name = proto_str("lccc")
+    cci_spec.chaincode_spec.chaincode_id.name = proto_str("lscc")
     cci_spec.chaincode_spec.input.args.extend(
         [proto_b(CC_INSTANTIATE), proto_b('default'),
          cc_deployment_spec.SerializeToString()])

@@ -32,7 +32,7 @@ USER_PASSWD = 'adminpw'
 
 
 class ChaincodeTest(unittest.TestCase):
-    """ This is an example framework for test case
+    """ Chaincode related Test cases
     """
 
     def setUp(self):
@@ -44,8 +44,9 @@ class ChaincodeTest(unittest.TestCase):
         self.kv_store_path = os.path.join(self.base_path, 'key-value-store')
         self.compose_file_path = os.path.normpath(
             os.path.join(os.path.dirname(__file__),
-                         "../fixtures/ca/docker-compose.yml")
+                         "../fixtures/chaincode/docker-compose.yml")
         )
+        self.start_test_env()
 
     def tearDown(self):
         if self.gopath_bak:
@@ -58,10 +59,8 @@ class ChaincodeTest(unittest.TestCase):
     def shutdown_test_env(self):
         cli_call(["docker-compose", "-f", self.compose_file_path, "down"])
 
-    @unittest.skip
+    # @unittest.skip
     def test_install(self):
-        self.shutdown_test_env()
-        self.start_test_env()
         time.sleep(5)
         client = Client()
         chain = client.new_chain(CHAIN_ID)
@@ -76,9 +75,13 @@ class ChaincodeTest(unittest.TestCase):
         queue = Queue(1)
 
         chain.install_chaincode(cc_install_req) \
-            .subscribe(lambda x: queue.put(x))
+            .subscribe(on_next=lambda x: queue.put(x),
+                       on_error=lambda x: queue.put(x))
 
-        response, _ = queue.get()
+        response, _ = queue.get(timeout=5)
+        print(response)
+        print(response.response)
+        print(response.response.status)
         self.assertEqual(200, response.response.status)
         self.shutdown_test_env()
 
@@ -103,7 +106,7 @@ class ChaincodeTest(unittest.TestCase):
         chain.instantiate_chaincode(cc_instantiate_req) \
             .subscribe(lambda x: queue.put(x))
 
-        prop = queue.get()
+        prop = queue.get(timeout=10)
         proposal_bytes = prop.proposal_bytes
         sig = prop.signature
 
@@ -135,7 +138,7 @@ class ChaincodeTest(unittest.TestCase):
         chain.invoke_chaincode(cc_invoke_req) \
             .subscribe(lambda x: queue.put(x))
 
-        prop = queue.get()
+        prop = queue.get(timeout=10)
         proposal_bytes = prop.proposal_bytes
         sig = prop.signature
 
