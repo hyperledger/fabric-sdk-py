@@ -39,7 +39,7 @@ class CAClient(object):
             ca_certs_path (str): Local ca certs path
         """
         self._ca_certs_path = ca_certs_path
-        self._base_url = target + "/api/v1/cfssl/"
+        self._base_url = target + "/api/v1/"
 
     def enroll(self, enrollment_id, enrollment_secret, csr):
         """Enroll a registered user in order to receive a signed X509 certificate
