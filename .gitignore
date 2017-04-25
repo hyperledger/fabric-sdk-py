@@ -206,3 +206,5 @@ local.properties
 # Code Recommenders
 .recommenders/
 
+# .db files from tests
+*.db
