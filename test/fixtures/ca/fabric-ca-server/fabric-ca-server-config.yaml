@@ -26,9 +26,10 @@
 #
 #   FILE NAME ELEMENTS
 #   ------------------
-#   All filename elements below end with the word "file".
-#   For example, see "certfile" and "keyfile" in the "ca" section.
-#   The value of each filename element can be a simple filename, a
+#   The value of all fields whose name ends with "file" or "files" are
+#   name or names of other files.
+#   For example, see "tls.certfile" and "tls.clientauth.certfiles".
+#   The value of each of these fields can be a simple filename, a
 #   relative path, or an absolute path.  If the value is not an
 #   absolute path, it is interpretted as being relative to the location
 #   of this configuration file.
@@ -59,7 +60,7 @@ tls:
   keyfile: ca-key.pem
   clientauth:
     type: noclientcert
-    certfiles:                  # Comma Separated list of root certificate files (e.g. root.pem, root2.pem)
+    certfiles:
 
 #############################################################################
 #  The CA section contains information related to the Certificate Authority
@@ -73,7 +74,7 @@ tls:
 #############################################################################
 ca:
   # Name of this CA
-  name: 985a63c35c26
+  name:
   # Key file (default: ca-key.pem)
   keyfile: ca-key.pem
   # Certificate file (default: ca-cert.pem)
@@ -100,10 +101,19 @@ registry:
   # (default: 0, which means there is no limit)
   maxEnrollments: 0
 
-  # Contains user information which is used when LDAP is disabled
+  # Contains identity information which is used when LDAP is disabled
   identities:
      - name: admin
        pass: adminpw
+       type: client
+       affiliation: ""
+       attrs:
+          hf.Registrar.Roles: "client,user,peer,validator,auditor,ca"
+          hf.Registrar.DelegateRoles: "client,user,validator,auditor"
+          hf.Revoker: true
+          hf.IntermediateCA: true
+     - name: user
+       pass: userpw
        type: client
        affiliation: ""
        attrs:
@@ -146,7 +156,8 @@ ldap:
    # The URL of the LDAP server
    url: ldap://<adminDN>:<adminPassword>@<host>:<port>/<base>
    tls:
-      certfiles: ldap-server-cert.pem                           # Comma Separated (e.g. root.pem, root2.pem)
+      certfiles:
+        - ldap-server-cert.pem
       client:
          certfile: ldap-client-cert.pem
          keyfile: ldap-client-key.pem
@@ -178,7 +189,8 @@ signing:
       expiry: 8000h
 
 ###########################################################################
-#  Certificate Signing Request section for generating the CA certificate
+#  Certificate Signing Request (CSR) section for generating the request
+#  for an intermediate CA certificate.
 ###########################################################################
 csr:
    cn: fabric-ca-server
@@ -189,18 +201,52 @@ csr:
         O: Hyperledger
         OU: Fabric
    hosts:
-     - 985a63c35c26
+     - 901681b3ecc8
    ca:
       pathlen:
       pathlenzero:
       expiry:
 
 #############################################################################
-#  Crypto section configures the crypto primitives used for all
+# BCCSP (BlockChain Crypto Service Provider) section is used to select which
+# crypto library implementation to use
 #############################################################################
-crypto:
-  software:
-     hash_family: SHA2
-     security_level: 256
-     ephemeral: false
-     key_store_dir: keys
+
+bccsp:
+    default: SW
+    sw:
+        hash: SHA2
+        security: 256
+        filekeystore:
+            # The directory used for the software file-based keystore
+            keystore: keystore
+
+#############################################################################
+# The fabric-ca-server init and start commands support the following two
+# additional mutually exclusive options:
+#
+# 1) --cacount <number-of-CAs>
+# Automatically generate multiple default CA instances.
+# This is particularly useful in a development environment to quickly set up
+# multiple CAs.
+# For example,
+#     fabric-ca-server start -b admin:adminpw --cacount 2
+# starts a server with a default CA and two non-default CA's with names
+# 'ca1' and 'ca2'.
+#
+# 2) --cafiles <CA-config-files>
+# For each CA config file in the list, generate a separate signing CA.  Each CA
+# config file in this list MAY contain all of the same elements as are found in
+# the server config file except port, debug, and tls sections.
+# For example,
+#    fabric-ca-server start -b admin:adminpw                \
+#          --cafiles ca/ca1/fabric-ca-server-config.yaml    \
+#          --cafiles ca/ca2/fabric-ca-server-config.yaml
+# is equivalent to the previous example, except the files CA config files
+# must already exist and can be customized.
+#
+#############################################################################
+
+cacount:
+
+cafiles:

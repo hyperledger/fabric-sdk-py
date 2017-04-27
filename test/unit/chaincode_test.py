@@ -26,8 +26,8 @@ CHAINCODE_NAME = 'example_cc'
 CHAINCODE_VERSION = 'v1'
 CHAIN_ID = 'testchainid'
 
-USER_ID = 'admin'
-USER_PASSWD = 'adminpw'
+USER_ID = 'user'
+USER_PASSWD = 'userpw'
 
 
 class ChaincodeTest(unittest.TestCase):
@@ -43,7 +43,7 @@ class ChaincodeTest(unittest.TestCase):
         self.kv_store_path = os.path.join(self.base_path, 'key-value-store')
         self.compose_file_path = os.path.normpath(
             os.path.join(os.path.dirname(__file__),
-                         "../fixtures/chaincode/docker-compose.yml")
+                         "../fixtures/chaincode/docker-compose-simple.yml")
         )
         self.start_test_env()
 

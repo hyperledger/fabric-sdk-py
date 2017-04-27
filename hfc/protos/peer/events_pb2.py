@@ -23,7 +23,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/events.proto',
   package='protos',
   syntax='proto3',
-  serialized_pb=_b('\n\x1chfc/protos/peer/events.proto\x12\x06protos\x1a\x1ehfc/protos/common/common.proto\x1a%hfc/protos/peer/chaincode_event.proto\x1a!hfc/protos/peer/transaction.proto\"8\n\x0c\x43haincodeReg\x12\x14\n\x0c\x63haincode_id\x18\x01 \x01(\t\x12\x12\n\nevent_name\x18\x02 \x01(\t\"\x81\x01\n\x08Interest\x12%\n\nevent_type\x18\x01 \x01(\x0e\x32\x11.protos.EventType\x12\x32\n\x12\x63haincode_reg_info\x18\x02 \x01(\x0b\x32\x14.protos.ChaincodeRegH\x00\x12\x0f\n\x07\x63hainID\x18\x03 \x01(\tB\t\n\x07RegInfo\",\n\x08Register\x12 \n\x06\x65vents\x18\x01 \x03(\x0b\x32\x10.protos.Interest\"?\n\tRejection\x12\x1f\n\x02tx\x18\x01 \x01(\x0b\x32\x13.protos.Transaction\x12\x11\n\terror_msg\x18\x02 \x01(\t\".\n\nUnregister\x12 \n\x06\x65vents\x18\x01 \x03(\x0b\x32\x10.protos.Interest\"4\n\x0bSignedEvent\x12\x11\n\tsignature\x18\x01 \x01(\x0c\x12\x12\n\neventBytes\x18\x02 \x01(\x0c\"\xec\x01\n\x05\x45vent\x12$\n\x08register\x18\x01 \x01(\x0b\x32\x10.protos.RegisterH\x00\x12\x1e\n\x05\x62lock\x18\x02 \x01(\x0b\x32\r.common.BlockH\x00\x12\x31\n\x0f\x63haincode_event\x18\x03 \x01(\x0b\x32\x16.protos.ChaincodeEventH\x00\x12&\n\trejection\x18\x04 \x01(\x0b\x32\x11.protos.RejectionH\x00\x12(\n\nunregister\x18\x05 \x01(\x0b\x32\x12.protos.UnregisterH\x00\x12\x0f\n\x07\x63reator\x18\x06 \x01(\x0c\x42\x07\n\x05\x45vent*B\n\tEventType\x12\x0c\n\x08REGISTER\x10\x00\x12\t\n\x05\x42LOCK\x10\x01\x12\r\n\tCHAINCODE\x10\x02\x12\r\n\tREJECTION\x10\x03\x32\x34\n\x06\x45vents\x12*\n\x04\x43hat\x12\r.protos.Event\x1a\r.protos.Event\"\x00(\x01\x30\x01\x42^\n\"org.hyperledger.fabric.protos.peerB\rEventsPackageZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_pb=_b('\n\x1chfc/protos/peer/events.proto\x12\x06protos\x1a\x1ehfc/protos/common/common.proto\x1a%hfc/protos/peer/chaincode_event.proto\x1a!hfc/protos/peer/transaction.proto\"8\n\x0c\x43haincodeReg\x12\x14\n\x0c\x63haincode_id\x18\x01 \x01(\t\x12\x12\n\nevent_name\x18\x02 \x01(\t\"\x81\x01\n\x08Interest\x12%\n\nevent_type\x18\x01 \x01(\x0e\x32\x11.protos.EventType\x12\x32\n\x12\x63haincode_reg_info\x18\x02 \x01(\x0b\x32\x14.protos.ChaincodeRegH\x00\x12\x0f\n\x07\x63hainID\x18\x03 \x01(\tB\t\n\x07RegInfo\",\n\x08Register\x12 \n\x06\x65vents\x18\x01 \x03(\x0b\x32\x10.protos.Interest\"?\n\tRejection\x12\x1f\n\x02tx\x18\x01 \x01(\x0b\x32\x13.protos.Transaction\x12\x11\n\terror_msg\x18\x02 \x01(\t\".\n\nUnregister\x12 \n\x06\x65vents\x18\x01 \x03(\x0b\x32\x10.protos.Interest\"4\n\x0bSignedEvent\x12\x11\n\tsignature\x18\x01 \x01(\x0c\x12\x12\n\neventBytes\x18\x02 \x01(\x0c\"\xec\x01\n\x05\x45vent\x12$\n\x08register\x18\x01 \x01(\x0b\x32\x10.protos.RegisterH\x00\x12\x1e\n\x05\x62lock\x18\x02 \x01(\x0b\x32\r.common.BlockH\x00\x12\x31\n\x0f\x63haincode_event\x18\x03 \x01(\x0b\x32\x16.protos.ChaincodeEventH\x00\x12&\n\trejection\x18\x04 \x01(\x0b\x32\x11.protos.RejectionH\x00\x12(\n\nunregister\x18\x05 \x01(\x0b\x32\x12.protos.UnregisterH\x00\x12\x0f\n\x07\x63reator\x18\x06 \x01(\x0c\x42\x07\n\x05\x45vent*B\n\tEventType\x12\x0c\n\x08REGISTER\x10\x00\x12\t\n\x05\x42LOCK\x10\x01\x12\r\n\tCHAINCODE\x10\x02\x12\r\n\tREJECTION\x10\x03\x32:\n\x06\x45vents\x12\x30\n\x04\x43hat\x12\x13.protos.SignedEvent\x1a\r.protos.Event\"\x00(\x01\x30\x01\x42^\n\"org.hyperledger.fabric.protos.peerB\rEventsPackageZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
   ,
   dependencies=[hfc_dot_protos_dot_common_dot_common__pb2.DESCRIPTOR,hfc_dot_protos_dot_peer_dot_chaincode__event__pb2.DESCRIPTOR,hfc_dot_protos_dot_peer_dot_transaction__pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -469,7 +469,7 @@ try:
       """
       self.Chat = channel.stream_stream(
           '/protos.Events/Chat',
-          request_serializer=Event.SerializeToString,
+          request_serializer=SignedEvent.SerializeToString,
           response_deserializer=Event.FromString,
           )
 
@@ -490,7 +490,7 @@ try:
     rpc_method_handlers = {
         'Chat': grpc.stream_stream_rpc_method_handler(
             servicer.Chat,
-            request_deserializer=Event.FromString,
+            request_deserializer=SignedEvent.FromString,
             response_serializer=Event.SerializeToString,
         ),
     }
@@ -534,7 +534,7 @@ try:
     file not marked beta) for all further purposes. This function was
     generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
     request_deserializers = {
-      ('protos.Events', 'Chat'): Event.FromString,
+      ('protos.Events', 'Chat'): SignedEvent.FromString,
     }
     response_serializers = {
       ('protos.Events', 'Chat'): Event.SerializeToString,
@@ -553,7 +553,7 @@ try:
     file not marked beta) for all further purposes. This function was
     generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
     request_serializers = {
-      ('protos.Events', 'Chat'): Event.SerializeToString,
+      ('protos.Events', 'Chat'): SignedEvent.SerializeToString,
     }
     response_deserializers = {
       ('protos.Events', 'Chat'): Event.FromString,

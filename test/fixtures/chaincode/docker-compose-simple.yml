@@ -42,11 +42,10 @@ services:
       - CORE_PEER_ID=peer0
       - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
       - CORE_PEER_ADDRESSAUTODETECT=true
-      - CORE_LOGGING_LEVEL=DEBUG
       - CORE_PEER_NETWORKID=dev
-      - CORE_NEXT=true
       - CORE_PEER_ENDORSER_ENABLED=true
       - CORE_PEER_PROFILE_ENABLED=true
+      - CORE_LOGGING_LEVEL=DEBUG
     ports:
       - "7051:7051"
       - "7052:7052"

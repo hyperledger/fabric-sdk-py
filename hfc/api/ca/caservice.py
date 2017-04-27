@@ -24,6 +24,7 @@ from cryptography.x509 import NameOID
 from hfc.api.crypto.crypto import ecies
 
 DEFAULT_CA_ENDPOINT = 'http://localhost:7054'
+DEFAULT_CA_BASE_URL = '/api/v1/'
 
 _logger = logging.getLogger(__name__)
 
@@ -31,7 +32,8 @@ _logger = logging.getLogger(__name__)
 class CAClient(object):
     """Client for communicating with the Fabric CA APIs."""
 
-    def __init__(self, target=DEFAULT_CA_ENDPOINT, ca_certs_path=None):
+    def __init__(self, target=DEFAULT_CA_ENDPOINT, ca_certs_path=None,
+                 base_url=DEFAULT_CA_BASE_URL):
         """ Init CA client.
 
         Args:
@@ -39,7 +41,41 @@ class CAClient(object):
             ca_certs_path (str): Local ca certs path
         """
         self._ca_certs_path = ca_certs_path
-        self._base_url = target + "/api/v1/"
+        self._base_url = target + base_url
+
+    def _send_ca_post(self, path, **param):
+        """ Send a post request to the ca service
+
+        Args:
+            path: sub path after the base_url
+            **param: post request params
+
+        Returns: the response body in json
+
+        """
+        return requests.post(url=self._base_url + path, **param).json()
+
+    def get_cainfo(self, caname=""):
+        """Query the ca service information.
+
+        Args:
+            caname: caname to query
+
+        Returns: The base64 encoded CA PEM file content for the caname
+
+        """
+        if caname != "":
+            body_data = {"caname": caname}
+        else:
+            body_data = {}
+        response = self._send_ca_post(path="cainfo", json=body_data)
+        print(response)
+        _logger.debug("Raw response json {0}".format(response))
+        if response['success'] and response['result']['CAName'] == caname:
+            return base64.b64decode(response['result']['CAChain'])
+        else:
+            raise ValueError("get_cainfo failed with errors {0}"
+                             .format(response['errors']))
 
     def enroll(self, enrollment_id, enrollment_secret, csr):
         """Enroll a registered user in order to receive a signed X509 certificate
@@ -64,18 +100,17 @@ class CAClient(object):
                              " are all required.")
 
         req = {"certificate_request": csr}
-        response = requests.post(self._base_url + "enroll", json=req,
-                                 auth=(enrollment_id, enrollment_secret),
-                                 verify=self._ca_certs_path)
+        response = self._send_ca_post(path="enroll", json=req,
+                                      auth=(enrollment_id, enrollment_secret),
+                                      verify=self._ca_certs_path)
 
-        enrollment_response = response.json()
-        _logger.debug("Raw response json {0}".format(enrollment_response))
+        _logger.debug("Raw response json {0}".format(response))
 
-        if enrollment_response['success']:
-            return base64.b64decode(enrollment_response['result']['Cert'])
+        if response['success']:
+            return base64.b64decode(response['result']['Cert'])
         else:
             raise ValueError("Enrollment failed with errors {0}"
-                             .format(enrollment_response['errors']))
+                             .format(response['errors']))
 
 
 class CAService(object):
@@ -131,3 +166,11 @@ def ca_service(target=DEFAULT_CA_ENDPOINT,
 
     """
     return CAService(target, ca_certs_path, crypto)
+
+
+# Only for local testing
+
+if __name__ == "__main__":
+    ca_client = CAClient()
+    ca_chain = ca_client.get_cainfo()
+    print(ca_chain)
