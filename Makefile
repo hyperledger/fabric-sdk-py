@@ -4,7 +4,7 @@ define run-py-tox
 	rm -rf .tox/$@/log
 	# bin_path=.tox/$@/bin
 	# export PYTHON=$bin_path/python
-	tox -v -e$@
+	tox -v -e$@ -- test
 	# set +o pipefail
 endef
 
