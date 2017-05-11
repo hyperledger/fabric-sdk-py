@@ -1,40 +1,31 @@
+# Tox running function
 define run-py-tox
-	@echo "run python tox $@"
+	@echo "run python tox $(1)"
 	# set -o pipefail
-	rm -rf .tox/$@/log
-	# bin_path=.tox/$@/bin
+	rm -rf .tox/$(1)/log
+	# bin_path=.tox/$(1)/bin
 	# export PYTHON=$bin_path/python
-	tox -v -e$@ -- test
+	tox -v -e$(1) test
 	# set +o pipefail
 endef
+
+# Tox related variables
+TOX = tox
+TOX_VENV_NAMES = pylint flake8 py27 py30 py35
+TOX_VENVS = $(patsubst %, $(TOX).%, $(TOX_VENV_NAMES))
 
 # Triggered by the ci
 check:
 	bash check.sh
 
 # Run all unit test cases
-unittest: cov-init pylint flake8 py27 py35 cov-report
+.PHONY: unittest
 
-cov-init:
-	$(call run-py-tox)
+unittest: $(TOX_VENVS)
 
-pylint:
-	$(call run-py-tox)
-
-py27:
-	$(call run-py-tox)
-
-py30:
-	$(call run-py-tox)
-
-py35:
-	$(call run-py-tox)
-
-flake8:
-	$(call run-py-tox)
-
-cov-report:
-	$(call run-py-tox)
+$(TOX).%:
+	$(eval TOX_VENV_NAME = ${subst $(TOX).,,${@}})
+	$(call run-py-tox,$(TOX_VENV_NAME))
 
 # Generate the hyperledger/fabric-sdk-py image
 .PHONY: image
@@ -53,5 +44,5 @@ proto:
 # Clean temporary files
 .PHONY: clean
 clean:
-	rm -rf .cache *.egg-info .tox
+	rm -rf .cache *.egg-info .tox .coverage .coverage.*
 	find . -name "*.pyc" -exec rm -rf "{}" \;
