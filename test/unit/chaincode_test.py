@@ -58,6 +58,7 @@ class ChaincodeTest(unittest.TestCase):
     def shutdown_test_env(self):
         cli_call(["docker-compose", "-f", self.compose_file_path, "down"])
 
+    @unittest.skip
     def test_install(self):
         time.sleep(5)
         client = Client()
