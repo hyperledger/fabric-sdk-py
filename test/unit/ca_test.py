@@ -12,14 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 import os
-import time
 import unittest
 
 from requests.exceptions import RequestException
 
-from hfc.api.ca.caservice import CAClient, CAService
-from test.unit.util import cli_call
+from hfc.api.ca.caservice import CAClient
 
 with open(os.path.join(os.path.dirname(__file__),
                        "../fixtures/ca/enroll-csr.pem")) as f:
@@ -35,33 +34,10 @@ class CATest(unittest.TestCase):
     def setUp(self):
         self._enrollment_id = ENROLLMENT_ID
         self._enrollment_secret = ENROLLMENT_SECRET
-        # self._enrollment_id = "testUser"
-        # self._enrollment_secret = "user1"
         if os.getenv("CA_ADDR"):
             self._ca_server_address = os.getenv("CA_ADDR")
         else:
             self._ca_server_address = "localhost:7054"
-        self.compose_file_path = os.path.normpath(
-            os.path.join(os.path.dirname(__file__),
-                         "../fixtures/ca/docker-compose.yml")
-        )
-        self.start_test_env()
-
-    def tearDown(self):
-        self.shutdown_test_env()
-
-    def start_test_env(self):
-        cli_call(["docker-compose", "-f", self.compose_file_path, "up", "-d"])
-
-    # @staticmethod
-    def shutdown_test_env(self):
-        cli_call(["docker-compose", "-f", self.compose_file_path, "down"])
-
-    def test_get_ca_info(self):
-        time.sleep(1)
-        ca_client = CAClient("http://" + self._ca_server_address)
-        ca_chain = ca_client.get_cainfo()
-        self.assertTrue(ca_chain.startswith(b"-----BEGIN CERTIFICATE-----"))
 
     def test_enroll_missing_enrollment_id(self):
         """Test enroll missing enrollment id.
@@ -89,15 +65,6 @@ class CATest(unittest.TestCase):
             ca_client.enroll(self._enrollment_id,
                              self._enrollment_secret, "")
 
-    def test_enroll_success(self):
-        """Test enroll success.
-        """
-        time.sleep(5)
-        ca_client = CAClient("http://" + self._ca_server_address)
-        ecert = ca_client.enroll(self._enrollment_id,
-                                 self._enrollment_secret, test_pem)
-        self.assertTrue(ecert.startswith(b"-----BEGIN CERTIFICATE-----"))
-
     def test_enroll_unreachable_server_address(self):
         """Test enroll unreachable server address.
         """
@@ -115,15 +82,6 @@ class CATest(unittest.TestCase):
         with self.assertRaises(RequestException):
             ca_client.enroll(self._enrollment_id,
                              self._enrollment_secret, test_pem)
-
-    def test_enroll_with_generated_csr_success(self):
-        """Test enroll with generated csr success.
-        """
-        time.sleep(5)
-        ca_service = CAService("http://" + self._ca_server_address)
-        key, ecert = ca_service.enroll(self._enrollment_id,
-                                       self._enrollment_secret)
-        self.assertTrue(ecert.startswith(b"-----BEGIN CERTIFICATE-----"))
 
 
 if __name__ == '__main__':
