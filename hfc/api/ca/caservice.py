@@ -33,15 +33,20 @@ class CAClient(object):
     """Client for communicating with the Fabric CA APIs."""
 
     def __init__(self, target=DEFAULT_CA_ENDPOINT, ca_certs_path=None,
-                 base_url=DEFAULT_CA_BASE_URL):
+                 base_url=DEFAULT_CA_BASE_URL, ca_name=""):
         """ Init CA client.
 
         Args:
             target (str): CA server address including protocol,hostname,port
             ca_certs_path (str): Local ca certs path
+            ca_name (str): The optional name of the CA. Fabric-ca servers
+            support multiple Certificate Authorities from a single server
+            If omitted or null or an empty string, then the default CA is
+            the target of requests.
         """
         self._ca_certs_path = ca_certs_path
         self._base_url = target + base_url
+        self._ca_name = ca_name
 
     def _send_ca_post(self, path, **param):
         """ Send a post request to the ca service
@@ -55,23 +60,23 @@ class CAClient(object):
         """
         return requests.post(url=self._base_url + path, **param).json()
 
-    def get_cainfo(self, caname=""):
+    def get_cainfo(self):
         """Query the ca service information.
 
         Args:
-            caname: caname to query
 
         Returns: The base64 encoded CA PEM file content for the caname
 
         """
-        if caname != "":
-            body_data = {"caname": caname}
+        if self._ca_name != "":
+            body_data = {"caname": self._ca_name}
         else:
             body_data = {}
         response = self._send_ca_post(path="cainfo", json=body_data)
         print(response)
         _logger.debug("Raw response json {0}".format(response))
-        if response['success'] and response['result']['CAName'] == caname:
+        if (response['success'] and
+                response['result']['CAName'] == self._ca_name):
             return base64.b64decode(response['result']['CAChain'])
         else:
             raise ValueError("get_cainfo failed with errors {0}"
@@ -99,7 +104,14 @@ class CAClient(object):
                              "'enrollmentID', 'enrollmentSecret' and 'csr'"
                              " are all required.")
 
-        req = {"certificate_request": csr}
+        if self._ca_name != "":
+            req = {
+                    "caName": self._ca_name,
+                    "certificate_request": csr
+                  }
+        else:
+            req = {"certificate_request": csr}
+
         response = self._send_ca_post(path="enroll", json=req,
                                       auth=(enrollment_id, enrollment_secret),
                                       verify=self._ca_certs_path)
@@ -117,15 +129,19 @@ class CAService(object):
     """This is a ca server delegate."""
 
     def __init__(self, target=DEFAULT_CA_ENDPOINT,
-                 ca_certs_path=None, crypto=ecies()):
+                 ca_certs_path=None, crypto=ecies(), ca_name=""):
         """ Init CA service.
 
         Args:
             target (str): CA server address including protocol,hostname,port
             ca_certs_path (str): Local ca certs path
             crypto (Crypto): A crypto instance
+            ca_name (str): The optional name of the CA, Fabric-ca servers
+            support multiple Certificate Authorties from a signle server.
+            If omitted or null or an empty string, then the default CA
+            is the target of requests
         """
-        self._ca_client = CAClient(target, ca_certs_path)
+        self._ca_client = CAClient(target, ca_certs_path, ca_name=ca_name)
         self._crypto = crypto
 
     def enroll(self, enrollment_id, enrollment_secret):
@@ -154,18 +170,19 @@ class CAService(object):
 
 
 def ca_service(target=DEFAULT_CA_ENDPOINT,
-               ca_certs_path=None, crypto=ecies()):
+               ca_certs_path=None, crypto=ecies(), ca_name=""):
     """Create ca service
 
     Args:
         target: url
         ca_certs_path: certs path
         crypto: crypto
+        ca_name: CA name
 
     Returns: ca service instance
 
     """
-    return CAService(target, ca_certs_path, crypto)
+    return CAService(target, ca_certs_path, crypto, ca_name)
 
 
 # Only for local testing
