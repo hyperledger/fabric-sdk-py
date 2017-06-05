@@ -9,7 +9,7 @@ docker-compose -v
 pip install tox
 
 # pull fabric images
-IMG_TAG=0.9.2
+IMG_TAG=0.9.4
 echo "===Pulling fabric images... with tag = ${IMG_TAG}"
 docker pull yeasy/hyperledger-fabric-base:$IMG_TAG
 docker pull yeasy/hyperledger-fabric-peer:$IMG_TAG
