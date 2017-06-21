@@ -34,7 +34,6 @@ More details to build the crypto lib, can be found at
 * https://cryptography.io/en/latest/installation/#building-cryptography-on-linux
 * https://cryptography.io/en/latest/installation/#building-cryptography-on-macos
 
-
 ## Testing
 The following command will run the testing.
 
@@ -49,7 +48,7 @@ The following command will build a Docker image `hyperledger/fabric-sdk-py` with
 $ make image
 ```
 
-Also, you can use docker-compose to start a cluster for testing, including fabric-peer, fabric-orderer, fabric-ca, and fabric-sdk-py containers. 
+Also, you can use docker-compose to start a cluster for testing, including fabric-peer, fabric-orderer, fabric-ca, and fabric-sdk-py containers.
 
 ```sh
 $ docker-compose up -d
@@ -61,7 +60,7 @@ See [Change Log](docs/change_log.md).
 
 ## Wiki
 
-More information, please see the project [wiki](wiki.hyperledger.org/projects/fabric-sdk-py.md).
+More information, please see the project [wiki](wiki.hyperledger.org/projects/fabric-sdk-py).
 
 ## License <a name="license"></a>
 The Hyperledger Fabric-SDK-Py Project uses the [Apache License Version 2.0](LICENSE) software license.
