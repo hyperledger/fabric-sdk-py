@@ -12,8 +12,8 @@
 
 import unittest
 
-from hfc.api.msp.identity import Identity
-from hfc.api.msp.msp import MSP
+from hfc.fabric.msp.identity import Identity
+from hfc.fabric.msp.msp import MSP
 
 
 class IdentityTest(unittest.TestCase):

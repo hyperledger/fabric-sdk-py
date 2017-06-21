@@ -13,14 +13,15 @@
 # limitations under the License.
 #
 from __future__ import print_function
+
 import random
+import sys
 from abc import ABCMeta, abstractmethod
 
 import rx
 import six
-import sys
 
-from hfc.api.crypto import crypto
+from hfc.fabric_ca.crypto import crypto
 from hfc.protos.common import common_pb2
 from hfc.protos.peer import proposal_pb2
 from hfc.protos.peer import transaction_pb2

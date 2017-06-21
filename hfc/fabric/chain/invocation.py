@@ -16,11 +16,11 @@ import logging
 
 import rx
 
-from hfc.api.chain.transactionproposals \
+from hfc.fabric.chain.transactionproposals \
     import TransactionProposalHandler, TransactionProposalRequest, \
     check_tran_prop_request, \
     build_header, build_proposal, sign_proposal, CC_INVOKE
-from hfc.api.crypto import crypto
+from hfc.fabric_ca.crypto import crypto
 from hfc.protos.common import common_pb2
 from hfc.protos.peer import chaincode_pb2
 from hfc.util.utils import proto_str, proto_b

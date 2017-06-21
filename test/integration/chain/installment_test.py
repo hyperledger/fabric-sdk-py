@@ -3,14 +3,15 @@ import sys
 import time
 import unittest
 
-from hfc.api.ca.caservice import ca_service
-from hfc.api.chain.installment import create_installment_proposal_req
-from hfc.api.client import Client
-from hfc.api.crypto.crypto import ecies
-from hfc.api.msp.msp import msp
-from hfc.api.orderer import Orderer
-from hfc.api.peer import Peer
-from hfc.api.user import User
+from hfc.fabric_ca.caservice import ca_service
+
+from hfc.fabric.chain.installment import create_installment_proposal_req
+from hfc.fabric.client import Client
+from hfc.fabric.msp.msp import msp
+from hfc.fabric.orderer import Orderer
+from hfc.fabric.peer import Peer
+from hfc.fabric.user import User
+from hfc.fabric_ca.crypto.crypto import ecies
 from hfc.util.keyvaluestore import file_key_value_store
 from test.unit.util import cli_call
 

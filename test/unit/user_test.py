@@ -17,8 +17,8 @@ from shutil import rmtree
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.serialization import Encoding
 
-from hfc.api.crypto.crypto import ecies
-from hfc.api.user import User, Enrollment
+from hfc.fabric_ca.crypto.crypto import ecies
+from hfc.fabric.user import User, Enrollment
 from hfc.util.keyvaluestore import file_key_value_store
 
 

@@ -15,7 +15,7 @@
 
 import logging
 
-from hfc.api.chain.chain import Chain
+from hfc.fabric.chain.chain import Chain
 
 
 class Client(object):

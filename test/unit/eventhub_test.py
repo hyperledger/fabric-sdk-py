@@ -12,7 +12,7 @@
 
 import unittest
 
-from hfc.api.eventhub import EventHub
+from hfc.fabric.eventhub import EventHub
 
 
 class EventhubTest(unittest.TestCase):

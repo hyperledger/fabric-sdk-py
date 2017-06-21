@@ -45,4 +45,4 @@ proto:
 .PHONY: clean
 clean:
 	rm -rf .cache *.egg-info .tox .coverage .coverage.* test/fixtures/ca/fabric-ca-server/fabric-ca-server.db
-	find . -name "*.pyc" -exec rm -rf "{}" \;
+	find . -name "*.pyc" -o -name "__pycache__" -exec rm -rf "{}" \;

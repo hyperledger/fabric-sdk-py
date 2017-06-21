@@ -13,13 +13,12 @@
 # limitations under the License.
 #
 import pickle
-
 import binascii
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 
-from hfc.api.ca.caservice import Enrollment
+from hfc.fabric_ca.caservice import Enrollment
 
 
 class User(object):

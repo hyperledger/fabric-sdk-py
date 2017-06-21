@@ -12,7 +12,7 @@
 
 import unittest
 
-from hfc.api.orderer import Orderer
+from hfc.fabric.orderer import Orderer
 
 DEFAULT_ORDERER_ENDPOINT = 'localhost:7050'
 CUSTOM_ORDERER_ENDPOINT = 'orderer:7050'

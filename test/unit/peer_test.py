@@ -11,7 +11,7 @@
 # limitations under the License.
 
 import unittest
-from hfc.api.peer import Peer
+from hfc.fabric.peer import Peer
 
 DEFAULT_PEER_ENDPOINT = 'localhost:7051'
 CUSTOM_PEER_ENDPOINT = 'peer:7051'

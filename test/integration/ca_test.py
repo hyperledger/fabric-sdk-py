@@ -16,7 +16,7 @@ import os
 import time
 import unittest
 
-from hfc.api.ca.caservice import CAClient, CAService
+from hfc.fabric_ca.caservice import CAClient, CAService
 from test.unit.util import cli_call
 
 with open(os.path.join(os.path.dirname(__file__),

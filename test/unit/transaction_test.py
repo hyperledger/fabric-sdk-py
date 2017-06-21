@@ -12,8 +12,8 @@
 
 import unittest
 
-from hfc.api.transaction import Transaction
-from hfc.api.transaction import TransactionType
+from hfc.fabric.transaction import Transaction
+from hfc.fabric.transaction import TransactionType
 
 
 class TransactionTest(unittest.TestCase):

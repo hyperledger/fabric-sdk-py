@@ -12,7 +12,7 @@
 
 import unittest
 
-from hfc.api.chain.transactionproposals import check_tran_prop_request, \
+from hfc.fabric.chain.transactionproposals import check_tran_prop_request, \
     TransactionProposalRequest,\
     CC_INSTALL, CC_INSTANTIATE, CC_INVOKE
 

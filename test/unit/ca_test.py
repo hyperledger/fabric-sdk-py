@@ -18,7 +18,7 @@ import unittest
 
 from requests.exceptions import RequestException
 
-from hfc.api.ca.caservice import CAClient
+from hfc.fabric_ca.caservice import CAClient
 
 with open(os.path.join(os.path.dirname(__file__),
                        "../fixtures/ca/enroll-csr.pem")) as f:

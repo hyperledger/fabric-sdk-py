@@ -12,7 +12,7 @@
 
 import unittest
 import os
-from hfc.api.client import Client
+from hfc.fabric.client import Client
 from hfc.util.keyvaluestore import file_key_value_store
 
 

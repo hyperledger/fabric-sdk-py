@@ -15,10 +15,10 @@
 import hashlib
 import logging
 
-from hfc.api.chain.installment import chaincode_installment
-from hfc.api.chain.instantiation import chaincode_instantiation
-from hfc.api.chain.invocation import chaincode_invocation
-from hfc.api.crypto.crypto import ecies
+from hfc.fabric.chain.installment import chaincode_installment
+from hfc.fabric.chain.instantiation import chaincode_instantiation
+from hfc.fabric.chain.invocation import chaincode_invocation
+from hfc.fabric_ca.crypto.crypto import ecies
 
 _logger = logging.getLogger(__name__ + ".chain")
 

@@ -14,8 +14,8 @@ import os
 import time
 import unittest
 
-from hfc.api.ca.caservice import ca_service
-from hfc.api.user import User
+from hfc.fabric_ca.caservice import ca_service
+from hfc.fabric.user import User
 from hfc.util.keyvaluestore import file_key_value_store
 from test.unit.util import cli_call
 

@@ -12,9 +12,9 @@
 
 import unittest
 
-from hfc.api.chain.installment import Installment, \
+from hfc.fabric.chain.installment import Installment, \
     create_installment_proposal_req, chaincode_installment
-from hfc.api.chain.transactionproposals import TransactionProposalRequest
+from hfc.fabric.chain.transactionproposals import TransactionProposalRequest
 
 
 class InstallmentTest(unittest.TestCase):

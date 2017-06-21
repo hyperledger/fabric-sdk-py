@@ -15,7 +15,7 @@
 import os
 import unittest
 
-from hfc.api.channel_configuration import ChannelConfiguration
+from hfc.fabric.channel_configuration import ChannelConfiguration
 
 CONFIG_FILE_PATH = os.path.join(
     os.path.dirname(__file__),

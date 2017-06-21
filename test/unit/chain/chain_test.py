@@ -12,9 +12,9 @@
 
 import unittest
 
-from hfc.api.chain.chain import Chain
-from hfc.api.peer import Peer
-from hfc.api.orderer import Orderer
+from hfc.fabric.chain.chain import Chain
+from hfc.fabric.peer import Peer
+from hfc.fabric.orderer import Orderer
 
 
 class ChainTest(unittest.TestCase):
