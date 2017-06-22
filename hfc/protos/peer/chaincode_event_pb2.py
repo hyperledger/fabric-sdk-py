@@ -21,7 +21,6 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_pb=_b('\n%hfc/protos/peer/chaincode_event.proto\x12\x06protos\"Z\n\x0e\x43haincodeEvent\x12\x14\n\x0c\x63haincode_id\x18\x01 \x01(\t\x12\r\n\x05tx_id\x18\x02 \x01(\t\x12\x12\n\nevent_name\x18\x03 \x01(\t\x12\x0f\n\x07payload\x18\x04 \x01(\x0c\x42\x66\n\"org.hyperledger.fabric.protos.peerB\x15\x43haincodeEventPackageZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
 )
-_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
 
@@ -78,6 +77,7 @@ _CHAINCODEEVENT = _descriptor.Descriptor(
 )
 
 DESCRIPTOR.message_types_by_name['ChaincodeEvent'] = _CHAINCODEEVENT
+_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ChaincodeEvent = _reflection.GeneratedProtocolMessageType('ChaincodeEvent', (_message.Message,), dict(
   DESCRIPTOR = _CHAINCODEEVENT,
@@ -93,10 +93,10 @@ try:
   # THESE ELEMENTS WILL BE DEPRECATED.
   # Please use the generated *_pb2_grpc.py files instead.
   import grpc
-  from grpc.framework.common import cardinality
-  from grpc.framework.interfaces.face import utilities as face_utilities
   from grpc.beta import implementations as beta_implementations
   from grpc.beta import interfaces as beta_interfaces
+  from grpc.framework.common import cardinality
+  from grpc.framework.interfaces.face import utilities as face_utilities
 except ImportError:
   pass
 # @@protoc_insertion_point(module_scope)

@@ -21,7 +21,6 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_pb=_b('\n%hfc/protos/common/configuration.proto\x12\x06\x63ommon\" \n\x10HashingAlgorithm\x12\x0c\n\x04name\x18\x01 \x01(\t\"*\n\x19\x42lockDataHashingStructure\x12\r\n\x05width\x18\x01 \x01(\r\"%\n\x10OrdererAddresses\x12\x11\n\taddresses\x18\x01 \x03(\t\"\x1a\n\nConsortium\x12\x0c\n\x04name\x18\x01 \x01(\tBS\n$org.hyperledger.fabric.protos.commonZ+github.com/hyperledger/fabric/protos/commonb\x06proto3')
 )
-_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
 
@@ -153,6 +152,7 @@ DESCRIPTOR.message_types_by_name['HashingAlgorithm'] = _HASHINGALGORITHM
 DESCRIPTOR.message_types_by_name['BlockDataHashingStructure'] = _BLOCKDATAHASHINGSTRUCTURE
 DESCRIPTOR.message_types_by_name['OrdererAddresses'] = _ORDERERADDRESSES
 DESCRIPTOR.message_types_by_name['Consortium'] = _CONSORTIUM
+_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 HashingAlgorithm = _reflection.GeneratedProtocolMessageType('HashingAlgorithm', (_message.Message,), dict(
   DESCRIPTOR = _HASHINGALGORITHM,
@@ -189,10 +189,10 @@ try:
   # THESE ELEMENTS WILL BE DEPRECATED.
   # Please use the generated *_pb2_grpc.py files instead.
   import grpc
-  from grpc.framework.common import cardinality
-  from grpc.framework.interfaces.face import utilities as face_utilities
   from grpc.beta import implementations as beta_implementations
   from grpc.beta import interfaces as beta_interfaces
+  from grpc.framework.common import cardinality
+  from grpc.framework.interfaces.face import utilities as face_utilities
 except ImportError:
   pass
 # @@protoc_insertion_point(module_scope)

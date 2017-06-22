@@ -19,9 +19,8 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/orderer/configuration.proto',
   package='orderer',
   syntax='proto3',
-  serialized_pb=_b('\n&hfc/protos/orderer/configuration.proto\x12\x07orderer\"\x1d\n\rConsensusType\x12\x0c\n\x04type\x18\x01 \x01(\t\"Y\n\tBatchSize\x12\x17\n\x0fmaxMessageCount\x18\x01 \x01(\r\x12\x18\n\x10\x61\x62soluteMaxBytes\x18\x02 \x01(\r\x12\x19\n\x11preferredMaxBytes\x18\x03 \x01(\r\"\x1f\n\x0c\x42\x61tchTimeout\x12\x0f\n\x07timeout\x18\x01 \x01(\t\"\x1f\n\x0cKafkaBrokers\x12\x0f\n\x07\x62rokers\x18\x01 \x03(\t\"(\n\x13\x43hannelRestrictions\x12\x11\n\tmax_count\x18\x01 \x01(\x04\x42U\n%org.hyperledger.fabric.protos.ordererZ,github.com/hyperledger/fabric/protos/ordererb\x06proto3')
+  serialized_pb=_b('\n&hfc/protos/orderer/configuration.proto\x12\x07orderer\"\x1d\n\rConsensusType\x12\x0c\n\x04type\x18\x01 \x01(\t\"_\n\tBatchSize\x12\x19\n\x11max_message_count\x18\x01 \x01(\r\x12\x1a\n\x12\x61\x62solute_max_bytes\x18\x02 \x01(\r\x12\x1b\n\x13preferred_max_bytes\x18\x03 \x01(\r\"\x1f\n\x0c\x42\x61tchTimeout\x12\x0f\n\x07timeout\x18\x01 \x01(\t\"\x1f\n\x0cKafkaBrokers\x12\x0f\n\x07\x62rokers\x18\x01 \x03(\t\"(\n\x13\x43hannelRestrictions\x12\x11\n\tmax_count\x18\x01 \x01(\x04\x42U\n%org.hyperledger.fabric.protos.ordererZ,github.com/hyperledger/fabric/protos/ordererb\x06proto3')
 )
-_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
 
@@ -65,21 +64,21 @@ _BATCHSIZE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='maxMessageCount', full_name='orderer.BatchSize.maxMessageCount', index=0,
+      name='max_message_count', full_name='orderer.BatchSize.max_message_count', index=0,
       number=1, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='absoluteMaxBytes', full_name='orderer.BatchSize.absoluteMaxBytes', index=1,
+      name='absolute_max_bytes', full_name='orderer.BatchSize.absolute_max_bytes', index=1,
       number=2, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='preferredMaxBytes', full_name='orderer.BatchSize.preferredMaxBytes', index=2,
+      name='preferred_max_bytes', full_name='orderer.BatchSize.preferred_max_bytes', index=2,
       number=3, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -98,7 +97,7 @@ _BATCHSIZE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=82,
-  serialized_end=171,
+  serialized_end=177,
 )
 
 
@@ -128,8 +127,8 @@ _BATCHTIMEOUT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=173,
-  serialized_end=204,
+  serialized_start=179,
+  serialized_end=210,
 )
 
 
@@ -159,8 +158,8 @@ _KAFKABROKERS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=206,
-  serialized_end=237,
+  serialized_start=212,
+  serialized_end=243,
 )
 
 
@@ -190,8 +189,8 @@ _CHANNELRESTRICTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=239,
-  serialized_end=279,
+  serialized_start=245,
+  serialized_end=285,
 )
 
 DESCRIPTOR.message_types_by_name['ConsensusType'] = _CONSENSUSTYPE
@@ -199,6 +198,7 @@ DESCRIPTOR.message_types_by_name['BatchSize'] = _BATCHSIZE
 DESCRIPTOR.message_types_by_name['BatchTimeout'] = _BATCHTIMEOUT
 DESCRIPTOR.message_types_by_name['KafkaBrokers'] = _KAFKABROKERS
 DESCRIPTOR.message_types_by_name['ChannelRestrictions'] = _CHANNELRESTRICTIONS
+_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ConsensusType = _reflection.GeneratedProtocolMessageType('ConsensusType', (_message.Message,), dict(
   DESCRIPTOR = _CONSENSUSTYPE,
@@ -242,10 +242,10 @@ try:
   # THESE ELEMENTS WILL BE DEPRECATED.
   # Please use the generated *_pb2_grpc.py files instead.
   import grpc
-  from grpc.framework.common import cardinality
-  from grpc.framework.interfaces.face import utilities as face_utilities
   from grpc.beta import implementations as beta_implementations
   from grpc.beta import interfaces as beta_interfaces
+  from grpc.framework.common import cardinality
+  from grpc.framework.interfaces.face import utilities as face_utilities
 except ImportError:
   pass
 # @@protoc_insertion_point(module_scope)

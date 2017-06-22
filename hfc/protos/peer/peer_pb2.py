@@ -24,7 +24,6 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   serialized_pb=_b('\n\x1ahfc/protos/peer/peer.proto\x12\x06protos\x1a\x1ehfc/protos/peer/proposal.proto\x1a\'hfc/protos/peer/proposal_response.proto\"\x16\n\x06PeerID\x12\x0c\n\x04name\x18\x01 \x01(\t\";\n\x0cPeerEndpoint\x12\x1a\n\x02id\x18\x01 \x01(\x0b\x32\x0e.protos.PeerID\x12\x0f\n\x07\x61\x64\x64ress\x18\x02 \x01(\t2Q\n\x08\x45ndorser\x12\x45\n\x0fProcessProposal\x12\x16.protos.SignedProposal\x1a\x18.protos.ProposalResponse\"\x00\x42O\n\"org.hyperledger.fabric.protos.peerZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
   ,
   dependencies=[hfc_dot_protos_dot_peer_dot_proposal__pb2.DESCRIPTOR,hfc_dot_protos_dot_peer_dot_proposal__response__pb2.DESCRIPTOR,])
-_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
 
@@ -100,6 +99,7 @@ _PEERENDPOINT = _descriptor.Descriptor(
 _PEERENDPOINT.fields_by_name['id'].message_type = _PEERID
 DESCRIPTOR.message_types_by_name['PeerID'] = _PEERID
 DESCRIPTOR.message_types_by_name['PeerEndpoint'] = _PEERENDPOINT
+_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 PeerID = _reflection.GeneratedProtocolMessageType('PeerID', (_message.Message,), dict(
   DESCRIPTOR = _PEERID,
@@ -122,13 +122,15 @@ try:
   # THESE ELEMENTS WILL BE DEPRECATED.
   # Please use the generated *_pb2_grpc.py files instead.
   import grpc
-  from grpc.framework.common import cardinality
-  from grpc.framework.interfaces.face import utilities as face_utilities
   from grpc.beta import implementations as beta_implementations
   from grpc.beta import interfaces as beta_interfaces
+  from grpc.framework.common import cardinality
+  from grpc.framework.interfaces.face import utilities as face_utilities
 
 
   class EndorserStub(object):
+    # missing associated documentation comment in .proto file
+    pass
 
     def __init__(self, channel):
       """Constructor.
@@ -144,8 +146,12 @@ try:
 
 
   class EndorserServicer(object):
+    # missing associated documentation comment in .proto file
+    pass
 
     def ProcessProposal(self, request, context):
+      # missing associated documentation comment in .proto file
+      pass
       context.set_code(grpc.StatusCode.UNIMPLEMENTED)
       context.set_details('Method not implemented!')
       raise NotImplementedError('Method not implemented!')
@@ -170,7 +176,11 @@ try:
     It is recommended to use the GA API (classes and functions in this
     file not marked beta) for all further purposes. This class was generated
     only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0."""
+    # missing associated documentation comment in .proto file
+    pass
     def ProcessProposal(self, request, context):
+      # missing associated documentation comment in .proto file
+      pass
       context.code(beta_interfaces.StatusCode.UNIMPLEMENTED)
 
 
@@ -180,7 +190,11 @@ try:
     It is recommended to use the GA API (classes and functions in this
     file not marked beta) for all further purposes. This class was generated
     only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0."""
+    # missing associated documentation comment in .proto file
+    pass
     def ProcessProposal(self, request, timeout, metadata=None, with_call=False, protocol_options=None):
+      # missing associated documentation comment in .proto file
+      pass
       raise NotImplementedError()
     ProcessProposal.future = None
 

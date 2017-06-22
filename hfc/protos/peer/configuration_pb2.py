@@ -21,7 +21,6 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_pb=_b('\n#hfc/protos/peer/configuration.proto\x12\x06protos\"7\n\x0b\x41nchorPeers\x12(\n\x0c\x61nchor_peers\x18\x01 \x03(\x0b\x32\x12.protos.AnchorPeer\"(\n\nAnchorPeer\x12\x0c\n\x04host\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\x05\x42O\n\"org.hyperledger.fabric.protos.peerZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
 )
-_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
 
@@ -97,6 +96,7 @@ _ANCHORPEER = _descriptor.Descriptor(
 _ANCHORPEERS.fields_by_name['anchor_peers'].message_type = _ANCHORPEER
 DESCRIPTOR.message_types_by_name['AnchorPeers'] = _ANCHORPEERS
 DESCRIPTOR.message_types_by_name['AnchorPeer'] = _ANCHORPEER
+_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 AnchorPeers = _reflection.GeneratedProtocolMessageType('AnchorPeers', (_message.Message,), dict(
   DESCRIPTOR = _ANCHORPEERS,
@@ -119,10 +119,10 @@ try:
   # THESE ELEMENTS WILL BE DEPRECATED.
   # Please use the generated *_pb2_grpc.py files instead.
   import grpc
-  from grpc.framework.common import cardinality
-  from grpc.framework.interfaces.face import utilities as face_utilities
   from grpc.beta import implementations as beta_implementations
   from grpc.beta import interfaces as beta_interfaces
+  from grpc.framework.common import cardinality
+  from grpc.framework.interfaces.face import utilities as face_utilities
 except ImportError:
   pass
 # @@protoc_insertion_point(module_scope)

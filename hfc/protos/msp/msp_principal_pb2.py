@@ -21,7 +21,6 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_pb=_b('\n\"hfc/protos/msp/msp_principal.proto\x12\x06\x63ommon\"\xa9\x01\n\x0cMSPPrincipal\x12\x45\n\x18principal_classification\x18\x01 \x01(\x0e\x32#.common.MSPPrincipal.Classification\x12\x11\n\tprincipal\x18\x02 \x01(\x0c\"?\n\x0e\x43lassification\x12\x08\n\x04ROLE\x10\x00\x12\x15\n\x11ORGANIZATION_UNIT\x10\x01\x12\x0c\n\x08IDENTITY\x10\x02\"q\n\x10OrganizationUnit\x12\x16\n\x0emsp_identifier\x18\x01 \x01(\t\x12&\n\x1eorganizational_unit_identifier\x18\x02 \x01(\t\x12\x1d\n\x15\x63\x65rtifiers_identifier\x18\x03 \x01(\x0c\"r\n\x07MSPRole\x12\x16\n\x0emsp_identifier\x18\x01 \x01(\t\x12)\n\x04role\x18\x02 \x01(\x0e\x32\x1b.common.MSPRole.MSPRoleType\"$\n\x0bMSPRoleType\x12\n\n\x06MEMBER\x10\x00\x12\t\n\x05\x41\x44MIN\x10\x01\x42P\n$org.hyperledger.fabric.protos.commonZ(github.com/hyperledger/fabric/protos/mspb\x06proto3')
 )
-_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
 
@@ -203,6 +202,7 @@ _MSPROLE_MSPROLETYPE.containing_type = _MSPROLE
 DESCRIPTOR.message_types_by_name['MSPPrincipal'] = _MSPPRINCIPAL
 DESCRIPTOR.message_types_by_name['OrganizationUnit'] = _ORGANIZATIONUNIT
 DESCRIPTOR.message_types_by_name['MSPRole'] = _MSPROLE
+_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 MSPPrincipal = _reflection.GeneratedProtocolMessageType('MSPPrincipal', (_message.Message,), dict(
   DESCRIPTOR = _MSPPRINCIPAL,
@@ -232,10 +232,10 @@ try:
   # THESE ELEMENTS WILL BE DEPRECATED.
   # Please use the generated *_pb2_grpc.py files instead.
   import grpc
-  from grpc.framework.common import cardinality
-  from grpc.framework.interfaces.face import utilities as face_utilities
   from grpc.beta import implementations as beta_implementations
   from grpc.beta import interfaces as beta_interfaces
+  from grpc.framework.common import cardinality
+  from grpc.framework.interfaces.face import utilities as face_utilities
 except ImportError:
   pass
 # @@protoc_insertion_point(module_scope)

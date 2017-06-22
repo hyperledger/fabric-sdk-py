@@ -24,7 +24,6 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   serialized_pb=_b('\n hfc/protos/common/configtx.proto\x12\x06\x63ommon\x1a\x1ehfc/protos/common/common.proto\x1a hfc/protos/common/policies.proto\"W\n\x0e\x43onfigEnvelope\x12\x1e\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x0e.common.Config\x12%\n\x0blast_update\x18\x02 \x01(\x0b\x32\x10.common.Envelope\"\x9d\x03\n\x11\x43onfigGroupSchema\x12\x35\n\x06groups\x18\x01 \x03(\x0b\x32%.common.ConfigGroupSchema.GroupsEntry\x12\x35\n\x06values\x18\x02 \x03(\x0b\x32%.common.ConfigGroupSchema.ValuesEntry\x12\x39\n\x08policies\x18\x03 \x03(\x0b\x32\'.common.ConfigGroupSchema.PoliciesEntry\x1aH\n\x0bGroupsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.common.ConfigGroupSchema:\x02\x38\x01\x1aH\n\x0bValuesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.common.ConfigValueSchema:\x02\x38\x01\x1aK\n\rPoliciesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12)\n\x05value\x18\x02 \x01(\x0b\x32\x1a.common.ConfigPolicySchema:\x02\x38\x01\"\x13\n\x11\x43onfigValueSchema\"\x14\n\x12\x43onfigPolicySchema\"F\n\x06\x43onfig\x12\x10\n\x08sequence\x18\x01 \x01(\x04\x12*\n\rchannel_group\x18\x02 \x01(\x0b\x32\x13.common.ConfigGroup\"Z\n\x14\x43onfigUpdateEnvelope\x12\x15\n\rconfig_update\x18\x01 \x01(\x0c\x12+\n\nsignatures\x18\x02 \x03(\x0b\x32\x17.common.ConfigSignature\"q\n\x0c\x43onfigUpdate\x12\x12\n\nchannel_id\x18\x01 \x01(\t\x12%\n\x08read_set\x18\x02 \x01(\x0b\x32\x13.common.ConfigGroup\x12&\n\twrite_set\x18\x03 \x01(\x0b\x32\x13.common.ConfigGroup\"\x98\x03\n\x0b\x43onfigGroup\x12\x0f\n\x07version\x18\x01 \x01(\x04\x12/\n\x06groups\x18\x02 \x03(\x0b\x32\x1f.common.ConfigGroup.GroupsEntry\x12/\n\x06values\x18\x03 \x03(\x0b\x32\x1f.common.ConfigGroup.ValuesEntry\x12\x33\n\x08policies\x18\x04 \x03(\x0b\x32!.common.ConfigGroup.PoliciesEntry\x12\x12\n\nmod_policy\x18\x05 \x01(\t\x1a\x42\n\x0bGroupsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\"\n\x05value\x18\x02 \x01(\x0b\x32\x13.common.ConfigGroup:\x02\x38\x01\x1a\x42\n\x0bValuesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\"\n\x05value\x18\x02 \x01(\x0b\x32\x13.common.ConfigValue:\x02\x38\x01\x1a\x45\n\rPoliciesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12#\n\x05value\x18\x02 \x01(\x0b\x32\x14.common.ConfigPolicy:\x02\x38\x01\"A\n\x0b\x43onfigValue\x12\x0f\n\x07version\x18\x01 \x01(\x04\x12\r\n\x05value\x18\x02 \x01(\x0c\x12\x12\n\nmod_policy\x18\x03 \x01(\t\"S\n\x0c\x43onfigPolicy\x12\x0f\n\x07version\x18\x01 \x01(\x04\x12\x1e\n\x06policy\x18\x02 \x01(\x0b\x32\x0e.common.Policy\x12\x12\n\nmod_policy\x18\x03 \x01(\t\">\n\x0f\x43onfigSignature\x12\x18\n\x10signature_header\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\x42S\n$org.hyperledger.fabric.protos.commonZ+github.com/hyperledger/fabric/protos/commonb\x06proto3')
   ,
   dependencies=[hfc_dot_protos_dot_common_dot_common__pb2.DESCRIPTOR,hfc_dot_protos_dot_common_dot_policies__pb2.DESCRIPTOR,])
-_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
 
@@ -725,6 +724,7 @@ DESCRIPTOR.message_types_by_name['ConfigGroup'] = _CONFIGGROUP
 DESCRIPTOR.message_types_by_name['ConfigValue'] = _CONFIGVALUE
 DESCRIPTOR.message_types_by_name['ConfigPolicy'] = _CONFIGPOLICY
 DESCRIPTOR.message_types_by_name['ConfigSignature'] = _CONFIGSIGNATURE
+_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ConfigEnvelope = _reflection.GeneratedProtocolMessageType('ConfigEnvelope', (_message.Message,), dict(
   DESCRIPTOR = _CONFIGENVELOPE,
@@ -870,10 +870,10 @@ try:
   # THESE ELEMENTS WILL BE DEPRECATED.
   # Please use the generated *_pb2_grpc.py files instead.
   import grpc
-  from grpc.framework.common import cardinality
-  from grpc.framework.interfaces.face import utilities as face_utilities
   from grpc.beta import implementations as beta_implementations
   from grpc.beta import interfaces as beta_interfaces
+  from grpc.framework.common import cardinality
+  from grpc.framework.interfaces.face import utilities as face_utilities
 except ImportError:
   pass
 # @@protoc_insertion_point(module_scope)

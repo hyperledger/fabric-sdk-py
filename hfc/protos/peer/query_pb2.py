@@ -21,7 +21,6 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_pb=_b('\n\x1bhfc/protos/peer/query.proto\x12\x06protos\"C\n\x16\x43haincodeQueryResponse\x12)\n\nchaincodes\x18\x01 \x03(\x0b\x32\x15.protos.ChaincodeInfo\"g\n\rChaincodeInfo\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x0c\n\x04path\x18\x03 \x01(\t\x12\r\n\x05input\x18\x04 \x01(\t\x12\x0c\n\x04\x65scc\x18\x05 \x01(\t\x12\x0c\n\x04vscc\x18\x06 \x01(\t\"=\n\x14\x43hannelQueryResponse\x12%\n\x08\x63hannels\x18\x01 \x03(\x0b\x32\x13.protos.ChannelInfo\"!\n\x0b\x43hannelInfo\x12\x12\n\nchannel_id\x18\x01 \x01(\tBO\n\"org.hyperledger.fabric.protos.peerZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
 )
-_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
 
@@ -190,6 +189,7 @@ DESCRIPTOR.message_types_by_name['ChaincodeQueryResponse'] = _CHAINCODEQUERYRESP
 DESCRIPTOR.message_types_by_name['ChaincodeInfo'] = _CHAINCODEINFO
 DESCRIPTOR.message_types_by_name['ChannelQueryResponse'] = _CHANNELQUERYRESPONSE
 DESCRIPTOR.message_types_by_name['ChannelInfo'] = _CHANNELINFO
+_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ChaincodeQueryResponse = _reflection.GeneratedProtocolMessageType('ChaincodeQueryResponse', (_message.Message,), dict(
   DESCRIPTOR = _CHAINCODEQUERYRESPONSE,
@@ -226,10 +226,10 @@ try:
   # THESE ELEMENTS WILL BE DEPRECATED.
   # Please use the generated *_pb2_grpc.py files instead.
   import grpc
-  from grpc.framework.common import cardinality
-  from grpc.framework.interfaces.face import utilities as face_utilities
   from grpc.beta import implementations as beta_implementations
   from grpc.beta import interfaces as beta_interfaces
+  from grpc.framework.common import cardinality
+  from grpc.framework.interfaces.face import utilities as face_utilities
 except ImportError:
   pass
 # @@protoc_insertion_point(module_scope)
