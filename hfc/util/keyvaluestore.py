@@ -97,9 +97,12 @@ class FileKeyValueStore(KeyValueStore):
         :param key: key
         :return: value
         """
-        file_path = os.path.join(self.path, key)
-        with open(file_path) as f:
-            return f.read()
+        try:
+            file_path = os.path.join(self.path, key)
+            with open(file_path) as f:
+                return f.read()
+        except IOError:
+            return None
 
     def async_get_value(self, key, scheduler=None):
         """Get a value with a specific key.

@@ -10,32 +10,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
-import time
 import os
+import time
+import unittest
 
-from test.unit.util import cli_call
 from hfc.api.ca.caservice import ca_service
 from hfc.api.user import User
-from hfc.api.msp.msp import MSP
-from hfc.api.crypto.crypto import ecies
-
+from hfc.util.keyvaluestore import file_key_value_store
+from test.unit.util import cli_call
 
 USER_ID = 'user'
 USER_PASSWD = 'userpw'
 
 
-def get_submitter():
+def get_submitter(store):
     ca = ca_service()
-    msp = MSP('DEFAULT', ecies())
-    user = User(USER_ID, USER_PASSWD, msp_impl=msp, ca=ca)
-    user.enroll()
+    user = User(USER_ID, USER_PASSWD, store)
+    enrollment = ca.enroll(USER_ID, USER_PASSWD)
+    user.enrollment = enrollment
 
     return user
 
 
 class UserTest(unittest.TestCase):
-
     def setUp(self):
         self.gopath_bak = os.environ.get('GOPATH', '')
         gopath = os.path.normpath(os.path.join(os.path.dirname(__file__),
@@ -63,12 +60,12 @@ class UserTest(unittest.TestCase):
     def test_get_submitter(self):
         time.sleep(5)
 
-        submitter = get_submitter()
+        submitter = get_submitter(file_key_value_store(self.kv_store_path))
 
         self.assertTrue(submitter.is_enrolled())
 
         # test the identity object carrying
-        self.assertTrue(submitter.identity._certificate.
+        self.assertTrue(submitter.enrollment.cert.
                         startswith(b"-----BEGIN CERTIFICATE-----"))
 
 

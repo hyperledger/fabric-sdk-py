@@ -1,4 +1,4 @@
-cryptography >= 1.5.2
+cryptography >= 1.9
 grpcio >= 1.0.1
 hkdf >= 0.0.3
 pycryptodomex >= 3.4.2
