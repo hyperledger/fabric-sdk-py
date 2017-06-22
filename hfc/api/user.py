@@ -12,47 +12,63 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from hfc.api.ca.caservice import ca_service
-from .crypto.crypto import ecies
-from .msp.identity import Identity, Signer, SigningIdentity
-from .msp.msp import msp
+import pickle
+
+import binascii
+
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
+
+from hfc.api.ca.caservice import Enrollment
 
 
 class User(object):
-    """ The User Object
+    """ The default implementation of user. """
 
-    """
-
-    def __init__(self, name, password='', roles=None,
-                 affiliation="", msp_impl=msp('DEFAULT', ecies()),
-                 ca=ca_service()):
+    def __init__(self, name, org, state_store):
         """Constructor for a user.
 
         Args:
-            ca: ca service
             name: name
-            password: password
-            roles: roles
-            affiliation: affiliation
-            msp_impl: msp instance
+            org: org
+            state_store: persistent state store
 
         """
         self._name = name
-        self._roles = ['fabric.user'] if roles is None else roles
-        self._affiliation = affiliation
-        self._enrollment_secret = password
-        self._msp = msp_impl
-        self._identity = None
-        self._signing_identity = None
-        self._ca = ca
+        self._org = org
+        self._state_store = state_store
+        self._state_store_key = "user." + name + "." + org
+        self._roles = []
+        self._account = None
+        self._affiliation = None
+        self._enrollment_secret = None
+        self._enrollment = None
+        self._msp_id = None
+
+        user_state = state_store.get_value(self._state_store_key)
+
+        if not user_state:
+            self._save_state()
+        else:
+            self._restore_state()
 
     @property
     def name(self):
         """Get the user name
 
         Return: The user name
+
         """
         return self._name
+
+    @property
+    def org(self):
+        """Get the org
+
+        Return: The org
+
+        """
+        return self._org
 
     @property
     def roles(self):
@@ -70,6 +86,25 @@ class User(object):
             roles: the roles
         """
         self._roles = roles
+        self._save_state()
+
+    @property
+    def account(self):
+        """Get the account
+
+        Return: The account
+        """
+        return self._account
+
+    @account.setter
+    def account(self, account):
+        """Set the account
+
+        Args:
+            account: the account
+        """
+        self._account = account
+        self._save_state()
 
     @property
     def affiliation(self):
@@ -79,63 +114,166 @@ class User(object):
         """
         return self._affiliation
 
-    @property
-    def identity(self):
-        """Get the Identity object
+    @affiliation.setter
+    def affiliation(self, affiliation):
+        """Set the affiliation
 
-        The Identity object for this User instance is used to
-        verify signatures.
-
-        Return:
-            The identity object that encapsulates the user's
-            enrollment certificate
+        Args:
+            affiliation: the affiliation
         """
-        return self._identity
+        self._affiliation = affiliation
+        self._save_state()
 
     @property
-    def signing_identity(self):
-        """Get the SigningIdentity object
+    def enrollment(self):
+        """Get the enrollment
 
-        The SigningIdentity object for this User instance is used to
-        generate signatures.
-
-        Return:
-            The SigningIdentity object that encapsulates the user's
-            private key for signing.
+        Return: The enrollment
         """
-        return self._signing_identity
+        return self._enrollment
 
-    def enroll(self):
-        """Enroll user."""
-        priv_key, cert = self._ca.enroll(self.name, self._enrollment_secret)
-        public_key = priv_key.public_key()
-        self._identity = Identity(self._name + '_identity',
-                                  cert,
-                                  public_key,
-                                  self._msp)
-        signer = Signer(self._msp.crypto_suite, priv_key)
-        print("cert={}".format(cert))
-        print("public_key={}".format(public_key))
-        self._signing_identity = SigningIdentity(
-            self._name + '_signingIdentity',
-            cert, public_key,
-            self._msp, signer)
+    @enrollment.setter
+    def enrollment(self, enrollment):
+        """Set the enrollment
+
+        Args:
+            enrollment: the enrollment
+        """
+        self._enrollment = enrollment
+        self._save_state()
+
+    @property
+    def enrollment_secret(self):
+        """Get the enrollment_secret
+
+        Return: The enrollment_secret
+        """
+        return self._enrollment_secret
+
+    @enrollment_secret.setter
+    def enrollment_secret(self, enrollment_secret):
+        """Set the enrollment_secret
+
+        Args:
+            enrollment_secret: the enrollment_secret
+        """
+        self._enrollment_secret = enrollment_secret
+        self._save_state()
+
+    @property
+    def msp_id(self):
+        """Get the msp_id
+
+        Return: The msp_id
+        """
+        return self._msp_id
+
+    @msp_id.setter
+    def msp_id(self, msp_id):
+        """Set the msp_id
+
+        Args:
+            msp_id: the msp_id
+        """
+        self._msp_id = msp_id
+        self._save_state()
+
+    def is_registered(self):
+        """Check if user registered
+
+        Returns: boolean
+
+        """
+        return self._enrollment_secret is not None
 
     def is_enrolled(self):
-        """Determine if this name has been enrolled.
+        """Check if user enrolled
 
-        Return: True if enrolled; otherwise, false.
-        """
-        return self._identity and self._signing_identity
-
-    def from_string(self):
-        """Set the current state of this user from a string based JSON object
+        Returns: boolean
 
         """
-        pass
+        return self._enrollment is not None
 
-    def to_string(self):
-        """Save the current state of this user as a string
+    def _save_state(self):
+        """ Persistent user state. """
+        try:
+            state = {
+                'name': self.name, 'org': self.org, 'roles': self.roles,
+                'affiliation': self.affiliation, 'account': self.account,
+                'enrollment_secret': self.enrollment_secret,
+                'msp_id': self.msp_id
+            }
 
-        """
-        pass
+            if self.enrollment:
+                enrollment = {
+                    'private_key':
+                        self.enrollment.private_key.private_bytes(
+                            encoding=serialization.Encoding.PEM,
+                            format=serialization.PrivateFormat.PKCS8,
+                            encryption_algorithm=serialization.NoEncryption()
+                        ),
+                    'cert': self.enrollment.cert
+                }
+
+                state['enrollment'] = enrollment
+
+            self._state_store.set_value(
+                self._state_store_key,
+                binascii.hexlify(pickle.dumps(state)).decode("utf-8"))
+        except:
+            raise IOError("Cannot serialize the user")
+
+    def _restore_state(self):
+        """ Restore user state. """
+        try:
+            state = self._state_store.get_value(self._state_store_key)
+            state_dict = pickle.loads(
+                binascii.unhexlify(state.encode("utf-8")))
+            self._name = state_dict['name']
+            self.enrollment_secret = state_dict['enrollment_secret']
+            enrollment = state_dict['enrollment']
+            if enrollment:
+                private_key = serialization.load_pem_private_key(
+                    enrollment['private_key'],
+                    password=None,
+                    backend=default_backend()
+                )
+                cert = enrollment['cert']
+                self.enrollment = Enrollment(private_key, cert)
+            self.affiliation = state_dict['affiliation']
+            self.account = state_dict['account']
+            self.roles = state_dict['roles']
+            self._org = state_dict['org']
+            self.msp_id = state_dict['msp_id']
+        except:
+            raise IOError("Cannot deserialize the user")
+
+
+def check(user):
+    """ Check the user.
+
+    Args:
+        user: A user object
+
+    Raises:
+        ValueError: When user property is invalid
+
+    """
+    if not user:
+        raise ValueError("User cannot be empty.")
+
+    if not user.name:
+        raise ValueError("Missing user name.")
+
+    enrollment = user.enrollment
+    if not enrollment:
+        raise ValueError("Missing user enrollment.")
+
+    if not enrollment.cert:
+        raise ValueError("Missing user enrollment cert.")
+
+    if not enrollment.key:
+        raise ValueError("Missing user enrollment key.")
+
+    if not user.msp_id:
+        raise ValueError("Missing msp id.")

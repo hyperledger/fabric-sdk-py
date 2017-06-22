@@ -55,7 +55,7 @@ class CATest(unittest.TestCase):
         cli_call(["docker-compose", "-f", self.compose_file_path, "down"])
 
     def test_get_ca_info(self):
-        time.sleep(1)
+        time.sleep(5)
         ca_client = CAClient("http://" + self._ca_server_address)
         ca_chain = ca_client.get_cainfo()
         self.assertTrue(ca_chain.startswith(b"-----BEGIN CERTIFICATE-----"))
@@ -74,9 +74,10 @@ class CATest(unittest.TestCase):
         """
         time.sleep(5)
         ca_service = CAService("http://" + self._ca_server_address)
-        key, ecert = ca_service.enroll(self._enrollment_id,
+        enrollment = ca_service.enroll(self._enrollment_id,
                                        self._enrollment_secret)
-        self.assertTrue(ecert.startswith(b"-----BEGIN CERTIFICATE-----"))
+        self.assertTrue(enrollment.cert
+                        .startswith(b"-----BEGIN CERTIFICATE-----"))
 
 
 if __name__ == '__main__':

@@ -29,6 +29,52 @@ DEFAULT_CA_BASE_URL = '/api/v1/'
 _logger = logging.getLogger(__name__)
 
 
+class Enrollment(object):
+    """ Class represents enrollment. """
+
+    def __init__(self, private_key, cert):
+        self._private_key = private_key
+        self._cert = cert
+
+    @property
+    def private_key(self):
+        """ Get private key
+
+        Returns: private key
+
+        """
+        return self._private_key
+
+    @private_key.setter
+    def private_key(self, private_key):
+        """ Set the private key
+
+        Args:
+            private_key: private key
+
+        """
+        self._private_key = private_key
+
+    @property
+    def cert(self):
+        """ Get cert
+
+        Returns: cert
+
+        """
+        return self._cert
+
+    @cert.setter
+    def cert(self, cert):
+        """ Set cert
+
+        Args:
+            cert: cert
+
+        """
+        self._cert = cert
+
+
 class CAClient(object):
     """Client for communicating with the Fabric CA APIs."""
 
@@ -73,10 +119,9 @@ class CAClient(object):
         else:
             body_data = {}
         response = self._send_ca_post(path="cainfo", json=body_data)
-        print(response)
         _logger.debug("Raw response json {0}".format(response))
-        if (response['success'] and
-                response['result']['CAName'] == self._ca_name):
+        if (response['success'] and response['result']['CAName']
+                == self._ca_name):
             return base64.b64decode(response['result']['CAChain'])
         else:
             raise ValueError("get_cainfo failed with errors {0}"
@@ -106,9 +151,9 @@ class CAClient(object):
 
         if self._ca_name != "":
             req = {
-                    "caName": self._ca_name,
-                    "certificate_request": csr
-                  }
+                "caName": self._ca_name,
+                "certificate_request": csr
+            }
         else:
             req = {"certificate_request": csr}
 
@@ -166,7 +211,7 @@ class CAService(object):
             enrollment_id, enrollment_secret,
             csr.public_bytes(Encoding.PEM).decode("utf-8"))
 
-        return private_key, cert
+        return Enrollment(private_key, cert)
 
 
 def ca_service(target=DEFAULT_CA_ENDPOINT,
@@ -183,11 +228,3 @@ def ca_service(target=DEFAULT_CA_ENDPOINT,
 
     """
     return CAService(target, ca_certs_path, crypto, ca_name)
-
-
-# Only for local testing
-
-if __name__ == "__main__":
-    ca_client = CAClient()
-    ca_chain = ca_client.get_cainfo()
-    print(ca_chain)
