@@ -11,32 +11,24 @@
 # limitations under the License.
 
 import unittest
-import os
+
 from hfc.fabric.client import Client
-from hfc.util.keyvaluestore import file_key_value_store
 
 
 class ClientTest(unittest.TestCase):
-
-    def setUp(self):
-        self.base_path = '/tmp/fabric-sdk-py'
-        self.kv_store_path = os.path.join(self.base_path, 'key-value-store')
-
     @unittest.expectedFailure
     def test_create_client(self):
         # TODO impl
 
-        client = Client()
-        client.set_state_store(file_key_value_store(self.kv_store_path))
+        Client()
         self.fail()
 
     def test_create_new_chain(self):
         client = Client()
-        client.set_state_store(file_key_value_store(self.kv_store_path))
-        test_chain = client.new_chain('test')
-        self.assertEqual(test_chain, client.get_chain('test'))
+        test_chain = client.new_channel('test')
+        self.assertEqual(test_chain, client.get_channel('test'))
 
-        no_chain = client.get_chain('test1')
+        no_chain = client.get_channel('test1')
         self.assertIsNone(no_chain)
 
 
