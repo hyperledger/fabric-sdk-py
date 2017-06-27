@@ -71,7 +71,7 @@ class InvocationTest(unittest.TestCase):
         self.start_test_env()
         time.sleep(5)
         client = Client()
-        chain = client.new_chain(CHAIN_ID)
+        chain = client.new_channel(CHAIN_ID)
         client.set_state_store(file_key_value_store(self.kv_store_path))
         chain.add_peer(Peer())
 

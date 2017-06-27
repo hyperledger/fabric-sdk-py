@@ -16,6 +16,8 @@ import sys
 
 from google.protobuf.timestamp_pb2 import Timestamp
 
+from hfc.protos.msp import identities_pb2
+
 
 def proto_str(x):
     return proto_b(x).decode("utf-8")
@@ -23,6 +25,14 @@ def proto_str(x):
 
 proto_b = \
     sys.version_info[0] < 3 and (lambda x: x) or (lambda x: x.encode('latin1'))
+
+
+def create_serialized_identity(user):
+    """ Create serialized identity from user"""
+    serialized_identity = identities_pb2.SerializedIdentity()
+    serialized_identity.mspid = user.msp_id
+    serialized_identity.id_bytes = user.enrollment.cert
+    return serialized_identity.SerializeToString()
 
 
 def current_timestamp():
