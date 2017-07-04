@@ -1,5 +1,5 @@
 # https://github.com/yeasy/docker-compose-files/tree/master/hyperledger
-# This compose file will start a Hyperledger Fabric 1.0 MVE, including
+# This compose file will start a Hyperledger Fabric 1.0.0-rc1 with peer create and peer join done. including
 # * 1 ca
 # * 1 orderer
 # * 1 peers in 1 orgs
@@ -60,7 +60,8 @@ services:
       - orderer.example.com
       - peer0.org1.example.com
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
-    command: bash -c 'while true; do sleep 20170504; done'
+    #command: bash -c 'while true; do sleep 20170504; done'
+    command: bash -c 'while true; do bash ./scripts/channel-operation.sh; sleep 20170701; done'
 
 #networks:
 #  default:
