@@ -21,7 +21,7 @@ from cryptography import x509
 from cryptography.hazmat.primitives.serialization import Encoding
 from cryptography.x509 import NameOID
 
-from hfc.fabric_ca.crypto.crypto import ecies
+from hfc.util.crypto.crypto import ecies
 
 DEFAULT_CA_ENDPOINT = 'http://localhost:7054'
 DEFAULT_CA_BASE_URL = '/api/v1/'

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from hfc.fabric_ca.crypto.crypto import ecies
+from hfc.util.crypto.crypto import ecies
 
 
 class MSP(object):

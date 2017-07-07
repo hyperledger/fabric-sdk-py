@@ -20,9 +20,9 @@ from hfc.fabric.chain.transactionproposals \
     import TransactionProposalHandler, TransactionProposalRequest, \
     CC_INSTANTIATE, check_tran_prop_request, \
     build_header, build_proposal, sign_proposal
-from hfc.fabric_ca.crypto import crypto
 from hfc.protos.common import common_pb2
 from hfc.protos.peer import chaincode_pb2
+from hfc.util.crypto import crypto
 from hfc.util.utils import proto_str, proto_b
 
 _logger = logging.getLogger(__name__ + ".instantiate")

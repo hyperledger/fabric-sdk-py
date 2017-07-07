@@ -11,14 +11,13 @@
 # limitations under the License.
 import os
 import unittest
-
 from shutil import rmtree
 
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.serialization import Encoding
 
-from hfc.fabric_ca.crypto.crypto import ecies
 from hfc.fabric.user import User, Enrollment
+from hfc.util.crypto.crypto import ecies
 from hfc.util.keyvaluestore import file_key_value_store
 
 

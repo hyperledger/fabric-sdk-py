@@ -21,10 +21,10 @@ from abc import ABCMeta, abstractmethod
 import rx
 import six
 
-from hfc.fabric_ca.crypto import crypto
 from hfc.protos.common import common_pb2
 from hfc.protos.peer import proposal_pb2
 from hfc.protos.peer import transaction_pb2
+from hfc.util.crypto import crypto
 from hfc.util.utils import current_timestamp, proto_str
 
 CC_INSTALL = "install"

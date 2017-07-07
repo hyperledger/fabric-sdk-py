@@ -23,9 +23,9 @@ from hfc.fabric.chain.transactionproposals \
     import TransactionProposalHandler, CC_INSTALL, \
     TransactionProposalRequest, check_tran_prop_request, \
     build_header, build_proposal, send_transaction_proposal, send_transaction
-from hfc.fabric_ca.crypto import crypto
 from hfc.protos.common import common_pb2
 from hfc.protos.peer import chaincode_pb2
+from hfc.util.crypto import crypto
 from hfc.util.utils import proto_str, proto_b, current_timestamp
 
 _logger = logging.getLogger(__name__ + ".installment")
