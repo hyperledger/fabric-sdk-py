@@ -31,6 +31,7 @@ class Client(object):
         self._channels = {}
         self._crypto_suite = None
         self._user_context = None
+        self._state_store = None
 
     def new_channel(self, name):
         """Init a channel instance with given name.
@@ -81,7 +82,7 @@ class Client(object):
         Returns: The user context or None
 
         """
-        return self._crypto_suite
+        return self._user_context
 
     @user_context.setter
     def user_context(self, user_context):
@@ -94,3 +95,22 @@ class Client(object):
 
         """
         self._user_context = user_context
+
+        @property
+        def state_store(self):
+            """ Geet the KeyValue store.
+
+            Return the keyValue store instance or None
+
+            """
+            return self._state_store
+
+        @state_store.setter
+        def state_store(self, state_store):
+            """ Set the KeyValue store.
+
+            Args:
+                state_store: the KeyValue store to use.
+            No return Value
+            """
+            self._state_store = state_store
