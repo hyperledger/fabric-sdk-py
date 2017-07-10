@@ -15,11 +15,11 @@
 import os
 import unittest
 
-from hfc.fabric.channel_configuration import ChannelConfiguration
+from hfc.fabric.channel.channel_configuration import ChannelConfiguration
 
 CONFIG_FILE_PATH = os.path.join(
     os.path.dirname(__file__),
-    '../fixtures/e2e_cli/channel-artifacts/channel.tx')
+    '../../fixtures/e2e_cli/channel-artifacts/channel.tx')
 
 
 class ChannelConfigurationTest(unittest.TestCase):

@@ -15,7 +15,7 @@
 
 import logging
 
-from hfc.fabric.chain.chain import Chain
+from hfc.fabric.channel.channel import Channel
 
 _logger = logging.getLogger(__name__ + ".client")
 
@@ -23,7 +23,7 @@ _logger = logging.getLogger(__name__ + ".client")
 class Client(object):
     """
         Main interaction handler with end user.
-        Client can maintain several chains.
+        Client can maintain several channels.
     """
 
     def __init__(self):
@@ -36,21 +36,23 @@ class Client(object):
     def new_channel(self, name):
         """Init a channel instance with given name.
 
-        :param name: The name of chain
+        :param name: The name of channel
 
-        :return: The inited chain instance
+        :return: The inited channel instance
+
         """
-        _logger.debug("New a chain with name = {}".format(name))
+        _logger.debug("New channel with name = {}".format(name))
         if name not in self._channels:
-            self._channels[name] = Chain(name)
+            self._channels[name] = Channel(name, self)
         return self._channels[name]
 
     def get_channel(self, name):
         """ Get a channel instance
 
-        :param name: the name of the chain
+        :param name: the name of the channel
 
-        :return: Get the chain instance with the name or None
+        :return: Get the channel instance with the name or None
+
         """
         return self._channels.get(name, None)
 
@@ -96,21 +98,23 @@ class Client(object):
         """
         self._user_context = user_context
 
-        @property
-        def state_store(self):
-            """ Geet the KeyValue store.
+    @property
+    def state_store(self):
+        """ Get the KeyValue store.
 
-            Return the keyValue store instance or None
+        Return the keyValue store instance or None
 
-            """
-            return self._state_store
+        """
+        return self._state_store
 
-        @state_store.setter
-        def state_store(self, state_store):
-            """ Set the KeyValue store.
+    @state_store.setter
+    def state_store(self, state_store):
+        """ Set the KeyValue store.
 
-            Args:
-                state_store: the KeyValue store to use.
-            No return Value
-            """
-            self._state_store = state_store
+        Args:
+            state_store: the KeyValue store to use.
+
+        No return Value
+
+        """
+        self._state_store = state_store

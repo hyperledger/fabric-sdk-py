@@ -12,19 +12,17 @@
 
 import unittest
 
-from hfc.fabric.chain.chain import Chain
-from hfc.fabric.peer import Peer
+from hfc.fabric.channel.channel import Channel
 from hfc.fabric.orderer import Orderer
 
 
-class ChainTest(unittest.TestCase):
+class ChannelTest(unittest.TestCase):
 
     @unittest.expectedFailure
-    def test_create_chain(self):
+    def test_create_channel(self):
         # TODO impl
-        chain = Chain()
-        chain.add_peer(Peer())
-        chain.add_orderer(Orderer())
+        channel = Channel()
+        channel.add_orderer(Orderer())
         self.fail()
 
 

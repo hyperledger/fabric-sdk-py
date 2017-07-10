@@ -19,7 +19,7 @@ import tarfile
 
 import rx
 
-from hfc.fabric.chain.transactionproposals \
+from hfc.fabric.channel.transactionproposals \
     import TransactionProposalHandler, CC_INSTALL, \
     TransactionProposalRequest, check_tran_prop_request, \
     build_header, build_proposal, send_transaction_proposal, send_transaction

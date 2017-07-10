@@ -3,10 +3,9 @@ import sys
 import time
 import unittest
 
-from hfc.fabric.chain.installment import create_installment_proposal_req
+from hfc.fabric.channel.installment import create_installment_proposal_req
 from hfc.fabric.client import Client
 from hfc.fabric.msp.msp import msp
-from hfc.fabric.orderer import Orderer
 from hfc.fabric.peer import Peer
 from hfc.fabric.user import User
 from hfc.fabric_ca.caservice import ca_service
@@ -36,7 +35,7 @@ def get_submitter():
     return user
 
 
-class InstallmentTest(unittest.TestCase):
+class InstantiationTest(unittest.TestCase):
     """ Chaincode related Test cases
     """
 
@@ -65,32 +64,43 @@ class InstallmentTest(unittest.TestCase):
         cli_call(["docker-compose", "-f", self.compose_file_path, "down"])
 
     @unittest.skip
-    def test_install(self):
+    def test_instantiate(self):
+        self.shutdown_test_env()
+        self.start_test_env()
         time.sleep(5)
         client = Client()
         chain = client.new_channel(CHAIN_ID)
         client.set_state_store(file_key_value_store(self.kv_store_path))
         chain.add_peer(Peer())
-        chain.add_orderer(Orderer())
 
         submitter = get_submitter()
-
         signing_identity = submitter.signing_identity
-        cc_install_req = create_installment_proposal_req(
+        # cc_instantiate_req = create_instantiation_proposal_req(
+        #     CHAINCODE_NAME, CHAINCODE_PATH,
+        #     CHAINCODE_VERSION, signing_identity,
+        #     args=['a', '100', 'b', '200'])
+
+        cc_instantiate_req = create_installment_proposal_req(
             CHAINCODE_NAME, CHAINCODE_PATH,
-            CHAINCODE_VERSION)
+            CHAINCODE_VERSION, signing_identity,
+        )
+
         queue = Queue(1)
 
-        chain.install_chaincode(cc_install_req, signing_identity) \
-            .subscribe(on_next=lambda x: queue.put(x),
-                       on_error=lambda x: queue.put(x))
+        chain.instantiate_chaincode(cc_instantiate_req) \
+            .subscribe(lambda x: queue.put(x))
 
-        response, _ = queue.get(timeout=5)
-        # TODO: create channel not implement yet
-        print(response.status)
-        self.assertEqual(404, response.status)
+        prop = queue.get(timeout=10)
+        proposal_bytes = prop.proposal_bytes
+        sig = prop.signature
 
-        # TODO: commented these tests due to reduce test time
+        # verify the signature against the hash of proposal_bytes
+        digest = signing_identity.msp.crypto_suite.hash(proposal_bytes)
+        self.assertEqual(
+            signing_identity.verify(str.encode(digest.hexdigest()),
+                                    sig),
+            True)
+        self.shutdown_test_env()
 
 
 if __name__ == '__main__':
