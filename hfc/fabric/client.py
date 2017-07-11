@@ -15,7 +15,7 @@
 
 import logging
 
-from hfc.fabric.channel.channel import Channel
+from hfc.fabric.channel.channel import Channel, create_system_channel
 from hfc.protos.common import common_pb2, configtx_pb2
 from hfc.util import utils
 
@@ -39,6 +39,7 @@ class Client(object):
         self._user_context = None
         self._tx_context = None
         self._state_store = None
+        self._is_dev_mode = False
 
     def new_channel(self, name):
         """Init a channel instance with given name.
@@ -185,7 +186,7 @@ class Client(object):
             proto_payload = common_pb2.Payload()
 
             proto_payload.header.CopyFrom(proto_header)
-            proto_payload.data = proto_config_update_envelope\
+            proto_payload.data = proto_config_update_envelope \
                 .SerializeToString()
             payload_bytes = proto_payload.SerializeToString()
 
@@ -330,3 +331,18 @@ class Client(object):
 
         """
         self._state_store = state_store
+
+    def send_install_proposal(self, tx_context, peers, scheduler=None):
+        """ Send install proposal
+
+        Args:
+            scheduler: rx scheduler
+            tx_context: transaction context
+            peers: peers
+
+        Returns: A set of proposal_response
+
+        """
+        sys_channel = create_system_channel(self)
+        _logger.debug("context {}".format(tx_context))
+        return sys_channel.send_install_proposal(tx_context, peers, scheduler)

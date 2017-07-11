@@ -19,6 +19,7 @@ from google.protobuf.message import DecodeError
 from google.protobuf.timestamp_pb2 import Timestamp
 from hfc.protos.common import common_pb2, configtx_pb2
 from hfc.protos.msp import identities_pb2
+from hfc.protos.peer import proposal_pb2
 
 _logger = logging.getLogger(__name__ + '.utils')
 
@@ -179,3 +180,45 @@ def extract_channel_config(configtx_proto_envelope):
                          .format(e))
 
     return configtx.config_update
+
+
+def build_cc_proposal(cci_spec, header, transient_map):
+    """ Create an chaincode transaction proposal
+
+    Args:
+        transient_map: transient data map
+        cci_spec: The spec
+        header: header of the proposal
+
+    Returns: The created proposal
+
+    """
+    cc_payload = proposal_pb2.ChaincodeProposalPayload()
+    cc_payload.input = cci_spec.SerializeToString()
+    if transient_map:
+        cc_payload.TransientMap = transient_map
+
+    proposal = proposal_pb2.Proposal()
+    proposal.header = header.SerializeToString()
+    proposal.payload = cc_payload.SerializeToString()
+
+    return proposal
+
+
+def sign_proposal(tx_context, proposal):
+    """ Sign a proposal
+    Args:
+        tx_context: transaction context
+        proposal: proposal to sign on
+
+    Returns: Signed proposal
+
+    """
+    proposal_bytes = proposal.SerializeToString()
+    sig = tx_context.sign(proposal_bytes)
+
+    signed_proposal = proposal_pb2.SignedProposal()
+    signed_proposal.signature = sig
+    signed_proposal.proposal_bytes = proposal_bytes
+
+    return signed_proposal

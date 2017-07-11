@@ -23,9 +23,8 @@ from hfc.util.keyvaluestore import FileKeyValueStore
 from hfc.fabric.orderer import Orderer
 from test.integration.e2e_config import E2E_CONFIG
 from test.unit.util import get_peer_org_admin, get_orderer_org_admin, cli_call
-from hfc.fabric.tx_context import TXContext
+from hfc.fabric.transaction.tx_context import TXContext
 from hfc.util.crypto.crypto import Ecies
-
 
 if sys.version_info < (3, 0):
     from Queue import Queue
@@ -80,7 +79,7 @@ class ClientTest(unittest.TestCase):
 
         # signatures orderer admin
         orderer_admin = get_orderer_org_admin(self.client)
-        orderer_admin_tx_context = TXContext(orderer_admin, Ecies())
+        orderer_admin_tx_context = TXContext(orderer_admin, Ecies(), {})
         self.client.tx_context = orderer_admin_tx_context
 
         orderer_admin_signature = self.client.sign_channel_config(config)
@@ -96,7 +95,7 @@ class ClientTest(unittest.TestCase):
 
         # signatures org1 admin
         org1_admin = get_peer_org_admin(self.client, 'org1.example.com')
-        org1_admin_tx_context = TXContext(org1_admin, Ecies())
+        org1_admin_tx_context = TXContext(org1_admin, Ecies(), {})
         self.client.tx_context = org1_admin_tx_context
 
         org1_admin_signature = self.client.sign_channel_config(config)
@@ -108,7 +107,7 @@ class ClientTest(unittest.TestCase):
 
         # signatures org2 admin
         org2_admin = get_peer_org_admin(self.client, 'org2.example.com')
-        org2_admin_tx_context = TXContext(org2_admin, Ecies())
+        org2_admin_tx_context = TXContext(org2_admin, Ecies(), {})
         self.client.tx_context = org2_admin_tx_context
 
         org2_admin_signature = self.client.sign_channel_config(config)
@@ -156,7 +155,7 @@ class ClientTest(unittest.TestCase):
 
         # signatures orderer admin
         orderer_admin = get_orderer_org_admin(self.client)
-        orderer_admin_tx_context = TXContext(orderer_admin, Ecies())
+        orderer_admin_tx_context = TXContext(orderer_admin, Ecies(), {})
         self.client.tx_context = orderer_admin_tx_context
 
         orderer_admin_signature = self.client.sign_channel_config(config)
@@ -176,7 +175,7 @@ class ClientTest(unittest.TestCase):
 
         # signatures org1 admin
         org1_admin = get_peer_org_admin(self.client, 'org1.example.com')
-        org1_admin_tx_context = TXContext(org1_admin, Ecies())
+        org1_admin_tx_context = TXContext(org1_admin, Ecies(), {})
         self.client.tx_context = org1_admin_tx_context
 
         org1_admin_signature = self.client.sign_channel_config(config)
@@ -191,7 +190,7 @@ class ClientTest(unittest.TestCase):
 
         # signatures org2 admin
         org2_admin = get_peer_org_admin(self.client, 'org2.example.com')
-        org2_admin_tx_context = TXContext(org2_admin, Ecies())
+        org2_admin_tx_context = TXContext(org2_admin, Ecies(), {})
         self.client.tx_context = org2_admin_tx_context
 
         org2_admin_signature = self.client.sign_channel_config(config)

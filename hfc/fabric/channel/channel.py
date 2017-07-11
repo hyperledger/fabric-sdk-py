@@ -1,28 +1,29 @@
-# Copyright IBM Corp. 2017 All Rights Reserved.
+# Copyright 281165273@qq.com. All Rights Reserved.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
+# SPDX-License-Identifier: Apache-2.0
+
+import io
+import logging
+import os
 import random
 import sys
+import tarfile
 
-from hfc.fabric.tx_context import TXContext
-from hfc.fabric.user import check
+import rx
+
+from hfc.fabric.transaction.tx_context import TXContext
+from hfc.fabric.transaction.tx_proposal_request import \
+    CC_INSTALL, CC_TYPE_GOLANG
+from hfc.fabric.user import validate
 from hfc.protos.common import common_pb2
 from hfc.protos.orderer import ab_pb2
-from hfc.util.utils import proto_str, current_timestamp
-from hfc.fabric.channel.installment import chaincode_installment
-from hfc.fabric.channel.invocation import chaincode_invocation
-from hfc.fabric.channel.instantiation import chaincode_instantiation
+from hfc.protos.peer import chaincode_pb2, proposal_pb2
+from hfc.util import utils
+from hfc.util.utils import proto_str, current_timestamp, proto_b
+
+SYSTEM_CHANNEL_NAME = ""
+
+_logger = logging.getLogger(__name__ + ".channel")
 
 
 class Channel(object):
@@ -31,16 +32,30 @@ class Channel(object):
     call client.create_channel().
     """
 
-    def __init__(self, name, client):
+    def __init__(self, name, client, is_sys_chan=False):
+        """Construct channel instance
 
-        self._name = name
+        Args:
+            is_sys_chan (bool): if system channel
+            client (object): fabric client instance
+            name (str): channel name
+        """
         self._client = client
         self._orderers = {}
         self._peers = {}
-        self._tcert_batch_size = 0
+        self._initialized = False
+        self._shutdown = False
+        self._is_sys_chan = is_sys_chan
         self._is_dev_mode = False
-        self._is_pre_fetch_mode = False
-        self.initialized = False
+
+        if self._is_sys_chan:
+            self._name = SYSTEM_CHANNEL_NAME
+            self._initialized = True
+        else:
+            if not name:
+                raise ValueError(
+                    "Channel name is invalid can not be null or empty.")
+            self._name = name
 
     def add_orderer(self, orderer):
         """Add orderer endpoint to a channel object.
@@ -68,6 +83,23 @@ class Channel(object):
         if orderer.endpoint in self._orderers:
             self._orderers.pop(orderer.endpoint, None)
 
+    def add_peer(self, peer):
+        """Add peer endpoint to a chain object.
+
+        Args:
+             peer: an instance of the Peer class
+        """
+        self._peers[peer.endpoint] = peer
+
+    def remove_peer(self, peer):
+        """Remove peer endpoint from a channel object.
+
+        Args:
+            peer: an instance of the Peer class
+        """
+        if peer.endpoint in self._peers:
+            self._peers.pop(peer.endpoint, None)
+
     @property
     def orderers(self):
         """Get orderers of a channel.
@@ -76,6 +108,14 @@ class Channel(object):
 
         """
         return self._orderers
+
+    @property
+    def peers(self):
+        """Get peers of a channel.
+
+        Returns: The peer list on the chain
+        """
+        return self._peers
 
     def _get_tx_context(self, user_context=None):
         """Get tx context
@@ -88,9 +128,9 @@ class Channel(object):
         Raises: ValueError
 
         """
-        user = user_context if not None else self._client.user_context
-        check(user)
-        return TXContext(user, self._client.crypto_suite)
+        user = user_context if not None else self._client.requester
+        validate(user)
+        return TXContext(self, user, self._client.crypto_suite)
 
     def _get_latest_block(self, orderer):
         """ Get latest block from orderer."""
@@ -136,60 +176,6 @@ class Channel(object):
         """
         return self._name
 
-    @property
-    def tcert_batch_size(self):
-        """Get the tcert batch size
-
-        :return: the current tcert batch size
-
-        """
-        return self._tcert_batch_size
-
-    @tcert_batch_size.setter
-    def tcert_batch_size(self, tcert_batch_size):
-        """Set the tcert batch size
-
-        :param tcert_batch_size: tcert batch size (integer)
-
-        """
-        self._tcert_batch_size = tcert_batch_size
-
-    def add_peer(self, peer):
-        """Add peer endpoint to a channel object
-
-        :param peer: an instance of the Peer class
-
-        """
-        self._peers[peer.endpoint] = peer
-
-    def remove_peer(self, peer):
-        """Remove peer endpoint from a channel object
-
-        Args:
-            peer: peer
-
-        """
-        if peer.endpoint in self._peers:
-            self._peers.pop(peer.endpoint, None)
-
-    @property
-    def peers(self):
-        """Get peers of a channel.
-
-        :return: The peer list on the channel
-
-        """
-        return self._peers
-
-    def is_valid_peer(self, peer):
-        """Check a peer if it is on this channel
-
-        Returns: True/False
-
-        """
-        endpoint = peer.endpoint()
-        return endpoint in self._peers
-
     def state_store(self):
         """Get the key val store instance of the instantiating client.
         Get the KeyValueStore implementation (if any)
@@ -199,6 +185,151 @@ class Channel(object):
 
         """
         return self._client.state_store
+
+    def _validate_state(self):
+        """Validate channel state.
+
+        Raises:
+            ValueError
+
+        """
+        if self._shutdown:
+            raise ValueError(
+                "Channel %s has been shutdown.".format(self._name))
+
+        if not self._initialized:
+            raise ValueError(
+                "Channel %s has not been initialized.".format(self._name))
+
+    @property
+    def is_sys_chan(self):
+        """Get if system channel"""
+        return self._is_sys_chan
+
+    def _validate_peer(self, peer):
+        """Validate peer
+
+        Args:
+            peer: peer
+
+        Raises:
+            ValueError
+
+        """
+        if not peer:
+            raise ValueError("Peer value is null.")
+
+        if self._is_sys_chan:
+            return
+
+        if peer not in self._peers.values():
+            raise ValueError(
+                "Channel %s does not have peer %s".format(self._name,
+                                                          peer.endpoint))
+
+        if self not in peer.channels:
+            raise ValueError(
+                "Peer %s not joined this channel %s".format(peer.endpoint,
+                                                            self._name)
+            )
+
+    def _validate_peers(self, peers):
+        """Validate peer set
+
+        Args:
+            peers: peers
+
+        Raises:
+            ValueError
+
+        """
+        if not peers:
+            raise ValueError("Collection of peers is null.")
+
+        if len(peers) == 0:
+            raise ValueError("Collection of peers is empty.")
+
+        for peer in peers:
+            self._validate_peer(peer)
+
+    def send_install_proposal(self, tx_context, peers=None, scheduler=None):
+        """ Send install chaincode proposal
+
+        Args:
+            schedule: Rx schedule
+            install_proposal_req: install proposal request
+            targets: a set of peer to send
+
+        Returns: a set of proposal response
+
+        """
+        if peers is None:
+            targets = self._peers.values()
+        else:
+            targets = peers
+        self._validate_state()
+        self._validate_peers(targets)
+
+        if not tx_context:
+            raise ValueError("InstallProposalRequest is null.")
+
+        cc_deployment_spec = chaincode_pb2.ChaincodeDeploymentSpec()
+        cc_deployment_spec.chaincode_spec.type = \
+            chaincode_pb2.ChaincodeSpec.Type.Value(
+                proto_str(tx_context.tx_prop_req.cc_type))
+        cc_deployment_spec.chaincode_spec.chaincode_id.name = \
+            proto_str(tx_context.tx_prop_req.cc_name)
+        cc_deployment_spec.chaincode_spec.chaincode_id.path = \
+            proto_str(tx_context.tx_prop_req.cc_path)
+        cc_deployment_spec.chaincode_spec.chaincode_id.version = \
+            proto_str(tx_context.tx_prop_req.cc_version)
+        if not self._is_dev_mode:
+            if not tx_context.tx_prop_req.packaged_cc:
+                cc_deployment_spec.code_package = \
+                    self._package_chaincode(
+                        tx_context.tx_prop_req.cc_path,
+                        tx_context.tx_prop_req.cc_type)
+            else:
+                cc_deployment_spec.code_package = \
+                    tx_context.tx_prop_req.packaged_cc
+
+        cc_deployment_spec.effective_date.seconds = \
+            tx_context.tx_prop_req.effective_date.seconds
+        cc_deployment_spec.effective_date.nanos = \
+            tx_context.tx_prop_req.effective_date.nanos
+
+        channel_header_extension = proposal_pb2.ChaincodeHeaderExtension()
+        channel_header_extension.chaincode_id.name = \
+            proto_str("lscc")
+        channel_header = utils.build_channel_header(
+            common_pb2.ENDORSER_TRANSACTION,
+            tx_context.tx_id,
+            self.name,
+            utils.current_timestamp(),
+            tx_context.epoch,
+            channel_header_extension.SerializeToString()
+        )
+
+        header = utils.build_header(tx_context.identity,
+                                    channel_header,
+                                    tx_context.nonce)
+
+        cci_spec = chaincode_pb2.ChaincodeInvocationSpec()
+        cci_spec.chaincode_spec.type = \
+            chaincode_pb2.ChaincodeSpec.Type.Value(CC_TYPE_GOLANG)
+        cci_spec.chaincode_spec.chaincode_id.name = proto_str("lscc")
+        cci_spec.chaincode_spec.input.args.extend(
+            [proto_b(CC_INSTALL), cc_deployment_spec.SerializeToString()])
+        proposal = utils.build_cc_proposal(
+            cci_spec, header,
+            tx_context.tx_prop_req.transient_map)
+        signed_proposal = utils.sign_proposal(tx_context, proposal)
+
+        send_executions = [peer.send_proposal(signed_proposal, scheduler)
+                           for peer in targets]
+
+        return rx.Observable.merge(send_executions).to_iterable() \
+            .map(lambda responses: (responses, proposal, header))
 
     def _build_channel_header(type, tx_id, channel_id,
                               timestamp, epoch=0, extension=None):
@@ -287,61 +418,16 @@ class Channel(object):
         """
         pass
 
-    def query_transaction(self, transactionID):
+    def query_transaction(self, tx_id):
         """Queries the ledger for Transaction by transaction ID.
 
         Args:
-            transactionID: transaction ID (string)
+            tx_id: transaction ID (string)
 
         Returns: TransactionInfo containing the transaction
 
         """
         pass
-
-    def install_chaincode(self, cc_install_request,
-                          signing_identity, scheduler=None):
-        """Install chaincode.
-
-        Args:
-            signing_identity: signing identity
-            scheduler: see rx.Scheduler
-            cc_install_request: see TransactionProposalRequest
-
-        Returns: An rx.Observable of install result
-
-        """
-        return chaincode_installment(self).handle(
-            cc_install_request, signing_identity, scheduler)
-
-    def instantiate_chaincode(self, cc_instantiate_request,
-                              signing_identity, scheduler=None):
-        """Instantiate chaincode.
-
-        Args:
-            signing_identity: signing identity
-            scheduler: see rx.Scheduler
-            cc_instantiate_request: see TransactionProposalRequest
-
-        Returns: An rx.Observable of instantiate result
-
-        """
-        return chaincode_instantiation(self).handle(
-            cc_instantiate_request, signing_identity, scheduler)
-
-    def invoke_chaincode(self, cc_invoke_request,
-                         signing_identity, scheduler=None):
-        """Invoke chaincode.
-
-        Args:
-            signing_identity: signing identity
-            cc_invoke_request: see TransactionProposalRequest
-            scheduler: see rx.Scheduler
-
-        Returns: An rx.Observable of instantiate result
-
-        """
-        return chaincode_invocation(self).handle(
-            cc_invoke_request, signing_identity, scheduler)
 
     @staticmethod
     def instantiate(name, config, signers, orderer):
@@ -351,7 +437,7 @@ class Channel(object):
 
         Args:
             name: channel name
-            config: cofiguration class instance
+            config: configuration class instance
             config_signed(string): signed config file
             orderer: orderer instance
         Return: True successfully or False in failure
@@ -398,3 +484,55 @@ class Channel(object):
         Return: signed config in string
         """
         pass
+
+    def _package_chaincode(self, cc_path, cc_type):
+        """ Package all chaincode env into a tar.gz file
+
+        Args:
+            cc_path: path to the chaincode
+
+        Returns: The chaincode pkg path or None
+
+        """
+        _logger.debug('Packaging chaincode path={}, chaincode type={}'.format(
+            cc_path, cc_type))
+
+        if cc_type == CC_TYPE_GOLANG:
+            go_path = os.environ['GOPATH']
+            if not cc_path:
+                raise ValueError("Missing chaincode path parameter "
+                                 "in install proposal request")
+
+            if not go_path:
+                raise ValueError("No GOPATH env variable is found")
+
+            proj_path = go_path + '/src/' + cc_path
+            _logger.debug('Project path={}'.format(proj_path))
+
+            with io.BytesIO() as temp:
+                with tarfile.open(fileobj=temp, mode='w|gz') as code_writer:
+                    for dir_path, _, file_names in os.walk(proj_path):
+                        for filename in file_names:
+                            file_path = os.path.join(dir_path, filename)
+                            code_writer.add(
+                                file_path,
+                                arcname=os.path.relpath(file_path, go_path))
+                temp.flush()
+                code_content = temp.read()
+
+            return code_content
+
+        else:
+            raise ValueError('Currently only support install GOLANG chaincode')
+
+
+def create_system_channel(client):
+    """ Create system channel instance
+
+    Args:
+        client: client instance
+
+    Returns: system channel instance
+
+    """
+    return Channel(SYSTEM_CHANNEL_NAME, client, True)

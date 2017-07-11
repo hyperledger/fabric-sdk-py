@@ -36,7 +36,7 @@ class Orderer(object):
 
         Args:
             endpoint (str): The grpc endpoint of the orderer.
-            pem (bytes): The tls certificate for the given
+            pem (str): The tls certificate for the given
                 orderer as bytes.
             opts (tuple): Additional grpc config options as
                 tuple e.g. ((key, val),).

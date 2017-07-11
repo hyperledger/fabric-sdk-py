@@ -16,7 +16,7 @@
 import os
 import unittest
 from hfc.fabric.client import Client
-from hfc.fabric.tx_context import TXContext
+from hfc.fabric.transaction.tx_context import TXContext
 from hfc.util.crypto.crypto import Ecies
 from hfc.util import utils
 from hfc.util.keyvaluestore import FileKeyValueStore
@@ -29,7 +29,6 @@ from google.protobuf.timestamp_pb2 import Timestamp
 
 
 class UtilsTest(unittest.TestCase):
-
     def setUp(self):
         self.orderer_org_mspid = \
             E2E_CONFIG['test-network']['orderer']['mspid']
@@ -66,7 +65,6 @@ class UtilsTest(unittest.TestCase):
         self.assertEqual(proto_channel_header.channel_id, self.channel_id)
 
     def test_string_to_signature(self):
-
         with open(self.channel_tx, 'rb') as f:
             channel_tx = f.read()
 
@@ -76,7 +74,8 @@ class UtilsTest(unittest.TestCase):
         client.state_store = FileKeyValueStore(self.kv_store_path)
 
         orderer_org_admin = get_orderer_org_admin(client)
-        orderer_org_admin_tx_context = TXContext(orderer_org_admin, Ecies())
+        orderer_org_admin_tx_context = \
+            TXContext(orderer_org_admin, Ecies(), {})
         client.tx_context = orderer_org_admin_tx_context
 
         orderer_org_admin_signature = client.sign_channel_config(
@@ -119,7 +118,8 @@ class UtilsTest(unittest.TestCase):
         client.state_store = FileKeyValueStore(self.kv_store_path)
 
         orderer_org_admin = get_orderer_org_admin(client)
-        orderer_org_admin_tx_context = TXContext(orderer_org_admin, Ecies())
+        orderer_org_admin_tx_context = \
+            TXContext(orderer_org_admin, Ecies(), {})
         client.tx_context = orderer_org_admin_tx_context
 
         orderer_org_admin_serialized = utils.create_serialized_identity(

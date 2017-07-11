@@ -1,18 +1,9 @@
-# Copyright IBM Corp. 2017 All Rights Reserved.
+# Copyright 281165273@qq.com. All Rights Reserved.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
+# SPDX-License-Identifier: Apache-2.0
+
 import logging
+import threading
 
 import rx
 
@@ -27,10 +18,12 @@ _logger = logging.getLogger(__name__ + ".peer")
 class Peer(object):
     """ A peer node in the network.
 
-    It has a specific Grpc channel address.
+    It has a specific gRPC channel address.
     """
 
     def __init__(self, endpoint=DEFAULT_PEER_ENDPOINT, pem=None, opts=None):
+        self._lock = threading.RLock()
+        self._channels = []
         self._endpoint = endpoint
         self._endorser_client = peer_pb2_grpc.EndorserStub(
             channel(self._endpoint, pem, opts))
@@ -39,6 +32,7 @@ class Peer(object):
         """ Send an endorsement proposal to endorser
 
         Args:
+            scheduler: rx scheduler
             proposal: The endorsement proposal
 
         Returns: proposal_response or exception
@@ -57,3 +51,32 @@ class Peer(object):
 
         """
         return self._endpoint
+
+    def join(self, chan):
+        """ Join a channel
+
+        Args:
+            chan: a channel instance
+
+        """
+        with self._lock:
+            self._channels.append(chan)
+
+    @property
+    def channels(self):
+        with self._lock:
+            return self._channels
+
+
+def create_peer(endpoint=DEFAULT_PEER_ENDPOINT, pem=None, opts=None):
+    """ Factory method to construct a peer instance
+
+    Args:
+        endpoint: endpoint
+        pem: pem
+        opts: opts
+
+    Returns: a peer instance
+
+    """
+    return Peer(endpoint, pem, opts)

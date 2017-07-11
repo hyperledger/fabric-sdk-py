@@ -29,7 +29,7 @@ E2E_CONFIG = {
             'grpc_endpoint': 'localhost:7050',
             'server_hostname': 'orderer.example.com',
             'tls_cacerts': 'test/fixtures/e2e_cli/crypto-config/ordererOrganizations/'
-            'example.com/tlsca/tlsca.example.com-cert.pem',
+                           'example.com/tlsca/tlsca.example.com-cert.pem',
             'mspid': 'OrdererMSP',
             'users': {
                 'admin': {
@@ -44,6 +44,16 @@ E2E_CONFIG = {
                     'cert': 'Admin@org1.example.com-cert.pem',
                     'private_key': '570182787133a5137f0982ba0e018462d3ed20491402585741bb516922fc9416_sk'
                 }
+            },
+            'peers': {
+                'peer0': {
+                    'grpc_request_endpoint': 'localhost:7051',
+                    'grpc_event_endpoint': 'localhost:7053',
+                    'server_hostname': 'peer0.org1.example.com',
+                    'tls_cacerts': 'test/fixtures/e2e_cli/crypto-config/peerOrganizations/'
+                                   'org1.example.com/peers/peer0.org1.example.com/msp/tlscacerts/'
+                                   'tlsca.org1.example.com-cert.pem'
+                }
             }
         },
         'org2.example.com': {
@@ -52,6 +62,16 @@ E2E_CONFIG = {
                 'admin': {
                     'cert': 'Admin@org2.example.com-cert.pem',
                     'private_key': 'a23db9fe4fdfc7d8f87a42919597b44e52b429fb09634b523b366146b9bf1e3b_sk'
+                }
+            },
+            'peers': {
+                'peer0': {
+                    'grpc_request_endpoint': 'localhost:9051',
+                    'grpc_event_endpoint': 'localhost:9053',
+                    'server_hostname': 'peer0.org2.example.com',
+                    'tls_cacerts': 'test/fixtures/e2e_cli/crypto-config/peerOrganizations/'
+                                   'org2.example.com/peers/peer0.org2.example.com/msp/tlscacerts/'
+                                   'tlsca.org2.example.com-cert.pem'
                 }
             }
         }

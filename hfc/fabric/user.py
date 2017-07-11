@@ -248,7 +248,7 @@ class User(object):
             raise IOError("Cannot deserialize the user")
 
 
-def check(user):
+def validate(user):
     """ Check the user.
 
     Args:
@@ -276,3 +276,20 @@ def check(user):
 
     if not user.msp_id:
         raise ValueError("Missing msp id.")
+
+    return user
+
+
+def create_user(name, org, state_store):
+    """Create user
+
+    Args:
+        name: username
+        org: org
+        state_store: user state store
+
+    Returns: a user instance
+
+    """
+    user = User(name, org, state_store)
+    return validate(user)
