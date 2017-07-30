@@ -1,0 +1,62 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import unittest
+import time
+
+from hfc.api.client import Client
+from hfc.api.user import User
+from hfc.api.ca.caservice import ca_service
+from hfc.api.crypto.crypto import ecies
+from hfc.api.msp.identity import Identity, Signer, SigningIdentity
+from hfc.api.msp import msp
+
+USER_ID = admin
+USER_PASSWD = adminpw
+
+def get_submitter():
+    ca = ca_service()
+    msp = MSP("DEFAULT", ecies())
+    user = User(USER_ID, USER_PASSWD, msp_impl=msp, ca=ca)
+    user.enroll()
+
+    return user
+
+class CreateChannelTest(unittest.TestCase):
+    """
+    creating channel test.
+    """
+    def setUp(self):
+        channel_name = "channel"
+        client = Client()
+        orderer = Orderer()
+        self.base_path = '/tmp/fabric-sdk-py'
+        self.kv_store_path = os.path.join(self.base_path, 'key-value-store')
+        self.compose_file_path = os.path.normpath(
+            os.path.join(os.path.dirname(__file__), "../fixtures/docker-compose-base.yaml"))
+
+        self.caroot_path = os.path.join(os.path_dirname(__file__,
+                                                        "../../fixtures/e2e_cli/crypto-config/ordererOrgnizations/example.com/ca"))
+        self.start_test_env()
+
+    def tearDOwn(self):
+            self.shutdown_test_env()
+    def start_test_env(self):
+            cli_call(["docker-compose", "-f", self.compose_file_path, "up", "-d"])
+
+    def shutdown_test_env(self):
+            cli_call(["docker-compose", "-f", self.compose_file_path, "down"])
+
+    def test_create_cahnnel(self):
+
+
+if "__name__" == __main__:
