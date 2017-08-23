@@ -99,6 +99,19 @@ class Client(object):
         self._user_context = user_context
 
     @property
+    def is_dev_mode(self):
+        """Get is_dev_mode
+
+        Returns: is_dev_mode
+
+        """
+        return self._is_dev_mode
+
+    @is_dev_mode.setter
+    def is_dev_mode(self, mode):
+        self._is_dev_mode = mode
+
+    @property
     def state_store(self):
         """ Get the KeyValue store.
 
@@ -118,3 +131,14 @@ class Client(object):
 
         """
         self._state_store = state_store
+
+    def create_channel(self, name, config, signers, orderer):
+        """
+        Args:
+            name: channel name or channel ID
+            config: channel config, channel configuration instance
+            signers(user list): user(s), to sign the config
+            orderer: orderer instance
+        Return: a new channel, or None when failure
+        """
+        pass

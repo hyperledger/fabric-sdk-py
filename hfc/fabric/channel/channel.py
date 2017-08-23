@@ -14,7 +14,6 @@
 #
 import random
 import sys
-import hashlib
 
 from hfc.fabric.tx_context import TXContext
 from hfc.fabric.user import check
@@ -29,20 +28,16 @@ from hfc.fabric.channel.instantiation import chaincode_instantiation
 class Channel(object):
     """The class represents of the channel. """
 
-    def __init__(self, name, client,
-                 orderers=None,
-                 peers=None,
-                 tcert_batch_size=0,
-                 is_dev_mode=False,
-                 is_pre_fetch_mode=False):
+    def __init__(self, name, client):
 
         self._name = name
         self._client = client
-        self._orderers = {} if not orderers else orderers
-        self._peers = {} if not peers else peers
-        self._tcert_batch_size = tcert_batch_size
-        self._is_dev_mode = is_dev_mode
-        self._is_pre_fetch_mode = is_pre_fetch_mode
+        self._orderers = {}
+        self._peers = {}
+        self._tcert_batch_size = 0
+        self._is_dev_mode = False
+        self._is_pre_fetch_mode = False
+        self.initialized = False
 
     def add_orderer(self, orderer):
         """Add orderer endpoint to a channel object.
@@ -92,7 +87,7 @@ class Channel(object):
         """
         user = user_context if not None else self._client.user_context
         check(user)
-        return TXContext(self, user, self._client.crypto_suite)
+        return TXContext(user, self._client.crypto_suite)
 
     def _get_latest_block(self, orderer):
         """ Get latest block from orderer."""
@@ -128,15 +123,6 @@ class Channel(object):
             return random.choice(self._orderers.values())
         else:
             return random.choice(list(self._orderers.values()))
-
-    @property
-    def is_dev_mode(self):
-        """Get is_dev_mode
-
-        Returns: is_dev_mode
-
-        """
-        return self._is_dev_mode
 
     @property
     def name(self):
@@ -238,26 +224,27 @@ class Channel(object):
 
         return channel_header
 
-    def initialize_channel(self):
+    def initialize(self):
         """Initialize a new channel
 
-        Calls the orderer(s) to start building the new channel, which is a
-        combination of opening new message stream and connecting the list
-        of participating peers.
-
+        start the channel and connect the event hubs.
         :return: True if the channel initialization process was successful,
             False otherwise.
 
         """
         return True
 
-    def update_channel(self):
+    def update(self, config, orderer, signers):
         """Update a channel configuration
 
         Calls the orderer(s) to update an existing channel. This allows the
         addition and deletion of Peer nodes to an existing channel, as well as
         the update of Peer certificate information upon certificate renewals.
 
+        Args:
+            config: config to be updated
+            orderer: specific orderer to use
+            signers: the Ecert of users
         Returns: True if the channel update process was successful,
             False otherwise.
 
@@ -353,14 +340,58 @@ class Channel(object):
         return chaincode_invocation(self).handle(
             cc_invoke_request, signing_identity, scheduler)
 
-    def generate_tx_id(self, nonce, creator):
-        """Generate transaction id by nonce and creator.
+    @staticmethod
+    def instantiate(name, config, signers, orderer):
+        """
+        This function will be the factory function to create
+        a really new channel.
 
         Args:
-            nonce: nonce
-            creator: a user
+            name: channel name
+            config: cofiguration class instance
+            config_signed(string): signed config file
+            orderer: orderer instance
+        Return: True successfully or False in failure
+        """
+        pass
 
-        Returns: transaction id
+    def _update_or_create(self, config, signers, orderer):
+        """
+        Send configuration to orderer for updating.
+        This function really does all the dirty work with remote orderer.
+        This is the low level function to create or update function.
+
+        Args:
+            conifg(string):  channel config
+            signers(list):   list of user Ecert
+            orderer:         Orderer instance
+        Return: True if updated sucessfully, False otherwise
 
         """
-        return hashlib.sha256(nonce + creator.serialize()).hexdigest()
+        pass
+
+    def _get_config_payload(self, config, signers, is_update):
+        """
+        This function will build the config payload sent to
+        orderer.
+        Args:
+            config: channel config
+            user:   user client
+        Return:
+             the config payload for the orderer, None if failure.
+
+        """
+        pass
+
+    def _get_config_sigs(self, config, signers):
+        """
+        This function is used to sign the config with user or
+        to update the user signature.
+
+        Args:
+            config: channel configuration instance to be signed
+            user:   user to signed the config
+            is_update: wether to update the config
+        Return: signed config in string
+        """
+        pass

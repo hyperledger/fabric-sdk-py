@@ -18,23 +18,19 @@ from hfc.util.utils import create_serialized_identity
 class TXContext(object):
     """ A class represent Transaction context."""
 
-    def __init__(self, channel, user, crypto):
+    def __init__(self, user, crypto):
         """ Construct transaction context
 
         Args:
-            channel: channel
             user: user
             crypto: crypto
         """
         self._user = user
-        self._channel = channel
-        self._need_verify = channel.name is not None and channel.name != ""
         self._crypto = crypto
         self._identity = create_serialized_identity(user)
         self._nonce = crypto.generate_nonce(24)
         hash_func = crypto.hash
-        self._tx_id = hash_func(self._nonce
-                                + self._identity).hexdigest()
+        self._tx_id = hash_func(self._nonce + self._identity).hexdigest()
 
     @property
     def tx_id(self):
