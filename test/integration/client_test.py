@@ -210,17 +210,12 @@ class ClientTest(unittest.TestCase):
         }
         response = self.client.create_channel(request)
 
-        def on_next(x):
-            status, _ = x
-            self.assertEqual(status.status, 200)
+        q = Queue(1)
+        response.subscribe(on_next=lambda x: q.put(x),
+                           on_error=lambda x: q.put(x))
 
-        def on_error(x):
-            assert(False)
-
-        def on_completed():
-            assert(True)
-
-        response.subscribe(on_next, on_error, on_completed)
+        status, _ = q.get(timeout=5)
+        self.assertEqual(status.status, 200)
 
     @unittest.skip
     def test_create_channel_with_envelope(self):
