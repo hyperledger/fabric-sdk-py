@@ -26,7 +26,10 @@ from hfc.fabric.channel.instantiation import chaincode_instantiation
 
 
 class Channel(object):
-    """The class represents of the channel. """
+    """The class represents of the channel.
+    This is a client-side-only call. To create a new channel in the fabric
+    call client.create_channel().
+    """
 
     def __init__(self, name, client):
 

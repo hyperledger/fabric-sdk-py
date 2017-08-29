@@ -154,8 +154,21 @@ class Crypto(object):
         :Returns: A boolean True as valid
         """
 
+    @staticmethod
+    def generate_nonce(size):
+        """ Generate a secure random for cryptographic use.
+
+        Args:
+            size: Number of bytes for the nonce
+
+        Returns: Generated random bytes
+
+        """
+        return Random.get_random_bytes(size)
+
 
 def generate_nonce(size):
+    # TODO still has old dependencies but has to be deleted
     """ Generate a secure random for cryptographic use.
 
     Args:
@@ -310,7 +323,8 @@ class Ecies(Crypto):
         hkdf_output = Hkdf(salt=None, input_key_material=z, hash=self._hash) \
             .expand(length=AES_KEY_LENGTH + HMAC_KEY_LENGTH)
         aes_key = hkdf_output[:AES_KEY_LENGTH]
-        hmac_key = hkdf_output[AES_KEY_LENGTH:AES_KEY_LENGTH + HMAC_KEY_LENGTH]
+        hmac_key = hkdf_output[AES_KEY_LENGTH:AES_KEY_LENGTH +
+                               HMAC_KEY_LENGTH]
 
         mac = hmac.new(hmac_key, em, self._hash)
         recovered_d = mac.digest()
@@ -344,7 +358,8 @@ class Ecies(Crypto):
         hkdf_output = Hkdf(salt=None, input_key_material=z, hash=self._hash) \
             .expand(length=AES_KEY_LENGTH + HMAC_KEY_LENGTH)
         aes_key = hkdf_output[:AES_KEY_LENGTH]
-        hmac_key = hkdf_output[AES_KEY_LENGTH:AES_KEY_LENGTH + HMAC_KEY_LENGTH]
+        hmac_key = hkdf_output[AES_KEY_LENGTH:AES_KEY_LENGTH +
+                               HMAC_KEY_LENGTH]
 
         aes_cipher = AES.new(aes_key, AES.MODE_CFB)
         em = aes_cipher.iv + aes_cipher.encrypt(plain_text)

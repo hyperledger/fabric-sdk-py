@@ -51,7 +51,7 @@ class UserTest(unittest.TestCase):
         self.assertTrue(pub_key.public_bytes(
             encoding=Encoding.PEM,
             format=serialization.PublicFormat.SubjectPublicKeyInfo)
-                        .startswith(b'-----BEGIN PUBLIC KEY'))
+            .startswith(b'-----BEGIN PUBLIC KEY'))
 
 
 if __name__ == '__main__':

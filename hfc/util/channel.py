@@ -20,15 +20,17 @@ def channel(target, pem=None, opts=None):
 
     Args:
         target: url of target include host:port
-        pem: ssl/tls pem location
+        pem: ssl/tls pem file as bytes
         opts: grpc channel options
                 grpc.default_authority: default authority
                 grpc.ssl_target_name_override: ssl target name override
+
     Returns:
-        a grpc channel.
+        grpc channel
+
     """
     if pem is None:
         return grpc.insecure_channel(target, opts)
     else:
-        with open(pem) as credential:
-            return grpc.secure_channel(target, credential.read(), opts)
+        creds = grpc.ssl_channel_credentials(pem)
+        return grpc.secure_channel(target, creds, opts)

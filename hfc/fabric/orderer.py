@@ -27,17 +27,27 @@ _logger = logging.getLogger(__name__ + ".orderer")
 class Orderer(object):
     """ A orderer node in the network.
 
-    It has a specific Grpc channel address.
+    It has a specific grpc channel address.
     """
 
     def __init__(self, endpoint=DEFAULT_ORDERER_ENDPOINT,
                  pem=None, opts=None):
+        """Creates an orderer object.
+
+        Args:
+            endpoint (str): The grpc endpoint of the orderer.
+            pem (bytes): The tls certificate for the given
+                orderer as bytes.
+            opts (tuple): Additional grpc config options as
+                tuple e.g. ((key, val),).
+
+        """
         self._endpoint = endpoint
         self._orderer_client = ab_pb2.AtomicBroadcastStub(
             channel(self._endpoint, pem, opts))
 
     def broadcast(self, envelope, scheduler=None):
-        """ Send an broadcast envelope to orderer
+        """Send an broadcast envelope to orderer.
 
         Args:
             envelope: The message envelope
@@ -52,7 +62,7 @@ class Orderer(object):
             scheduler).map(self._handle_response_stream)
 
     def delivery(self, envelope, scheduler=None):
-        """ Send an delivery envelop to orderer
+        """ Send an delivery envelop to orderer.
 
         Args:
             envelope: The message envelope
@@ -75,7 +85,7 @@ class Orderer(object):
         return self._endpoint
 
     def _handle_response_stream(self, responses):
-        """Handle response stream
+        """Handle response stream.
 
         Args:
             responses: responses

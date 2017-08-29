@@ -36,7 +36,8 @@ class InstallmentTest(unittest.TestCase):
                                                          chaincode_path,
                                                          chaincode_version)
 
-        self.assertTrue(isinstance(trans_prop_req, TransactionProposalRequest))
+        self.assertTrue(isinstance(
+            trans_prop_req, TransactionProposalRequest))
 
     def test_chaincode_installment(self):
         chain = None
