@@ -11,7 +11,7 @@ This project is a Hyperledger project in _Incubation_. It was proposed to the co
 ## Bug, Question and Code Contributions
 Welcome for any kind of contribution, including bugs, questions and documentation!
 
-Please see [How to Contribution](docs/CONTRIBUTING.md).
+Please see [How to Contribution](CONTRIBUTING.md).
 
 # Coding Style
 
@@ -56,7 +56,7 @@ $ docker exec -it fabric-sdk-py bash
 ```
 
 ## Change Logs
-See [Change Log](docs/change_log.md).
+See [Change Log](CHANGELOG.md).
 
 ## Wiki
 
