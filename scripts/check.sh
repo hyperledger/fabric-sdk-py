@@ -1,8 +1,11 @@
-#!/bin/bash
-set -x
+#!/bin/bash -eu
+
+set -o pipefail
+
 # checking local version
-echo "===Checking Docker and Docker-Compose version"
+echo "===> Checking Docker and Docker-Compose version"
 docker version
+echo
 docker-compose -v
 
 # install tox
@@ -15,20 +18,24 @@ BASE_VERSION=1.0.0
 PROJECT_VERSION=1.0.0
 IMG_TAG=1.0.0
 
-echo "===Pulling fabric images... with tag = ${IMG_TAG}"
-docker pull hyperledger/fabric-peer:$ARCH-$IMG_TAG
-docker pull hyperledger/fabric-tools:$ARCH-$IMG_TAG
-docker pull hyperledger/fabric-orderer:$ARCH-$IMG_TAG
-docker pull hyperledger/fabric-ca:$ARCH-$IMG_TAG
-docker pull hyperledger/fabric-ccenv:$ARCH-$IMG_TAG
+
+dockerFabricPull() {
+  local FABRIC_TAG=$1
+  for IMAGES in peer tools orderer ccenv ca; do
+      echo "==> FABRIC IMAGE: $IMAGES"
+      echo
+      docker pull hyperledger/fabric-$IMAGES:$FABRIC_TAG
+      docker tag hyperledger/fabric-$IMAGES:$FABRIC_TAG hyperledger/fabric-$IMAGES
+  done
+}
+
+: ${FABRIC_TAG:="$ARCH-$IMG_TAG"}
+
+echo "=====> Pulling fabric Images"
+dockerFabricPull ${FABRIC_TAG}
+
 docker pull hyperledger/fabric-baseimage:$ARCH-$BASEIMAGE_RELEASE
 docker pull hyperledger/fabric-baseos:$ARCH-$BASEIMAGE_RELEASE
-
-echo "===Re-tagging images to *latest* tag"
-docker tag hyperledger/fabric-peer:$ARCH-$IMG_TAG hyperledger/fabric-peer
-docker tag hyperledger/fabric-tools:$ARCH-$IMG_TAG hyperledger/fabric-tools
-docker tag hyperledger/fabric-orderer:$ARCH-$IMG_TAG hyperledger/fabric-orderer
-docker tag hyperledger/fabric-ca:$ARCH-$IMG_TAG hyperledger/fabric-ca
 
 # run tests
 echo "===Starting test..."
