@@ -15,7 +15,7 @@
 #
 import os
 import subprocess
-from test.integration.e2e_config import E2E_CONFIG
+from test.integration.config import E2E_CONFIG
 from hfc.fabric.user import User
 from hfc.fabric_ca.caservice import Enrollment
 from cryptography.hazmat.primitives.serialization import load_pem_private_key

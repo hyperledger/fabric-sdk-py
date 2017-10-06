@@ -14,7 +14,7 @@ from hfc.fabric.transaction.tx_proposal_request import create_tx_prop_req, \
     CC_INSTALL, CC_TYPE_GOLANG
 from hfc.util.crypto.crypto import ecies
 from hfc.util.keyvaluestore import file_key_value_store
-from test.integration.e2e_config import E2E_CONFIG
+from test.integration.config import E2E_CONFIG
 from test.unit.util import get_peer_org_admin, cli_call
 
 if sys.version_info < (3, 0):

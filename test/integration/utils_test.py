@@ -21,7 +21,7 @@ from hfc.util.crypto.crypto import Ecies
 from hfc.util import utils
 from hfc.util.keyvaluestore import FileKeyValueStore
 from test.unit.util import get_orderer_org_admin
-from test.integration.e2e_config import E2E_CONFIG
+from test.integration.config import E2E_CONFIG
 from hfc.protos.msp import identities_pb2
 from hfc.protos.common import configtx_pb2
 from hfc.protos.common import common_pb2

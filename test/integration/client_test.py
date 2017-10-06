@@ -21,7 +21,7 @@ from hfc.util.utils import extract_channel_config
 from hfc.fabric.client import Client
 from hfc.util.keyvaluestore import FileKeyValueStore
 from hfc.fabric.orderer import Orderer
-from test.integration.e2e_config import E2E_CONFIG
+from test.integration.config import E2E_CONFIG
 from test.unit.util import get_peer_org_admin, get_orderer_org_admin, cli_call
 from hfc.fabric.transaction.tx_context import TXContext
 from hfc.util.crypto.crypto import Ecies
