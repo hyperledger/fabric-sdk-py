@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+#
 ca:
   container_name: fabric-ca
   image: hyperledger/fabric-ca

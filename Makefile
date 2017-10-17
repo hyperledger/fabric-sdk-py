@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+#
 # Tox running function
 define run-py-tox
 	@echo "run python tox $(1)"

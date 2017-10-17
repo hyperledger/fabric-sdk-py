@@ -1,4 +1,6 @@
-# https://github.com/yeasy/docker-compose-files/tree/master/hyperledger
+# SPDX-License-Identifier: Apache-2.0
+#
+
 # This compose file will start a Hyperledger Fabric 1.0.0-rc1 with peer create and peer join done. including
 # * 1 ca
 # * 1 orderer
