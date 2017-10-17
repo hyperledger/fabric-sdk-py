@@ -14,12 +14,15 @@
 #
 import sys
 import logging
+import rx
+import random
 
 from google.protobuf.message import DecodeError
 from google.protobuf.timestamp_pb2 import Timestamp
 from hfc.protos.common import common_pb2, configtx_pb2
 from hfc.protos.msp import identities_pb2
 from hfc.protos.peer import proposal_pb2
+from hfc.protos.utils import create_tx_payload
 
 _logger = logging.getLogger(__name__ + '.utils')
 
@@ -222,3 +225,97 @@ def sign_proposal(tx_context, proposal):
     signed_proposal.proposal_bytes = proposal_bytes
 
     return signed_proposal
+
+
+def send_transaction_proposal(proposal, header, tx_context,
+                              peers, scheduler=None):
+    """Send transaction proposal
+
+    Args:
+        header: header
+        tx_context: transaction context
+        proposal: transaction proposal
+        peers: peers
+        scheduler: see rx.Scheduler
+
+    Returns: a list containing all the proposal response
+
+    """
+    signed_proposal = sign_proposal(
+        tx_context, proposal)
+
+    send_executions = [peer.send_proposal(signed_proposal, scheduler)[0]
+                       for peer in peers]
+
+    return send_executions
+
+
+def send_transaction(orderers, tran_req, tx_context, scheduler=None):
+    """Send a transaction to the chain's orderer service (one or more
+    orderer endpoints) for consensus and committing to the ledger.
+
+    This call is asynchronous and the successful transaction commit is
+    notified via a BLOCK or CHAINCODE event. This method must provide a
+    mechanism for applications to attach event listeners to handle
+    'transaction submitted', 'transaction complete' and 'error' events.
+
+    Args:
+        scheduler: scheduler
+        tx_context: transaction context
+        orderers: orderers
+        tran_req (TransactionRequest): The transaction object
+
+    Returns:
+        result (EventEmitter): an handle to allow the application to
+        attach event handlers on 'submitted', 'complete', and 'error'.
+
+    """
+    if not tran_req:
+        return rx.Observable.just(ValueError(
+            "Missing input request object on the transaction request"
+        ))
+
+    if not tran_req.responses or len(tran_req.responses) < 1:
+        return rx.Observable.just(ValueError(
+            "Missing 'proposalResponses' parameter in transaction request"
+        ))
+
+    if not tran_req.proposal:
+        return rx.Observable.just(ValueError(
+            "Missing 'proposalResponses' parameter in transaction request"
+        ))
+
+    if len(orderers) < 1:
+        return rx.Observable.just(ValueError(
+            "Missing orderer objects on this chain"
+        ))
+
+    endorsements = map(lambda res: res[0].endorsement, tran_req.responses)
+
+    tran_payload_bytes = create_tx_payload(endorsements, tran_req)
+    envelope = sign_tran_payload(tx_context, tran_payload_bytes)
+
+    if sys.version_info < (3, 0):
+        orderer = random.choice(orderers.values())
+    else:
+        orderer = random.choice(list(orderers.values()))
+    return orderer.broadcast(envelope, scheduler)
+
+
+def sign_tran_payload(tx_context, tran_payload_bytes):
+    """Sign a transaction payload
+
+    Args:
+        signing_identity: id to sign with
+        tran_payload: transaction payload to sign on
+
+    Returns: Envelope
+
+    """
+    sig = tx_context.sign(tran_payload_bytes)
+
+    envelope = common_pb2.Envelope()
+    envelope.signature = sig
+    envelope.payload = tran_payload_bytes
+
+    return envelope

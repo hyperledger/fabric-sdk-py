@@ -271,7 +271,7 @@ def validate(user):
     if not enrollment.cert:
         raise ValueError("Missing user enrollment cert.")
 
-    if not enrollment.key:
+    if not enrollment.private_key:
         raise ValueError("Missing user enrollment key.")
 
     if not user.msp_id:
