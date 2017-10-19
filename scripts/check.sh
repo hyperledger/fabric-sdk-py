@@ -10,8 +10,16 @@ docker version
 echo
 docker-compose -v
 
-# install tox
-pip install tox
+which tox
+
+if [ $? -eq 0 ] ; then
+   echo "====> tox is already installed"
+   echo
+else
+   echo "====> install tox here"
+   echo
+   pip install tox
+fi
 
 # pull fabric images
 ARCH=x86_64
