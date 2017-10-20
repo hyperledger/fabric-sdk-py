@@ -21,6 +21,7 @@ from hfc.util import utils
 
 # inject global default config
 from hfc.fabric.config.default import DEFAULT
+
 assert DEFAULT
 
 _logger = logging.getLogger(__name__ + ".client")
@@ -36,7 +37,6 @@ class Client(object):
         """ Construct client"""
         self._channels = {}
         self._crypto_suite = None
-        self._user_context = None
         self._tx_context = None
         self._state_store = None
         self._is_dev_mode = False
@@ -276,27 +276,6 @@ class Client(object):
 
         """
         self._tx_context = tx_context
-
-    @property
-    def user_context(self):
-        """Get the user context.
-
-        Returns: The user context or None
-
-        """
-        return self._user_context
-
-    @user_context.setter
-    def user_context(self, user_context):
-        """Set the user context to given one.
-
-        Args:
-            user_context: The user_context to use.
-
-        Returns: None
-
-        """
-        self._user_context = user_context
 
     @property
     def is_dev_mode(self):

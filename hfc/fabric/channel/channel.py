@@ -11,10 +11,8 @@ import tarfile
 
 import rx
 
-from hfc.fabric.transaction.tx_context import TXContext
 from hfc.fabric.transaction.tx_proposal_request import \
     CC_INSTALL, CC_TYPE_GOLANG
-from hfc.fabric.user import validate
 from hfc.protos.common import common_pb2
 from hfc.protos.orderer import ab_pb2
 from hfc.protos.peer import chaincode_pb2, proposal_pb2
@@ -117,30 +115,19 @@ class Channel(object):
         """
         return self._peers
 
-    def _get_tx_context(self, user_context=None):
-        """Get tx context
+    def _get_latest_block(self, tx_context, orderer):
+        """ Get latest block from orderer.
 
         Args:
-            user_context (object): user context
-
-        Returns: A tx_context instance
-
-        Raises: ValueError
-
+            tx_context (object): a tx_context instance
+            orderer (object): a orderer instance
         """
-        user = user_context if not None else self._client.requester
-        validate(user)
-        return TXContext(self, user, self._client.crypto_suite)
-
-    def _get_latest_block(self, orderer):
-        """ Get latest block from orderer."""
         seek_info = ab_pb2.SeekInfo()
         seek_info.start.newest = ab_pb2.SeekNewest()
         seek_info.stop.newest = ab_pb2.SeekNewest()
         seek_info.behavior = \
             ab_pb2.SeekInfo.SeekBehavior.Value('BLOCK_UNTIL_READY')
 
-        tx_context = self._get_tx_context()
         seek_info_header = self._build_channel_header(
             common_pb2.HeaderType.Value('DELIVER_SEEK_INFO'),
             tx_context.tx_id, self._name, current_timestamp(),

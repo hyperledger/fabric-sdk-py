@@ -25,6 +25,8 @@ from hfc.protos.peer import chaincode_pb2
 from hfc.util.crypto import crypto
 from hfc.util.utils import proto_str, proto_b
 
+# deprecated remain for new code
+
 _logger = logging.getLogger(__name__ + ".instantiate")
 
 
