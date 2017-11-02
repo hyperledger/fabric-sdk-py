@@ -46,7 +46,3 @@ dockerFabricPull ${FABRIC_TAG}
 
 docker pull hyperledger/fabric-baseimage:$ARCH-$BASEIMAGE_RELEASE
 docker pull hyperledger/fabric-baseos:$ARCH-$BASEIMAGE_RELEASE
-
-# run tests
-echo "===Starting test..."
-make unittest

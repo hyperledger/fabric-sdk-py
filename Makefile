@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-#
+
 # Tox running function
 define run-py-tox
 	@echo "run python tox $(1)"
@@ -17,18 +17,19 @@ TOX_VENV_NAMES = pylint flake8 py27 py30 py35
 TOX_VENVS = $(patsubst %, $(TOX).%, $(TOX_VENV_NAMES))
 
 # Changelog related variables
-BASE_VERSION =
-PREV_VERSION = 838e035
+INIT_VERSION = 838e035
 
 # changelog update
 # TODO (dpdornseifer): As long as there is no versioning, always write the changelog
-# starting with the initial commit PREV_VERSION (bug)
+# starting with the initial commit INIT_VERSION (bug)
 changelog:
-	./scripts/changelog.sh $(PREV_VERSION)
+	bash ./scripts/changelog.sh $(INIT_VERSION)
 
 # Triggered by the ci
 check:
-	./scripts/check.sh
+	bash ./scripts/check_env.sh
+	echo "===Starting test..."
+	make unittest
 
 # Run all unit test cases
 .PHONY: unittest

@@ -1,5 +1,13 @@
-## Fri Sep  8 10:35:33 PDT 2017
+## Thu Nov  2 15:54:39 CST 2017
 
+* [145d2e7](https://github.com/hyperledger/fabric/commit/145d2e7) [FAB-6701](https://jira.hyperledger.org/browse/FAB-6701)Cleanup old unuesd code
+* [5f27d61](https://github.com/hyperledger/fabric/commit/5f27d61) [FAB-6686](https://jira.hyperledger.org/browse/FAB-6686) remove tox installation step
+* [4243cab](https://github.com/hyperledger/fabric/commit/4243cab) [FAB-4742](https://jira.hyperledger.org/browse/FAB-4742) Add license for sdk-py's code and docs.
+* [a68cf47](https://github.com/hyperledger/fabric/commit/a68cf47) [FAB-6519](https://jira.hyperledger.org/browse/FAB-6519): Refactor the e2e test framework
+* [fdcb654](https://github.com/hyperledger/fabric/commit/fdcb654) [FAB-5151](https://jira.hyperledger.org/browse/FAB-5151)Install chaincode
+* [b8b775b](https://github.com/hyperledger/fabric/commit/b8b775b) [FAB-6150](https://jira.hyperledger.org/browse/FAB-6150) Optimize scripts/check.sh script
+* [075a7cb](https://github.com/hyperledger/fabric/commit/075a7cb) [FAB-4562](https://jira.hyperledger.org/browse/FAB-4562): e2e test: creating a channel
+* [1b361ec](https://github.com/hyperledger/fabric/commit/1b361ec) [FAB-4952](https://jira.hyperledger.org/browse/FAB-4952) Update change log
 * [a4ac20d](https://github.com/hyperledger/fabric/commit/a4ac20d) [FAB-4315](https://jira.hyperledger.org/browse/FAB-4315) Implement Create Channel
 * [53388dc](https://github.com/hyperledger/fabric/commit/53388dc) [FAB-3483](https://jira.hyperledger.org/browse/FAB-3483): create channel feature.
 * [cf328ae](https://github.com/hyperledger/fabric/commit/cf328ae) [FAB-5414](https://jira.hyperledger.org/browse/FAB-5414) Modify fabric-tools image
