@@ -219,8 +219,8 @@ class User(object):
             self._state_store.set_value(
                 self._state_store_key,
                 binascii.hexlify(pickle.dumps(state)).decode("utf-8"))
-        except:
-            raise IOError("Cannot serialize the user")
+        except Exception as e:
+            raise IOError("Cannot serialize the user", e)
 
     def _restore_state(self):
         """ Restore user state. """
@@ -244,8 +244,8 @@ class User(object):
             self.roles = state_dict['roles']
             self._org = state_dict['org']
             self.msp_id = state_dict['msp_id']
-        except:
-            raise IOError("Cannot deserialize the user")
+        except Exception as e:
+            raise IOError("Cannot deserialize the user", e)
 
 
 def validate(user):
