@@ -1,6 +1,6 @@
 ## Maintainers
 
-| Name | Gerrit | GitHub | Slack | Email |
+| Name | Gerrit | GitHub | Chat | Email |
 |---|---|---|---|---|
 | Baohua Yang | baohua | yeasy | baohua | yangbaohua@gmail.com |
 | Chen Kai | grapebaba | grapebaba | grapebaba | 281165273@qq.com |
