@@ -38,7 +38,9 @@ More details to build the crypto lib, can be found at
 The following command will run the testing.
 
 ```sh
-$ make check
+$ make check # Check environment and run tests
+$ make test # Only run test cases
+$ tox -e py30 -- test/integration/ca_test.py  # Run specified test case
 ```
 
 ## Generating Docker images

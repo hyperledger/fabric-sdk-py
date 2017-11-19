@@ -8,7 +8,7 @@ import threading
 import rx
 
 from hfc.protos.peer import peer_pb2_grpc
-from hfc.util.channel import channel
+from hfc.util.channel import create_grpc_channel
 
 DEFAULT_PEER_ENDPOINT = 'localhost:7051'
 
@@ -26,7 +26,7 @@ class Peer(object):
         self._channels = []
         self._endpoint = endpoint
         self._endorser_client = peer_pb2_grpc.EndorserStub(
-            channel(self._endpoint, pem, opts))
+            create_grpc_channel(self._endpoint, pem, opts))
 
     def send_proposal(self, proposal, scheduler=None):
         """ Send an endorsement proposal to endorser

@@ -14,12 +14,13 @@
 # limitations under the License.
 #
 # flake8: noqa
+
 """Contains the paths and attributes necessary for the integration tests."""
 E2E_CONFIG = {
     'test-network': {
         'docker': {
             'compose_file_no_tls': 'test/fixtures/docker-compose-1peer-notls.yaml',
-            'compose_file_tls': 'test/fixtures/docker-compose-base.yaml'
+            'compose_file_tls': 'test/fixtures/docker-compose-2orgs-4peers-tls.yaml'
         },
         'channel-artifacts': {
             'channel_id': 'businesschannel',

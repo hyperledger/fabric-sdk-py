@@ -15,7 +15,7 @@
 import grpc
 
 
-def channel(target, pem=None, opts=None):
+def create_grpc_channel(target, pem=None, opts=None):
     """Construct a grpc channel.
 
     Args:

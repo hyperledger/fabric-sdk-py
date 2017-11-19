@@ -13,18 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import os
+
 import unittest
 import sys
 
 from hfc.util.utils import extract_channel_config
-from hfc.fabric.client import Client
 from hfc.util.keyvaluestore import FileKeyValueStore
 from hfc.fabric.orderer import Orderer
-from test.integration.config import E2E_CONFIG
-from test.unit.util import get_peer_org_admin, get_orderer_org_admin, cli_call
 from hfc.fabric.transaction.tx_context import TXContext
 from hfc.util.crypto.crypto import Ecies
+from test.integration.config import E2E_CONFIG
+from test.integration.utils import \
+    BaseTestCase, \
+    get_peer_org_admin, \
+    get_orderer_org_admin
 
 if sys.version_info < (3, 0):
     from Queue import Queue
@@ -32,36 +34,19 @@ else:
     from queue import Queue
 
 
-class ClientTest(unittest.TestCase):
-    """ Integration tests for the client module. """
+class ChannelCreateTest(BaseTestCase):
+    """ Integration tests for the channel related operations.
+    """
 
     def setUp(self):
-        self.configtx_path = \
-            E2E_CONFIG['test-network']['channel-artifacts']['channel.tx']
+        super(ChannelCreateTest, self).setUp()
         self.orderer_tls_certs = \
             E2E_CONFIG['test-network']['orderer']['tls_cacerts']
         self.orderer_tls_hostname = \
             E2E_CONFIG['test-network']['orderer']['server_hostname']
-        self.compose_file_path = \
-            E2E_CONFIG['test-network']['docker']['compose_file_tls']
-        self.base_path = "/tmp/fabric-sdk-py"
-        self.kv_store_path = os.path.join(self.base_path, "key-value-store")
-        self.client = Client()
-        self.start_test_env()
-
-    def tearDown(self):
-        self.shutdown_test_env()
-
-    def start_test_env(self):
-        cli_call(["docker-compose", "-f", self.compose_file_path, "up", "-d"])
-
-    def shutdown_test_env(self):
-        cli_call(["docker-compose", "-f", self.compose_file_path, "down"])
 
     def test_create_channel_missing_signatures(self):
         signatures = []
-
-        self.client.state_store = FileKeyValueStore(self.kv_store_path)
 
         with open(self.orderer_tls_certs) as f:
             pem = f.read()

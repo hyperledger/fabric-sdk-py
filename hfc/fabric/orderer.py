@@ -17,7 +17,7 @@ import logging
 import rx
 
 from hfc.protos.orderer import ab_pb2
-from hfc.util.channel import channel
+from hfc.util.channel import create_grpc_channel
 
 DEFAULT_ORDERER_ENDPOINT = 'localhost:7050'
 
@@ -44,7 +44,7 @@ class Orderer(object):
         """
         self._endpoint = endpoint
         self._orderer_client = ab_pb2.AtomicBroadcastStub(
-            channel(self._endpoint, pem, opts))
+            create_grpc_channel(self._endpoint, pem, opts))
 
     def broadcast(self, envelope, scheduler=None):
         """Send an broadcast envelope to orderer.
