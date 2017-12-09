@@ -12,7 +12,7 @@ from hfc.fabric.transaction.tx_proposal_request import TXProposalRequest
 from hfc.util.crypto.crypto import ecies
 from hfc.util import utils
 
-from test.unit.util import get_orderer_org_admin, get_peer_org_admin
+from test.integration.utils import get_orderer_org_admin, get_peer_org_user
 
 from test.integration.config import E2E_CONFIG
 test_network = E2E_CONFIG['test-network']
@@ -52,7 +52,7 @@ def build_channel_request(client, channel_tx, channel_name):
     tx_id = orderer_tx_context.tx_id
     nonce = orderer_tx_context.nonce
 
-    org1_admin = get_peer_org_admin(client, 'org1.example.com')
+    org1_admin = get_peer_org_user(client, 'org1.example.com')
     org1_tx_context = TXContext(org1_admin, ecies(), prop_req, {})
     client.tx_context = org1_tx_context
     org1_admin_signature = client.sign_channel_config(config)
@@ -60,7 +60,7 @@ def build_channel_request(client, channel_tx, channel_name):
 
     signatures.append(org1_admin_signature_bytes)
 
-    org2_admin = get_peer_org_admin(client, 'org2.example.com')
+    org2_admin = get_peer_org_user(client, 'org2.example.com')
     org2_tx_context = TXContext(org2_admin, ecies(), prop_req, {})
     client.tx_context = org2_tx_context
     org2_admin_signature = client.sign_channel_config(config)
@@ -131,7 +131,7 @@ def build_join_channel_req(org, channel, client):
         return None
 
     # create the peer
-    org_admin = get_peer_org_admin(client, org)
+    org_admin = get_peer_org_user(client, org)
     client.tx_context = TXContext(org_admin, ecies(), tx_prop_req)
 
     peer_config = test_network[org]["peers"]['peer0']

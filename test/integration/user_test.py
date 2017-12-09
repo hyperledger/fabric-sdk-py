@@ -19,7 +19,7 @@ import unittest
 from hfc.fabric_ca.caservice import ca_service
 from hfc.fabric.user import User
 from hfc.util.keyvaluestore import file_key_value_store
-from test.unit.util import cli_call
+from test.integration.utils import cli_call
 
 USER_ID = 'user'
 USER_PASSWD = 'userpw'

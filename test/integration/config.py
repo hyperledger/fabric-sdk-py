@@ -20,7 +20,8 @@ E2E_CONFIG = {
     'test-network': {
         'docker': {
             'compose_file_no_tls': 'test/fixtures/docker-compose-1peer-notls.yaml',
-            'compose_file_tls': 'test/fixtures/docker-compose-2orgs-4peers-tls.yaml'
+            'compose_file_tls': 'test/fixtures/docker-compose-2orgs-4peers-tls.yaml',
+            'compose_file_tls_cli': 'test/fixtures/docker-compose-2orgs-4peers-tls-cli.yaml'
         },
         'channel-artifacts': {
             'channel_id': 'businesschannel',
@@ -41,9 +42,13 @@ E2E_CONFIG = {
         'org1.example.com': {
             'mspid': 'Org1MSP',
             'users': {
-                'admin': {
+                'Admin': {
                     'cert': 'Admin@org1.example.com-cert.pem',
                     'private_key': '570182787133a5137f0982ba0e018462d3ed20491402585741bb516922fc9416_sk'
+                },
+                'User1': {
+                    'cert': 'User1@org1.example.com-cert.pem',
+                    'private_key': '613ca29ff265101aaebd9b79aff9924d5cd7baa9077141d24cf7c8fed4425bd4_sk'
                 }
             },
             'peers': {
@@ -60,9 +65,13 @@ E2E_CONFIG = {
         'org2.example.com': {
             'mspid': 'Org2MSP',
             'users': {
-                'admin': {
+                'Admin': {
                     'cert': 'Admin@org2.example.com-cert.pem',
                     'private_key': 'a23db9fe4fdfc7d8f87a42919597b44e52b429fb09634b523b366146b9bf1e3b_sk'
+                },
+                'User1': {
+                    'cert': 'User1@org2.example.com-cert.pem',
+                    'private_key': '90da90b106c077543acc5b5f414ee857a3d5b1096d7be11f6f2ec25787e5110b_sk'
                 }
             },
             'peers': {

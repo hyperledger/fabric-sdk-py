@@ -17,7 +17,7 @@ import time
 import unittest
 
 from hfc.fabric_ca.caservice import CAClient, CAService
-from test.unit.util import cli_call
+from test.integration.utils import cli_call
 
 with open(os.path.join(os.path.dirname(__file__),
                        "../fixtures/ca/enroll-csr.pem")) as f:

@@ -14,7 +14,7 @@ import time
 from hfc.fabric.client import Client
 from hfc.util.keyvaluestore import FileKeyValueStore
 
-from test.unit.util import cli_call
+from test.integration.utils import cli_call
 from test.integration.config import E2E_CONFIG
 from test.integration.e2e_utils import build_channel_request, \
     build_join_channel_req

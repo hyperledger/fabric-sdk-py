@@ -25,7 +25,7 @@ from hfc.util.crypto.crypto import Ecies
 from test.integration.config import E2E_CONFIG
 from test.integration.utils import \
     BaseTestCase, \
-    get_peer_org_admin, \
+    get_peer_org_user, \
     get_orderer_org_admin
 
 if sys.version_info < (3, 0):
@@ -79,7 +79,7 @@ class ChannelCreateTest(BaseTestCase):
         self.client.state_store = FileKeyValueStore(self.kv_store_path)
 
         # signatures org1 admin
-        org1_admin = get_peer_org_admin(self.client, 'org1.example.com')
+        org1_admin = get_peer_org_user(self.client, 'org1.example.com')
         org1_admin_tx_context = TXContext(org1_admin, Ecies(), {})
         self.client.tx_context = org1_admin_tx_context
 
@@ -91,7 +91,7 @@ class ChannelCreateTest(BaseTestCase):
         self.client.state_store = FileKeyValueStore(self.kv_store_path)
 
         # signatures org2 admin
-        org2_admin = get_peer_org_admin(self.client, 'org2.example.com')
+        org2_admin = get_peer_org_user(self.client, 'org2.example.com')
         org2_admin_tx_context = TXContext(org2_admin, Ecies(), {})
         self.client.tx_context = org2_admin_tx_context
 
@@ -159,7 +159,7 @@ class ChannelCreateTest(BaseTestCase):
         self.client.state_store = FileKeyValueStore(self.kv_store_path)
 
         # signatures org1 admin
-        org1_admin = get_peer_org_admin(self.client, 'org1.example.com')
+        org1_admin = get_peer_org_user(self.client, 'org1.example.com')
         org1_admin_tx_context = TXContext(org1_admin, Ecies(), {})
         self.client.tx_context = org1_admin_tx_context
 
@@ -174,7 +174,7 @@ class ChannelCreateTest(BaseTestCase):
         self.client.state_store = FileKeyValueStore(self.kv_store_path)
 
         # signatures org2 admin
-        org2_admin = get_peer_org_admin(self.client, 'org2.example.com')
+        org2_admin = get_peer_org_user(self.client, 'org2.example.com')
         org2_admin_tx_context = TXContext(org2_admin, Ecies(), {})
         self.client.tx_context = org2_admin_tx_context
 

@@ -70,28 +70,27 @@ def cli_call(arg_list, expect_success=True, env=os.environ.copy()):
     return output, error, p.returncode
 
 
-def get_peer_org_admin(client, peer_org):
-    """Loads the admin user for a given peer org
+def get_peer_org_user(client, peer_org, user='Admin'):
+    """Loads the requested user for a given peer org
         and returns a user object.
-
     """
 
-    peer_admin_base_path = os.path.join(
+    peer_user_base_path = os.path.join(
         os.getcwd(),
         'test/fixtures/e2e_cli/crypto-config/peerOrganizations/{0}'
-        '/users/Admin@{0}/msp/'.format(peer_org)
+        '/users/{1}@{0}/msp/'.format(peer_org, user)
     )
 
     key_path = os.path.join(
-        peer_admin_base_path,
+        peer_user_base_path,
         'keystore/',
-        E2E_CONFIG['test-network'][peer_org]['users']['admin']['private_key']
+        E2E_CONFIG['test-network'][peer_org]['users'][user]['private_key']
     )
 
     cert_path = os.path.join(
-        peer_admin_base_path,
+        peer_user_base_path,
         'signcerts/',
-        E2E_CONFIG['test-network'][peer_org]['users']['admin']['cert']
+        E2E_CONFIG['test-network'][peer_org]['users'][user]['cert']
     )
 
     with open(key_path, 'rb') as key:
@@ -100,8 +99,7 @@ def get_peer_org_admin(client, peer_org):
     with open(cert_path, 'rb') as cert:
         cert_pem = cert.read()
 
-    org_admin = User('peer' + peer_org + 'Admin',
-                     peer_org, client.state_store)
+    org_user = User('peer' + peer_org + user, peer_org, client.state_store)
 
     # wrap the key in a 'cryptography' private key object
     # so that all the methods can be used
@@ -109,10 +107,10 @@ def get_peer_org_admin(client, peer_org):
 
     enrollment = Enrollment(private_key, cert_pem)
 
-    org_admin.enrollment = enrollment
-    org_admin.msp_id = E2E_CONFIG['test-network'][peer_org]['mspid']
+    org_user.enrollment = enrollment
+    org_user.msp_id = E2E_CONFIG['test-network'][peer_org]['mspid']
 
-    return org_admin
+    return org_user
 
 
 def get_orderer_org_admin(client):

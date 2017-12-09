@@ -14,7 +14,7 @@ from hfc.util.crypto.crypto import ecies
 from test.integration.config import E2E_CONFIG
 from test.integration.utils import \
     BaseTestCase, \
-    get_peer_org_admin
+    get_peer_org_user
 
 if sys.version_info < (3, 0):
     from Queue import Queue
@@ -53,7 +53,7 @@ class ChaincodeInstallTest(BaseTestCase):
             ('grpc.ssl_target_name_override', self.peer0Org1_tls_hostname),)
         peer0_org1 = create_peer(endpoint=self.peer0Org1_req_endpoint,
                                  pem=pem, opts=opts)
-        org1_admin = get_peer_org_admin(self.client, 'org1.example.com')
+        org1_admin = get_peer_org_user(self.client, 'org1.example.com')
 
         crypto = ecies()
         tran_prop_req = create_tx_prop_req(CC_INSTALL, CC_PATH, CC_TYPE_GOLANG,
