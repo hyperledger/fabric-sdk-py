@@ -37,20 +37,14 @@ def create_seek_payload(seek_header, seek_info):
 
     return seek_payload_bytes
 
-def create_chaincode_spec(block_bytes, chaincode_id_name, type):
-
-    chaincode_input = chaincode_pb2.ChaincodeInput()
-    chaincode_input.args.append(block_bytes)
-
-    chaincode_id = chaincode_pb2.ChaincodeID()
-    chaincode_id.name = chaincode_id_name
+def create_cc_spec(chaincode_input, chaincode_id, type):
 
     chaincode_spec = chaincode_pb2.ChaincodeSpec()
     chaincode_spec.type = chaincode_pb2.ChaincodeSpec.Type.Value(type)
     chaincode_spec.chaincode_id.CopyFrom(chaincode_id)
     chaincode_spec.input.CopyFrom(chaincode_input)
 
-    return chaincode_spec.SerializeToString()
+    return chaincode_spec
 
 def create_tx_payload(endorsements, tran_req):
 

@@ -52,6 +52,7 @@ class ClientTest(unittest.TestCase):
         request['channel_name'] = 'channel_name'
         request['orderer'] = 'orderer'
         request['tx_id'] = 'tx_id'
+        request['nonce'] = 'nonce'
         with self.assertRaises(ValueError):
             self.client.create_channel(request)
 
@@ -62,6 +63,7 @@ class ClientTest(unittest.TestCase):
         request['channel_name'] = 'channel_name'
         request['orderer'] = 'orderer'
         request['tx_id'] = 'tx_id'
+        request['nonce'] = 'nonce'
         with self.assertRaises(ValueError):
             self.client.create_channel(request)
 
@@ -70,6 +72,7 @@ class ClientTest(unittest.TestCase):
         request['config'] = 'config'
         request['channel_name'] = 'channel_name'
         request['orderer'] = 'orderer'
+        request['nonce'] = 'nonce'
 
         with self.assertRaises(ValueError):
             self.client.create_channel(request)
@@ -79,6 +82,7 @@ class ClientTest(unittest.TestCase):
         request['config'] = 'config'
         request['channel_name'] = 'channel_name'
         request['tx_id'] = 'tx_id'
+        request['nonce'] = 'nonce'
 
         with self.assertRaises(ValueError):
             self.client.create_channel(request)
@@ -88,6 +92,7 @@ class ClientTest(unittest.TestCase):
         request['config'] = 'config'
         request['orderer'] = 'orderer'
         request['tx_id'] = 'tx_id'
+        request['nonce'] = 'nonce'
 
         with self.assertRaises(ValueError):
             self.client.create_channel(request)

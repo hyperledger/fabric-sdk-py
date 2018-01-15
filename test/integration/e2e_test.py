@@ -83,25 +83,26 @@ class E2eTest(unittest.TestCase):
 
     def join_channel(self):
 
-        # sleep 5 seconds for channel created
+        # wait for channel created
         time.sleep(5)
         client = Client()
-        client.state_store = FileKeyValueStore(
-            self.kv_store_path + 'join-channel')
-
         channel = client.new_channel(self.channel_name)
 
         logger.info("start to join channel")
         orgs = ["org1.example.com", "org2.example.com"]
+        done = True
         for org in orgs:
+            client.state_store = FileKeyValueStore(
+                self.kv_store_path + org)
             request = build_join_channel_req(org, channel, client)
-            assert(request)
-            # result = True and channel.join_channel(request)
-            logger.info("peers in org: %s join channel: %s",
-                        org, self.channel_name)
-
-        logger.info("joining channel tested successfully")
+            done = done and channel.join_channel(request)
+            if done:
+                logger.info("peers in org: %s join channel: %s.",
+                            org, self.channel_name)
+        if done:
+            logger.info("joining channel tested succefully.")
         client.state_store = None
+        assert(done)
 
     def install_chaincode(self):
 

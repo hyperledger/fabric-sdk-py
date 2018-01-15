@@ -16,12 +16,12 @@ from hfc.fabric.transaction.tx_proposal_request import \
 from hfc.protos.common import common_pb2
 from hfc.protos.orderer import ab_pb2
 from hfc.protos.peer import chaincode_pb2, proposal_pb2
-from hfc.protos.utils import create_seek_info, create_chaincode_spec, \
+from hfc.protos.utils import create_seek_info, create_cc_spec, \
     create_seek_payload, create_envelope
 from hfc.util import utils
 from hfc.util.utils import proto_str, current_timestamp, proto_b, \
     build_header, build_channel_header, build_cc_proposal, \
-    create_serialized_identity, send_transaction_proposal
+    send_transaction_proposal
 
 if sys.version_info < (3, 0):
     from Queue import Queue
@@ -507,7 +507,7 @@ class Channel(object):
         if(not request):
             err_msg = "Missing all required input request parameters"
 
-        if 'targets'not in request:
+        if 'targets' not in request:
             err_msg = "Missing peers parameter"
 
         if 'block' not in request:
@@ -521,27 +521,33 @@ class Channel(object):
             raise ValueError(err_msg)
 
         tx_context = self._client.tx_context
-        chaincode_spec = create_chaincode_spec(
-            request['block'],
-            'cscc',
-            "GOLANG")
+        block_bytes = request['block']
+        chaincode_input = chaincode_pb2.ChaincodeInput()
+        chaincode_input.args.extend([proto_b("JoinChain"), block_bytes])
+        chaincode_id = chaincode_pb2.ChaincodeID()
+        chaincode_id.name = proto_str("cscc")
 
-        extension = chaincode_spec.SerializeToString()
+        cc_spec = create_cc_spec(chaincode_input, chaincode_id, 'GOLANG')
+        cc_invoke_spec = chaincode_pb2.ChaincodeInvocationSpec()
+        cc_invoke_spec.chaincode_spec.CopyFrom(cc_spec)
+
+        extension = proposal_pb2.ChaincodeHeaderExtension()
+        extension.chaincode_id.name = proto_str('cscc')
         channel_header = build_channel_header(
             common_pb2.HeaderType.Value('ENDORSER_TRANSACTION'),
             tx_context.tx_id,
-            self.name,
+            '',
             current_timestamp(),
             tx_context.epoch,
-            extension=extension
-        )
+            extension=extension.SerializeToString())
 
-        creator = create_serialized_identity(tx_context.user)
-        header = build_header(creator, channel_header, tx_context.nonce)
+        header = build_header(tx_context.identity,
+                              channel_header,
+                              tx_context.nonce)
         proposal = build_cc_proposal(
-            chaincode_spec,
+            cc_invoke_spec,
             header,
-            {})
+            request['transient_map'])
 
         try:
             responses = send_transaction_proposal(
@@ -553,14 +559,16 @@ class Channel(object):
             raise IOError("fail to send transanction proposal", e)
 
         q = Queue(1)
+        result = True
         for r in responses:
             r.subscribe(on_next=lambda x: q.put(x),
                         on_error=lambda x: q.put(x))
             res = q.get(timeout=5)
+            proposal_res = res[0]
+            result = result and (proposal_res.response.status == 200)
+        if result:
+            _logger.info("sucessfully join the peers")
 
-            result = True and (res.response.status == 200)
-
-        _logger.info("The return status is:", result)
         return result
 
 
