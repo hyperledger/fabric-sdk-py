@@ -118,7 +118,8 @@ class CAClient(object):
             body_data = {"caname": self._ca_name}
         else:
             body_data = {}
-        response = self._send_ca_post(path="cainfo", json=body_data)
+        response = self._send_ca_post(path="cainfo", json=body_data,
+                                      verify=self._ca_certs_path)
         _logger.debug("Raw response json {0}".format(response))
         if (response['success'] and response['result']['CAName']
                 == self._ca_name):
