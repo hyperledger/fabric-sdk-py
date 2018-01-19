@@ -29,9 +29,10 @@ class BaseTestCase(unittest.TestCase):
         self.compose_file_path = \
             E2E_CONFIG['test-network']['docker']['compose_file_tls']
         self.base_path = "/tmp/fabric-sdk-py"
-        self.kv_store_path = os.path.join(self.base_path, "key-value-store")
         self.client = Client()
+        self.kv_store_path = os.path.join(self.base_path, "key-value-store")
         self.client.state_store = FileKeyValueStore(self.kv_store_path)
+        self.channel_name = "businesschannel"  # default application channel
         self.start_test_env()
 
     def tearDown(self):

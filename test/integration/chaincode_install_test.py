@@ -6,15 +6,16 @@ import sys
 import unittest
 from time import sleep
 
+from test.integration.config import E2E_CONFIG
+from test.integration.utils import \
+    BaseTestCase, \
+    get_peer_org_user
+
 from hfc.fabric.peer import create_peer
 from hfc.fabric.transaction.tx_context import create_tx_context
 from hfc.fabric.transaction.tx_proposal_request import create_tx_prop_req, \
     CC_INSTALL, CC_TYPE_GOLANG
 from hfc.util.crypto.crypto import ecies
-from test.integration.config import E2E_CONFIG
-from test.integration.utils import \
-    BaseTestCase, \
-    get_peer_org_user
 
 if sys.version_info < (3, 0):
     from Queue import Queue
@@ -31,28 +32,31 @@ class ChaincodeInstallTest(BaseTestCase):
 
     def setUp(self):
         super(ChaincodeInstallTest, self).setUp()
-        self.peer0Org1_req_endpoint = E2E_CONFIG['test-network'][
+        self.peer0_org1_endpoint = E2E_CONFIG['test-network'][
             'org1.example.com']['peers']['peer0']['grpc_request_endpoint']
-        self.peer0Org1_tls_certs = E2E_CONFIG['test-network'][
+        self.peer0_org1_tls_certs = E2E_CONFIG['test-network'][
             'org1.example.com']['peers']['peer0']['tls_cacerts']
-        self.peer0Org1_tls_hostname = E2E_CONFIG['test-network'][
+        self.peer0_org1_tls_hostname = E2E_CONFIG['test-network'][
             'org1.example.com']['peers']['peer0']['server_hostname']
-        self.peer0Org2_req_endpoint = E2E_CONFIG['test-network'][
+        self.peer0_org2_req_endpoint = E2E_CONFIG['test-network'][
             'org2.example.com']['peers']['peer0']['grpc_request_endpoint']
-        self.peer0Org2_tls_certs = E2E_CONFIG['test-network'][
+        self.peer0_org2_tls_certs = E2E_CONFIG['test-network'][
             'org2.example.com']['peers']['peer0']['tls_cacerts']
-        self.peer0Org2_tls_hostname = E2E_CONFIG['test-network'][
+        self.peer0_org2_tls_hostname = E2E_CONFIG['test-network'][
             'org2.example.com']['peers']['peer0']['server_hostname']
 
+    @unittest.skip("chaincode install needs a env with channel create+join")
     def test_install_chaincode_success(self):
+        """
+        Test a chaincode installation success.
+        :return:
+        """
 
-        with open(self.peer0Org1_tls_certs) as f:
-            pem = f.read()
-
-        opts = (
-            ('grpc.ssl_target_name_override', self.peer0Org1_tls_hostname),)
-        peer0_org1 = create_peer(endpoint=self.peer0Org1_req_endpoint,
-                                 pem=pem, opts=opts)
+        opts = (('grpc.ssl_target_name_override',
+                 self.peer0_org1_tls_hostname),)
+        peer0_org1 = create_peer(endpoint=self.peer0_org1_endpoint,
+                                 tls_cacerts=self.peer0_org1_tls_certs,
+                                 opts=opts)
         org1_admin = get_peer_org_user(self.client, 'org1.example.com')
 
         crypto = ecies()

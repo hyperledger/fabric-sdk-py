@@ -65,7 +65,7 @@ class ClientTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.client.create_channel(request)
 
-    def test_create_channel_missing_missing_tx_id(self):
+    def test_create_channel_missing_tx_id(self):
         request = {}
         request['config'] = 'config'
         request['channel_name'] = 'channel_name'

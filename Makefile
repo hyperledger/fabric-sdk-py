@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Triggered by the ci
-check:
+# To run some specific case, run like `tox -e py30 -- test/integration/create_channel_test.py`
+check: clean
 	bash ./scripts/check_env.sh
 	echo "=== Testing started... ==="
 	make test
@@ -31,7 +32,6 @@ define run-py-tox
 endef
 
 
-
 # changelog update
 # TODO (dpdornseifer): As long as there is no versioning, always write the changelog
 # starting with the initial commit INIT_VERSION (bug)
@@ -54,6 +54,6 @@ proto:
 # Clean temporary files
 clean:
 	rm -rf .cache *.egg-info .tox .coverage .coverage.* test/fixtures/ca/fabric-ca-server/fabric-ca-server.db
-	find . -name "*.pyc" -o -name "__pycache__" -exec rm -rf "{}" \;
+	find . -name "*.pyc" -o -name "__pycache__" | xargs rm -rf
 
 .PHONY: check clean proto image test

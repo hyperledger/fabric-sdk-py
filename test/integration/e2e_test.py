@@ -97,10 +97,10 @@ class E2eTest(unittest.TestCase):
             request = build_join_channel_req(org, channel, client)
             assert(request)
             # result = True and channel.join_channel(request)
-            logger.info("peers in org: %s join channel: %",
+            logger.info("peers in org: %s join channel: %s",
                         org, self.channel_name)
 
-        logger.info("joining channel tested succefully")
+        logger.info("joining channel tested successfully")
         client.state_store = None
 
     def install_chaincode(self):

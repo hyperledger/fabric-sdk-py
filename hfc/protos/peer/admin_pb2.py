@@ -78,7 +78,7 @@ _SERVERSTATUS = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -110,14 +110,14 @@ _LOGLEVELREQUEST = _descriptor.Descriptor(
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='log_level', full_name='protos.LogLevelRequest.log_level', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -148,14 +148,14 @@ _LOGLEVELRESPONSE = _descriptor.Descriptor(
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='log_level', full_name='protos.LogLevelResponse.log_level', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -203,251 +203,64 @@ _sym_db.RegisterMessage(LogLevelResponse)
 
 DESCRIPTOR.has_options = True
 DESCRIPTOR._options = _descriptor._ParseOptions(descriptor_pb2.FileOptions(), _b('\n\"org.hyperledger.fabric.protos.peerB\014AdminPackageZ)github.com/hyperledger/fabric/protos/peer'))
-try:
-  # THESE ELEMENTS WILL BE DEPRECATED.
-  # Please use the generated *_pb2_grpc.py files instead.
-  import grpc
-  from grpc.beta import implementations as beta_implementations
-  from grpc.beta import interfaces as beta_interfaces
-  from grpc.framework.common import cardinality
-  from grpc.framework.interfaces.face import utilities as face_utilities
 
+_ADMIN = _descriptor.ServiceDescriptor(
+  name='Admin',
+  full_name='protos.Admin',
+  file=DESCRIPTOR,
+  index=0,
+  options=None,
+  serialized_start=343,
+  serialized_end=691,
+  methods=[
+  _descriptor.MethodDescriptor(
+    name='GetStatus',
+    full_name='protos.Admin.GetStatus',
+    index=0,
+    containing_service=None,
+    input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    output_type=_SERVERSTATUS,
+    options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='StartServer',
+    full_name='protos.Admin.StartServer',
+    index=1,
+    containing_service=None,
+    input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    output_type=_SERVERSTATUS,
+    options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='GetModuleLogLevel',
+    full_name='protos.Admin.GetModuleLogLevel',
+    index=2,
+    containing_service=None,
+    input_type=_LOGLEVELREQUEST,
+    output_type=_LOGLEVELRESPONSE,
+    options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='SetModuleLogLevel',
+    full_name='protos.Admin.SetModuleLogLevel',
+    index=3,
+    containing_service=None,
+    input_type=_LOGLEVELREQUEST,
+    output_type=_LOGLEVELRESPONSE,
+    options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='RevertLogLevels',
+    full_name='protos.Admin.RevertLogLevels',
+    index=4,
+    containing_service=None,
+    input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    options=None,
+  ),
+])
+_sym_db.RegisterServiceDescriptor(_ADMIN)
 
-  class AdminStub(object):
-    """Interface exported by the server.
-    """
+DESCRIPTOR.services_by_name['Admin'] = _ADMIN
 
-    def __init__(self, channel):
-      """Constructor.
-
-      Args:
-        channel: A grpc.Channel.
-      """
-      self.GetStatus = channel.unary_unary(
-          '/protos.Admin/GetStatus',
-          request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-          response_deserializer=ServerStatus.FromString,
-          )
-      self.StartServer = channel.unary_unary(
-          '/protos.Admin/StartServer',
-          request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-          response_deserializer=ServerStatus.FromString,
-          )
-      self.GetModuleLogLevel = channel.unary_unary(
-          '/protos.Admin/GetModuleLogLevel',
-          request_serializer=LogLevelRequest.SerializeToString,
-          response_deserializer=LogLevelResponse.FromString,
-          )
-      self.SetModuleLogLevel = channel.unary_unary(
-          '/protos.Admin/SetModuleLogLevel',
-          request_serializer=LogLevelRequest.SerializeToString,
-          response_deserializer=LogLevelResponse.FromString,
-          )
-      self.RevertLogLevels = channel.unary_unary(
-          '/protos.Admin/RevertLogLevels',
-          request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-          response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-          )
-
-
-  class AdminServicer(object):
-    """Interface exported by the server.
-    """
-
-    def GetStatus(self, request, context):
-      """Return the serve status.
-      """
-      context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-      context.set_details('Method not implemented!')
-      raise NotImplementedError('Method not implemented!')
-
-    def StartServer(self, request, context):
-      # missing associated documentation comment in .proto file
-      pass
-      context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-      context.set_details('Method not implemented!')
-      raise NotImplementedError('Method not implemented!')
-
-    def GetModuleLogLevel(self, request, context):
-      # missing associated documentation comment in .proto file
-      pass
-      context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-      context.set_details('Method not implemented!')
-      raise NotImplementedError('Method not implemented!')
-
-    def SetModuleLogLevel(self, request, context):
-      # missing associated documentation comment in .proto file
-      pass
-      context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-      context.set_details('Method not implemented!')
-      raise NotImplementedError('Method not implemented!')
-
-    def RevertLogLevels(self, request, context):
-      # missing associated documentation comment in .proto file
-      pass
-      context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-      context.set_details('Method not implemented!')
-      raise NotImplementedError('Method not implemented!')
-
-
-  def add_AdminServicer_to_server(servicer, server):
-    rpc_method_handlers = {
-        'GetStatus': grpc.unary_unary_rpc_method_handler(
-            servicer.GetStatus,
-            request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-            response_serializer=ServerStatus.SerializeToString,
-        ),
-        'StartServer': grpc.unary_unary_rpc_method_handler(
-            servicer.StartServer,
-            request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-            response_serializer=ServerStatus.SerializeToString,
-        ),
-        'GetModuleLogLevel': grpc.unary_unary_rpc_method_handler(
-            servicer.GetModuleLogLevel,
-            request_deserializer=LogLevelRequest.FromString,
-            response_serializer=LogLevelResponse.SerializeToString,
-        ),
-        'SetModuleLogLevel': grpc.unary_unary_rpc_method_handler(
-            servicer.SetModuleLogLevel,
-            request_deserializer=LogLevelRequest.FromString,
-            response_serializer=LogLevelResponse.SerializeToString,
-        ),
-        'RevertLogLevels': grpc.unary_unary_rpc_method_handler(
-            servicer.RevertLogLevels,
-            request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-            response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-        ),
-    }
-    generic_handler = grpc.method_handlers_generic_handler(
-        'protos.Admin', rpc_method_handlers)
-    server.add_generic_rpc_handlers((generic_handler,))
-
-
-  class BetaAdminServicer(object):
-    """The Beta API is deprecated for 0.15.0 and later.
-
-    It is recommended to use the GA API (classes and functions in this
-    file not marked beta) for all further purposes. This class was generated
-    only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0."""
-    """Interface exported by the server.
-    """
-    def GetStatus(self, request, context):
-      """Return the serve status.
-      """
-      context.code(beta_interfaces.StatusCode.UNIMPLEMENTED)
-    def StartServer(self, request, context):
-      # missing associated documentation comment in .proto file
-      pass
-      context.code(beta_interfaces.StatusCode.UNIMPLEMENTED)
-    def GetModuleLogLevel(self, request, context):
-      # missing associated documentation comment in .proto file
-      pass
-      context.code(beta_interfaces.StatusCode.UNIMPLEMENTED)
-    def SetModuleLogLevel(self, request, context):
-      # missing associated documentation comment in .proto file
-      pass
-      context.code(beta_interfaces.StatusCode.UNIMPLEMENTED)
-    def RevertLogLevels(self, request, context):
-      # missing associated documentation comment in .proto file
-      pass
-      context.code(beta_interfaces.StatusCode.UNIMPLEMENTED)
-
-
-  class BetaAdminStub(object):
-    """The Beta API is deprecated for 0.15.0 and later.
-
-    It is recommended to use the GA API (classes and functions in this
-    file not marked beta) for all further purposes. This class was generated
-    only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0."""
-    """Interface exported by the server.
-    """
-    def GetStatus(self, request, timeout, metadata=None, with_call=False, protocol_options=None):
-      """Return the serve status.
-      """
-      raise NotImplementedError()
-    GetStatus.future = None
-    def StartServer(self, request, timeout, metadata=None, with_call=False, protocol_options=None):
-      # missing associated documentation comment in .proto file
-      pass
-      raise NotImplementedError()
-    StartServer.future = None
-    def GetModuleLogLevel(self, request, timeout, metadata=None, with_call=False, protocol_options=None):
-      # missing associated documentation comment in .proto file
-      pass
-      raise NotImplementedError()
-    GetModuleLogLevel.future = None
-    def SetModuleLogLevel(self, request, timeout, metadata=None, with_call=False, protocol_options=None):
-      # missing associated documentation comment in .proto file
-      pass
-      raise NotImplementedError()
-    SetModuleLogLevel.future = None
-    def RevertLogLevels(self, request, timeout, metadata=None, with_call=False, protocol_options=None):
-      # missing associated documentation comment in .proto file
-      pass
-      raise NotImplementedError()
-    RevertLogLevels.future = None
-
-
-  def beta_create_Admin_server(servicer, pool=None, pool_size=None, default_timeout=None, maximum_timeout=None):
-    """The Beta API is deprecated for 0.15.0 and later.
-
-    It is recommended to use the GA API (classes and functions in this
-    file not marked beta) for all further purposes. This function was
-    generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
-    request_deserializers = {
-      ('protos.Admin', 'GetModuleLogLevel'): LogLevelRequest.FromString,
-      ('protos.Admin', 'GetStatus'): google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-      ('protos.Admin', 'RevertLogLevels'): google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-      ('protos.Admin', 'SetModuleLogLevel'): LogLevelRequest.FromString,
-      ('protos.Admin', 'StartServer'): google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-    }
-    response_serializers = {
-      ('protos.Admin', 'GetModuleLogLevel'): LogLevelResponse.SerializeToString,
-      ('protos.Admin', 'GetStatus'): ServerStatus.SerializeToString,
-      ('protos.Admin', 'RevertLogLevels'): google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-      ('protos.Admin', 'SetModuleLogLevel'): LogLevelResponse.SerializeToString,
-      ('protos.Admin', 'StartServer'): ServerStatus.SerializeToString,
-    }
-    method_implementations = {
-      ('protos.Admin', 'GetModuleLogLevel'): face_utilities.unary_unary_inline(servicer.GetModuleLogLevel),
-      ('protos.Admin', 'GetStatus'): face_utilities.unary_unary_inline(servicer.GetStatus),
-      ('protos.Admin', 'RevertLogLevels'): face_utilities.unary_unary_inline(servicer.RevertLogLevels),
-      ('protos.Admin', 'SetModuleLogLevel'): face_utilities.unary_unary_inline(servicer.SetModuleLogLevel),
-      ('protos.Admin', 'StartServer'): face_utilities.unary_unary_inline(servicer.StartServer),
-    }
-    server_options = beta_implementations.server_options(request_deserializers=request_deserializers, response_serializers=response_serializers, thread_pool=pool, thread_pool_size=pool_size, default_timeout=default_timeout, maximum_timeout=maximum_timeout)
-    return beta_implementations.server(method_implementations, options=server_options)
-
-
-  def beta_create_Admin_stub(channel, host=None, metadata_transformer=None, pool=None, pool_size=None):
-    """The Beta API is deprecated for 0.15.0 and later.
-
-    It is recommended to use the GA API (classes and functions in this
-    file not marked beta) for all further purposes. This function was
-    generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
-    request_serializers = {
-      ('protos.Admin', 'GetModuleLogLevel'): LogLevelRequest.SerializeToString,
-      ('protos.Admin', 'GetStatus'): google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-      ('protos.Admin', 'RevertLogLevels'): google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-      ('protos.Admin', 'SetModuleLogLevel'): LogLevelRequest.SerializeToString,
-      ('protos.Admin', 'StartServer'): google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
-    }
-    response_deserializers = {
-      ('protos.Admin', 'GetModuleLogLevel'): LogLevelResponse.FromString,
-      ('protos.Admin', 'GetStatus'): ServerStatus.FromString,
-      ('protos.Admin', 'RevertLogLevels'): google_dot_protobuf_dot_empty__pb2.Empty.FromString,
-      ('protos.Admin', 'SetModuleLogLevel'): LogLevelResponse.FromString,
-      ('protos.Admin', 'StartServer'): ServerStatus.FromString,
-    }
-    cardinalities = {
-      'GetModuleLogLevel': cardinality.Cardinality.UNARY_UNARY,
-      'GetStatus': cardinality.Cardinality.UNARY_UNARY,
-      'RevertLogLevels': cardinality.Cardinality.UNARY_UNARY,
-      'SetModuleLogLevel': cardinality.Cardinality.UNARY_UNARY,
-      'StartServer': cardinality.Cardinality.UNARY_UNARY,
-    }
-    stub_options = beta_implementations.stub_options(host=host, metadata_transformer=metadata_transformer, request_serializers=request_serializers, response_deserializers=response_deserializers, thread_pool=pool, thread_pool_size=pool_size)
-    return beta_implementations.dynamic_stub(channel, 'protos.Admin', cardinalities, options=stub_options)
-except ImportError:
-  pass
 # @@protoc_insertion_point(module_scope)

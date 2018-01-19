@@ -48,11 +48,9 @@ class ChannelCreateTest(BaseTestCase):
     def test_create_channel_missing_signatures(self):
         signatures = []
 
-        with open(self.orderer_tls_certs) as f:
-            pem = f.read()
-
-        opts = (('grpc.ssl_target_name_override', 'orderer.example.com'),)
-        orderer = Orderer(pem=pem, opts=opts)
+        orderer = Orderer(tls_cacerts=self.orderer_tls_certs,
+                          opts=(('grpc.ssl_target_name_override',
+                                 'orderer.example.com'),))
 
         with open(self.configtx_path, 'rb') as f:
             envelope = f.read()
@@ -122,21 +120,15 @@ class ChannelCreateTest(BaseTestCase):
     def test_create_channel(self):
         signatures = []
 
-        self.client.state_store = FileKeyValueStore(self.kv_store_path)
-
-        with open(self.orderer_tls_certs) as f:
-            pem = f.read()
-
-        opts = (('grpc.ssl_target_name_override', 'orderer.example.com'),)
-        orderer = Orderer(pem=pem, opts=opts)
+        orderer = Orderer(tls_cacerts=self.orderer_tls_certs,
+                          opts=(('grpc.ssl_target_name_override',
+                                 'orderer.example.com'),))
 
         with open(self.configtx_path, 'rb') as f:
             envelope = f.read()
 
         # convert envelope to config
         config = extract_channel_config(envelope)
-
-        channel_name = 'businesschannel'
 
         # signatures orderer admin
         orderer_admin = get_orderer_org_admin(self.client)
@@ -190,7 +182,7 @@ class ChannelCreateTest(BaseTestCase):
             'signatures': signatures,
             'config': config,
             'orderer': orderer,
-            'channel_name': channel_name
+            'channel_name': self.channel_name
         }
         response = self.client.create_channel(request)
 

@@ -15,12 +15,12 @@
 import grpc
 
 
-def create_grpc_channel(target, pem=None, opts=None):
+def create_grpc_channel(target, cert_file=None, opts=None):
     """Construct a grpc channel.
 
     Args:
-        target: url of target include host:port
-        pem: ssl/tls pem file as bytes
+        target: server address include host:port
+        cert_file: ssl/tls root cert file for the connection
         opts: grpc channel options
                 grpc.default_authority: default authority
                 grpc.ssl_target_name_override: ssl target name override
@@ -29,8 +29,14 @@ def create_grpc_channel(target, pem=None, opts=None):
         grpc channel
 
     """
-    if pem is None:
+
+    root_cert = None
+    if cert_file:
+        with open(cert_file, 'rb') as f:
+            root_cert = f.read()
+
+    if root_cert is None:
         return grpc.insecure_channel(target, opts)
     else:
-        creds = grpc.ssl_channel_credentials(pem)
+        creds = grpc.ssl_channel_credentials(root_cert)
         return grpc.secure_channel(target, creds, opts)

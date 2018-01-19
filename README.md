@@ -38,9 +38,14 @@ More details to build the crypto lib, can be found at
 The following command will run the testing.
 
 ```sh
+$ virtualenv venv  # create a virtual env
+$ source venv/bin/activate  # active it
+
 $ make check # Check environment and run tests
 $ make test # Only run test cases
 $ tox -e py30 -- test/integration/ca_test.py  # Run specified test case
+
+$ deactivate  # deactive the virtual env
 ```
 
 ## Generating Docker images
@@ -48,13 +53,6 @@ The following command will build a Docker image `hyperledger/fabric-sdk-py` with
 
 ```sh
 $ make image
-```
-
-Also, you can use docker-compose to start a cluster for testing, including fabric-peer, fabric-orderer, fabric-ca, and fabric-sdk-py containers.
-
-```sh
-$ docker-compose up -d
-$ docker exec -it fabric-sdk-py bash
 ```
 
 ## Change Logs

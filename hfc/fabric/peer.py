@@ -21,12 +21,19 @@ class Peer(object):
     It has a specific gRPC channel address.
     """
 
-    def __init__(self, endpoint=DEFAULT_PEER_ENDPOINT, pem=None, opts=None):
+    def __init__(self, endpoint=DEFAULT_PEER_ENDPOINT, tls_cacerts=None,
+                 opts=None):
+        """
+
+        :param endpoint: Endpoint of the peer's gRPC service
+        :param tls_cacerts: file path of tls root ca's certificate
+        :param opts: optional params
+        """
         self._lock = threading.RLock()
         self._channels = []
         self._endpoint = endpoint
-        self._endorser_client = peer_pb2_grpc.EndorserStub(
-            create_grpc_channel(self._endpoint, pem, opts))
+        self._channel = create_grpc_channel(self._endpoint, tls_cacerts, opts)
+        self._endorser_client = peer_pb2_grpc.EndorserStub(self._channel)
 
     def send_proposal(self, proposal, scheduler=None):
         """ Send an endorsement proposal to endorser
@@ -68,15 +75,15 @@ class Peer(object):
             return self._channels
 
 
-def create_peer(endpoint=DEFAULT_PEER_ENDPOINT, pem=None, opts=None):
+def create_peer(endpoint=DEFAULT_PEER_ENDPOINT, tls_cacerts=None, opts=None):
     """ Factory method to construct a peer instance
 
     Args:
         endpoint: endpoint
-        pem: pem
+        tls_cacerts: pem
         opts: opts
 
     Returns: a peer instance
 
     """
-    return Peer(endpoint, pem, opts)
+    return Peer(endpoint, tls_cacerts, opts)

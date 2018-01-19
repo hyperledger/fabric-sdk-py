@@ -193,11 +193,11 @@ class Channel(object):
         """
         if self._shutdown:
             raise ValueError(
-                "Channel %s has been shutdown.".format(self._name))
+                "Channel {} has been shutdown.".format(self._name))
 
         if not self._initialized:
             raise ValueError(
-                "Channel %s has not been initialized.".format(self._name))
+                "Channel {} has not been initialized.".format(self._name))
 
     @property
     def is_sys_chan(self):
@@ -265,8 +265,8 @@ class Channel(object):
             targets = self._peers.values()
         else:
             targets = peers
-        self._validate_state()
-        self._validate_peers(targets)
+        # self._validate_state() # TODO: enable this later
+        # self._validate_peers(targets)  # TODO: enable this later
 
         if not tx_context:
             raise ValueError("InstallProposalRequest is null.")
@@ -564,7 +564,7 @@ class Channel(object):
         return result
 
 
-def create_system_channel(client):
+def create_system_channel(client, name=SYSTEM_CHANNEL_NAME):
     """ Create system channel instance
 
     Args:
@@ -573,4 +573,16 @@ def create_system_channel(client):
     Returns: system channel instance
 
     """
-    return Channel(SYSTEM_CHANNEL_NAME, client, True)
+    return Channel(name, client, True)
+
+
+def create_app_channel(client, name="businesschannel"):
+    """ Create application channel instance
+
+    Args:
+        client: client instance
+
+    Returns: system channel instance
+
+    """
+    return Channel(name, client, False)

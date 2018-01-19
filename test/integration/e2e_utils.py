@@ -34,14 +34,12 @@ def build_channel_request(client, channel_tx, channel_name):
         config = utils.extract_channel_config(envelope)
 
     orderer_config = E2E_CONFIG['test-network']['orderer']
-    with open(orderer_config['tls_cacerts'], 'rb') as tls_cacerts:
-        pem = tls_cacerts.read()
 
-    opts = (('grpc.ssl_target_name_override', 'orderer.example.com'),)
     orderer = Orderer(
         endpoint=orderer_config['grpc_endpoint'],
-        pem=pem,
-        opts=opts
+        tls_cacerts=orderer_config['tls_cacerts'],
+        opts=(('grpc.ssl_target_name_override',
+               'orderer.example.com'),),
     )
     orderer_admin = get_orderer_org_admin(client)
     orderer_tx_context = TXContext(orderer_admin, ecies(), prop_req, {})
@@ -113,13 +111,10 @@ def build_join_channel_req(org, channel, client):
     # add the orderer
     orderer_config = test_network['orderer']
     endpoint = orderer_config['grpc_endpoint']
-    opts = (('grpc.ssl_target_name_override',
-             orderer_config['server_hostname']),)
-
     ca_root_path = orderer_config['tls_cacerts']
-    with open(ca_root_path, 'rb') as f:
-        pem = f.read()
-    orderer = Orderer(endpoint=endpoint, pem=pem, opts=opts)
+    orderer = Orderer(endpoint=endpoint, tls_cacerts=ca_root_path,
+                      opts=(('grpc.ssl_target_name_override',
+                             'orderer.example.com'),))
     channel.add_orderer(orderer)
 
     # get the genesis block
@@ -136,14 +131,11 @@ def build_join_channel_req(org, channel, client):
 
     peer_config = test_network[org]["peers"]['peer0']
     ca_root = peer_config["tls_cacerts"]
-    with open(ca_root, 'rb') as f:
-        pem = f.read()
-    peer = Peer(pem=pem, opts=None)
+    peer = Peer(tls_cacerts=ca_root)
 
     # connect the peer
     eh = EventHub()
     event = peer_config['grpc_event_endpoint']
-    opts = {'pem': pem, 'hostname': peer_config['server_hostname']}
 
     tx_id = client.tx_context.tx_id
     eh.set_peer_addr(event)

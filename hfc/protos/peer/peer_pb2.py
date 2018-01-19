@@ -41,7 +41,7 @@ _PEERID = _descriptor.Descriptor(
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -72,14 +72,14 @@ _PEERENDPOINT = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='address', full_name='protos.PeerEndpoint.address', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -118,123 +118,28 @@ _sym_db.RegisterMessage(PeerEndpoint)
 
 DESCRIPTOR.has_options = True
 DESCRIPTOR._options = _descriptor._ParseOptions(descriptor_pb2.FileOptions(), _b('\n\"org.hyperledger.fabric.protos.peerZ)github.com/hyperledger/fabric/protos/peer'))
-try:
-  # THESE ELEMENTS WILL BE DEPRECATED.
-  # Please use the generated *_pb2_grpc.py files instead.
-  import grpc
-  from grpc.beta import implementations as beta_implementations
-  from grpc.beta import interfaces as beta_interfaces
-  from grpc.framework.common import cardinality
-  from grpc.framework.interfaces.face import utilities as face_utilities
 
+_ENDORSER = _descriptor.ServiceDescriptor(
+  name='Endorser',
+  full_name='protos.Endorser',
+  file=DESCRIPTOR,
+  index=0,
+  options=None,
+  serialized_start=196,
+  serialized_end=277,
+  methods=[
+  _descriptor.MethodDescriptor(
+    name='ProcessProposal',
+    full_name='protos.Endorser.ProcessProposal',
+    index=0,
+    containing_service=None,
+    input_type=hfc_dot_protos_dot_peer_dot_proposal__pb2._SIGNEDPROPOSAL,
+    output_type=hfc_dot_protos_dot_peer_dot_proposal__response__pb2._PROPOSALRESPONSE,
+    options=None,
+  ),
+])
+_sym_db.RegisterServiceDescriptor(_ENDORSER)
 
-  class EndorserStub(object):
-    # missing associated documentation comment in .proto file
-    pass
+DESCRIPTOR.services_by_name['Endorser'] = _ENDORSER
 
-    def __init__(self, channel):
-      """Constructor.
-
-      Args:
-        channel: A grpc.Channel.
-      """
-      self.ProcessProposal = channel.unary_unary(
-          '/protos.Endorser/ProcessProposal',
-          request_serializer=hfc_dot_protos_dot_peer_dot_proposal__pb2.SignedProposal.SerializeToString,
-          response_deserializer=hfc_dot_protos_dot_peer_dot_proposal__response__pb2.ProposalResponse.FromString,
-          )
-
-
-  class EndorserServicer(object):
-    # missing associated documentation comment in .proto file
-    pass
-
-    def ProcessProposal(self, request, context):
-      # missing associated documentation comment in .proto file
-      pass
-      context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-      context.set_details('Method not implemented!')
-      raise NotImplementedError('Method not implemented!')
-
-
-  def add_EndorserServicer_to_server(servicer, server):
-    rpc_method_handlers = {
-        'ProcessProposal': grpc.unary_unary_rpc_method_handler(
-            servicer.ProcessProposal,
-            request_deserializer=hfc_dot_protos_dot_peer_dot_proposal__pb2.SignedProposal.FromString,
-            response_serializer=hfc_dot_protos_dot_peer_dot_proposal__response__pb2.ProposalResponse.SerializeToString,
-        ),
-    }
-    generic_handler = grpc.method_handlers_generic_handler(
-        'protos.Endorser', rpc_method_handlers)
-    server.add_generic_rpc_handlers((generic_handler,))
-
-
-  class BetaEndorserServicer(object):
-    """The Beta API is deprecated for 0.15.0 and later.
-
-    It is recommended to use the GA API (classes and functions in this
-    file not marked beta) for all further purposes. This class was generated
-    only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0."""
-    # missing associated documentation comment in .proto file
-    pass
-    def ProcessProposal(self, request, context):
-      # missing associated documentation comment in .proto file
-      pass
-      context.code(beta_interfaces.StatusCode.UNIMPLEMENTED)
-
-
-  class BetaEndorserStub(object):
-    """The Beta API is deprecated for 0.15.0 and later.
-
-    It is recommended to use the GA API (classes and functions in this
-    file not marked beta) for all further purposes. This class was generated
-    only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0."""
-    # missing associated documentation comment in .proto file
-    pass
-    def ProcessProposal(self, request, timeout, metadata=None, with_call=False, protocol_options=None):
-      # missing associated documentation comment in .proto file
-      pass
-      raise NotImplementedError()
-    ProcessProposal.future = None
-
-
-  def beta_create_Endorser_server(servicer, pool=None, pool_size=None, default_timeout=None, maximum_timeout=None):
-    """The Beta API is deprecated for 0.15.0 and later.
-
-    It is recommended to use the GA API (classes and functions in this
-    file not marked beta) for all further purposes. This function was
-    generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
-    request_deserializers = {
-      ('protos.Endorser', 'ProcessProposal'): hfc_dot_protos_dot_peer_dot_proposal__pb2.SignedProposal.FromString,
-    }
-    response_serializers = {
-      ('protos.Endorser', 'ProcessProposal'): hfc_dot_protos_dot_peer_dot_proposal__response__pb2.ProposalResponse.SerializeToString,
-    }
-    method_implementations = {
-      ('protos.Endorser', 'ProcessProposal'): face_utilities.unary_unary_inline(servicer.ProcessProposal),
-    }
-    server_options = beta_implementations.server_options(request_deserializers=request_deserializers, response_serializers=response_serializers, thread_pool=pool, thread_pool_size=pool_size, default_timeout=default_timeout, maximum_timeout=maximum_timeout)
-    return beta_implementations.server(method_implementations, options=server_options)
-
-
-  def beta_create_Endorser_stub(channel, host=None, metadata_transformer=None, pool=None, pool_size=None):
-    """The Beta API is deprecated for 0.15.0 and later.
-
-    It is recommended to use the GA API (classes and functions in this
-    file not marked beta) for all further purposes. This function was
-    generated only to ease transition from grpcio<0.15.0 to grpcio>=0.15.0"""
-    request_serializers = {
-      ('protos.Endorser', 'ProcessProposal'): hfc_dot_protos_dot_peer_dot_proposal__pb2.SignedProposal.SerializeToString,
-    }
-    response_deserializers = {
-      ('protos.Endorser', 'ProcessProposal'): hfc_dot_protos_dot_peer_dot_proposal__response__pb2.ProposalResponse.FromString,
-    }
-    cardinalities = {
-      'ProcessProposal': cardinality.Cardinality.UNARY_UNARY,
-    }
-    stub_options = beta_implementations.stub_options(host=host, metadata_transformer=metadata_transformer, request_serializers=request_serializers, response_deserializers=response_deserializers, thread_pool=pool, thread_pool_size=pool_size)
-    return beta_implementations.dynamic_stub(channel, 'protos.Endorser', cardinalities, options=stub_options)
-except ImportError:
-  pass
 # @@protoc_insertion_point(module_scope)

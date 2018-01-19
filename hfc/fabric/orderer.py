@@ -16,7 +16,7 @@ import logging
 
 import rx
 
-from hfc.protos.orderer import ab_pb2
+from hfc.protos.orderer import ab_pb2_grpc
 from hfc.util.channel import create_grpc_channel
 
 DEFAULT_ORDERER_ENDPOINT = 'localhost:7050'
@@ -31,20 +31,20 @@ class Orderer(object):
     """
 
     def __init__(self, endpoint=DEFAULT_ORDERER_ENDPOINT,
-                 pem=None, opts=None):
+                 tls_cacerts=None, opts=None):
         """Creates an orderer object.
 
         Args:
             endpoint (str): The grpc endpoint of the orderer.
-            pem (str): The tls certificate for the given
+            tls_cacerts (str): The tls certificate for the given
                 orderer as bytes.
             opts (tuple): Additional grpc config options as
                 tuple e.g. ((key, val),).
 
         """
         self._endpoint = endpoint
-        self._orderer_client = ab_pb2.AtomicBroadcastStub(
-            create_grpc_channel(self._endpoint, pem, opts))
+        self._channel = create_grpc_channel(self._endpoint, tls_cacerts, opts)
+        self._orderer_client = ab_pb2_grpc.AtomicBroadcastStub(self._channel)
 
     def broadcast(self, envelope, scheduler=None):
         """Send an broadcast envelope to orderer.
