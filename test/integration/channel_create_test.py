@@ -18,15 +18,12 @@ import unittest
 import sys
 
 from hfc.util.utils import extract_channel_config
-from hfc.util.keyvaluestore import FileKeyValueStore
 from hfc.fabric.orderer import Orderer
 from hfc.fabric.transaction.tx_context import TXContext
 from hfc.util.crypto.crypto import Ecies
 from test.integration.config import E2E_CONFIG
-from test.integration.utils import \
-    BaseTestCase, \
-    get_peer_org_user, \
-    get_orderer_org_admin
+from test.integration.utils import get_peer_org_user
+from test.integration.utils import BaseTestCase
 
 if sys.version_info < (3, 0):
     from Queue import Queue
@@ -52,7 +49,7 @@ class ChannelCreateTest(BaseTestCase):
                           opts=(('grpc.ssl_target_name_override',
                                  'orderer.example.com'),))
 
-        with open(self.configtx_path, 'rb') as f:
+        with open(self.channel_tx, 'rb') as f:
             envelope = f.read()
 
         # convert envelope to config
@@ -60,41 +57,12 @@ class ChannelCreateTest(BaseTestCase):
 
         channel_name = 'businesschannel'
 
-        # signatures orderer admin
-        orderer_admin = get_orderer_org_admin(self.client)
-        orderer_admin_tx_context = TXContext(orderer_admin, Ecies(), {})
-        self.client.tx_context = orderer_admin_tx_context
-
-        orderer_admin_signature = self.client.sign_channel_config(config)
-        orderer_admin_signature.SerializeToString()
-
-        # take the tx_id and nonce from the oderer user context
-        tx_id = orderer_admin_tx_context.tx_id
-        nonce = orderer_admin_tx_context.nonce
-
-        # reset the state store to handle different
-        # users with one client object
-        self.client.state_store = FileKeyValueStore(self.kv_store_path)
-
         # signatures org1 admin
-        org1_admin = get_peer_org_user(self.client, 'org1.example.com')
-        org1_admin_tx_context = TXContext(org1_admin, Ecies(), {})
-        self.client.tx_context = org1_admin_tx_context
-
-        org1_admin_signature = self.client.sign_channel_config(config)
-        org1_admin_signature.SerializeToString()
-
-        # reset the state store to handle different
-        # users with one client object
-        self.client.state_store = FileKeyValueStore(self.kv_store_path)
-
-        # signatures org2 admin
-        org2_admin = get_peer_org_user(self.client, 'org2.example.com')
-        org2_admin_tx_context = TXContext(org2_admin, Ecies(), {})
-        self.client.tx_context = org2_admin_tx_context
-
-        org2_admin_signature = self.client.sign_channel_config(config)
-        org2_admin_signature.SerializeToString()
+        org1_admin = get_peer_org_user('org1.example.com', 'Admin',
+                                       self.client.state_store)
+        self.client.tx_context = TXContext(org1_admin, Ecies(), {})
+        tx_id = self.client.tx_context.tx_id
+        nonce = self.client.tx_context.nonce
 
         request = {
             'tx_id': tx_id,
@@ -117,6 +85,9 @@ class ChannelCreateTest(BaseTestCase):
         status, _ = queue.get(timeout=5)
         self.assertEqual(status.status, 400)
 
+    def sign_config(self):
+        pass
+
     def test_create_channel(self):
         signatures = []
 
@@ -124,57 +95,22 @@ class ChannelCreateTest(BaseTestCase):
                           opts=(('grpc.ssl_target_name_override',
                                  'orderer.example.com'),))
 
-        with open(self.configtx_path, 'rb') as f:
+        with open(self.channel_tx, 'rb') as f:
             envelope = f.read()
 
         # convert envelope to config
         config = extract_channel_config(envelope)
 
-        # signatures orderer admin
-        orderer_admin = get_orderer_org_admin(self.client)
-        orderer_admin_tx_context = TXContext(orderer_admin, Ecies(), {})
-        self.client.tx_context = orderer_admin_tx_context
-
-        orderer_admin_signature = self.client.sign_channel_config(config)
-        orderer_admin_signature_bytes = \
-            orderer_admin_signature.SerializeToString()
-
-        # take the tx_id and nonce from the oderer user context
-        tx_id = orderer_admin_tx_context.tx_id
-        nonce = orderer_admin_tx_context.nonce
-
-        # append orderer_org_admin signatures
-        signatures.append(orderer_admin_signature_bytes)
-
-        # reset the state store to handle different
-        # users with one client object
-        self.client.state_store = FileKeyValueStore(self.kv_store_path)
-
         # signatures org1 admin
-        org1_admin = get_peer_org_user(self.client, 'org1.example.com')
-        org1_admin_tx_context = TXContext(org1_admin, Ecies(), {})
-        self.client.tx_context = org1_admin_tx_context
-
+        org1_admin = get_peer_org_user('org1.example.com', 'Admin',
+                                       self.client.state_store)
+        self.client.tx_context = TXContext(org1_admin, Ecies(), {})
         org1_admin_signature = self.client.sign_channel_config(config)
-        org1_admin_signature_bytes = org1_admin_signature.SerializeToString()
-
         # append org1_admin_signature to signatures
-        signatures.append(org1_admin_signature_bytes)
+        signatures.append(org1_admin_signature)
 
-        # reset the state store to handle different
-        # users with one client object
-        self.client.state_store = FileKeyValueStore(self.kv_store_path)
-
-        # signatures org2 admin
-        org2_admin = get_peer_org_user(self.client, 'org2.example.com')
-        org2_admin_tx_context = TXContext(org2_admin, Ecies(), {})
-        self.client.tx_context = org2_admin_tx_context
-
-        org2_admin_signature = self.client.sign_channel_config(config)
-        org2_admin_signature_bytes = org2_admin_signature.SerializeToString()
-
-        # append org1_admin_signature to signatures
-        signatures.append(org2_admin_signature_bytes)
+        tx_id = self.client.tx_context.tx_id
+        nonce = self.client.tx_context.nonce
 
         request = {
             'tx_id': tx_id,

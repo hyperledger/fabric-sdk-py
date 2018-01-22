@@ -5,12 +5,9 @@ import subprocess
 import unittest
 
 from hfc.fabric.client import Client
+from hfc.fabric.user import create_user
 from test.integration.config import E2E_CONFIG
-from hfc.fabric.user import User
-from hfc.fabric_ca.caservice import Enrollment
 from hfc.util.keyvaluestore import FileKeyValueStore
-from cryptography.hazmat.primitives.serialization import load_pem_private_key
-from cryptography.hazmat.backends import default_backend
 
 
 class BaseTestCase(unittest.TestCase):
@@ -24,14 +21,15 @@ class BaseTestCase(unittest.TestCase):
         gopath = os.path.normpath(os.path.join(os.path.dirname(__file__),
                                                "../../fixtures/chaincode"))
         os.environ['GOPATH'] = os.path.abspath(gopath)
-        self.configtx_path = \
+        self.channel_tx = \
             E2E_CONFIG['test-network']['channel-artifacts']['channel.tx']
         self.compose_file_path = \
             E2E_CONFIG['test-network']['docker']['compose_file_tls']
+
         self.base_path = "/tmp/fabric-sdk-py"
-        self.client = Client()
         self.kv_store_path = os.path.join(self.base_path, "key-value-store")
-        self.client.state_store = FileKeyValueStore(self.kv_store_path)
+        self.client = Client(state_store=FileKeyValueStore(self.kv_store_path))
+
         self.channel_name = "businesschannel"  # default application channel
         self.start_test_env()
 
@@ -43,6 +41,57 @@ class BaseTestCase(unittest.TestCase):
 
     def shutdown_test_env(self):
         cli_call(["docker-compose", "-f", self.compose_file_path, "down"])
+
+
+def get_peer_org_user(org, user, state_store):
+    """Loads the requested user for a given peer org
+        and returns a user object.
+    """
+
+    peer_user_base_path = os.path.join(
+        os.getcwd(),
+        'test/fixtures/e2e_cli/crypto-config/peerOrganizations/{0}'
+        '/users/{1}@{0}/msp/'.format(org, user)
+    )
+
+    key_path = os.path.join(
+        peer_user_base_path, 'keystore/',
+        E2E_CONFIG['test-network'][org]['users'][user]['private_key']
+    )
+
+    cert_path = os.path.join(
+        peer_user_base_path, 'signcerts/',
+        E2E_CONFIG['test-network'][org]['users'][user]['cert']
+    )
+
+    msp_id = E2E_CONFIG['test-network'][org]['mspid']
+
+    return create_user(user, org, state_store, msp_id, key_path, cert_path)
+
+
+def get_orderer_org_user(org='example.com', user='Admin', state_store=None):
+    """Loads the admin user for a given orderer org and
+        returns an user object.
+        Currently, orderer org only has Admin
+
+    """
+    msp_path = os.path.join(
+        os.getcwd(),
+        'test/fixtures/e2e_cli/crypto-config/ordererOrganizations/'
+        'example.com/users/Admin@example.com/msp/')
+
+    key_path = os.path.join(
+        msp_path, 'keystore/',
+        E2E_CONFIG['test-network']['orderer']['users'][user]['private_key']
+    )
+
+    cert_path = os.path.join(
+        msp_path, 'signcerts',
+        E2E_CONFIG['test-network']['orderer']['users'][user]['cert']
+    )
+    msp_id = E2E_CONFIG['test-network']['orderer']['mspid']
+
+    return create_user(user, org, state_store, msp_id, key_path, cert_path)
 
 
 def cli_call(arg_list, expect_success=True, env=os.environ.copy()):
@@ -69,86 +118,3 @@ def cli_call(arg_list, expect_success=True, env=os.environ.copy()):
             raise subprocess.CalledProcessError(
                 p.returncode, arg_list, output)
     return output, error, p.returncode
-
-
-def get_peer_org_user(client, peer_org, user='Admin'):
-    """Loads the requested user for a given peer org
-        and returns a user object.
-    """
-
-    peer_user_base_path = os.path.join(
-        os.getcwd(),
-        'test/fixtures/e2e_cli/crypto-config/peerOrganizations/{0}'
-        '/users/{1}@{0}/msp/'.format(peer_org, user)
-    )
-
-    key_path = os.path.join(
-        peer_user_base_path,
-        'keystore/',
-        E2E_CONFIG['test-network'][peer_org]['users'][user]['private_key']
-    )
-
-    cert_path = os.path.join(
-        peer_user_base_path,
-        'signcerts/',
-        E2E_CONFIG['test-network'][peer_org]['users'][user]['cert']
-    )
-
-    with open(key_path, 'rb') as key:
-        key_pem = key.read()
-
-    with open(cert_path, 'rb') as cert:
-        cert_pem = cert.read()
-
-    org_user = User('peer' + peer_org + user, peer_org, client.state_store)
-
-    # wrap the key in a 'cryptography' private key object
-    # so that all the methods can be used
-    private_key = load_pem_private_key(key_pem, None, default_backend())
-
-    enrollment = Enrollment(private_key, cert_pem)
-
-    org_user.enrollment = enrollment
-    org_user.msp_id = E2E_CONFIG['test-network'][peer_org]['mspid']
-
-    return org_user
-
-
-def get_orderer_org_admin(client):
-    """Loads the admin user for a given orderer org and
-        returns an user object.
-
-    """
-    orderer_admin_base_path = os.path.join(
-        os.getcwd(),
-        'test/fixtures/e2e_cli/crypto-config/ordererOrganizations/'
-        'example.com/users/Admin@example.com/msp/')
-
-    key_path = os.path.join(
-        orderer_admin_base_path,
-        'keystore/',
-        E2E_CONFIG['test-network']['orderer']['users']['admin']['private_key']
-    )
-
-    cert_path = os.path.join(
-        orderer_admin_base_path, 'signcerts',
-        E2E_CONFIG['test-network']['orderer']['users']['admin']['cert']
-    )
-
-    with open(key_path, 'rb') as key:
-        key_pem = key.read()
-
-    with open(cert_path, 'rb') as cert:
-        cert_pem = cert.read()
-
-    orderer_admin = User('ordererAdmin',
-                         'example.com', client.state_store)
-
-    private_key = load_pem_private_key(key_pem, None, default_backend())
-
-    enrollment = Enrollment(private_key, cert_pem)
-
-    orderer_admin.enrollment = enrollment
-    orderer_admin.msp_id = E2E_CONFIG['test-network']['orderer']['mspid']
-
-    return orderer_admin

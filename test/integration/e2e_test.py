@@ -41,6 +41,7 @@ class E2eTest(unittest.TestCase):
             test_network['channel-artifacts']['channel_id']
         self.compose_file_path = \
             test_network['docker']['compose_file_tls']
+        self.client = Client(state_store=FileKeyValueStore(self.kv_store_path))
 
         self.start_test_env()
 
@@ -59,9 +60,8 @@ class E2eTest(unittest.TestCase):
 
     def create_channel(self):
 
-        client = Client()
-        client.state_store = FileKeyValueStore(
-            self.kv_store_path + 'build-channel')
+        client = Client(state_store=FileKeyValueStore(self.kv_store_path +
+                                                      'build-channel'))
 
         logger.info("start to create channel")
         request = build_channel_request(
@@ -85,7 +85,9 @@ class E2eTest(unittest.TestCase):
 
         # wait for channel created
         time.sleep(5)
-        client = Client()
+        client = Client(state_store=FileKeyValueStore(self.kv_store_path +
+                                                      'join-channel'))
+
         channel = client.new_channel(self.channel_name)
 
         logger.info("start to join channel")

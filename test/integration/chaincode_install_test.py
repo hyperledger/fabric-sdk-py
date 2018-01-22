@@ -57,7 +57,8 @@ class ChaincodeInstallTest(BaseTestCase):
         peer0_org1 = create_peer(endpoint=self.peer0_org1_endpoint,
                                  tls_cacerts=self.peer0_org1_tls_certs,
                                  opts=opts)
-        org1_admin = get_peer_org_user(self.client, 'org1.example.com')
+        org1_admin = get_peer_org_user('org1.example.com', "Admin",
+                                       self.client.state_store)
 
         crypto = ecies()
         tran_prop_req = create_tx_prop_req(CC_INSTALL, CC_PATH, CC_TYPE_GOLANG,

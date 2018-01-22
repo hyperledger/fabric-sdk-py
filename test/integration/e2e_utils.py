@@ -11,7 +11,7 @@ from hfc.fabric.transaction.tx_proposal_request import TXProposalRequest
 from hfc.util.crypto.crypto import ecies
 from hfc.util import utils
 
-from test.integration.utils import get_orderer_org_admin, get_peer_org_user
+from test.integration.utils import get_orderer_org_user, get_peer_org_user
 
 from test.integration.config import E2E_CONFIG
 test_network = E2E_CONFIG['test-network']
@@ -40,29 +40,27 @@ def build_channel_request(client, channel_tx, channel_name):
         opts=(('grpc.ssl_target_name_override',
                'orderer.example.com'),),
     )
-    orderer_admin = get_orderer_org_admin(client)
+    orderer_admin = get_orderer_org_user(state_store=client.state_store)
     orderer_tx_context = TXContext(orderer_admin, ecies(), prop_req, {})
     client.tx_context = orderer_tx_context
     orderer_admin_signature = client.sign_channel_config(config)
-    orderer_admin_signature_bytes = orderer_admin_signature.SerializeToString()
-    signatures.append(orderer_admin_signature_bytes)
+    signatures.append(orderer_admin_signature)
     tx_id = orderer_tx_context.tx_id
     nonce = orderer_tx_context.nonce
 
-    org1_admin = get_peer_org_user(client, 'org1.example.com')
+    org1_admin = get_peer_org_user('org1.example.com', "Admin",
+                                   client.state_store)
     org1_tx_context = TXContext(org1_admin, ecies(), prop_req, {})
     client.tx_context = org1_tx_context
     org1_admin_signature = client.sign_channel_config(config)
-    org1_admin_signature_bytes = org1_admin_signature.SerializeToString()
+    signatures.append(org1_admin_signature)
 
-    signatures.append(org1_admin_signature_bytes)
-
-    org2_admin = get_peer_org_user(client, 'org2.example.com')
+    org2_admin = get_peer_org_user('org2.example.com', "Admin",
+                                   client.state_store)
     org2_tx_context = TXContext(org2_admin, ecies(), prop_req, {})
     client.tx_context = org2_tx_context
     org2_admin_signature = client.sign_channel_config(config)
-    org2_admin_signature_bytes = org2_admin_signature.SerializeToString()
-    signatures.append(org2_admin_signature_bytes)
+    signatures.append(org2_admin_signature)
 
     request = {'config': config,
                'signatures': signatures,
@@ -116,13 +114,13 @@ def build_join_channel_req(org, channel, client):
     channel.add_orderer(orderer)
 
     # get the genesis block
-    orderer_admin = get_orderer_org_admin(client)
+    orderer_admin = get_orderer_org_user(state_store=client.state_store)
     tx_context = TXContext(orderer_admin, ecies(), tx_prop_req)
     client.tx_context = tx_context
     genesis_block = channel.get_genesis_block().SerializeToString()
 
     # create the peer
-    org_admin = get_peer_org_user(client, org)
+    org_admin = get_peer_org_user(org, "Admin", client.state_store)
     client.tx_context = TXContext(org_admin, ecies(), tx_prop_req)
     tx_id = client.tx_context.tx_id
 
