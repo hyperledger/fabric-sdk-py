@@ -20,7 +20,7 @@ from hfc.fabric.transaction.tx_context import TXContext
 from hfc.util.crypto.crypto import Ecies
 from hfc.util import utils
 from hfc.util.keyvaluestore import FileKeyValueStore
-from test.integration.utils import get_orderer_org_admin
+from test.integration.utils import get_orderer_org_user
 from test.integration.config import E2E_CONFIG
 from hfc.protos.msp import identities_pb2
 from hfc.protos.common import configtx_pb2
@@ -40,10 +40,10 @@ class UtilsTest(unittest.TestCase):
         self.kv_store_path = os.path.join(self.base_path, "key-value-store")
 
     def test_create_serialized_identity(self):
-        client = Client()
-        client.state_store = FileKeyValueStore(self.kv_store_path)
+        client = Client(state_store=FileKeyValueStore(self.kv_store_path))
 
-        orderer_org_admin = get_orderer_org_admin(client)
+        orderer_org_admin = get_orderer_org_user(state_store=client.state_store
+                                                 )
         orderer_org_admin_serialized = utils.create_serialized_identity(
             orderer_org_admin)
         serialized_identity = identities_pb2.SerializedIdentity()
@@ -70,10 +70,10 @@ class UtilsTest(unittest.TestCase):
 
         channel_config = utils.extract_channel_config(channel_tx)
 
-        client = Client()
-        client.state_store = FileKeyValueStore(self.kv_store_path)
+        client = Client(state_store=FileKeyValueStore(self.kv_store_path))
 
-        orderer_org_admin = get_orderer_org_admin(client)
+        orderer_org_admin = get_orderer_org_user(state_store=client.state_store
+                                                 )
         orderer_org_admin_tx_context = \
             TXContext(orderer_org_admin, Ecies(), {})
         client.tx_context = orderer_org_admin_tx_context
@@ -81,11 +81,9 @@ class UtilsTest(unittest.TestCase):
         orderer_org_admin_signature = client.sign_channel_config(
             channel_config
         )
-        orderer_org_admin_signature_bytes = \
-            orderer_org_admin_signature.SerializeToString()
 
         proto_signature = utils.string_to_signature(
-            [orderer_org_admin_signature_bytes]
+            [orderer_org_admin_signature]
         )
 
         self.assertIsInstance(proto_signature, list)
@@ -114,10 +112,10 @@ class UtilsTest(unittest.TestCase):
     def test_build_header(self):
         timestamp = utils.current_timestamp()
 
-        client = Client()
-        client.state_store = FileKeyValueStore(self.kv_store_path)
+        client = Client(state_store=FileKeyValueStore(self.kv_store_path))
 
-        orderer_org_admin = get_orderer_org_admin(client)
+        orderer_org_admin = get_orderer_org_user(state_store=client.state_store
+                                                 )
         orderer_org_admin_tx_context = \
             TXContext(orderer_org_admin, Ecies(), {})
         client.tx_context = orderer_org_admin_tx_context

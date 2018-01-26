@@ -17,6 +17,7 @@ import binascii
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
 from hfc.fabric_ca.caservice import Enrollment
 
@@ -30,7 +31,7 @@ class User(object):
         Args:
             name: name
             org: org
-            state_store: persistent state store
+            state_store: persistent state store as a cache
 
         """
         self._name = name
@@ -280,16 +281,32 @@ def validate(user):
     return user
 
 
-def create_user(name, org, state_store):
+def create_user(name, org, state_store, msp_id, key_path, cert_path):
     """Create user
 
     Args:
-        name: username
-        org: org
+        name: user's name
+        org: org name
         state_store: user state store
+        msp_id: msp id for the user
+        key_path: identity private key path
+        cert_path: identity public cert path
 
     Returns: a user instance
 
     """
+
+    with open(key_path, 'rb') as key:
+        key_pem = key.read()
+
+    with open(cert_path, 'rb') as cert:
+        cert_pem = cert.read()
+
+    private_key = load_pem_private_key(key_pem, None, default_backend())
+    enrollment = Enrollment(private_key, cert_pem)
+
     user = User(name, org, state_store)
+    user.enrollment = enrollment
+    user.msp_id = msp_id
+
     return validate(user)

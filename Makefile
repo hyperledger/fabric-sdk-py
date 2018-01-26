@@ -31,6 +31,9 @@ define run-py-tox
 	# set +o pipefail
 endef
 
+# Check the format
+linter:
+	tox -e flake8
 
 # changelog update
 # TODO (dpdornseifer): As long as there is no versioning, always write the changelog

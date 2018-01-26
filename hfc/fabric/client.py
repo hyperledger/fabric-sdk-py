@@ -33,12 +33,12 @@ class Client(object):
         Client can maintain several channels.
     """
 
-    def __init__(self):
+    def __init__(self, state_store=None):
         """ Construct client"""
         self._channels = {}
         self._crypto_suite = None
         self._tx_context = None
-        self._state_store = None
+        self._state_store = state_store
         self._is_dev_mode = False
 
     def new_channel(self, name):
@@ -103,6 +103,15 @@ class Client(object):
             have_envelope = True
 
         return self._create_or_update_channel_request(request, have_envelope)
+
+    def _validate_request(self, request):
+        """
+        Validate a request
+        :param request: request to validate
+        :return:
+        """
+        # TODO: implement this to validate the request
+        pass
 
     def _create_or_update_channel_request(self, request, have_envelope):
         """Inits the create of update channel process.
@@ -203,12 +212,13 @@ class Client(object):
 
         return orderer.broadcast(out_envelope)
 
-    def sign_channel_config(self, config):
+    def sign_channel_config(self, config, to_string=True):
         """This method uses the client instance's current signing identity to
          sign over the configuration bytes passed in.
 
         Args:
             config: The configuration update in bytes form.
+            to_string: Whether to convert the result to string
 
         Returns:
             config_signature (common_pb2.ConfigSignature):
@@ -232,7 +242,10 @@ class Client(object):
         proto_config_signature.signature_header = proto_signature_header_bytes
         proto_config_signature.signature = signature_bytes
 
-        return proto_config_signature
+        if to_string:
+            return proto_config_signature.SerializeToString()
+        else:
+            return proto_config_signature
 
     @property
     def crypto_suite(self):

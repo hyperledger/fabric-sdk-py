@@ -34,7 +34,7 @@ E2E_CONFIG = {
                            'example.com/tlsca/tlsca.example.com-cert.pem',
             'mspid': 'OrdererMSP',
             'users': {
-                'admin': {
+                'Admin': {
                     'cert': 'Admin@example.com-cert.pem',
                     'private_key': 'b92d5923828aa15d965e438de5a7edb92ec128889c2fe8026ee7b95490270048_sk'}
             }
