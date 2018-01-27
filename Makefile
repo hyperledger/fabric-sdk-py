@@ -56,7 +56,7 @@ proto:
 
 # Clean temporary files
 clean:
-	rm -rf .cache *.egg-info .tox .coverage .coverage.* test/fixtures/ca/fabric-ca-server/fabric-ca-server.db
+	rm -rf .cache *.egg-info .tox .coverage .coverage.* test/fixtures/ca/fabric-ca-server/fabric-ca-server.db test/fixtures/ca/fabric-ca-server/keystore/0e729224e8b3f31784c8a93c5b8ef6f4c1c91d9e6e577c45c33163609fe40011_sk
 	find . -name "*.pyc" -o -name "__pycache__" | xargs rm -rf
 
 .PHONY: check clean proto image test
