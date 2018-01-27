@@ -277,19 +277,6 @@ class Client(object):
         self._tx_context = tx_context
 
     @property
-    def is_dev_mode(self):
-        """Get is_dev_mode
-
-        Returns: is_dev_mode
-
-        """
-        return self._is_dev_mode
-
-    @is_dev_mode.setter
-    def is_dev_mode(self, mode):
-        self._is_dev_mode = mode
-
-    @property
     def state_store(self):
         """ Get the KeyValue store.
 
@@ -321,6 +308,6 @@ class Client(object):
         Returns: A set of proposal_response
 
         """
-        app_channel = create_app_channel(self, "businesschannel")
+        app_channel = create_app_channel(self, name="businesschannel")
         _logger.debug("context {}".format(tx_context))
         return app_channel.send_install_proposal(tx_context, peers, scheduler)

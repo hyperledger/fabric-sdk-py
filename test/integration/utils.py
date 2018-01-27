@@ -22,7 +22,7 @@ class BaseTestCase(unittest.TestCase):
     def setUp(self):
         self.gopath_bak = os.environ.get('GOPATH', '')
         gopath = os.path.normpath(os.path.join(os.path.dirname(__file__),
-                                               "../../fixtures/chaincode"))
+                                               "../fixtures/chaincode"))
         os.environ['GOPATH'] = os.path.abspath(gopath)
         self.configtx_path = \
             E2E_CONFIG['test-network']['channel-artifacts']['channel.tx']
