@@ -35,17 +35,49 @@ More details to build the crypto lib, can be found at
 * https://cryptography.io/en/latest/installation/#building-cryptography-on-macos
 
 ## Testing
-The following command will run the testing.
+
+### Use Virtual Env
+
+[virtualenv](https://virtualenv.pypa.io) helps provide a clean environment, suggest to use it to test.
 
 ```sh
-$ virtualenv venv  # create a virtual env
-$ source venv/bin/activate  # active it
+$ pip install virtualenv # install the virtualenv tool if not installed
+$ make venv  # enter a virtual env
+$ ....
+$ deactivate  # deactive the virtual env
+$ make clean # clean the temporary files
+```
 
+### Run Intergration Testing
+The following command will run the testing.
+```sh
 $ make check # Check environment and run tests
 $ make test # Only run test cases
 $ tox -e py30 -- test/integration/ca_test.py  # Run specified test case
+```
 
-$ deactivate  # deactive the virtual env
+## Tutorial
+
+### Install Fabric-SDK-Py
+
+```bash
+$ git clone https://github.com/hyperledger/fabric-sdk-py.git
+$ cd fabric-sdk-py
+$ python setup.py install
+```
+
+### Start a Fabric Network
+SDK needs a targeted fabric network to operate with, if there is not a running one, need to start a network manually.
+
+TODO: Need more details/script to quickly start a fabric network.
+
+### Verify Installation Successfully
+
+```bash
+$ python
+>>> import hfc
+>>> print(hfc.VERSION)
+0.0.1
 ```
 
 ## Generating Docker images

@@ -58,5 +58,15 @@ proto:
 clean:
 	rm -rf .cache *.egg-info .tox .coverage .coverage.* test/fixtures/ca/fabric-ca-server/fabric-ca-server.db test/fixtures/ca/fabric-ca-server/keystore/0e729224e8b3f31784c8a93c5b8ef6f4c1c91d9e6e577c45c33163609fe40011_sk
 	find . -name "*.pyc" -o -name "__pycache__" | xargs rm -rf
+	rm -rf ./venv
 
-.PHONY: check clean proto image test
+venv: # enter a virtual env
+	if [ ! -d venv ]; then \
+		virtualenv venv; \
+	fi
+	. venv/bin/activate
+
+install: # install sdk to local python env
+	python3 setup.py install
+
+.PHONY: check clean proto image install test venv
