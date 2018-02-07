@@ -7,6 +7,7 @@ from hfc.util.utils import current_timestamp
 CC_INSTALL = "install"
 CC_INSTANTIATE = "deploy"
 CC_INVOKE = "invoke"
+CC_UPGRADE = "upgrade"
 
 CC_TYPE_GOLANG = "GOLANG"
 CC_TYPE_JAVA = "JAVA"
@@ -178,7 +179,7 @@ class TXProposalRequest(object):
         Returns: return function name
 
         """
-        return self._cc_name
+        return self._fcn
 
     @fcn.setter
     def fcn(self, fcn):
