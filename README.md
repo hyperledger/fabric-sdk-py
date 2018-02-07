@@ -58,27 +58,7 @@ $ tox -e py30 -- test/integration/ca_test.py  # Run specified test case
 
 ## Tutorial
 
-### Install Fabric-SDK-Py
-
-```bash
-$ git clone https://github.com/hyperledger/fabric-sdk-py.git
-$ cd fabric-sdk-py
-$ python setup.py install
-```
-
-### Start a Fabric Network
-SDK needs a targeted fabric network to operate with, if there is not a running one, need to start a network manually.
-
-TODO: Need more details/script to quickly start a fabric network.
-
-### Verify Installation Successfully
-
-```bash
-$ python
->>> import hfc
->>> print(hfc.VERSION)
-0.0.1
-```
+See [Fabric SDK Tutorial](docs/tutorial.md).
 
 ## Generating Docker images
 The following command will build a Docker image `hyperledger/fabric-sdk-py` with the fabric-sdk-py installed.
