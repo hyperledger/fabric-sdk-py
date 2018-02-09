@@ -63,13 +63,14 @@ class ChaincodeInstantiateTest(BaseTestCase):
 
         org1 = 'org1.example.com'
         crypto = ecies()
-        org1_admin = get_peer_org_user(self.client, org1)
+        org1_admin = get_peer_org_user(org1, 'Admin',
+                                       self.client.state_store)
         tx_context_in = create_tx_context(org1_admin,
                                           crypto,
                                           tran_prop_req_in)
 
         request = build_channel_request(self.client,
-                                        self.configtx_path,
+                                        self.channel_tx,
                                         self.channel_name)
 
         res = self.client.create_channel(request)
