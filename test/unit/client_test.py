@@ -97,6 +97,41 @@ class ClientTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.client.create_channel(request)
 
+    def test_export_network_profile(self):
+        network_info = {
+            "organizations": {
+                "OrdererOrg": {
+                }
+            },
+            "orderers": {
+                "orderer1": {
+                }
+            },
+            "peers": {
+                "peer0": {
+                }
+            },
+            "certificateAuthorities": {
+                "ca-org1": {
+                }
+            },
+        }
+        self.client.network_info = network_info
+        self.client.export_network_profile('test-export.json')
+        self.client.network_info = dict()
+        self.client.import_network_profile('test-export.json')
+        self.assertEqual(network_info, self.client.network_info)
+        self.assertEqual({"OrdererOrg": {}}, self.client.get_organizations())
+        self.assertEqual({"orderer1": {}}, self.client.get_orderers())
+        self.assertEqual({"peer0": {}}, self.client.get_peers())
+        self.assertEqual({"ca-org1": {}}, self.client.get_CAs())
+
+    def test_import_network_profile(self):
+        self.client.import_network_profile('test/fixtures/network.json')
+        self.assertEqual(self.client.network_info['organizations']
+                         ['OrdererOrg']['mspid'], 'OrdererOrg',
+                         "profile not match")
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -44,13 +44,12 @@ SDK can load all network information from the profile, and check the resources i
 # TODO: update code
 import hfc
 
-cli = hfc.Client()
-cli.load_config("./network1.json")
+cli = hfc.Client(network_profile="./network1.json")
 
-cli.list_users()  # local valid users that can be used as client role
-cli.list_peers()  # peers in the network
-cli.list_orderers()  # orderers in the network
-cli.list_cas()  # ca nodes in the network
+cli.get_organizations()  # orgs in the network
+cli.get_peers()  # peers in the network
+cli.get_orderers()  # orderers in the network
+cli.get_CAs()  # ca nodes in the network
 ```
 
 ## Interaction with Fabric Network
