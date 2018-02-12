@@ -29,7 +29,7 @@ else:
     from queue import Queue
 
 
-SYSTEM_CHANNEL_NAME = ""
+SYSTEM_CHANNEL_NAME = "testchainid"
 
 _logger = logging.getLogger(__name__ + ".channel")
 _logger.setLevel(logging.DEBUG)
@@ -38,7 +38,7 @@ _logger.setLevel(logging.DEBUG)
 class Channel(object):
     """The class represents of the channel.
     This is a client-side-only call. To create a new channel in the fabric
-    call client.create_channel().
+    call client._create_channel().
     """
 
     def __init__(self, name, client, is_sys_chan=False):

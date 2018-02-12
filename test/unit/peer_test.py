@@ -28,7 +28,7 @@ class PeerTest(unittest.TestCase):
         self.assertEqual(peer.endpoint, self.default_peer_endpoint)
 
     def test_create_peer_custom_endpoint(self):
-        peer = Peer(self.custom_peer_endpoint)
+        peer = Peer(name="test_peer", endpoint=self.custom_peer_endpoint)
         self.assertEqual(peer.endpoint, self.custom_peer_endpoint)
 
 

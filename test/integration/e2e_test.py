@@ -7,7 +7,6 @@
 
 import unittest
 import logging
-import os
 import sys
 import time
 
@@ -33,21 +32,18 @@ class E2eTest(unittest.TestCase):
 
     def setUp(self):
 
-        self.base_path = "/tmp/fabric-sdk-py"
-        self.kv_store_path = os.path.join(self.base_path, "key-value-store")
         self.channel_tx = \
             test_network['channel-artifacts']['channel.tx']
         self.channel_name = \
             test_network['channel-artifacts']['channel_id']
         self.compose_file_path = \
             test_network['docker']['compose_file_tls']
-        self.client = Client(state_store=FileKeyValueStore(self.kv_store_path))
+        self.client = Client('test/fixtures/network.json')
 
         self.start_test_env()
 
     def tearDown(self):
 
-        self.kv_store_path = None
         self.shutdown_test_env()
 
     def start_test_env(self):
@@ -60,8 +56,7 @@ class E2eTest(unittest.TestCase):
 
     def create_channel(self):
 
-        client = Client(state_store=FileKeyValueStore(self.kv_store_path +
-                                                      'build-channel'))
+        client = Client('test/fixtures/network.json')
 
         logger.info("start to create channel")
         request = build_channel_request(
@@ -70,7 +65,7 @@ class E2eTest(unittest.TestCase):
             self.channel_name)
 
         q = Queue(1)
-        response = client.create_channel(request)
+        response = client._create_channel(request)
         response.subscribe(on_next=lambda x: q.put(x),
                            on_error=lambda x: q.put(x))
 
@@ -85,8 +80,7 @@ class E2eTest(unittest.TestCase):
 
         # wait for channel created
         time.sleep(5)
-        client = Client(state_store=FileKeyValueStore(self.kv_store_path +
-                                                      'join-channel'))
+        client = Client('test/fixtures/network.json')
 
         channel = client.new_channel(self.channel_name)
 
@@ -95,14 +89,14 @@ class E2eTest(unittest.TestCase):
         done = True
         for org in orgs:
             client.state_store = FileKeyValueStore(
-                self.kv_store_path + org)
+                self.client.kv_store_path + org)
             request = build_join_channel_req(org, channel, client)
             done = done and channel.join_channel(request)
             if done:
                 logger.info("peers in org: %s join channel: %s.",
                             org, self.channel_name)
         if done:
-            logger.info("joining channel tested succefully.")
+            logger.info("joining channel tested successfully.")
         client.state_store = None
         assert(done)
 

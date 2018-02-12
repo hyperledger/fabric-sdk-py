@@ -18,12 +18,11 @@ from hfc.fabric.orderer import Orderer
 
 class ChannelTest(unittest.TestCase):
 
-    @unittest.expectedFailure
+    # @unittest.expectedFailure
     def test_create_channel(self):
         # TODO impl
-        channel = Channel()
+        channel = Channel('test-channel', None)
         channel.add_orderer(Orderer())
-        self.fail()
 
 
 if __name__ == '__main__':

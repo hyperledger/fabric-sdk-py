@@ -7,7 +7,6 @@ import unittest
 from hfc.fabric.client import Client
 from hfc.fabric.user import create_user
 from test.integration.config import E2E_CONFIG
-from hfc.util.keyvaluestore import FileKeyValueStore
 
 
 class BaseTestCase(unittest.TestCase):
@@ -26,15 +25,18 @@ class BaseTestCase(unittest.TestCase):
         self.compose_file_path = \
             E2E_CONFIG['test-network']['docker']['compose_file_tls']
 
-        self.base_path = "/tmp/fabric-sdk-py"
-        self.kv_store_path = os.path.join(self.base_path, "key-value-store")
-        self.client = Client(state_store=FileKeyValueStore(self.kv_store_path))
-
+        self.client = Client('test/fixtures/network.json')
         self.channel_name = "businesschannel"  # default application channel
+        self.user = self.client.get_user('org1.example.com', 'Admin')
+        self.assertIsNotNone(self.user, 'org1 admin should not be None')
         self.start_test_env()
 
     def tearDown(self):
         self.shutdown_test_env()
+
+    def check_logs(self):
+        cli_call(["docker-compose", "-f", self.compose_file_path, "logs",
+                  "--tail=200"])
 
     def start_test_env(self):
         cli_call(["docker-compose", "-f", self.compose_file_path, "up", "-d"])

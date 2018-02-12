@@ -14,15 +14,10 @@
 # limitations under the License.
 #
 
-import unittest
 import sys
+import time
+import unittest
 
-from hfc.util.utils import extract_channel_config
-from hfc.fabric.orderer import Orderer
-from hfc.fabric.transaction.tx_context import TXContext
-from hfc.util.crypto.crypto import Ecies
-from test.integration.config import E2E_CONFIG
-from test.integration.utils import get_peer_org_user
 from test.integration.utils import BaseTestCase
 
 if sys.version_info < (3, 0):
@@ -37,103 +32,18 @@ class ChannelCreateTest(BaseTestCase):
 
     def setUp(self):
         super(ChannelCreateTest, self).setUp()
-        self.orderer_tls_certs = \
-            E2E_CONFIG['test-network']['orderer']['tls_cacerts']
-        self.orderer_tls_hostname = \
-            E2E_CONFIG['test-network']['orderer']['server_hostname']
 
-    def test_create_channel_missing_signatures(self):
-        signatures = []
-
-        orderer = Orderer(tls_cacerts=self.orderer_tls_certs,
-                          opts=(('grpc.ssl_target_name_override',
-                                 'orderer.example.com'),))
-
-        with open(self.channel_tx, 'rb') as f:
-            envelope = f.read()
-
-        # convert envelope to config
-        config = extract_channel_config(envelope)
-
-        channel_name = 'businesschannel'
-
-        # signatures org1 admin
-        org1_admin = get_peer_org_user('org1.example.com', 'Admin',
-                                       self.client.state_store)
-        self.client.tx_context = TXContext(org1_admin, Ecies(), {})
-        tx_id = self.client.tx_context.tx_id
-        nonce = self.client.tx_context.nonce
-
-        request = {
-            'tx_id': tx_id,
-            'nonce': nonce,
-            'signatures': signatures,
-            'config': config,
-            'orderer': orderer,
-            'channel_name': channel_name
-        }
-
-        queue = Queue(1)
-
-        response = self.client.create_channel(request)
-
-        response.subscribe(
-            on_next=lambda x: queue.put(x),
-            on_error=lambda x: queue.put(x)
-        )
-
-        status, _ = queue.get(timeout=5)
-        self.assertEqual(status.status, 400)
-
-    def sign_config(self):
-        pass
-
-    def test_create_channel(self):
-        signatures = []
-
-        orderer = Orderer(tls_cacerts=self.orderer_tls_certs,
-                          opts=(('grpc.ssl_target_name_override',
-                                 'orderer.example.com'),))
-
-        with open(self.channel_tx, 'rb') as f:
-            envelope = f.read()
-
-        # convert envelope to config
-        config = extract_channel_config(envelope)
-
-        # signatures org1 admin
-        org1_admin = get_peer_org_user('org1.example.com', 'Admin',
-                                       self.client.state_store)
-        self.client.tx_context = TXContext(org1_admin, Ecies(), {})
-        org1_admin_signature = self.client.sign_channel_config(config)
-        # append org1_admin_signature to signatures
-        signatures.append(org1_admin_signature)
-
-        tx_id = self.client.tx_context.tx_id
-        nonce = self.client.tx_context.nonce
-
-        request = {
-            'tx_id': tx_id,
-            'nonce': nonce,
-            'signatures': signatures,
-            'config': config,
-            'orderer': orderer,
-            'channel_name': self.channel_name
-        }
-        response = self.client.create_channel(request)
-
+    def test_channel_create(self):
+        time.sleep(5)  # wait the network starts
         q = Queue(1)
+        response = self.client.create_channel('orderer.example.com',
+                                              self.channel_name, self.user,
+                                              self.channel_tx)
         response.subscribe(on_next=lambda x: q.put(x),
                            on_error=lambda x: q.put(x))
 
         status, _ = q.get(timeout=5)
         self.assertEqual(status.status, 200)
-
-    @unittest.skip
-    def test_create_channel_with_envelope(self):
-        # TODO missing impl
-        # signed envelope necessary
-        pass
 
 
 if __name__ == '__main__':

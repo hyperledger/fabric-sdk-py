@@ -29,7 +29,7 @@ class OrdererTest(unittest.TestCase):
         self.assertEqual(orderer.endpoint, self.deault_orderer_endpoint)
 
     def test_create_orderer_custom_orderer(self):
-        orderer = Orderer(self.custom_orderer_endpoint)
+        orderer = Orderer(endpoint=self.custom_orderer_endpoint)
         self.assertEqual(orderer.endpoint, self.custom_orderer_endpoint)
 
 

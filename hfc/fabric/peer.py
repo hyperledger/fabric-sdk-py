@@ -21,17 +21,21 @@ class Peer(object):
     It has a specific gRPC channel address.
     """
 
-    def __init__(self, endpoint=DEFAULT_PEER_ENDPOINT, tls_cacerts=None,
-                 opts=None):
+    def __init__(self, name='peer', endpoint=DEFAULT_PEER_ENDPOINT,
+                 tls_cacerts=None, opts=None):
         """
 
         :param endpoint: Endpoint of the peer's gRPC service
         :param tls_cacerts: file path of tls root ca's certificate
         :param opts: optional params
         """
+        self._name = name
         self._lock = threading.RLock()
         self._channels = []
         self._endpoint = endpoint
+        self._eh_url = None
+        self._grpc_options = dict()
+        self._tls_ca_certs_path = None
         self._channel = create_grpc_channel(self._endpoint, tls_cacerts, opts)
         self._endorser_client = peer_pb2_grpc.EndorserStub(self._channel)
 
@@ -49,6 +53,21 @@ class Peer(object):
         return rx.Observable.start(
             lambda: self._endorser_client.ProcessProposal(proposal),
             scheduler).map(lambda response: (response, self))
+
+    def init_with_bundle(self, info):
+        """
+        Init the peer with given info dict
+        :param info: Dict including all info, e.g., endpoint, grpc option
+        :return: True or False
+        """
+        try:
+            self._endpoint = info['url']
+            self._eh_url = info['eventUrl']
+            self._grpc_options = info['grpcOptions']
+            self._tls_ca_certs_path = info['tlsCACerts']['path']
+        except KeyError:
+            return False
+        return True
 
     @property
     def endpoint(self):
@@ -86,4 +105,4 @@ def create_peer(endpoint=DEFAULT_PEER_ENDPOINT, tls_cacerts=None, opts=None):
     Returns: a peer instance
 
     """
-    return Peer(endpoint, tls_cacerts, opts)
+    return Peer(endpoint=endpoint, tls_cacerts=tls_cacerts, opts=opts)

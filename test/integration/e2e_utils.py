@@ -36,7 +36,7 @@ def build_channel_request(client, channel_tx, channel_name):
 
     orderer = Orderer(
         endpoint=orderer_config['grpc_endpoint'],
-        tls_cacerts=orderer_config['tls_cacerts'],
+        tls_ca_cert_file=orderer_config['tls_cacerts'],
         opts=(('grpc.ssl_target_name_override',
                'orderer.example.com'),),
     )
@@ -108,7 +108,7 @@ def build_join_channel_req(org, channel, client):
     orderer_config = test_network['orderer']
     endpoint = orderer_config['grpc_endpoint']
     ca_root_path = orderer_config['tls_cacerts']
-    orderer = Orderer(endpoint=endpoint, tls_cacerts=ca_root_path,
+    orderer = Orderer(endpoint=endpoint, tls_ca_cert_file=ca_root_path,
                       opts=(('grpc.ssl_target_name_override',
                              'orderer.example.com'),))
     channel.add_orderer(orderer)

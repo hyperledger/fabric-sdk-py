@@ -73,7 +73,7 @@ class ChaincodeInstantiateTest(BaseTestCase):
                                         self.channel_tx,
                                         self.channel_name)
 
-        res = self.client.create_channel(request)
+        res = self.client._create_channel(request)
         q = Queue(1)
         res.subscribe(on_next=lambda x: q.put(x),
                       on_error=lambda x: q.put(x))

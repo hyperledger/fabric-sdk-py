@@ -19,7 +19,7 @@ from hfc.fabric.client import Client
 class ClientTest(unittest.TestCase):
 
     def setUp(self):
-        self.client = Client()
+        self.client = Client('test/fixtures/network.json')
 
     def test_create_client(self):
 
@@ -54,7 +54,7 @@ class ClientTest(unittest.TestCase):
         request['tx_id'] = 'tx_id'
         request['nonce'] = 'nonce'
         with self.assertRaises(ValueError):
-            self.client.create_channel(request)
+            self.client._create_channel(request)
 
     def test_create_channel_not_list_of_signatures(self):
         request = {}
@@ -65,7 +65,7 @@ class ClientTest(unittest.TestCase):
         request['tx_id'] = 'tx_id'
         request['nonce'] = 'nonce'
         with self.assertRaises(ValueError):
-            self.client.create_channel(request)
+            self.client._create_channel(request)
 
     def test_create_channel_missing_tx_id(self):
         request = {}
@@ -75,7 +75,7 @@ class ClientTest(unittest.TestCase):
         request['nonce'] = 'nonce'
 
         with self.assertRaises(ValueError):
-            self.client.create_channel(request)
+            self.client._create_channel(request)
 
     def test_create_channel_missing_orderer(self):
         request = {}
@@ -85,17 +85,18 @@ class ClientTest(unittest.TestCase):
         request['nonce'] = 'nonce'
 
         with self.assertRaises(ValueError):
-            self.client.create_channel(request)
+            self.client._create_channel(request)
 
     def test_create_channel_missing_channel_name(self):
-        request = {}
-        request['config'] = 'config'
-        request['orderer'] = 'orderer'
-        request['tx_id'] = 'tx_id'
-        request['nonce'] = 'nonce'
+        request = {
+            'config': 'config',
+            'orderer': 'orderer',
+            'tx_id': 'tx_id',
+            'nonce': 'nonce',
+        }
 
         with self.assertRaises(ValueError):
-            self.client.create_channel(request)
+            self.client._create_channel(request)
 
     def test_export_network_profile(self):
         network_info = {
@@ -115,21 +116,22 @@ class ClientTest(unittest.TestCase):
                 "ca-org1": {
                 }
             },
+            'a': {
+                'b': 'a.b'
+            }
         }
         self.client.network_info = network_info
-        self.client.export_network_profile('test-export.json')
+        self.client.export_net_profile('test-export.json')
         self.client.network_info = dict()
-        self.client.import_network_profile('test-export.json')
+        self.client.init_with_net_profile('test-export.json')
         self.assertEqual(network_info, self.client.network_info)
-        self.assertEqual({"OrdererOrg": {}}, self.client.get_organizations())
-        self.assertEqual({"orderer1": {}}, self.client.get_orderers())
-        self.assertEqual({"peer0": {}}, self.client.get_peers())
-        self.assertEqual({"ca-org1": {}}, self.client.get_CAs())
+        self.assertEqual('a.b', self.client.get_net_info('a', 'b'))
 
-    def test_import_network_profile(self):
-        self.client.import_network_profile('test/fixtures/network.json')
-        self.assertEqual(self.client.network_info['organizations']
-                         ['OrdererOrg']['mspid'], 'OrdererOrg',
+    def test_init_with_net_profile(self):
+        self.client.init_with_net_profile('test/fixtures/network.json')
+        self.assertEqual(self.client.get_net_info('organizations',
+                                                  'orderer.example.com',
+                                                  'mspid'), 'OrdererOrg',
                          "profile not match")
 
 

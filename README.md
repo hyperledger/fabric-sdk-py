@@ -42,8 +42,9 @@ More details to build the crypto lib, can be found at
 
 ```sh
 $ pip install virtualenv # install the virtualenv tool if not installed
-$ make venv  # enter a virtual env
-$ ....
+$ make venv  # create a virtual env
+$ source venv/bin/activate
+$ # Do the testing here
 $ deactivate  # deactive the virtual env
 $ make clean # clean the temporary files
 ```

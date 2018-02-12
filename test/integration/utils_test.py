@@ -19,7 +19,6 @@ from hfc.fabric.client import Client
 from hfc.fabric.transaction.tx_context import TXContext
 from hfc.util.crypto.crypto import Ecies
 from hfc.util import utils
-from hfc.util.keyvaluestore import FileKeyValueStore
 from test.integration.utils import get_orderer_org_user
 from test.integration.config import E2E_CONFIG
 from hfc.protos.msp import identities_pb2
@@ -40,7 +39,7 @@ class UtilsTest(unittest.TestCase):
         self.kv_store_path = os.path.join(self.base_path, "key-value-store")
 
     def test_create_serialized_identity(self):
-        client = Client(state_store=FileKeyValueStore(self.kv_store_path))
+        client = Client('test/fixtures/network.json')
 
         orderer_org_admin = get_orderer_org_user(state_store=client.state_store
                                                  )
@@ -70,7 +69,7 @@ class UtilsTest(unittest.TestCase):
 
         channel_config = utils.extract_channel_config(channel_tx)
 
-        client = Client(state_store=FileKeyValueStore(self.kv_store_path))
+        client = Client('test/fixtures/network.json')
 
         orderer_org_admin = get_orderer_org_user(state_store=client.state_store
                                                  )
@@ -112,7 +111,7 @@ class UtilsTest(unittest.TestCase):
     def test_build_header(self):
         timestamp = utils.current_timestamp()
 
-        client = Client(state_store=FileKeyValueStore(self.kv_store_path))
+        client = Client('test/fixtures/network.json')
 
         orderer_org_admin = get_orderer_org_user(state_store=client.state_store
                                                  )

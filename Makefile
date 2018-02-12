@@ -64,7 +64,7 @@ venv: # enter a virtual env
 	if [ ! -d venv ]; then \
 		virtualenv venv; \
 	fi
-	. venv/bin/activate
+	@echo "Run 'source venv/bin/activate' to active the virtual env now."
 
 install: # install sdk to local python env
 	python3 setup.py install

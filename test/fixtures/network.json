@@ -13,16 +13,21 @@
     }
   },
   "organizations":{
-    "OrdererOrg": {
+    "orderer.example.com": {
       "mspid": "OrdererOrg",
       "orderers": [
         "orderer.example.com"
       ],
       "certificateAuthorities": [
         "ca-orderer"
-      ]
+      ],
+      "users": {
+        "Admin": {
+          "cert": "test/fixtures/e2e_cli/crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/signcerts/Admin@example.com-cert.pem",
+          "private_key": "test/fixtures/e2e_cli/crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/keystore/b92d5923828aa15d965e438de5a7edb92ec128889c2fe8026ee7b95490270048_sk"}
+      }
     },
-    "Org1":{
+    "org1.example.com":{
       "mspid":"Org1MSP",
       "peers":[
         "peer0.org1.example.com",
@@ -30,9 +35,19 @@
       ],
       "certificateAuthorities":[
         "ca-org1"
-      ]
+      ],
+      "users": {
+        "Admin": {
+          "cert": "test/fixtures/e2e_cli/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem",
+          "private_key": "test/fixtures/e2e_cli/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/570182787133a5137f0982ba0e018462d3ed20491402585741bb516922fc9416_sk"
+        },
+        "User1": {
+          "cert": "test/fixtures/e2e_cli/crypto-config/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/signcerts/User1@org1.example.com-cert.pem",
+          "private_key": "test/fixtures/e2e_cli/crypto-config/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/613ca29ff265101aaebd9b79aff9924d5cd7baa9077141d24cf7c8fed4425bd4_sk"
+        }
+      }
     },
-    "Org2":{
+    "org2.example.com":{
       "mspid":"Org2MSP",
       "peers":[
         "peer0.org2.example.com",
@@ -40,18 +55,28 @@
       ],
       "certificateAuthorities":[
         "ca-org2"
-      ]
+      ],
+      "users": {
+        "Admin": {
+          "cert": "test/fixtures/e2e_cli/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/signcerts/Admin@org2.example.com-cert.pem",
+          "private_key": "test/fixtures/e2e_cli/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore/a23db9fe4fdfc7d8f87a42919597b44e52b429fb09634b523b366146b9bf1e3b_sk"
+        },
+        "User1": {
+          "cert": "test/fixtures/e2e_cli/crypto-config/peerOrganizations/org2.example.com/users/User1@org2.example.com/msp/signcerts/User1@org2.example.com-cert.pem",
+          "private_key": "test/fixtures/e2e_cli/crypto-config/peerOrganizations/org2.example.com/users/User1@org2.example.com/msp/keystore/90da90b106c077543acc5b5f414ee857a3d5b1096d7be11f6f2ec25787e5110b_sk"
+        }
+      }
     }
   },
   "orderers":{
     "orderer.example.com":{
-      "url":"grpcs://localhost:7050",
+      "url":"localhost:7050",
       "grpcOptions":{
         "ssl-target-name-override":"orderer.example.com",
         "grpc-max-send-message-length":15
       },
       "tlsCACerts":{
-        "path":"test/fixtures/e2e_cli/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tlscacerts/example.com-cert.pem"
+        "path":"test/fixtures/e2e_cli/crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem"
       }
     }
   },

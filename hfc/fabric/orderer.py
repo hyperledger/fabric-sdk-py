@@ -30,21 +30,48 @@ class Orderer(object):
     It has a specific grpc channel address.
     """
 
-    def __init__(self, endpoint=DEFAULT_ORDERER_ENDPOINT,
-                 tls_cacerts=None, opts=None):
+    def __init__(self, name='orderer', endpoint=DEFAULT_ORDERER_ENDPOINT,
+                 tls_ca_cert_file=None, opts=None):
         """Creates an orderer object.
 
         Args:
             endpoint (str): The grpc endpoint of the orderer.
-            tls_cacerts (str): The tls certificate for the given
+            tls_ca_cert_file (str): The tls certificate for the given
                 orderer as bytes.
             opts (tuple): Additional grpc config options as
                 tuple e.g. ((key, val),).
 
         """
+        self._name = name
         self._endpoint = endpoint
-        self._channel = create_grpc_channel(self._endpoint, tls_cacerts, opts)
+        self._grpc_options = dict()
+        self._ssl_target_name = None
+        self._tls_ca_certs_path = tls_ca_cert_file
+        self._channel = create_grpc_channel(self._endpoint, tls_ca_cert_file,
+                                            opts)
         self._orderer_client = ab_pb2_grpc.AtomicBroadcastStub(self._channel)
+
+    def init_with_bundle(self, info):
+        """
+        Init the peer with given info dict
+        :param info: Dict including all info, e.g., endpoint, grpc option
+        :return: True or False
+        """
+        try:
+            self._endpoint = info['url']
+            self._grpc_options = info['grpcOptions']
+            self._tls_ca_certs_path = info['tlsCACerts']['path']
+            self._ssl_target_name = self._grpc_options[
+                'ssl-target-name-override']
+            self._channel = create_grpc_channel(
+                self._endpoint, self._tls_ca_certs_path,
+                opts=(('grpc.ssl_target_name_override',
+                       self._ssl_target_name),))
+            self._orderer_client = ab_pb2_grpc.AtomicBroadcastStub(
+                self._channel)
+        except KeyError:
+            return False
+        return True
 
     def broadcast(self, envelope, scheduler=None):
         """Send an broadcast envelope to orderer.

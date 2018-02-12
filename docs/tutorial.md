@@ -42,14 +42,14 @@ SDK can load all network information from the profile, and check the resources i
 
 ```python
 # TODO: update code
-import hfc
+from hfc.fabric.client import Client
 
-cli = hfc.Client(network_profile="./network1.json")
+cli = Client(net_profile="test/fixtures/network.json")
 
-cli.get_organizations()  # orgs in the network
-cli.get_peers()  # peers in the network
-cli.get_orderers()  # orderers in the network
-cli.get_CAs()  # ca nodes in the network
+cli.organizations()  # orgs in the network
+cli.peers()  # peers in the network
+cli.orderers()  # orderers in the network
+cli.CAs()  # ca nodes in the network
 ```
 
 ## Interaction with Fabric Network
@@ -59,7 +59,11 @@ After load the configuration, SDK can operate with the network.
 ### Create a New Channel
 ```python
 # TODO: update code
-cli.create_channel(user_id, channel_name)
+from hfc.fabric.client import Client
+
+cli = Client(net_profile="test/fixtures/network.json")
+org1_admin = cli.get_user('org1.example.com', 'Admin')
+response = cli.create_channel('orderer.example.com', 'businesschannel', org1_admin, 'test/fixtures/e2e_cli/channel-artifacts/channel.tx')
 ```
 
 ### Join Peers into Channel

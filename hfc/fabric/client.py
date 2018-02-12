@@ -17,9 +17,16 @@ import logging
 import json
 
 
+from hfc.fabric.transaction.tx_context import TXContext
 from hfc.fabric.channel.channel import Channel, create_app_channel
+from hfc.fabric.orderer import Orderer
+from hfc.fabric.peer import Peer
+from hfc.fabric.organization import create_org
 from hfc.protos.common import common_pb2, configtx_pb2
 from hfc.util import utils
+from hfc.util.crypto.crypto import Ecies
+from hfc.util.keyvaluestore import FileKeyValueStore
+from hfc.util.utils import extract_channel_config
 
 # inject global default config
 from hfc.fabric.config.default import DEFAULT
@@ -35,69 +42,167 @@ class Client(object):
         Client can maintain several channels.
     """
 
-    def __init__(self, state_store=None, network_profile=None):
+    def __init__(self, net_profile=None):
         """ Construct client"""
         self._channels = dict()
         self._crypto_suite = None
         self._tx_context = None
-        self._state_store = state_store
+        self.kv_store_path = None  # TODO: fix this as private later
+        self._state_store = None
         self._is_dev_mode = False
         self.network_info = dict()
-        if network_profile:
-            self.import_network_profile(network_profile)
 
-    def import_network_profile(self, profile_file='network.json'):
+        self._organizations = dict()
+        self._users = dict()
+        self._channels = dict()
+        self._peers = dict()
+        self._orderers = dict()
+        self._CAs = dict()
+
+        if net_profile:
+            logging.debug("Init client with profile={}".format(net_profile))
+            self.init_with_net_profile(net_profile)
+
+    def init_with_net_profile(self, profile_path='network.json'):
         """
         Load the connection profile from external file to network_info.
 
-        :param profile_file: The connection profile file path
+        :param profile_path: The connection profile file path
         :return:
         """
-        with open(profile_file, 'r') as profile:
+        with open(profile_path, 'r') as profile:
             d = json.load(profile)
             self.network_info = d
+
+        # read kv store path
+        self.kv_store_path = self.get_net_info('client', 'credentialStore',
+                                               'path')
+        if self.kv_store_path:
+            self._state_store = FileKeyValueStore(self.kv_store_path)
+        else:
+            logging.warning('No kv store path exists in profile {}'.format(
+                profile_path))
+
+        # Init organizations
+        orgs = self.get_net_info('organizations')
+        for name in orgs:
+            org = create_org(name, orgs[name], self.state_store)
+            self._organizations[name] = org
+
+        # Init CAs
+        # TODO
+
+        # Init orderer nodes
+        orderers = self.get_net_info('orderers')
+        for name in orderers:
+            orderer = Orderer(name=name)
+            orderer.init_with_bundle(orderers[name])
+            self.orderers[name] = orderer
+
+        # Init peer nodes
+        peers = self.get_net_info('peers')
+        for name in peers:
+            peer = Peer(name=name)
+            peer.init_with_bundle(peers[name])
+            self._peers[name] = peer
+
+    def get_user(self, org_name, name):
+        """
+        Get a user instance.
+        :param org_name: Name of org belongs to
+        :param name: Name of the user
+        :return: user instance or None
+        """
+        if org_name in self.organizations:
+            org = self.organizations[org_name]
+            return org.get_user(name)
+
         return None
 
-    def export_network_profile(self, export_file='network_exported.json'):
+    def get_orderer(self, name):
+        """
+        Get an orderer instance with the name.
+        :param name:  Name of the orderer node.
+        :return: The orderer instance or None.
+        """
+        if name in self.orderers:
+            return self.orderers[name]
+        else:
+            return None
+
+    def get_peer(self, name):
+        """
+        Get a peer instance with the name.
+        :param name:  Name of the peer node.
+        :return: The peer instance or None.
+        """
+        if name in self._peers:
+            return self._peers['name']
+        else:
+            return None
+
+    def export_net_profile(self, export_file='network_exported.json'):
         """
         Export the current network profile into external file
         :param export_file: External file to save the result into
         :return:
         """
         with open(export_file, 'w') as f:
-            json.dump(self.network_info, f)
+            json.dump(self.network_info, f, indent='\t')
 
-    def get_organizations(self):
+    def get_net_info(self, *key_path):
+        """
+        Get the info from self.network_info
+        :param key_path: path of the key, e.g., a.b.c means info['a']['b']['c']
+        :return: The value, or None
+        """
+        result = self.network_info
+        if result:
+            for k in key_path:
+                try:
+                    result = result[k]
+                except KeyError:
+                    logging.warning('No key path {} exists in net info'.format(
+                        key_path))
+                    return None
+
+        return result
+
+    @property
+    def organizations(self):
         """
         Get the organizations in the network.
 
-        :return: organization info as dict
+        :return: organizations as dict
         """
-        return self.network_info.get('organizations', dict())
+        return self._organizations
 
-    def get_orderers(self):
+    @property
+    def orderers(self):
         """
         Get the orderers in the network.
 
-        :return: orderers info as dict
+        :return: orderers as dict
         """
-        return self.network_info.get('orderers', dict())
+        return self._orderers
 
-    def get_peers(self):
+    @property
+    def peers(self):
         """
-        Get the peers in the network.
+        Get the peers instance in the network.
 
-        :return: peers info as dict
+        :return: peers as dict
         """
-        return self.network_info.get('peers', dict())
+        return self._peers
 
-    def get_CAs(self):
+    @property
+    def CAs(self):
         """
         Get the CAs in the network.
 
-        :return: CA info as dict
+        :return: CAs as dict
         """
-        return self.network_info.get('certificateAuthorities', dict())
+        return self._CAs
 
     def new_channel(self, name):
         """Init a channel instance with given name.
@@ -126,7 +231,45 @@ class Client(object):
         """
         return self._channels.get(name, None)
 
-    def create_channel(self, request):
+    def create_channel(self, orderer_name, channel, creator, tx):
+        """
+        Create a channel
+        :param orderer_name: Name of orderer to send request to
+        :param channel: Name of channel to create
+        :param creator: Name of creator
+        :param tx: Path to the new channel tx file
+        :return:
+        """
+        orderer = self.get_orderer(orderer_name)
+        if not orderer:
+            logging.error("No orderer_name instance found with name {}".format(
+                orderer_name))
+            return None
+
+        with open(tx, 'rb') as f:
+            envelope = f.read()
+            config = extract_channel_config(envelope)
+
+        # convert envelope to config
+        self.tx_context = TXContext(creator, Ecies(), {})
+        tx_id = self.tx_context.tx_id
+        nonce = self.tx_context.nonce
+        signatures = []
+        org1_admin_signature = self.sign_channel_config(config)
+        # append org1_admin_signature to signatures
+        signatures.append(org1_admin_signature)
+
+        request = {
+            'tx_id': tx_id,
+            'nonce': nonce,
+            'signatures': signatures,
+            'config': config,
+            'orderer': orderer,
+            'channel_name': channel
+        }
+        return self._create_channel(request)
+
+    def _create_channel(self, request):
         """Calls the orderer to start building the new channel.
 
         Args:
@@ -138,8 +281,9 @@ class Client(object):
 
         """
         have_envelope = False
+        logging.debug(request)
         if request and 'envelope' in request:
-            _logger.debug('create_channel - have envelope')
+            _logger.debug('_create_channel - have envelope')
             have_envelope = True
 
         return self._create_or_update_channel_request(request, have_envelope)
@@ -157,7 +301,7 @@ class Client(object):
         """
         have_envelope = False
         if request and 'envelope' in request:
-            _logger.debug('create_channel - have envelope')
+            _logger.debug('_create_channel - have envelope')
             have_envelope = True
 
         return self._create_or_update_channel_request(request, have_envelope)
