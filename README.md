@@ -48,7 +48,7 @@ $ deactivate  # deactive the virtual env
 $ make clean # clean the temporary files
 ```
 
-### Run Intergration Testing
+### Run Integration Testing
 The following command will run the testing.
 ```sh
 $ make check # Check environment and run tests
