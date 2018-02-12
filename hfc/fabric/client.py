@@ -14,6 +14,8 @@
 #
 
 import logging
+import json
+
 
 from hfc.fabric.channel.channel import Channel, create_app_channel
 from hfc.protos.common import common_pb2, configtx_pb2
@@ -33,13 +35,69 @@ class Client(object):
         Client can maintain several channels.
     """
 
-    def __init__(self, state_store=None):
+    def __init__(self, state_store=None, network_profile=None):
         """ Construct client"""
-        self._channels = {}
+        self._channels = dict()
         self._crypto_suite = None
         self._tx_context = None
         self._state_store = state_store
         self._is_dev_mode = False
+        self.network_info = dict()
+        if network_profile:
+            self.import_network_profile(network_profile)
+
+    def import_network_profile(self, profile_file='network.json'):
+        """
+        Load the connection profile from external file to network_info.
+
+        :param profile_file: The connection profile file path
+        :return:
+        """
+        with open(profile_file, 'r') as profile:
+            d = json.load(profile)
+            self.network_info = d
+        return None
+
+    def export_network_profile(self, export_file='network_exported.json'):
+        """
+        Export the current network profile into external file
+        :param export_file: External file to save the result into
+        :return:
+        """
+        with open(export_file, 'w') as f:
+            json.dump(self.network_info, f)
+
+    def get_organizations(self):
+        """
+        Get the organizations in the network.
+
+        :return: organization info as dict
+        """
+        return self.network_info.get('organizations', dict())
+
+    def get_orderers(self):
+        """
+        Get the orderers in the network.
+
+        :return: orderers info as dict
+        """
+        return self.network_info.get('orderers', dict())
+
+    def get_peers(self):
+        """
+        Get the peers in the network.
+
+        :return: peers info as dict
+        """
+        return self.network_info.get('peers', dict())
+
+    def get_CAs(self):
+        """
+        Get the CAs in the network.
+
+        :return: CA info as dict
+        """
+        return self.network_info.get('certificateAuthorities', dict())
 
     def new_channel(self, name):
         """Init a channel instance with given name.
