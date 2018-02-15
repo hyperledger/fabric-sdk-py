@@ -25,7 +25,17 @@ $ python
 
 SDK needs a targeted fabric network to operate with, if there is not a running one, need to start a network manually.
 
-TODO: Need more details/script to quickly start a fabric network.
+To start a fabric network you can simple up the `docker-compose-2orgs-4peers-tls` under fixtures.
+
+```bash
+docker-compose -f test/fixtures/docker-compose-2orgs-4peers-tls.yaml up
+```
+
+Then you'll have 2 orgs (org1.example.com; org2.example.com) with 2 peers in each one and one orderer (orderer.example.com)
+
+If you want to understand the fabric-network and how to change the network configuration, we'd recommend you to follow the byfn tutorial, from [this point](http://hyperledger-fabric.readthedocs.io/en/release/build_network.html#crypto-generator)
+[to here](http://hyperledger-fabric.readthedocs.io/en/release/build_network.html#start-the-network), you don't need the cli
+service on the yaml file either.
 
 ### Create Connection Profile
 
