@@ -56,10 +56,10 @@ from hfc.fabric.client import Client
 
 cli = Client(net_profile="test/fixtures/network.json")
 
-cli.organizations()  # orgs in the network
-cli.peers()  # peers in the network
-cli.orderers()  # orderers in the network
-cli.CAs()  # ca nodes in the network
+cli.organizations  # orgs in the network
+cli.peers  # peers in the network
+cli.orderers  # orderers in the network
+cli.CAs  # ca nodes in the network
 ```
 
 ## Interaction with Fabric Network
