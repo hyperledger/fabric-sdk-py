@@ -30,6 +30,7 @@ class BlockDecoderTest(unittest.TestCase):
     """Test for BlockDecoder in Fabric"""
     def setUp(self):
         self._data = data
+        self.decoder_instance = BlockDecoder.decode(self._data)
 
     def test_decode_block_header(self):
         """
@@ -39,11 +40,49 @@ class BlockDecoderTest(unittest.TestCase):
             b'f2dabae6cbc541c519234b3a8a7cf17b885ac83d5a18807abdd2ce431573f53c'
         previous_hash = b''
         number = 0
-        decoder_instance = BlockDecoder.decode(self._data)
-        header_info = decoder_instance['header']
+        header_info = self.decoder_instance['header']
         self.assertEqual(header_info['data_hash'], data_hash)
         self.assertEqual(header_info['previous_hash'], previous_hash)
         self.assertEqual(header_info['number'], number)
+
+    def test_decode_block_data(self):
+        """
+        Checks if the block data has been decoded correctly.
+        This test case also verifies the results from other
+        decode header and data calls while decoding the block.
+        """
+        sh_nonce = b'cfa064bebe2a846b8f89a4fc82da2f652b9edb69eac65426'
+        channel_id = 'testchainid'
+        timestamp = '2017-06-23 09:45:18'
+        tx_id = \
+            '70add6a845ab8a90d97d402a6c0de665e717ed1bb74d37c6bf32232d8339194f'
+        epoch = 0
+        version = 1
+        type_value = 1
+        extension = b''
+
+        data_info = self.decoder_instance['data']
+        data_item = data_info['data'][0]
+        data_payload_header = data_item['payload']['header']
+        sh = data_payload_header['signature_header']
+        ch = data_payload_header['channel_header']
+
+        self.assertEqual(len(data_info), 1)
+        self.assertEqual(len(data_info['data']), 1)
+        self.assertEqual(len(data_item.keys()), 2)
+        self.assertEqual(len(data_payload_header.keys()), 2)
+        self.assertEqual(len(sh['creator'].keys()), 2)
+        self.assertEqual(len(sh.keys()), 2)
+        self.assertEqual(len(ch.keys()), 7)
+
+        self.assertEqual(sh['nonce'], sh_nonce)
+        self.assertEqual(ch['extension'], extension)
+        self.assertEqual(ch['channel_id'], channel_id)
+        self.assertEqual(ch['timestamp'], timestamp)
+        self.assertEqual(ch['tx_id'], tx_id)
+        self.assertEqual(ch['epoch'], epoch)
+        self.assertEqual(ch['version'], version)
+        self.assertEqual(ch['type'], type_value)
 
 
 if __name__ == '__main__':
