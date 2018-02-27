@@ -23,6 +23,9 @@ from hfc.protos.common import common_pb2
 # Import required MSP Protos
 from hfc.protos.msp import identities_pb2
 
+# Import required Peer Protos
+from hfc.protos.peer import transaction_pb2
+
 _logger = logging.getLogger(__name__ + ".block_decoder")
 
 
@@ -53,6 +56,32 @@ class BlockDecoder(object):
         except Exception as e:
             raise ValueError("BlockDecoder :: decode failed", e)
         return block
+
+    @staticmethod
+    def decode_transaction(processed_tx_bytes):
+        """
+        Decodes a transaction proto and constructs a deserialized object
+
+        Args:
+            processed_tx_bytes {str} -- Binary content of tx
+
+        Returns: Dictionary containing tx block information
+
+        Raises:
+            ValueError -- If data is not passed to the method
+        """
+        if not processed_tx_bytes:
+            raise ValueError("BlockDecoder :: decode_transaction \
+                doesnot have processed transaction bytes")
+        processed_tx = {}
+        pr_processed_tx = transaction_pb2.ProcessedTransaction()
+        pr_processed_tx.ParseFromString(processed_tx_bytes)
+        if pr_processed_tx:
+            processed_tx['validation_code'] = \
+                pr_processed_tx.validationCode
+            processed_tx['transaction_envelope'] = \
+                decode_block_data_envelope(pr_processed_tx.transactionEnvelope)
+        return processed_tx
 
 
 def decode_block_header(proto_block_header):

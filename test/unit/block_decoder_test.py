@@ -25,12 +25,20 @@ with open(os.path.join(os.path.dirname(__file__),
           'rb') as f:
     data = f.read()
 
+with open(os.path.join(os.path.dirname(__file__),
+          "../fixtures/e2e_cli/channel-artifacts/channel.tx"),
+          'rb') as f:
+    tx_data = f.read()
+
 
 class BlockDecoderTest(unittest.TestCase):
     """Test for BlockDecoder in Fabric"""
     def setUp(self):
         self._data = data
         self.decoder_instance = BlockDecoder.decode(self._data)
+        self._tx_data = tx_data
+        self.decode_transaction = \
+            BlockDecoder.decode_transaction(self._tx_data)
 
     def test_decode_block_header(self):
         """
@@ -83,6 +91,31 @@ class BlockDecoderTest(unittest.TestCase):
         self.assertEqual(ch['epoch'], epoch)
         self.assertEqual(ch['version'], version)
         self.assertEqual(ch['type'], type_value)
+
+    def test_decode_transaction(self):
+        """
+        Checks if a transaction has been decoded correctly.
+        """
+        transaction_envelope = self.decode_transaction['transaction_envelope']
+        validation_code = self.decode_transaction['validation_code']
+        tx_payload = transaction_envelope['payload']
+        tx_payload_header = tx_payload['header']
+        tx_channel_header = tx_payload_header['channel_header']
+        tx_signature_header = tx_payload_header['signature_header']
+        self.assertEqual(type(dict()), type(transaction_envelope))
+        self.assertEqual(validation_code, 0)
+        self.assertIn('header', tx_payload)
+        self.assertIn('channel_header', tx_payload_header)
+        self.assertIn('signature_header', tx_payload_header)
+        self.assertIn('channel_id', tx_channel_header)
+        self.assertIn('epoch', tx_channel_header)
+        self.assertIn('extension', tx_channel_header)
+        self.assertIn('timestamp', tx_channel_header)
+        self.assertIn('tx_id', tx_channel_header)
+        self.assertIn('type', tx_channel_header)
+        self.assertIn('version', tx_channel_header)
+        self.assertIn('creator', tx_signature_header)
+        self.assertIn('nonce', tx_signature_header)
 
 
 if __name__ == '__main__':
