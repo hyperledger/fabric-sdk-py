@@ -30,15 +30,22 @@ with open(os.path.join(os.path.dirname(__file__),
           'rb') as f:
     tx_data = f.read()
 
+with open(os.path.join(os.path.dirname(__file__),
+          "../fixtures/e2e_cli/channel-artifacts/businesschannel_4.block"),
+          'rb') as f:
+    metadata_block = f.read()
+
 
 class BlockDecoderTest(unittest.TestCase):
     """Test for BlockDecoder in Fabric"""
     def setUp(self):
         self._data = data
+        self._metadata_block = metadata_block
         self.decoder_instance = BlockDecoder.decode(self._data)
         self._tx_data = tx_data
         self.decode_transaction = \
             BlockDecoder.decode_transaction(self._tx_data)
+        self.decoded_metadata = BlockDecoder.decode(self._metadata_block)
 
     def test_decode_block_header(self):
         """
@@ -116,6 +123,26 @@ class BlockDecoderTest(unittest.TestCase):
         self.assertIn('version', tx_channel_header)
         self.assertIn('creator', tx_signature_header)
         self.assertIn('nonce', tx_signature_header)
+
+    def test_decode_block_metadata(self):
+        """
+        Checks if the metadata for the block has been decoded properly.
+        """
+        index = 2
+
+        decoded_metadata = self.decoded_metadata
+        block_metadata = decoded_metadata['metadata']
+        metadata = block_metadata['metadata']
+        sample_signature = metadata[1]
+        self.assertIn('metadata', decoded_metadata)
+        self.assertIn('metadata', block_metadata)
+        self.assertIn('value', metadata[0])
+        self.assertIn('signatures', metadata[0])
+        self.assertIn('signature_header', sample_signature['signatures'][0])
+        self.assertIn('signature', sample_signature['signatures'][0])
+        self.assertEqual(sample_signature['value']['index'], index)
+        self.assertEqual(len(metadata), 3)
+        self.assertEqual(len(sample_signature['signatures']), 1)
 
 
 if __name__ == '__main__':

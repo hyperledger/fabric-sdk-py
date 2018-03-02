@@ -51,7 +51,7 @@ class BlockDecoder(object):
             proto_block.ParseFromString(block_bytes)
             block['header'] = decode_block_header(proto_block.header)
             block['data'] = decode_block_data(proto_block.data, True)
-            # block['metadata'] = decode_block_metadata(proto_block.metadata)
+            block['metadata'] = decode_block_metadata(proto_block.metadata)
             # Add decode for data and metadata
         except Exception as e:
             raise ValueError("BlockDecoder :: decode failed", e)
@@ -121,6 +121,35 @@ def decode_block_data(proto_block_data, not_proto=False):
             envelope = decode_block_data_envelope(proto_envelope)
             data['data'].append(envelope)
     return data
+
+
+def decode_block_metadata(proto_block_metadata):
+    """Decodes block metadata from block
+
+    Args:
+        proto_block_metadata (bytes): Block metadata proto content
+
+    Returns: deserialized metadata contents
+    """
+    metadata = {}
+    metadata['metadata'] = []
+    if proto_block_metadata and proto_block_metadata.metadata:
+        signatures = {}
+        signatures = \
+            decode_metadata_signatures(proto_block_metadata.metadata[0])
+        metadata['metadata'].append(signatures)
+
+        last_config = {}
+        last_config = decode_last_config_sequence_number(
+           proto_block_metadata.metadata[1])
+        metadata['metadata'].append(last_config)
+
+        transaction_filter = {}
+        transaction_filter = \
+            decode_transaction_filter(proto_block_metadata.metadata[2])
+        metadata['metadata'].append(transaction_filter)
+
+    return metadata
 
 
 def decode_block_data_envelope(proto_envelope):
@@ -240,3 +269,77 @@ def decode_identity(id_bytes):
     except Exception as e:
         raise ValueError("BlockDecoder :: decode_identiy failed", e)
     return identity
+
+
+def decode_metadata_signatures(metadata_bytes):
+    """Decodes metadata signature from bytes
+
+    Args:
+        metadata_bytes (str): Metadata object proto
+
+    Returns: deserialized Metadata blocks
+    """
+    metadata = {}
+    proto_metadata = common_pb2.Metadata()
+    proto_metadata.ParseFromString(metadata_bytes)
+    metadata['value'] = proto_metadata.value
+    metadata['signatures'] = \
+        decode_metadata_value_signatures(proto_metadata.signatures)
+    return metadata
+
+
+def decode_metadata_value_signatures(proto_meta_signatures):
+    """Decodes all signatures in metadata values
+
+    Args:
+        proto_meta_signatures (list(str)): List of value objects
+
+    Returns: deserialized list of signatures from metadata values
+    """
+    signatures = []
+    if proto_meta_signatures:
+        for signature in proto_meta_signatures:
+            metadata_signature = {}
+            metadata_signature['signature_header'] = \
+                decode_signature_header(signature.signature_header)
+            metadata_signature['signature'] = signature.signature
+            signatures.append(metadata_signature)
+    return signatures
+
+
+def decode_last_config_sequence_number(metadata_bytes):
+    """Decodes last configuration and index for sequence number
+
+    Args:
+        metadata_bytes (str): encoded content for sequence number
+
+    Returns: deserialized dictionary of config sequence number
+    """
+    last_config = {}
+    last_config['value'] = {}
+    if metadata_bytes:
+        proto_metadata = common_pb2.Metadata()
+        proto_metadata.ParseFromString(metadata_bytes)
+        proto_last_config = common_pb2.LastConfig()
+        proto_last_config.ParseFromString(proto_metadata.value)
+        last_config['value']['index'] = proto_last_config.index
+        last_config['signatures'] = \
+            decode_metadata_value_signatures(proto_metadata.signatures)
+    return last_config
+
+
+def decode_transaction_filter(metadata_bytes):
+    """Decodes transaction filter from metadata bytes
+
+    Args:
+        metadata_bytes (str): Encoded list of transaction filters
+
+    Returns: decoded transaction_filter list
+    """
+    transaction_filter = []
+    if not metadata_bytes:
+        return None
+
+    for i in metadata_bytes:
+        transaction_filter.append(int(i))
+    return transaction_filter
