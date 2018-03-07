@@ -17,6 +17,12 @@ import os
 import unittest
 
 from hfc.fabric.block_decoder import BlockDecoder
+from hfc.fabric.block_decoder import HeaderType
+from hfc.fabric.block_decoder import decode_readwrite_sets
+
+# Import required Ledger Protos
+from hfc.protos.ledger.rwset import rwset_pb2
+from hfc.protos.ledger.rwset.kvrwset import kv_rwset_pb2
 
 
 # Load a genesis block as input to test the decoders
@@ -38,6 +44,7 @@ with open(os.path.join(os.path.dirname(__file__),
 
 class BlockDecoderTest(unittest.TestCase):
     """Test for BlockDecoder in Fabric"""
+
     def setUp(self):
         self._data = data
         self._metadata_block = metadata_block
@@ -46,6 +53,13 @@ class BlockDecoderTest(unittest.TestCase):
         self.decode_transaction = \
             BlockDecoder.decode_transaction(self._tx_data)
         self.decoded_metadata = BlockDecoder.decode(self._metadata_block)
+
+    def test_decode_failure(self):
+        """
+        Checks failure cases for decode of block.
+        """
+        self.assertRaises(TypeError, lambda: BlockDecoder.decode())
+        self.assertRaises(ValueError, lambda: BlockDecoder.decode('test'))
 
     def test_decode_block_header(self):
         """
@@ -88,7 +102,7 @@ class BlockDecoderTest(unittest.TestCase):
         self.assertEqual(len(data_payload_header.keys()), 2)
         self.assertEqual(len(sh['creator'].keys()), 2)
         self.assertEqual(len(sh.keys()), 2)
-        self.assertEqual(len(ch.keys()), 7)
+        self.assertEqual(len(ch.keys()), 8)
 
         self.assertEqual(sh['nonce'], sh_nonce)
         self.assertEqual(ch['extension'], extension)
@@ -143,6 +157,84 @@ class BlockDecoderTest(unittest.TestCase):
         self.assertEqual(sample_signature['value']['index'], index)
         self.assertEqual(len(metadata), 3)
         self.assertEqual(len(sample_signature['signatures']), 1)
+
+    def test_decode_read_write_sets(self):
+        """
+        checks if the decode read write sets have been decoded properly.
+        """
+        kv_read_proto = kv_rwset_pb2.KVRead()
+        version_proto = kv_rwset_pb2.Version()
+        version_proto.block_num = 12
+        version_proto.tx_num = 21
+        kv_read_proto.version.CopyFrom(version_proto)
+        kv_read_proto.key = 'read key'
+        reads_array = []
+        reads_array.append(kv_read_proto)
+
+        range_query_info_proto = kv_rwset_pb2.RangeQueryInfo()
+        range_query_info_proto.start_key = 'start'
+        range_query_info_proto.end_key = 'end'
+        range_query_info_proto.itr_exhausted = False
+        range_query_info_array = []
+        range_query_info_array.append(range_query_info_proto)
+
+        kv_write_proto = kv_rwset_pb2.KVWrite()
+        kv_write_proto.key = 'write key'
+        kv_write_proto.is_delete = False
+        kv_write_proto.value = b'this is the value'
+        writes_array = []
+        writes_array.append(kv_write_proto)
+
+        kvrwset_proto = kv_rwset_pb2.KVRWSet()
+        kvrwset_proto.reads.extend(reads_array)
+        kvrwset_proto.range_queries_info.extend(range_query_info_array)
+        kvrwset_proto.writes.extend(writes_array)
+
+        results_proto = rwset_pb2.TxReadWriteSet()
+        results_proto.data_model = rwset_pb2.TxReadWriteSet.KV
+        ns_rwset_array = []
+        ns_rwset_proto = rwset_pb2.NsReadWriteSet()
+        ns_rwset_proto.namespace = 'testnamespace'
+        ns_rwset_proto.rwset = kvrwset_proto.SerializeToString()
+        ns_rwset_array.append(ns_rwset_proto)
+        results_proto.ns_rwset.extend(ns_rwset_array)
+
+        results_json = decode_readwrite_sets(results_proto.SerializeToString())
+        nsrwset_value = results_json['ns_rwset'][0]
+        nsrwset_reads = nsrwset_value['rwset']['reads']
+        nsrwset_range_queries = nsrwset_value['rwset']['range_queries_info'][0]
+
+        self.assertEqual('testnamespace', nsrwset_value['namespace'])
+        self.assertEqual('read key', nsrwset_reads[0]['key'])
+        self.assertEqual('12', nsrwset_reads[0]['version']['block_num'])
+        self.assertEqual('21', nsrwset_reads[0]['version']['tx_num'])
+
+        self.assertIn('range_queries_info', nsrwset_value['rwset'])
+        self.assertEqual('end', nsrwset_range_queries['end_key'])
+        self.assertEqual('start', nsrwset_range_queries['start_key'])
+        self.assertIn('reads_merkle_hashes', nsrwset_range_queries)
+        self.assertIn('raw_reads', nsrwset_range_queries)
+
+        self.assertIn('writes', nsrwset_value['rwset'])
+        self.assertEqual('write key',
+                         nsrwset_value['rwset']['writes'][0]['key'])
+        self.assertEqual(b'this is the value',
+                         nsrwset_value['rwset']['writes'][0]['value'])
+
+    def test_decode_header_type(self):
+        """
+        Test cases for decoding headertype
+        """
+        self.assertEqual('MESSAGE', HeaderType.convert_to_string(0))
+        self.assertEqual('CONFIG', HeaderType.convert_to_string(1))
+        self.assertEqual('CONFIG_UPDATE', HeaderType.convert_to_string(2))
+        self.assertEqual('ENDORSER_TRANSACTION',
+                         HeaderType.convert_to_string(3))
+        self.assertEqual('ORDERER_TRANSACTION',
+                         HeaderType.convert_to_string(4))
+        self.assertEqual('DELIVER_SEEK_INFO', HeaderType.convert_to_string(5))
+        self.assertEqual('CHAINCODE_PACKAGE', HeaderType.convert_to_string(6))
+        self.assertEqual('UNKNOWN_TYPE', HeaderType.convert_to_string(99))
 
 
 if __name__ == '__main__':
