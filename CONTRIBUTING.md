@@ -107,6 +107,14 @@ After the ci checking passed, add [reviewers](https://wiki.hyperledger.org/proje
 
 * If you need to refine the patch further as the reviewers may suggest, you can change on the same branch, and commit the new code with `git commit -a --amend`, and then use the `git review` command again.
 
+## Maintainers
+
+The project’s [Maintainers](MAINTAINERS.md) are responsible for reviewing and merging all patches submitted for review and they guide the over-all technical direction of the project within the guidelines established by the Hyperledger Technical Steering Committee (TSC).
+
+
+## Becoming a maintainer
+
+The project’s maintainers will, from time-to-time, consider adding or removing a maintainer. An existing maintainer can submit a change set to the [Maintainers](MAINTAINERS.md) file. A nominated Contributor may become a Maintainer by a majority approval of the proposal by the existing Maintainers. Once approved, the change set is then merged and the individual is added to (or alternatively, removed from) the maintainers group. Maintainers may be removed by explicit resignation, for prolonged inactivity (3 or more months), or for some infraction of the code of conduct or by consistently demonstrating poor judgement. A maintainer removed for inactivity should be restored following a sustained resumption of contributions and reviews (a month or more) demonstrating a renewed commitment to the project.
 
 ## License <a name="license"></a>
 Hyperledger Fabric-SDK-Py software uses the [Apache License Version 2.0](LICENSE) software license.

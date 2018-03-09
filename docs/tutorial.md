@@ -1,6 +1,6 @@
 # Tutorial of using Fabric SDK
 
-**Notice: The tutorial is still in-progress.**
+**Notice: The tutorial is still in-progress, feel free to ask question in the rktchat channel.**
 
 ## Pre-requisites
 
@@ -18,7 +18,7 @@ After installation, you can optionally verify the installation.
 $ python
 >>> import hfc
 >>> print(hfc.VERSION)
-0.0.1
+0.7.0
 ```
 
 ### Start a Fabric Network
@@ -28,13 +28,12 @@ SDK needs a targeted fabric network to operate with, if there is not a running o
 To start a fabric network you can simple up the `docker-compose-2orgs-4peers-tls` under fixtures.
 
 ```bash
-docker-compose -f test/fixtures/docker-compose-2orgs-4peers-tls.yaml up
+$ docker-compose -f test/fixtures/docker-compose-2orgs-4peers-tls.yaml up
 ```
 
 Then you'll have 2 orgs (org1.example.com; org2.example.com) with 2 peers in each one and one orderer (orderer.example.com)
 
-If you want to understand the fabric-network and how to change the network configuration, we'd recommend you to follow the byfn tutorial, from [this point](http://hyperledger-fabric.readthedocs.io/en/release/build_network.html#crypto-generator)
-[to here](http://hyperledger-fabric.readthedocs.io/en/release/build_network.html#start-the-network), you don't need the cli
+If you want to understand the fabric network and how to change the network configuration, feel free to follow the byfn tutorial, from [crypto-generator section](http://hyperledger-fabric.readthedocs.io/en/release/build_network.html#crypto-generator) to [start-the-network section](http://hyperledger-fabric.readthedocs.io/en/release/build_network.html#start-the-network).
 service on the yaml file either.
 
 ### Create Connection Profile
@@ -67,8 +66,8 @@ cli.CAs  # ca nodes in the network
 After load the configuration, SDK can operate with the network.
 
 ### Create a New Channel
+
 ```python
-# TODO: update code
 from hfc.fabric.client import Client
 
 cli = Client(net_profile="test/fixtures/network.json")
@@ -78,11 +77,45 @@ response = cli.create_channel('orderer.example.com', 'businesschannel', org1_adm
 
 ### Join Peers into Channel
 
+```python
+from hfc.fabric.client import Client
+
+#TODO
+```
+
+
+### Create a New Channel
+
+```python
+from hfc.fabric.client import Client
+
+#TODO
+```
+
 ### Install Chaincode to Peers
+
+```python
+from hfc.fabric.client import Client
+
+#TODO
+```
 
 ### Instantiate Chaincode in Channel
 
+```python
+from hfc.fabric.client import Client
+
+#TODO
+```
+
 ### Invoke a Chaincode
+
+```python
+from hfc.fabric.client import Client
+
+#TODO
+```
+
 
 ## License <a name="license"></a>
 
