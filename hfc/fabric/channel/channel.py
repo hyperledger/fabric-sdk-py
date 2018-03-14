@@ -692,24 +692,12 @@ class Channel(object):
             header,
             request.transient_map)
 
-        try:
-            responses = send_transaction_proposal(
-                proposal,
-                header,
-                tx_context,
-                peers)
-        except Exception as e:
-            raise IOError("fail to send transanction proposal", e)
+        signed_proposal = utils.sign_proposal(tx_context, proposal)
+        send_executions = [peer.send_proposal(signed_proposal)
+                           for peer in peers]
 
-        q = Queue(1)
-        result = True
-        for r in responses:
-            r.subscribe(on_next=lambda x: q.put(x),
-                        on_error=lambda x: q.put(x))
-            res, _ = q.get()
-            result = result and (res.response.status == 200)
-
-        return result
+        return rx.Observable.merge(send_executions).to_iterable() \
+            .map(lambda responses: (responses, proposal, header))
 
 
 def create_system_channel(client, name=SYSTEM_CHANNEL_NAME):

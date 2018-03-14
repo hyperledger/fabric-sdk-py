@@ -35,6 +35,11 @@ proto_b = \
     sys.version_info[0] < 3 and (lambda x: x) or (
         lambda x: x.encode('latin1'))
 
+if sys.version_info < (3, 0):
+    from Queue import Queue
+else:
+    from queue import Queue
+
 
 def create_serialized_identity(user):
     """Create serialized identity from user.
@@ -319,3 +324,46 @@ def sign_tran_payload(tx_context, tran_payload_bytes):
     envelope.payload = tran_payload_bytes
 
     return envelope
+
+
+def build_tx_req(responses):
+    """ Check the endorsements from peers
+
+    Args:
+        reponses: rx.Oberservable instance from endorsers
+
+    Return: transaction request or None for endorser failure
+    """
+
+    class TXRequest(object):
+
+        def __init__(self, responses, proposal, header):
+            self._responses = responses
+            self._proposal = proposal
+            self._header = header
+
+        @property
+        def responses(self):
+            return self._responses
+
+        @property
+        def proposal(self):
+            return self._proposal
+
+        @property
+        def header(self):
+            return self._header
+
+    q = Queue(1)
+    responses.subscribe(on_next=lambda x: q.put(x),
+                        on_error=lambda x: q.put(x))
+
+    res = q.get(timeout=15)
+    for r in res[0]:
+        if r[0].response.status != 200:
+            return None
+
+    responses = res[0]
+    proposal = res[1]
+    header = res[2]
+    return TXRequest(responses, proposal, header)

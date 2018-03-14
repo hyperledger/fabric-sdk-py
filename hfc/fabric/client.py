@@ -148,7 +148,7 @@ class Client(object):
         :return:
         """
         with open(export_file, 'w') as f:
-            json.dump(self.network_info, f, indent='\t')
+            json.dump(self.network_info, f, indent=4)
 
     def get_net_info(self, *key_path):
         """
