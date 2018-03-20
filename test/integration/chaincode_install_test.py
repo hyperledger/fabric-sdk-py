@@ -45,7 +45,6 @@ class ChaincodeInstallTest(BaseTestCase):
         self.peer0_org2_tls_hostname = E2E_CONFIG['test-network'][
             'org2.example.com']['peers']['peer0']['server_hostname']
 
-    @unittest.skip("chaincode install needs a env with channel create+join")
     def test_install_chaincode_success(self):
         """
         Test a chaincode installation success.

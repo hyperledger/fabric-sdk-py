@@ -12,7 +12,8 @@ import tarfile
 import rx
 
 from hfc.fabric.transaction.tx_proposal_request import \
-    CC_INSTALL, CC_TYPE_GOLANG, CC_INSTANTIATE, CC_UPGRADE
+    CC_INSTALL, CC_TYPE_GOLANG, CC_INSTANTIATE, CC_UPGRADE, \
+    CC_INVOKE
 from hfc.protos.common import common_pb2
 from hfc.protos.orderer import ab_pb2
 from hfc.protos.peer import chaincode_pb2, proposal_pb2
@@ -692,6 +693,77 @@ class Channel(object):
             header,
             request.transient_map)
 
+        signed_proposal = utils.sign_proposal(tx_context, proposal)
+        send_executions = [peer.send_proposal(signed_proposal)
+                           for peer in peers]
+
+        return rx.Observable.merge(send_executions).to_iterable() \
+            .map(lambda responses: (responses, proposal, header))
+
+    def send_tx_proposal(self, tx_context, peers):
+        """
+        Invoke the chaincode
+
+        Send a transaction proposal to one or more endorser without
+        creating a channel.
+
+        Args:
+        peers: the pees to send this proposal
+                 if it is None the channel peers list will be used.
+        channel_id(required): channel id
+        client(required): client context
+
+        Return: True in success or False in failure.
+
+        """
+        if not peers:
+            peers = self.peers.values()
+
+        return Channel._send_tx_proposal(self.name, tx_context, peers)
+
+    @staticmethod
+    def _send_tx_proposal(channel_id, tx_context, peers):
+
+        request = tx_context.tx_prop_req
+
+        args = []
+        if request.fcn:
+            args.append(proto_b(request.fcn))
+        else:
+            args.append(proto_b(CC_INVOKE))
+
+        for arg in request.args:
+            args.append(proto_b(arg))
+
+        cc_id = chaincode_pb2.ChaincodeID()
+        cc_id.name = request.cc_name
+        cc_id.version = request.cc_version
+
+        cc_input = chaincode_pb2.ChaincodeInput()
+        cc_input.args.extend(args)
+
+        cc_spec = chaincode_pb2.ChaincodeSpec()
+        cc_spec.type = chaincode_pb2.ChaincodeSpec.Type.Value(CC_TYPE_GOLANG)
+        cc_spec.chaincode_id.CopyFrom(cc_id)
+        cc_spec.input.CopyFrom(cc_input)
+
+        extension = proposal_pb2.ChaincodeHeaderExtension()
+        extension.chaincode_id.name = request.cc_name
+        cc_invoke_spec = chaincode_pb2.ChaincodeInvocationSpec()
+        cc_invoke_spec.chaincode_spec.CopyFrom(cc_spec)
+        channel_header = build_channel_header(
+            common_pb2.ENDORSER_TRANSACTION,
+            tx_context.tx_id,
+            channel_id,
+            current_timestamp(),
+            tx_context.epoch,
+            extension=extension.SerializeToString())
+
+        header = build_header(tx_context.identity,
+                              channel_header,
+                              tx_context.nonce)
+        proposal = build_cc_proposal(cc_invoke_spec, header,
+                                     request.transient_map)
         signed_proposal = utils.sign_proposal(tx_context, proposal)
         send_executions = [peer.send_proposal(signed_proposal)
                            for peer in peers]
