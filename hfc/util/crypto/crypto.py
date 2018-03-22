@@ -236,9 +236,8 @@ class Ecies(Crypto):
         :param message: message to sign
         :Returns: signature
         """
-        signer = private_key.signer(ec.ECDSA(self.sign_hash_algorithm))
-        signer.update(message)
-        return self._prevent_malleability(signer.finalize())
+        signer = private_key.sign(message, ec.ECDSA(self.sign_hash_algorithm))
+        return self._prevent_malleability(signer)
 
     def verify(self, public_key, message, signature):
         """ECDSA verify signature.
@@ -250,11 +249,9 @@ class Ecies(Crypto):
         """
         if not (self._check_malleability(signature)):
             return False
-        verifier = public_key.verifier(signature,
-                                       ec.ECDSA(self.sign_hash_algorithm))
-        verifier.update(message)
         try:
-            verifier.verify()
+            public_key.verify(signature, message,
+                              ec.ECDSA(self.sign_hash_algorithm))
         except InvalidSignature:
             return False
         except Exception as e:
