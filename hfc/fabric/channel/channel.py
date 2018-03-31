@@ -12,8 +12,8 @@ import tarfile
 import rx
 
 from hfc.fabric.transaction.tx_proposal_request import \
-    CC_INSTALL, CC_TYPE_GOLANG, CC_INSTANTIATE, CC_UPGRADE, \
-    CC_INVOKE
+    create_tx_prop_req, CC_INSTALL, CC_TYPE_GOLANG, \
+    CC_INSTANTIATE, CC_UPGRADE, CC_INVOKE, CC_QUERY
 from hfc.protos.common import common_pb2
 from hfc.protos.orderer import ab_pb2
 from hfc.protos.peer import chaincode_pb2, proposal_pb2
@@ -737,7 +737,8 @@ class Channel(object):
 
         cc_id = chaincode_pb2.ChaincodeID()
         cc_id.name = request.cc_name
-        cc_id.version = request.cc_version
+        if request.prop_type != CC_QUERY:
+            cc_id.version = request.cc_version
 
         cc_input = chaincode_pb2.ChaincodeInput()
         cc_input.args.extend(args)
@@ -770,6 +771,24 @@ class Channel(object):
 
         return rx.Observable.merge(send_executions).to_iterable() \
             .map(lambda responses: (responses, proposal, header))
+
+    def query_installed_chaincodes(self, tx_context, peers):
+        """
+        Args:
+            tx_context: tx_context instance
+            peers: peers in the channel
+
+        Returns: chain code response
+        """
+
+        request = create_tx_prop_req(
+            prop_type=CC_QUERY,
+            fcn='getinstalledchaincodes',
+            cc_name='lscc',
+            cc_type=CC_TYPE_GOLANG)
+
+        tx_context.tx_prop_req = request
+        return self.send_tx_proposal(tx_context, peers)
 
 
 def create_system_channel(client, name=SYSTEM_CHANNEL_NAME):

@@ -8,6 +8,7 @@ CC_INSTALL = "install"
 CC_INSTANTIATE = "deploy"
 CC_INVOKE = "invoke"
 CC_UPGRADE = "upgrade"
+CC_QUERY = "query"
 
 CC_TYPE_GOLANG = "GOLANG"
 CC_TYPE_JAVA = "JAVA"
@@ -292,7 +293,7 @@ def validate(tx_prop_req):
             raise ValueError("Missing 'cc_path' parameter "
                              "in the proposal request")
 
-    if not tx_prop_req.cc_version:
+    if not tx_prop_req.cc_version and tx_prop_req.prop_type != CC_QUERY:
         raise ValueError("Missing 'cc_version' parameter "
                          "in the proposal request")
 
