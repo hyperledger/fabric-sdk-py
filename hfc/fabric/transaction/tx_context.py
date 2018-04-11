@@ -26,6 +26,14 @@ class TXContext(object):
         self._tx_id = hash_func(self._nonce + self._identity).hexdigest()
         self._prop_wait_time = prop_wait_time
 
+    def get_attrs(self):
+        return ",".join("{}={}"
+                        .format(k, getattr(self, k))
+                        for k in self.__dict__.keys())
+
+    def __str__(self):
+        return "[{}:{}]".format(self.__class__.__name__, self.get_attrs())
+
     @property
     def tx_id(self):
         """ Get transaction id."""

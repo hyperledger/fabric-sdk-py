@@ -232,8 +232,7 @@ def sign_proposal(tx_context, proposal):
     return signed_proposal
 
 
-def send_transaction_proposal(proposal, header, tx_context,
-                              peers, scheduler=None):
+def send_transaction_proposal(proposal, tx_context, peers, scheduler=None):
     """Send transaction proposal
 
     Args:
@@ -246,8 +245,7 @@ def send_transaction_proposal(proposal, header, tx_context,
     Returns: a list containing all the proposal response
 
     """
-    signed_proposal = sign_proposal(
-        tx_context, proposal)
+    signed_proposal = sign_proposal(tx_context, proposal)
 
     send_executions = [peer.send_proposal(signed_proposal, scheduler)[0]
                        for peer in peers]
@@ -276,21 +274,28 @@ def send_transaction(orderers, tran_req, tx_context, scheduler=None):
 
     """
     if not tran_req:
+        logging.warning("Missing input request object on the transaction "
+                        "request")
         return rx.Observable.just(ValueError(
             "Missing input request object on the transaction request"
         ))
 
     if not tran_req.responses or len(tran_req.responses) < 1:
+        logging.warning("Missing 'proposalResponses' parameter in transaction "
+                        "request")
         return rx.Observable.just(ValueError(
             "Missing 'proposalResponses' parameter in transaction request"
         ))
 
     if not tran_req.proposal:
+        logging.warning("Missing 'proposalResponses' parameter in transaction "
+                        "request")
         return rx.Observable.just(ValueError(
             "Missing 'proposalResponses' parameter in transaction request"
         ))
 
     if len(orderers) < 1:
+        logging.warning("Missing orderer objects on this chain")
         return rx.Observable.just(ValueError(
             "Missing orderer objects on this chain"
         ))

@@ -59,10 +59,9 @@ class ChaincodeInstallTest(BaseTestCase):
         org1_admin = get_peer_org_user('org1.example.com', "Admin",
                                        self.client.state_store)
 
-        crypto = ecies()
         tran_prop_req = create_tx_prop_req(CC_INSTALL, CC_PATH, CC_TYPE_GOLANG,
                                            CC_NAME, CC_VERSION)
-        tx_context = create_tx_context(org1_admin, crypto, tran_prop_req)
+        tx_context = create_tx_context(org1_admin, ecies(), tran_prop_req)
 
         queue = Queue(1)
 

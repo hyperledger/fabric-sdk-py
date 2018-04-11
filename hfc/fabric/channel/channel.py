@@ -17,8 +17,7 @@ from hfc.fabric.transaction.tx_proposal_request import \
 from hfc.protos.common import common_pb2
 from hfc.protos.orderer import ab_pb2
 from hfc.protos.peer import chaincode_pb2, proposal_pb2
-from hfc.protos.utils import create_seek_info, create_cc_spec, \
-    create_seek_payload, create_envelope
+from hfc.protos.utils import create_cc_spec
 from hfc.util import utils
 from hfc.util.utils import proto_str, current_timestamp, proto_b, \
     build_header, build_channel_header, build_cc_proposal, \
@@ -74,7 +73,7 @@ class Channel(object):
         will broadcast requests to the rest of the orderer network. Or if
         the application does not trust the orderer nodes, it can choose to
         use more than one by adding them to the channel instance. And all
-        APIs concerning the orderer will broadcast to all orderers
+        APIs concerning the orderer will broadcast to all _orderers
         simultaneously.
 
         Args:
@@ -112,7 +111,7 @@ class Channel(object):
 
     @property
     def orderers(self):
-        """Get orderers of a channel.
+        """Get _orderers of a channel.
 
         Returns: The orderer list on the channel
 
@@ -469,48 +468,6 @@ class Channel(object):
         else:
             raise ValueError('Currently only support install GOLANG chaincode')
 
-    def get_genesis_block(self):
-        """ get the genesis block of the channel.
-        Return: the genesis block in success or None in fail.
-        """
-        _logger.info("get genesis block - start")
-
-        orderer = self._get_random_orderer()
-
-        tx_context = self._client.tx_context
-
-        seek_info = create_seek_info(0, 0)
-        seek_info_header = build_channel_header(
-            common_pb2.HeaderType.Value('DELIVER_SEEK_INFO'),
-            tx_context.tx_id,
-            self.name,
-            current_timestamp(),
-            tx_context.epoch)
-
-        seek_header = build_header(
-            tx_context.identity,
-            seek_info_header,
-            tx_context.nonce)
-
-        seek_payload_bytes = create_seek_payload(seek_header, seek_info)
-        sig = tx_context.sign(seek_payload_bytes)
-
-        envelope = create_envelope(sig, seek_payload_bytes)
-        q = Queue(1)
-        response = orderer.delivery(envelope)
-        response.subscribe(on_next=lambda x: q.put(x),
-                           on_error=lambda x: q.put(x))
-
-        res, _ = q.get(timeout=5)
-
-        if res.block is None or res.block == '':
-            _logger.error("fail to get genesis block")
-            return None
-
-        _logger.info("get genesis block successfully, block=%s",
-                     res.block.header)
-        return res.block
-
     def join_channel(self, request):
         """
         To join the peer to a channel.
@@ -520,29 +477,16 @@ class Channel(object):
         Return:
             True in sucess or False in failure
         """
-        _logger.debug('join_channel - start')
+        _logger.debug('channel_join - start')
 
-        err_msg = None
-        if(not request):
-            err_msg = "Missing all required input request parameters"
+        for key in ['targets', 'block', 'tx_context']:
+            if key not in request:
+                err_msg = "Missing parameter {}".format(key)
+                _logger.error('channel_join error: {}'.format(err_msg))
+                raise ValueError(err_msg)
 
-        if 'targets' not in request:
-            err_msg = "Missing peers parameter"
-
-        if 'block' not in request:
-            err_msg = "Missing genesis block parameter"
-
-        if 'tx_id' not in request:
-            err_msg = "Missing transaction id parameter"
-
-        if err_msg:
-            _logger.error('join_channel error: {}'.format(err_msg))
-            raise ValueError(err_msg)
-
-        tx_context = self._client.tx_context
-        block_bytes = request['block']
         chaincode_input = chaincode_pb2.ChaincodeInput()
-        chaincode_input.args.extend([proto_b("JoinChain"), block_bytes])
+        chaincode_input.args.extend([proto_b("JoinChain"), request['block']])
         chaincode_id = chaincode_pb2.ChaincodeID()
         chaincode_id.name = proto_str("cscc")
 
@@ -550,6 +494,7 @@ class Channel(object):
         cc_invoke_spec = chaincode_pb2.ChaincodeInvocationSpec()
         cc_invoke_spec.chaincode_spec.CopyFrom(cc_spec)
 
+        tx_context = request['tx_context']
         extension = proposal_pb2.ChaincodeHeaderExtension()
         extension.chaincode_id.name = proto_str('cscc')
         channel_header = build_channel_header(
@@ -563,17 +508,14 @@ class Channel(object):
         header = build_header(tx_context.identity,
                               channel_header,
                               tx_context.nonce)
-        proposal = build_cc_proposal(
-            cc_invoke_spec,
-            header,
-            request['transient_map'])
+        proposal = build_cc_proposal(cc_invoke_spec,
+                                     header,
+                                     request['transient_map'])
 
         try:
-            responses = send_transaction_proposal(
-                proposal,
-                header,
-                tx_context,
-                request['targets'])
+            responses = send_transaction_proposal(proposal,
+                                                  tx_context,
+                                                  request['targets'])
         except Exception as e:
             raise IOError("fail to send transanction proposal", e)
 
@@ -586,7 +528,7 @@ class Channel(object):
             proposal_res = res[0]
             result = result and (proposal_res.response.status == 200)
         if result:
-            _logger.info("sucessfully join the peers")
+            _logger.info("successfully join the peers")
 
         return result
 

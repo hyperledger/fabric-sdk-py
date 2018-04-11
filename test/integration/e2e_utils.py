@@ -5,7 +5,6 @@
 """
 
 from hfc.fabric.orderer import Orderer
-from hfc.fabric.peer import Peer
 from hfc.fabric.transaction.tx_context import TXContext
 from hfc.fabric.transaction.tx_proposal_request import TXProposalRequest
 from hfc.util.crypto.crypto import ecies
@@ -84,6 +83,8 @@ def disconnect(all_ehs):
             eh.disconnect()
 
 
+# This should be deprecated, the code should be included into the client's
+# channel_join method
 def build_join_channel_req(org, channel, client):
     """
     For test, there is only one peer.
@@ -96,41 +97,24 @@ def build_join_channel_req(org, channel, client):
         return request for joining channel
         """
 
-    def block_event_callback(block):
-
-        pass
-
-    client._crypto_suite = ecies()
-    request = {}
     tx_prop_req = TXProposalRequest()
 
     # add the orderer
-    orderer_config = test_network['orderer']
-    endpoint = orderer_config['grpc_endpoint']
-    ca_root_path = orderer_config['tls_cacerts']
-    orderer = Orderer(endpoint=endpoint, tls_ca_cert_file=ca_root_path,
-                      opts=(('grpc.ssl_target_name_override',
-                             'orderer.example.com'),))
-    channel.add_orderer(orderer)
+    orderer = client.get_orderer('orderer.example.com')
+    channel.add_orderer(orderer)  # TODO: where should we add orderer?
 
     # get the genesis block
-    orderer_admin = get_orderer_org_user(state_store=client.state_store)
+    orderer_admin = client.get_user('orderer.example.com', 'Admin')
     tx_context = TXContext(orderer_admin, ecies(), tx_prop_req)
-    client.tx_context = tx_context
-    genesis_block = channel.get_genesis_block().SerializeToString()
+    genesis_block = orderer.get_genesis_block(
+        tx_context,
+        channel.name).SerializeToString()
 
-    # create the peer
-    org_admin = get_peer_org_user(org, "Admin", client.state_store)
-    client.tx_context = TXContext(org_admin, ecies(), tx_prop_req)
-    tx_id = client.tx_context.tx_id
+    org_admin = client.get_user(org, 'Admin')
+    tx_context = TXContext(org_admin, ecies(), tx_prop_req)
+    # print(org, 'Admin', tx_context.identity)
 
-    peer_config = test_network[org]["peers"]['peer0']
-    ca_root = peer_config["tls_cacerts"]
-
-    endpoint = peer_config["grpc_request_endpoint"]
-    opts = (('grpc.ssl_target_name_override',
-             peer_config['server_hostname']),)
-    peer = Peer(endpoint=endpoint, tls_cacerts=ca_root, opts=opts)
+    peer = client.get_peer('peer0.'+org)
 
     """
     # connect the peer
@@ -144,9 +128,11 @@ def build_join_channel_req(org, channel, client):
     all_ehs.append(eh)
     """
 
-    request["targets"] = [peer]
-    request["block"] = genesis_block
-    request["tx_id"] = tx_id
-    request["transient_map"] = {}
+    request = {
+        "targets": [peer],
+        "block": genesis_block,
+        "tx_context": tx_context,
+        "transient_map": {},
+    }
 
     return request

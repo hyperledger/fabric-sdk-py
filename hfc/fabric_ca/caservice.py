@@ -74,6 +74,14 @@ class Enrollment(object):
         """
         self._cert = cert
 
+    def get_attrs(self):
+        return ",".join("{}={}"
+                        .format(k, getattr(self, k))
+                        for k in self.__dict__.keys())
+
+    def __str__(self):
+        return "[{}:{}]".format(self.__class__.__name__, self.get_attrs())
+
 
 class CAClient(object):
     """Client for communicating with the Fabric CA APIs."""

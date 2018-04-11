@@ -126,6 +126,14 @@ class FileKeyValueStore(KeyValueStore):
         return rx.Observable.start(lambda: self.set_value(key, value),
                                    scheduler)
 
+    def get_attrs(self):
+        return ",".join("{}={}"
+                        .format(k, getattr(self, k))
+                        for k in self.__dict__.keys())
+
+    def __str__(self):
+        return "[{}:{}]".format(self.__class__.__name__, self.get_attrs())
+
 
 def _make_dir(path):
     try:

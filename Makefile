@@ -32,6 +32,8 @@ define run-py-tox
 endef
 
 # Check the format
+flake8: linter
+
 linter:
 	tox -e flake8
 
@@ -60,13 +62,14 @@ clean:
 	find . -name "*.pyc" -o -name "__pycache__" | xargs rm -rf
 	rm -rf ./venv
 
-venv: # enter a virtual env
+# Enter a virtual env
+venv:
 	if [ ! -d venv ]; then \
 		virtualenv venv; \
 	fi
 	@echo "Run 'source venv/bin/activate' to active the virtual env now."
 
-install: # install sdk to local python env
+install: # Install sdk to local python env
 	python3 setup.py install
 
 .PHONY: check clean proto image install test venv

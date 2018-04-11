@@ -3,6 +3,7 @@
 
 # Set default logging handler to avoid "No handler found" warnings.
 import logging
+from .client import Client # noqa
 
 try:  # Python 2.7+
     from logging import NullHandler

@@ -35,6 +35,7 @@ class Peer(object):
         self._endpoint = endpoint
         self._eh_url = None
         self._grpc_options = dict()
+        self._ssl_target_name = None
         self._tls_ca_certs_path = None
         self._channel = create_grpc_channel(self._endpoint, tls_cacerts, opts)
         self._endorser_client = peer_pb2_grpc.EndorserStub(self._channel)
@@ -65,9 +66,27 @@ class Peer(object):
             self._eh_url = info['eventUrl']
             self._grpc_options = info['grpcOptions']
             self._tls_ca_certs_path = info['tlsCACerts']['path']
-        except KeyError:
+            self._ssl_target_name = self._grpc_options[
+                'ssl-target-name-override']
+            self._channel = create_grpc_channel(
+                self._endpoint,
+                self._tls_ca_certs_path,
+                opts=(('grpc.ssl_target_name_override',
+                       self._ssl_target_name),)
+            )
+            self._endorser_client = peer_pb2_grpc.EndorserStub(self._channel)
+        except KeyError as e:
+            print(e)
             return False
         return True
+
+    def get_attrs(self):
+        return ",".join("{}={}"
+                        .format(k, getattr(self, k))
+                        for k in self.__dict__.keys())
+
+    def __str__(self):
+        return "[{}:{}]".format(self.__class__.__name__, self.get_attrs())
 
     @property
     def endpoint(self):
