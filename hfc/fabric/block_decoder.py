@@ -16,6 +16,7 @@
 import logging
 import binascii
 import datetime
+from datetime import timezone
 
 # Import required Peer Protos
 from hfc.protos.peer import chaincode_event_pb2
@@ -293,7 +294,7 @@ def timestamp_to_date(timestamp):
     # WARNING: this will break on Windows because of the fromtimestamp()
     # restriction of values by C `localtime()` or `gmtime()` calls.
     millis = timestamp.seconds * 1000 + timestamp.nanos / 1000000
-    date = datetime.datetime.fromtimestamp(millis/1e3)
+    date = datetime.datetime.fromtimestamp(millis/1e3, tz=timezone.utc)
     return date.strftime("%Y-%m-%d %H:%M:%S")
 
 
