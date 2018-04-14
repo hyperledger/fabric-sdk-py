@@ -5,9 +5,10 @@
 """
 
 
-import unittest
+import docker
 import logging
 import time
+import unittest
 
 from test.integration.utils import BaseTestCase
 from test.integration.config import E2E_CONFIG
@@ -15,6 +16,10 @@ from test.integration.config import E2E_CONFIG
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 test_network = E2E_CONFIG['test-network']
+
+CC_PATH = 'github.com/example_cc'
+CC_NAME = 'example_cc'
+CC_VERSION = 'v1'
 
 
 class E2eTest(BaseTestCase):
@@ -48,8 +53,6 @@ class E2eTest(BaseTestCase):
         Join peers of two orgs into an existing channels
         :return:
         """
-        # wait for channel created
-        time.sleep(5)
 
         logger.info("E2E: Channel join start: name={}".format(
             self.channel_name))
@@ -61,19 +64,57 @@ class E2eTest(BaseTestCase):
         orgs = ["org1.example.com", "org2.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, 'Admin')
-            response = self.client.channel_join(org_admin,
-                                                self.channel_name,
-                                                ['peer0.'+org, 'peer1.'+org],
-                                                'orderer.example.com')
+            response = self.client.channel_join(
+                requester=org_admin,
+                channel_name=self.channel_name,
+                peer_names=['peer0.'+org, 'peer1.'+org],
+                orderer_name='orderer.example.com'
+            )
             self.assertTrue(response)
+            # Verify the ledger exists now in the peer node
+            dc = docker.from_env()
+            for peer in ['peer0', 'peer1']:
+                peer0_container = dc.containers.get(peer + '.' + org)
+                code, output = peer0_container.exec_run(
+                    'test -f '
+                    '/var/hyperledger/production/ledgersData/chains/chains/{}'
+                    '/blockfile_000000'.format(self.channel_name))
+                self.assertEqual(code, 0, "Local ledger not exists")
+
         logger.info("E2E: Channel join done: name={}".format(
             self.channel_name))
 
-    def install_chaincode(self):
+    def chaincode_install(self):
+        """
+        Test installing an example chaincode to peer
 
-        pass
+        :return:
+        """
+        logger.info("E2E: Chaincode install start")
 
-    def install_chaincode_fail(self):
+        orgs = ["org1.example.com", "org2.example.com"]
+        for org in orgs:
+            org_admin = self.client.get_user(org, "Admin")
+            response = self.client.chaincode_install(
+                requestor=org_admin,
+                peer_names=['peer0.'+org, 'peer1.'+org],
+                cc_path=CC_PATH,
+                cc_name=CC_NAME,
+                cc_version=CC_VERSION
+            )
+            self.assertTrue(response)
+            # Verify the cc pack exists now in the peer node
+            dc = docker.from_env()
+            for peer in ['peer0', 'peer1']:
+                peer0_container = dc.containers.get(peer+'.'+org)
+                code, output = peer0_container.exec_run(
+                    'test -f '
+                    '/var/hyperledger/production/chaincodes/example_cc.v1')
+                self.assertEqual(code, 0, "chaincodes pack not exists")
+
+        logger.info("E2E: chaincode install done")
+
+    def chaincode_install_fail(self):
 
         pass
 
@@ -91,13 +132,24 @@ class E2eTest(BaseTestCase):
 
     def test_in_sequence(self):
 
+        logger.info("\n\nE2E testing started...")
+
         self.channel_create()
+        time.sleep(5)  # wait for channel created
+
         self.channel_join()
-        self.install_chaincode()
-        self.install_chaincode_fail()
+
+        self.chaincode_install()
+
+        self.chaincode_install_fail()
+
         self.instantiate_chaincode()
+
         self.invoke_transaction()
+
         self.query()
+
+        logger.info("E2E all test cases done\n\n")
 
 
 if __name__ == "__main__":

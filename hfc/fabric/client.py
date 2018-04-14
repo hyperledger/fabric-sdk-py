@@ -22,8 +22,9 @@ from hfc.fabric.channel.channel import Channel, create_app_channel
 from hfc.fabric.orderer import Orderer
 from hfc.fabric.peer import Peer
 from hfc.fabric.organization import create_org
-from hfc.fabric.transaction.tx_context import TXContext
-from hfc.fabric.transaction.tx_proposal_request import TXProposalRequest
+from hfc.fabric.transaction.tx_context import TXContext, create_tx_context
+from hfc.fabric.transaction.tx_proposal_request import TXProposalRequest, \
+    create_tx_prop_req, CC_INSTALL, CC_TYPE_GOLANG
 from hfc.protos.common import common_pb2, configtx_pb2
 from hfc.util import utils
 from hfc.util.crypto.crypto import Ecies, ecies
@@ -359,6 +360,41 @@ class Client(object):
         }
 
         return channel.join_channel(request)
+
+    def chaincode_install(self, requestor, peer_names, cc_path, cc_name,
+                          cc_version, timeout=5):
+        """
+        Install chaincode to given peers by requestor role
+
+        :param requestor: User role who issue the request
+        :param peer_names: Names of the peers to install
+        :param cc_path: chaincode path
+        :param cc_name: chaincode name
+        :param cc_version: chaincode version
+        :param timeout: Timeout to wait
+        :return: True or False
+        """
+        peers = []
+        for peer_name in peer_names:
+            peer = self.get_peer(peer_name)
+            peers.append(peer)
+
+        tran_prop_req = create_tx_prop_req(CC_INSTALL, cc_path, CC_TYPE_GOLANG,
+                                           cc_name, cc_version)
+        tx_context = create_tx_context(requestor, ecies(), tran_prop_req)
+
+        # sleep(5)
+        response = self.send_install_proposal(tx_context, peers)
+
+        queue = Queue(1)
+        response.subscribe(
+            on_next=lambda x: queue.put(x),
+            on_error=lambda x: queue.put(x)
+        )
+
+        res = queue.get(timeout=timeout)
+        proposal_response, _ = res[0][0]
+        return proposal_response.response.status == 200
 
     def _create_channel(self, request):
         """Calls the orderer to start building the new channel.

@@ -35,7 +35,7 @@ class BaseTestCase(unittest.TestCase):
         self.start_test_env()
 
     def tearDown(self):
-        time.sleep(5)
+        time.sleep(1)
         self.shutdown_test_env()
 
     def check_logs(self):

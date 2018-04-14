@@ -103,7 +103,16 @@ response = cli.channel_join(
 ```python
 from hfc.fabric import Client
 
-#TODO
+cli = Client(net_profile="test/fixtures/network.json")
+org1_admin = cli.get_user('org1.example.com', 'Admin')
+
+# The response should be true if succeed
+response = cli.chaincode_install(
+		requestor=org1_admin,
+		peer_names=['peer0.org1.example.com'],
+		cc_path='github.com/example_cc',
+		cc_name='example_cc',
+		cc_version='v1.0' )
 ```
 
 ### Instantiate Chaincode in Channel
