@@ -14,14 +14,17 @@
 #
 import base64
 import logging
+import json
 
-import requests
 import six
 from cryptography import x509
 from cryptography.hazmat.primitives.serialization import Encoding
 from cryptography.x509 import NameOID
 
 from hfc.util.crypto.crypto import ecies
+
+import pycurl
+from io import BytesIO
 
 DEFAULT_CA_ENDPOINT = 'http://localhost:7054'
 DEFAULT_CA_BASE_URL = '/api/v1/'
@@ -112,7 +115,33 @@ class CAClient(object):
         Returns: the response body in json
 
         """
-        return requests.post(url=self._base_url + path, **param).json()
+
+        buffer = BytesIO()
+        c = pycurl.Curl()
+        c.setopt(c.URL, self._base_url + path)
+        c.setopt(pycurl.HTTPHEADER, [
+            'Accept:application/json',
+        ])
+        if 'auth' in param:
+            c.setopt(pycurl.USERPWD, ':'.join(str(i) for i in param['auth']))
+        data = json.dumps(param['json'])
+        c.setopt(pycurl.POST, 1)
+        c.setopt(pycurl.POSTFIELDS, data)
+        c.setopt(pycurl.SSL_VERIFYPEER, 1)
+        c.setopt(pycurl.SSL_VERIFYHOST, 2)
+        c.setopt(pycurl.CAINFO, param['verify'])
+        # c.setopt(pycurl.VERBOSE, 1)
+        c.setopt(c.WRITEDATA, buffer)
+        c.perform()
+        c.close()
+
+        body = buffer.getvalue().decode('iso-8859-1')
+        # Body is a byte string.
+        # We have to know the encoding in order to print it to a text file
+        # such as standard output.
+        return json.loads(body)
+
+        #return requests.post(url=self._base_url + path, **param).json()
 
     def get_cainfo(self):
         """Query the ca service information.
@@ -183,7 +212,7 @@ class CAService(object):
     """This is a ca server delegate."""
 
     def __init__(self, target=DEFAULT_CA_ENDPOINT,
-                 ca_certs_path=None, crypto=ecies(), ca_name=""):
+                 ca_certs_path=None, crypto=ecies(), ca_name="", base_url=DEFAULT_CA_BASE_URL):
         """ Init CA service.
 
         Args:
@@ -195,7 +224,7 @@ class CAService(object):
             If omitted or null or an empty string, then the default CA
             is the target of requests
         """
-        self._ca_client = CAClient(target, ca_certs_path, ca_name=ca_name)
+        self._ca_client = CAClient(target, ca_certs_path, ca_name=ca_name, base_url=base_url)
         self._crypto = crypto
 
     def enroll(self, enrollment_id, enrollment_secret):
@@ -214,6 +243,7 @@ class CAService(object):
 
         """
         private_key = self._crypto.generate_private_key()
+
         csr = self._crypto.generate_csr(private_key, x509.Name(
             [x509.NameAttribute(NameOID.COMMON_NAME, six.u(enrollment_id))]))
         cert = self._ca_client.enroll(
@@ -224,7 +254,7 @@ class CAService(object):
 
 
 def ca_service(target=DEFAULT_CA_ENDPOINT,
-               ca_certs_path=None, crypto=ecies(), ca_name=""):
+               ca_certs_path=None, crypto=ecies(), ca_name="", base_url=DEFAULT_CA_BASE_URL):
     """Create ca service
 
     Args:
@@ -236,4 +266,5 @@ def ca_service(target=DEFAULT_CA_ENDPOINT,
     Returns: ca service instance
 
     """
-    return CAService(target, ca_certs_path, crypto, ca_name)
+
+    return CAService(target, ca_certs_path, crypto, ca_name, base_url)
