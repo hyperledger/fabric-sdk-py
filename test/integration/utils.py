@@ -26,6 +26,10 @@ class BaseTestCase(unittest.TestCase):
         self.compose_file_path = \
             E2E_CONFIG['test-network']['docker']['compose_file_tls']
 
+        self.config_yaml = \
+            E2E_CONFIG['test-network']['channel-artifacts']['config_yaml']
+        self.channel_profile = \
+            E2E_CONFIG['test-network']['channel-artifacts']['channel_profile']
         self.client = Client('test/fixtures/network.json')
         self.channel_name = "businesschannel"  # default application channel
         self.user = self.client.get_user('org1.example.com', 'Admin')

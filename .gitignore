@@ -85,6 +85,9 @@ celerybeat-schedule
 venv/
 ENV/
 
+#fabric binaries
+fabric-bin/
+
 # Spyder project settings
 .spyderproject
 

@@ -25,7 +25,9 @@ E2E_CONFIG = {
         },
         'channel-artifacts': {
             'channel_id': 'businesschannel',
-            'channel.tx': 'test/fixtures/e2e_cli/channel-artifacts/channel.tx'
+            'channel.tx': 'test/fixtures/e2e_cli/channel-artifacts/channel.tx',
+            'config_yaml': 'test/fixtures/e2e_cli/',
+            'channel_profile': 'TwoOrgsChannel'
         },
         'orderer': {
             'grpc_endpoint': 'localhost:7050',

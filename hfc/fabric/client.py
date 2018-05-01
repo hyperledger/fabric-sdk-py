@@ -16,7 +16,8 @@
 import logging
 import json
 import sys
-
+import os
+import subprocess
 
 from hfc.fabric.channel.channel import Channel, create_app_channel
 from hfc.fabric.orderer import Orderer
@@ -245,14 +246,18 @@ class Client(object):
         """
         return self._channels.get(name, None)
 
-    def channel_create(self, orderer_name, channel_name, requester, tx):
+    def channel_create(self, orderer_name, channel_name, requester,
+                       config_yaml, channel_profile):
         """
         Create a channel, send request to orderer, and check the response
 
         :param orderer_name: Name of orderer to send request to
         :param channel_name: Name of channel to create
         :param requester: Name of creator
-        :param tx: Path to the new channel tx file
+        :param config_yaml: Directory path of config yaml to be set for FABRIC_
+        CFG_PATH variable
+        :param channel_profile: Name of the channel profile defined inside
+        config yaml file
         :return: True (creation succeeds) or False (creation failed)
         """
         if self.get_channel(channel_name):
@@ -265,6 +270,12 @@ class Client(object):
             logging.error("No orderer_name instance found with name {}".format(
                 orderer_name))
             return False
+
+        tx = self.generate_channel_tx(channel_name, config_yaml,
+                                      channel_profile)
+        if tx is None:
+            return False
+        logging.info("Configtx file sucessfully created in current directory")
 
         with open(tx, 'rb') as f:
             envelope = f.read()
@@ -294,8 +305,8 @@ class Client(object):
 
         status, _ = q.get(timeout=5)
         if status.status == 200:
-                self.new_channel(channel_name)
-                return True
+            self.new_channel(channel_name)
+            return True
         else:
             return False
 
@@ -653,3 +664,44 @@ class Client(object):
         app_channel = create_app_channel(self, name="businesschannel")
         _logger.debug("context {}".format(tx_context))
         return app_channel.send_install_proposal(tx_context, peers, scheduler)
+
+    def generate_channel_tx(self, channel_name, config_yaml, channel_profile):
+        """ Creates channel configuration transaction
+
+        Args:
+            :param channel_name: Name of the channel
+            :param config_yaml: Directory path of config yaml to be set for
+            FABRIC_CFG_PATH variable
+            :param channel_profile: Name of the channel profile defined inside
+            config yaml file
+        Returns: path to tx file if success else None
+
+        """
+
+        # check if configtxgen is in PATH
+        def cmd_exists(cmd):
+            return any(
+                os.access(os.path.join(path, cmd), os.X_OK)
+                for path in os.environ["PATH"].split(os.pathsep)
+            )
+
+        if not cmd_exists('configtxgen'):
+            logging.error("configtxgen not in PATH.")
+            return False
+
+        # Generate channel.tx with configtxgen
+        tx_path = "/tmp/channel.tx"
+        config_yaml = config_yaml if os.path.isabs(config_yaml) else \
+            os.getcwd() + "/" + config_yaml
+        logging.info("FABRIC_CFG_PATH set to {}".format(config_yaml))
+        new_env = dict(os.environ, FABRIC_CFG_PATH=config_yaml)
+        output = subprocess.Popen(['configtxgen', '-profile', channel_profile,
+                                   '-outputCreateChannelTx', tx_path,
+                                   '-channelID', channel_name],
+                                  stdout=open(os.devnull, "w"),
+                                  stderr=subprocess.PIPE, env=new_env)
+        err = output.communicate()[1]
+        if output.returncode:
+            logging.error('Failed to generate transaction file', err)
+            return None
+        return tx_path

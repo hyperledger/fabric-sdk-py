@@ -51,4 +51,19 @@ IMG=hyperledger/fabric-baseimage:$ARCH-$BASEIMAGE_RELEASE
 IMG=hyperledger/fabric-baseos:$ARCH-$BASEIMAGE_RELEASE
 [ -z "$(docker images -q ${IMG} 2> /dev/null)" ] && docker pull ${IMG}
 
+if ! which configtxgen
+	then
+		if  [ ! -e fabric-bin/bin/configtxgen ];
+		then
+			echo "configtxgen doesn't exits."
+			mkdir -p fabric-bin
+			(cd fabric-bin && curl -sSL https://goo.gl/6wtTN5 | bash -s -- -d -s) #downloads only binary
+			if [ $? -gt 0 ];
+			then
+				echo "Binary download failed."
+				exit 1
+			fi
+		fi
+	fi
+
 exit 0

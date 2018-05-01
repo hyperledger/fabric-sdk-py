@@ -2,6 +2,8 @@
 
 # Triggered by the ci
 # To run some specific case, run like `tox -e py30 -- test/integration/create_channel_test.py`
+PATH := fabric-bin/bin:$(PATH)
+SHELL := env PATH=$(PATH) /bin/bash
 check: clean
 	bash ./scripts/check_env.sh
 	echo "=== Testing started... ==="
