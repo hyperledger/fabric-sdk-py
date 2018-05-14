@@ -57,7 +57,13 @@ if ! which configtxgen
 		then
 			echo "configtxgen doesn't exits."
 			mkdir -p fabric-bin
-			(cd fabric-bin && curl -sSL https://goo.gl/6wtTN5 | bash -s -- -d -s) #downloads only binary
+			PLATFORM=$(echo "$(uname -s|tr '[:upper:]' '[:lower:]'|
+            sed 's/mingw64_nt.*/windows/')-$(uname -m | sed 's/x86_64/amd64/g')" | awk '{print tolower($0)}')
+			echo "===> Downloading platform specific fabric binaries"
+			binUrl="https://nexus.hyperledger.org/content/repositories/releases/org" \
+            binUrl="$binUrl/hyperledger/fabric/hyperledger-fabric/${PLATFORM}-${PROJECT_VERSION}" \
+            binUrl="$binUrl/hyperledger-fabric-${PLATFORM}-${PROJECT_VERSION}.tar.gz"
+            cd fabric-bin && curl $binUrl | tar xz;
 			if [ $? -gt 0 ];
 			then
 				echo "Binary download failed."
