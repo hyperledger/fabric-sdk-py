@@ -732,6 +732,22 @@ class Channel(object):
         tx_context.tx_prop_req = request
         return self.send_tx_proposal(tx_context, peers)
 
+    def query_instantiated_chaincodes(self, tx_context, peers):
+        """
+        Args:
+            tx_context: tx_context instance
+            peers: peers in the channel
+        Returns: chain code response
+        """
+        request = create_tx_prop_req(
+            prop_type=CC_QUERY,
+            fcn='getchaincodes',
+            cc_name='lscc',
+            cc_type=CC_TYPE_GOLANG)
+
+        tx_context.tx_prop_req = request
+        return self.send_tx_proposal(tx_context, peers)
+
 
 def create_system_channel(client, name=SYSTEM_CHANNEL_NAME):
     """ Create system channel instance
