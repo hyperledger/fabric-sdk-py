@@ -6,3 +6,4 @@ pysha3 == 1.0b1
 requests >= 2.12.4
 rx >= 1.5.3
 six >= 1.4.0
+protobuf >= 3.5.2.post1
