@@ -748,6 +748,24 @@ class Channel(object):
         tx_context.tx_prop_req = request
         return self.send_tx_proposal(tx_context, peers)
 
+    def query_transaction_by_id(self, tx_context, peers, transaction_id):
+        """
+        Args:
+            tx_context: tx_context instance
+            peers: peers in the channel
+            transaction_id: transaction to query for
+        Returns: chain code response
+        """
+        request = create_tx_prop_req(
+            prop_type=CC_QUERY,
+            fcn='GetTransactionByID',
+            cc_name='qscc',
+            args=[self.name, transaction_id],
+            cc_type=CC_TYPE_GOLANG)
+
+        tx_context.tx_prop_req = request
+        return self.send_tx_proposal(tx_context, peers)
+
 
 def create_system_channel(client, name=SYSTEM_CHANNEL_NAME):
     """ Create system channel instance
