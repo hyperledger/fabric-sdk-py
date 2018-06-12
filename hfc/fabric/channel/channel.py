@@ -17,7 +17,8 @@ from hfc.fabric.transaction.tx_proposal_request import \
 from hfc.protos.common import common_pb2
 from hfc.protos.orderer import ab_pb2
 from hfc.protos.peer import chaincode_pb2, proposal_pb2
-from hfc.protos.utils import create_cc_spec
+from hfc.protos.utils import create_cc_spec, create_seek_info, \
+    create_seek_payload, create_envelope
 from hfc.util import utils
 from hfc.util.utils import proto_str, current_timestamp, proto_b, \
     build_header, build_channel_header, build_cc_proposal, \
@@ -613,8 +614,9 @@ class Channel(object):
 
         cc_invoke_spec = chaincode_pb2.ChaincodeInvocationSpec()
         cc_invoke_spec.chaincode_spec.CopyFrom(create_cc_spec(invoke_input,
-                                               invoke_cc_id,
-                                               CC_TYPE_GOLANG))
+                                                              invoke_cc_id,
+                                                              CC_TYPE_GOLANG)
+                                               )
 
         extension = proposal_pb2.ChaincodeHeaderExtension()
         extension.chaincode_id.name = proto_str('lscc')
@@ -625,7 +627,7 @@ class Channel(object):
             current_timestamp(),
             epoch=0,
             extension=extension.SerializeToString()
-            )
+        )
 
         header = build_header(tx_context.identity,
                               channel_header,
@@ -761,6 +763,86 @@ class Channel(object):
             fcn='GetTransactionByID',
             cc_name='qscc',
             args=[self.name, transaction_id],
+            cc_type=CC_TYPE_GOLANG)
+
+        tx_context.tx_prop_req = request
+        return self.send_tx_proposal(tx_context, peers)
+
+    def get_block_between(self, tx_context, orderer, start, end):
+        """
+        Args:
+            tx_context: tx_context instance
+            orderer: orderer instance
+            start: id of block to start query for
+            end: id of block to end query for
+
+        Returns: block(s)
+        """
+        seek_info = create_seek_info(start, end)
+        seek_info_header = build_channel_header(
+            common_pb2.HeaderType.Value('DELIVER_SEEK_INFO'),
+            tx_context.tx_id,
+            self._name,
+            current_timestamp(),
+            tx_context.epoch)
+
+        seek_header = build_header(
+            tx_context.identity,
+            seek_info_header,
+            tx_context.nonce)
+
+        seek_payload_bytes = create_seek_payload(seek_header, seek_info)
+        sig = tx_context.sign(seek_payload_bytes)
+
+        envelope = create_envelope(sig, seek_payload_bytes)
+        q = Queue(1)
+        response = orderer.delivery(envelope)
+        response.subscribe(on_next=lambda x: q.put(x),
+                           on_error=lambda x: q.put(x))
+
+        res, _ = q.get(timeout=5)
+
+        if res.block is None or res.block == '':
+            _logger.error("fail to get block start from %s to %s" %
+                          (str(start), str(end)))
+            return None
+
+        _logger.info("get block successfully, start from %s to %s" %
+                     (str(start), str(end)))
+
+        return res.block
+
+    def query_block_by_number(self, tx_context, peers, block_number):
+        """
+        Args:
+            tx_context: tx_context instance
+            peers: peers in the channel
+            block_number: block to query for
+        Returns: chain code response
+        """
+        request = create_tx_prop_req(
+            prop_type=CC_QUERY,
+            fcn='GetBlockByNumber',
+            cc_name='qscc',
+            args=[self.name, block_number],
+            cc_type=CC_TYPE_GOLANG)
+
+        tx_context.tx_prop_req = request
+        return self.send_tx_proposal(tx_context, peers)
+
+    def query_block_by_hash(self, tx_context, peers, block_hash):
+        """
+        Args:
+            tx_context: tx_context instance
+            peers: peers in the channel
+            block_hash: block to query for
+        Returns: chain code response
+        """
+        request = create_tx_prop_req(
+            prop_type=CC_QUERY,
+            fcn='GetBlockByHash',
+            cc_name='qscc',
+            args=[self.name, block_hash],
             cc_type=CC_TYPE_GOLANG)
 
         tx_context.tx_prop_req = request
