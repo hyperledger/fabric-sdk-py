@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+
 import sys
 import logging
 from time import sleep
@@ -17,12 +18,12 @@ from test.integration.utils import get_peer_org_user,\
 from test.integration.config import E2E_CONFIG
 from test.integration.e2e_utils import build_channel_request,\
     build_join_channel_req
-from hfc.fabric.block_decoder import decode_block_header
 
 if sys.version_info < (3, 0):
     from Queue import Queue
 else:
     from queue import Queue
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -32,7 +33,8 @@ CC_NAME = 'example_cc'
 CC_VERSION = 'v1'
 
 
-class QueryBlockTest(BaseTestCase):
+class QueryChainInfoTest(BaseTestCase):
+
     def invoke_chaincode(self):
 
         self.channel = self.client.new_channel(self.channel_name)
@@ -50,21 +52,18 @@ class QueryBlockTest(BaseTestCase):
                                             self.client.state_store)
 
         crypto = ecies()
-
         tran_prop_req_install = create_tx_prop_req(
             prop_type=CC_INSTALL,
             cc_path=CC_PATH,
             cc_type=CC_TYPE_GOLANG,
             cc_name=CC_NAME,
             cc_version=CC_VERSION)
-
         tx_context_install = create_tx_context(
             self.org1_admin,
             crypto,
             tran_prop_req_install)
 
         args_dep = ['a', '200', 'b', '300']
-
         tran_prop_req_dep = create_tx_prop_req(
             prop_type=CC_INSTANTIATE,
             cc_type=CC_TYPE_GOLANG,
@@ -78,7 +77,6 @@ class QueryBlockTest(BaseTestCase):
                                            tran_prop_req_dep)
 
         args = ['a', 'b', '100']
-
         tran_prop_req = create_tx_prop_req(prop_type=CC_INVOKE,
                                            cc_type=CC_TYPE_GOLANG,
                                            cc_name=CC_NAME,
@@ -104,13 +102,6 @@ class QueryBlockTest(BaseTestCase):
                                                      [self.org1_peer])
         sleep(5)
 
-        test_block = self.channel.get_block_between(
-            tx_context, self.channel.orderers.get('localhost:7050'),
-            0, 2)  # test to get 2 blocks
-        block_header = decode_block_header(test_block.header)
-
-        block_hash = block_header['data_hash']
-
         tran_req = build_tx_req(res)
         send_transaction(self.channel.orderers, tran_req, tx_context)
         sleep(5)
@@ -125,18 +116,18 @@ class QueryBlockTest(BaseTestCase):
 
         send_transaction(self.channel.orderers, tran_req, tx_context_tx)
 
-        return block_hash.decode("utf-8")
+    def test_query_installed_chaincodes_sucess(self):
 
-    def test_query_block_success(self):
-
-        block_hash = self.invoke_chaincode()
+        self.invoke_chaincode()
         sleep(5)
+
         tx_context = create_tx_context(self.org1_admin,
                                        ecies(),
                                        TXProposalRequest())
-        response = self.channel.query_block_by_hash(tx_context,
-                                                    [self.org1_peer],
-                                                    block_hash)
+        sleep(5)
+        response = self.channel.query_chain_info(tx_context,
+                                                 [self.org1_peer])
+
         q = Queue(1)
         response.subscribe(on_next=lambda x: q.put(x),
                            on_error=lambda x: q.put(x))

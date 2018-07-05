@@ -848,6 +848,41 @@ class Channel(object):
         tx_context.tx_prop_req = request
         return self.send_tx_proposal(tx_context, peers)
 
+    def query_block_by_txid(self, tx_context, peers, tx_id):
+        """
+        Args:
+            tx_context: tx_context instance
+            peers: peers in the channel
+            tx_id: transaction id
+        Returns: chain code response
+        """
+        request = create_tx_prop_req(
+            prop_type=CC_QUERY,
+            fcn='GetBlockByTxID',
+            cc_name='qscc',
+            args=[self.name, tx_id],
+            cc_type=CC_TYPE_GOLANG)
+
+        tx_context.tx_prop_req = request
+        return self.send_tx_proposal(tx_context, peers)
+
+    def query_chain_info(self, tx_context, peers):
+        """
+        Args:
+            tx_context: tx_context instance
+            peers: peers in the channel
+        Returns: chain code response
+        """
+        request = create_tx_prop_req(
+            prop_type=CC_QUERY,
+            fcn='GetChainInfo',
+            cc_name='qscc',
+            args=[self.name],
+            cc_type=CC_TYPE_GOLANG)
+
+        tx_context.tx_prop_req = request
+        return self.send_tx_proposal(tx_context, peers)
+
 
 def create_system_channel(client, name=SYSTEM_CHANNEL_NAME):
     """ Create system channel instance
