@@ -51,14 +51,13 @@ e.g., `network1.json`.
 SDK can load all network information from the profile, and check the resources in the network.
 
 ```python
-# TODO: update code
 from hfc.fabric import Client
 
 cli = Client(net_profile="test/fixtures/network.json")
 
 cli.organizations  # orgs in the network
 cli.peers  # peers in the network
-cli.orderers # orderers in the network
+cli.orderers  # orderers in the network
 cli.CAs  # ca nodes in the network
 ```
 
@@ -76,10 +75,12 @@ org1_admin = cli.get_user('org1.example.com', 'Admin')
 
 # The response should be true if succeed
 response = cli.channel_create(
-		'orderer.example.com',
-		'businesschannel',
-		org1_admin,
-		'test/fixtures/e2e_cli/channel-artifacts/channel.tx')
+            'orderer.example.com',     # orderer_name
+            'businesschannel',         # channel_name
+            org1_admin,                # requester
+            'test/fixtures/e2e_cli/',  # config_yaml
+            'TwoOrgsChannel'           # channel_profile
+                             )
 ```
 
 ### Join Peers into Channel
@@ -92,10 +93,12 @@ org1_admin = cli.get_user('org1.example.com', 'Admin')
 
 # The response should be true if succeed
 response = cli.channel_join(
-		org1_admin,
-		'businesschannel',
-		['peer0.org1.example.com', 'peer1.org1.example.com'],
-		'orderer.example.com')
+               org1_admin,                 #requester
+               'businesschannel',          #channel_name
+               ['peer0.org1.example.com',
+                'peer1.org1.example.com'], #peer_names
+               'orderer.example.com'       #orderer_name
+                           )
 ```
 
 ### Install Chaincode to Peers
@@ -108,11 +111,12 @@ org1_admin = cli.get_user('org1.example.com', 'Admin')
 
 # The response should be true if succeed
 response = cli.chaincode_install(
-		requestor=org1_admin,
-		peer_names=['peer0.org1.example.com'],
-		cc_path='github.com/example_cc',
-		cc_name='example_cc',
-		cc_version='v1.0' )
+               org1_admin,                 #requestor
+               ['peer0.org1.example.com'], #peer_names
+               'github.com/example_cc',    #cc_path
+               'example_cc',               #cc_name
+               'v1.0'                      #cc_version
+                                )
 ```
 
 ### Instantiate Chaincode in Channel
@@ -120,7 +124,19 @@ response = cli.chaincode_install(
 ```python
 from hfc.fabric import Client
 
-#TODO
+cli = Client(net_profile="test/fixtures/network.json")
+org1_admin = cli.get_user('org1.example.com', 'Admin')
+
+# for chaincode instantiation
+args = ['a', '200', 'b', '300']
+# The response should be true if succeed
+response = cli.chaincode_instantiate(
+               org1_admin,                 #requestor
+               ['peer0.org1.example.com'], #peer_names
+               args,                       #args
+               'example_cc',               #cc_name
+               'v1.0'                      #cc_version
+                                    )
 ```
 
 ### Invoke a Chaincode
@@ -128,7 +144,19 @@ from hfc.fabric import Client
 ```python
 from hfc.fabric import Client
 
-#TODO
+cli = Client(net_profile="test/fixtures/network.json")
+org1_admin = cli.get_user('org1.example.com', 'Admin')
+
+# for chaincode invoke
+args = ['a', 'b', '100']
+# The response should be true if succeed
+response = cli.chaincode_invoke(
+               org1_admin,                 #requestor
+               ['peer0.org1.example.com'], #peer_names
+               args,                       #args
+               'example_cc',               #cc_name
+               'v1.0'                      #cc_version
+                               )
 ```
 
 
