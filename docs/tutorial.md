@@ -112,6 +112,7 @@ org1_admin = cli.get_user('org1.example.com', 'Admin')
 # The response should be true if succeed
 response = cli.chaincode_install(
                org1_admin,                 #requestor
+               'businesschannel'           #channel_name
                ['peer0.org1.example.com'], #peer_names
                'github.com/example_cc',    #cc_path
                'example_cc',               #cc_name
@@ -139,6 +140,18 @@ response = cli.chaincode_instantiate(
                                     )
 ```
 
+# for chaincode instantiation
+args = ['a', '200', 'b', '300']
+# The response should be true if succeed
+response = cli.chaincode_instantiate(
+               org1_admin,                 #requestor
+               'businesschannel'           #channel_name
+               ['peer0.org1.example.com'], #peer_names
+               args,                       #args
+               'example_cc',               #cc_name
+               'v1.0'                      #cc_version
+                                    )
+```
 ### Invoke a Chaincode
 
 ```python
@@ -152,6 +165,7 @@ args = ['a', 'b', '100']
 # The response should be true if succeed
 response = cli.chaincode_invoke(
                org1_admin,                 #requestor
+               'businesschannel'           #channel_name
                ['peer0.org1.example.com'], #peer_names
                args,                       #args
                'example_cc',               #cc_name

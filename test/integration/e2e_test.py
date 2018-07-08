@@ -19,7 +19,7 @@ test_network = E2E_CONFIG['test-network']
 
 CC_PATH = 'github.com/example_cc'
 CC_NAME = 'example_cc'
-CC_VERSION = 'v1'
+CC_VERSION = '1.0'
 
 
 class E2eTest(BaseTestCase):
@@ -68,7 +68,7 @@ class E2eTest(BaseTestCase):
             response = self.client.channel_join(
                 requester=org_admin,
                 channel_name=self.channel_name,
-                peer_names=['peer0.'+org, 'peer1.'+org],
+                peer_names=['peer0.' + org, 'peer1.' + org],
                 orderer_name='orderer.example.com'
             )
             self.assertTrue(response)
@@ -98,7 +98,8 @@ class E2eTest(BaseTestCase):
             org_admin = self.client.get_user(org, "Admin")
             response = self.client.chaincode_install(
                 requestor=org_admin,
-                peer_names=['peer0.'+org, 'peer1.'+org],
+                channel_name='businesschannel',
+                peer_names=['peer0.' + org, 'peer1.' + org],
                 cc_path=CC_PATH,
                 cc_name=CC_NAME,
                 cc_version=CC_VERSION
@@ -107,10 +108,10 @@ class E2eTest(BaseTestCase):
             # Verify the cc pack exists now in the peer node
             dc = docker.from_env()
             for peer in ['peer0', 'peer1']:
-                peer0_container = dc.containers.get(peer+'.'+org)
+                peer0_container = dc.containers.get(peer + '.' + org)
                 code, output = peer0_container.exec_run(
                     'test -f '
-                    '/var/hyperledger/production/chaincodes/example_cc.v1')
+                    '/var/hyperledger/production/chaincodes/example_cc.1.0')
                 self.assertEqual(code, 0, "chaincodes pack not exists")
 
         logger.info("E2E: chaincode install done")
@@ -119,17 +120,70 @@ class E2eTest(BaseTestCase):
 
         pass
 
-    def instantiate_chaincode(self):
+    def chaincode_instantiate(self):
+        """
+        Test instantiating an example chaincode to peer
 
-        pass
+        :return:
+        """
+        logger.info("E2E: Chaincode instantiation start")
 
-    def invoke_transaction(self):
+        orgs = ["org1.example.com"]
+        args = ['a', '200', 'b', '300']
+        for org in orgs:
+            org_admin = self.client.get_user(org, "Admin")
+            response = self.client.chaincode_instantiate(
+                requestor=org_admin,
+                channel_name='businesschannel',
+                peer_names=['peer0.' + org, 'peer1.' + org],
+                args=args,
+                cc_name=CC_NAME,
+                cc_version=CC_VERSION
+            )
+            logger.info(
+                "E2E: Chaincode instantiation response {}".format(response))
+            self.assertTrue(response)
 
-        pass
+        logger.info("E2E: chaincode instantiation done")
+
+    def chaincode_invoke(self):
+        """
+        Test invoking an example chaincode to peer
+
+        :return:
+        """
+        logger.info("E2E: Chaincode invoke start")
+
+        orgs = ["org1.example.com"]
+        args = ['a', 'b', '100']
+        for org in orgs:
+            org_admin = self.client.get_user(org, "Admin")
+            response = self.client.chaincode_invoke(
+                requestor=org_admin,
+                channel_name='businesschannel',
+                peer_names=['peer0.' + org, 'peer1.' + org],
+                args=args,
+                cc_name=CC_NAME,
+                cc_version=CC_VERSION
+            )
+            self.assertTrue(response)
+
+        logger.info("E2E: chaincode invoke done")
 
     def query(self):
 
-        pass
+        logger.info("E2E: Chaincode query start")
+
+        orgs = ["org1.example.com", "org2.example.com"]
+        for org in orgs:
+            org_admin = self.client.get_user(org, "Admin")
+            response = self.client.query_installed_chaincode(
+                requestor=org_admin,
+                peer_names=['peer0.' + org, 'peer1.' + org],
+            )
+            self.assertTrue(response)
+
+        logger.info("E2E: chaincode query done")
 
     def test_in_sequence(self):
 
@@ -144,9 +198,9 @@ class E2eTest(BaseTestCase):
 
         self.chaincode_install_fail()
 
-        self.instantiate_chaincode()
+        self.chaincode_instantiate()
 
-        self.invoke_transaction()
+        self.chaincode_invoke()
 
         self.query()
 

@@ -18,19 +18,20 @@ import json
 import sys
 import os
 import subprocess
+from time import sleep
 
-from hfc.fabric.channel.channel import Channel, create_app_channel
+from hfc.fabric.channel.channel import Channel
 from hfc.fabric.orderer import Orderer
 from hfc.fabric.peer import Peer
 from hfc.fabric.organization import create_org
 from hfc.fabric.transaction.tx_context import TXContext, create_tx_context
 from hfc.fabric.transaction.tx_proposal_request import TXProposalRequest, \
-    create_tx_prop_req, CC_INSTALL, CC_TYPE_GOLANG
+    create_tx_prop_req, CC_INSTALL, CC_TYPE_GOLANG, CC_INSTANTIATE, \
+    CC_INVOKE
 from hfc.protos.common import common_pb2, configtx_pb2
 from hfc.util import utils
 from hfc.util.crypto.crypto import Ecies, ecies
 from hfc.util.keyvaluestore import FileKeyValueStore
-from hfc.util.utils import extract_channel_config
 
 # inject global default config
 from hfc.fabric.config.default import DEFAULT
@@ -279,7 +280,7 @@ class Client(object):
 
         with open(tx, 'rb') as f:
             envelope = f.read()
-            config = extract_channel_config(envelope)
+            config = utils.extract_channel_config(envelope)
 
         # convert envelope to config
         self.tx_context = TXContext(requester, Ecies(), {})
@@ -372,12 +373,13 @@ class Client(object):
 
         return channel.join_channel(request)
 
-    def chaincode_install(self, requestor, peer_names, cc_path, cc_name,
-                          cc_version, timeout=5):
+    def chaincode_install(self, requestor, channel_name, peer_names,
+                          cc_path, cc_name, cc_version, timeout=5):
         """
         Install chaincode to given peers by requestor role
 
         :param requestor: User role who issue the request
+        :param channel_name: Name of the channel to send the install proposal
         :param peer_names: Names of the peers to install
         :param cc_path: chaincode path
         :param cc_name: chaincode name
@@ -394,8 +396,9 @@ class Client(object):
                                            cc_name, cc_version)
         tx_context = create_tx_context(requestor, ecies(), tran_prop_req)
 
-        # sleep(5)
-        response = self.send_install_proposal(tx_context, peers)
+        sleep(5)
+        response = self.send_install_proposal(
+            tx_context, peers, channel_name=channel_name)
 
         queue = Queue(1)
         response.subscribe(
@@ -650,20 +653,40 @@ class Client(object):
         """
         self._state_store = state_store
 
-    def send_install_proposal(self, tx_context, peers, scheduler=None):
+    def send_install_proposal(self, tx_context, peers, scheduler=None,
+                              channel_name='businesschannel'):
         """ Send install proposal
 
         Args:
             scheduler: rx scheduler
             tx_context: transaction context
             peers: peers
+            channel_name: name of channel
 
         Returns: A set of proposal_response
 
         """
-        app_channel = create_app_channel(self, name="businesschannel")
+        app_channel = self.get_channel(channel_name)
         _logger.debug("context {}".format(tx_context))
-        return app_channel.send_install_proposal(tx_context, peers, scheduler)
+        return app_channel.send_install_proposal(tx_context,
+                                                 peers,
+                                                 scheduler)
+
+    def send_instantiate_proposal(self, tx_context, peers,
+                                  channel_name='businesschannel'):
+        """ Send instantiate proposal
+
+        Args:
+            tx_context: transaction context
+            peers: peers
+            channel_name: the name of channel
+
+        Returns: A set of proposal_response
+
+        """
+        app_channel = self.get_channel(channel_name)
+        _logger.debug("context {}".format(tx_context))
+        return app_channel.send_instantiate_proposal(tx_context, peers)
 
     def generate_channel_tx(self, channel_name, config_yaml, channel_profile):
         """ Creates channel configuration transaction
@@ -705,3 +728,140 @@ class Client(object):
             logging.error('Failed to generate transaction file', err)
             return None
         return tx_path
+
+    def chaincode_instantiate(self, requestor, channel_name, peer_names, args,
+                              cc_name, cc_version, timeout=5):
+        """
+            Instantiate installed chaincode to particular peer in
+            particular channel
+
+        :param requestor: User role who issue the request
+        :param channel_name: the name of the channel to send tx proposal
+        :param peer_names: Names of the peers to install
+        :param args (list): arguments (keys and values) for initialization
+        :param cc_name: chaincode name
+        :param cc_version: chaincode version
+        :param timeout: Timeout to wait
+        :return: True or False
+        """
+        peers = []
+        for peer_name in peer_names:
+            peer = self.get_peer(peer_name)
+            peers.append(peer)
+
+        tran_prop_req_dep = create_tx_prop_req(
+            prop_type=CC_INSTANTIATE,
+            cc_type=CC_TYPE_GOLANG,
+            cc_name=cc_name,
+            cc_version=cc_version,
+            fcn='init',
+            args=args
+        )
+
+        tx_context_dep = create_tx_context(
+            requestor,
+            ecies(),
+            tran_prop_req_dep
+        )
+
+        res = self.send_instantiate_proposal(
+            tx_context_dep, peers, channel_name)
+
+        sleep(5)
+
+        tx_context = create_tx_context(requestor,
+                                       ecies(),
+                                       TXProposalRequest())
+        tran_req = utils.build_tx_req(res)
+        response = utils.send_transaction(self.orderers, tran_req, tx_context)
+
+        sleep(5)
+
+        queue = Queue(1)
+        response.subscribe(
+            on_next=lambda x: queue.put(x),
+            on_error=lambda x: queue.put(x)
+        )
+
+        res, _ = queue.get(timeout=timeout)
+        return res.status == 200
+
+    def chaincode_invoke(self, requestor, channel_name, peer_names, args,
+                         cc_name, cc_version, timeout=5):
+        """
+        Invoke chaincode for ledger update
+
+        :param requestor: User role who issue the request
+        :param channel_name: the name of the channel to send tx proposal
+        :param peer_names: Names of the peers to install
+        :param args (list): arguments (keys and values) for initialization
+        :param cc_name: chaincode name
+        :param cc_version: chaincode version
+        :param timeout: Timeout to wait
+        :return: True or False
+        """
+        peers = []
+        for peer_name in peer_names:
+            peer = self.get_peer(peer_name)
+            peers.append(peer)
+
+        tran_prop_req = create_tx_prop_req(
+            prop_type=CC_INVOKE,
+            cc_type=CC_TYPE_GOLANG,
+            cc_name=cc_name,
+            cc_version=cc_version,
+            fcn='invoke',
+            args=args
+        )
+
+        tx_context = create_tx_context(
+            requestor,
+            ecies(),
+            tran_prop_req
+        )
+
+        res = self.get_channel(
+            channel_name).send_tx_proposal(tx_context, peers)
+
+        tran_req = utils.build_tx_req(res)
+        tx_context_tx = create_tx_context(
+            requestor,
+            ecies(),
+            tran_req
+        )
+
+        utils.send_transaction(self.orderers, tran_req, tx_context_tx)
+        sleep(5)
+
+        queue = Queue(1)
+        res.subscribe(
+            on_next=lambda x: queue.put(x),
+            on_error=lambda x: queue.put(x)
+        )
+
+        res = queue.get(timeout=timeout)
+        return res[0][0][0].response.status == 200
+
+    def query_installed_chaincode(self, requestor, peer_names,
+                                  timeout=5, channel_name='businesschannel'):
+        """
+        query installed chaincode
+
+        """
+        peers = []
+        for peer_name in peer_names:
+            peer = self.get_peer(peer_name)
+            peers.append(peer)
+
+        tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
+        response = self.get_channel(
+            channel_name).query_installed_chaincodes(tx_context, peers)
+
+        queue = Queue(1)
+        response.subscribe(
+            on_next=lambda x: queue.put(x),
+            on_error=lambda x: queue.put(x)
+        )
+
+        res = queue.get(timeout=timeout)
+        return res[0][0][0].response.status == 200
