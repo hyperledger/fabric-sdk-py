@@ -61,6 +61,32 @@ cli.orderers  # orderers in the network
 cli.CAs  # ca nodes in the network
 ```
 
+## Prepare User Id (Optionally)
+
+SDK will try to get the credential of a valid network user from fabric-sdk.
+
+
+### If no valid user exist yet, register first
+SDK will login with default admin role and register a user.
+
+```python
+from hfc.fabric_ca import Client
+
+cli = Client(server_addr="127.0.0.1:7050")
+admin = cli.enroll(username="admin", password="pass") # now local will have the admin user
+```
+
+### There's user, just get the credential
+SDK will get valid credentials from fabric-ca.
+
+```python
+from hfc.fabric_ca import Client
+cli = Client(server_addr="127.0.0.1:7050")
+admin = cli.get_user(username="admin") # get the admin user from local path
+admin.register(username="user1", password="pass1", attributions={}) # register a user to ca
+user1 = cli.enroll(username="user1", password="pass1") # now local will have the user
+```
+
 ## Interaction with Fabric Network
 
 After load the configuration, SDK can operate with the network.
