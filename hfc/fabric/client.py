@@ -373,13 +373,12 @@ class Client(object):
 
         return channel.join_channel(request)
 
-    def chaincode_install(self, requestor, channel_name, peer_names,
-                          cc_path, cc_name, cc_version, timeout=5):
+    def chaincode_install(self, requestor, peer_names, cc_path, cc_name,
+                          cc_version, timeout=5):
         """
         Install chaincode to given peers by requestor role
 
         :param requestor: User role who issue the request
-        :param channel_name: Name of the channel to send the install proposal
         :param peer_names: Names of the peers to install
         :param cc_path: chaincode path
         :param cc_name: chaincode name
@@ -397,8 +396,7 @@ class Client(object):
         tx_context = create_tx_context(requestor, ecies(), tran_prop_req)
 
         sleep(5)
-        response = self.send_install_proposal(
-            tx_context, peers, channel_name=channel_name)
+        response = self.send_install_proposal(tx_context, peers)
 
         queue = Queue(1)
         response.subscribe(
@@ -653,24 +651,15 @@ class Client(object):
         """
         self._state_store = state_store
 
-    def send_install_proposal(self, tx_context, peers, scheduler=None,
-                              channel_name='businesschannel'):
+    def send_install_proposal(self, tx_context, peers, scheduler=None):
         """ Send install proposal
-
         Args:
-            scheduler: rx scheduler
             tx_context: transaction context
             peers: peers
-            channel_name: name of channel
-
+            scheduler: rx scheduler
         Returns: A set of proposal_response
-
         """
-        app_channel = self.get_channel(channel_name)
-        _logger.debug("context {}".format(tx_context))
-        return app_channel.send_install_proposal(tx_context,
-                                                 peers,
-                                                 scheduler)
+        return utils.send_install_proposal(tx_context, peers, scheduler)
 
     def send_instantiate_proposal(self, tx_context, peers,
                                   channel_name='businesschannel'):

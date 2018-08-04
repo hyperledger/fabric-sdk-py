@@ -98,7 +98,6 @@ class E2eTest(BaseTestCase):
             org_admin = self.client.get_user(org, "Admin")
             response = self.client.chaincode_install(
                 requestor=org_admin,
-                channel_name='businesschannel',
                 peer_names=['peer0.' + org, 'peer1.' + org],
                 cc_path=CC_PATH,
                 cc_name=CC_NAME,
@@ -170,7 +169,7 @@ class E2eTest(BaseTestCase):
 
         logger.info("E2E: chaincode invoke done")
 
-    def query(self):
+    def query_installed_cc(self):
 
         logger.info("E2E: Chaincode query start")
 
@@ -202,7 +201,7 @@ class E2eTest(BaseTestCase):
 
         self.chaincode_invoke()
 
-        self.query()
+        self.query_installed_cc()
 
         logger.info("E2E all test cases done\n\n")
 

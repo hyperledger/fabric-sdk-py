@@ -138,7 +138,6 @@ org1_admin = cli.get_user('org1.example.com', 'Admin')
 # The response should be true if succeed
 response = cli.chaincode_install(
                org1_admin,                 #requestor
-               'businesschannel'           #channel_name
                ['peer0.org1.example.com'], #peer_names
                'github.com/example_cc',    #cc_path
                'example_cc',               #cc_name
@@ -159,18 +158,6 @@ args = ['a', '200', 'b', '300']
 # The response should be true if succeed
 response = cli.chaincode_instantiate(
                org1_admin,                 #requestor
-               ['peer0.org1.example.com'], #peer_names
-               args,                       #args
-               'example_cc',               #cc_name
-               'v1.0'                      #cc_version
-                                    )
-```
-
-# for chaincode instantiation
-args = ['a', '200', 'b', '300']
-# The response should be true if succeed
-response = cli.chaincode_instantiate(
-               org1_admin,                 #requestor
                'businesschannel'           #channel_name
                ['peer0.org1.example.com'], #peer_names
                args,                       #args
@@ -178,6 +165,7 @@ response = cli.chaincode_instantiate(
                'v1.0'                      #cc_version
                                     )
 ```
+
 ### Invoke a Chaincode
 
 ```python
@@ -197,6 +185,24 @@ response = cli.chaincode_invoke(
                'example_cc',               #cc_name
                'v1.0'                      #cc_version
                                )
+```
+
+### Query a installed chaincode
+
+```python
+from hfc.fabric import Client
+
+cli = Client(net_profile="test/fixtures/network.json")
+org1_admin = cli.get_user('org1.example.com', 'Admin')
+
+# make sure the chaincode is installed
+# the response should be true if succeed
+response = cli.query_installed_chaincode(
+               org1_admin,                 #requestor
+               ['peer0.org1.example.com']  #peer_names
+                                        )
+
+
 ```
 
 
