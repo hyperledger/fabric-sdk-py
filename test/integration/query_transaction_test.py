@@ -118,9 +118,10 @@ class QueryTransaction(BaseTestCase):
         tx_context = create_tx_context(self.org1_admin,
                                        ecies(),
                                        TXProposalRequest())
-        response = self.channel.query_transaction_by_id(tx_context,
-                                                        [self.org1_peer],
-                                                        tx_id)
+
+        response = self.channel.query_transaction(tx_context,
+                                                  [self.org1_peer],
+                                                  tx_id)
         q = Queue(1)
         response.subscribe(on_next=lambda x: q.put(x),
                            on_error=lambda x: q.put(x))

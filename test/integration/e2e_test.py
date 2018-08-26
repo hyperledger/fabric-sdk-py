@@ -1,14 +1,12 @@
-"""
 # Copyright IBM Corp. 2017 All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
-"""
-
 
 import docker
 import logging
 import time
 import unittest
+import binascii
 
 from test.integration.utils import BaseTestCase
 from test.integration.config import E2E_CONFIG
@@ -66,7 +64,7 @@ class E2eTest(BaseTestCase):
         for org in orgs:
             org_admin = self.client.get_user(org, 'Admin')
             response = self.client.channel_join(
-                requester=org_admin,
+                requestor=org_admin,
                 channel_name=self.channel_name,
                 peer_names=['peer0.' + org, 'peer1.' + org],
                 orderer_name='orderer.example.com'
@@ -133,7 +131,7 @@ class E2eTest(BaseTestCase):
             org_admin = self.client.get_user(org, "Admin")
             response = self.client.chaincode_instantiate(
                 requestor=org_admin,
-                channel_name='businesschannel',
+                channel_name=self.channel_name,
                 peer_names=['peer0.' + org, 'peer1.' + org],
                 args=args,
                 cc_name=CC_NAME,
@@ -159,7 +157,7 @@ class E2eTest(BaseTestCase):
             org_admin = self.client.get_user(org, "Admin")
             response = self.client.chaincode_invoke(
                 requestor=org_admin,
-                channel_name='businesschannel',
+                channel_name=self.channel_name,
                 peer_names=['peer0.' + org, 'peer1.' + org],
                 args=args,
                 cc_name=CC_NAME,
@@ -169,20 +167,206 @@ class E2eTest(BaseTestCase):
 
         logger.info("E2E: chaincode invoke done")
 
-    def query_installed_cc(self):
+    def query_installed_chaincodes(self):
+        """
+        Test query installed chaincodes on peer
 
-        logger.info("E2E: Chaincode query start")
+        :return:
+        """
+        logger.info("E2E: Query installed chaincode start")
 
         orgs = ["org1.example.com", "org2.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
-            response = self.client.query_installed_chaincode(
+            response = self.client.query_installed_chaincodes(
                 requestor=org_admin,
                 peer_names=['peer0.' + org, 'peer1.' + org],
             )
-            self.assertTrue(response)
+            self.assertEqual(
+                response.chaincodes[0].name, CC_NAME, "Query failed")
+            self.assertEqual(
+                response.chaincodes[0].version, CC_VERSION, "Query failed")
+            self.assertEqual(
+                response.chaincodes[0].path, CC_PATH, "Query failed")
 
-        logger.info("E2E: chaincode query done")
+        logger.info("E2E: Query installed chaincode done")
+
+    def query_channels(self):
+        """
+        Test querying instantiated chaincode on peer
+
+        :return:
+        """
+        logger.info("E2E: Query channel start")
+
+        orgs = ["org1.example.com"]
+        for org in orgs:
+            org_admin = self.client.get_user(org, "Admin")
+            response = self.client.query_channels(
+                requestor=org_admin,
+                peer_names=['peer0.' + org, 'peer1.' + org],
+            )
+            self.assertEqual(
+                response.channels[0].channel_id,
+                'businesschannel',
+                "Query failed")
+
+        logger.info("E2E: Query channel done")
+
+    def query_info(self):
+        """
+        Test querying information on the state of the Channel
+
+        :return:
+        """
+        logger.info("E2E: Query info start")
+
+        orgs = ["org1.example.com"]
+        for org in orgs:
+            org_admin = self.client.get_user(org, "Admin")
+            response = self.client.query_info(
+                requestor=org_admin,
+                channel_name=self.channel_name,
+                peer_names=['peer0.' + org, 'peer1.' + org],
+            )
+            self.assertEqual(
+                response.height,
+                3,
+                "Query failed")
+
+        logger.info("E2E: Query info done")
+
+    def query_block_by_txid(self):
+        """
+        Test querying block by tx id
+
+        :return:
+        """
+        logger.info("E2E: Query block by tx id start")
+
+        orgs = ["org1.example.com"]
+        for org in orgs:
+            org_admin = self.client.get_user(org, "Admin")
+            response = self.client.query_block_by_txid(
+                requestor=org_admin,
+                channel_name=self.channel_name,
+                peer_names=['peer0.' + org, 'peer1.' + org],
+                tx_id=self.client.txid_for_test
+            )
+            self.assertEqual(
+                response['header']['number'],
+                1,
+                "Query failed")
+
+        logger.info("E2E: Query block by tx id done")
+
+    def query_block_by_hash(self):
+        """
+        Test querying block by tx id
+
+        :return:
+        """
+        logger.info("E2E: Query block by block hash start")
+
+        orgs = ["org1.example.com"]
+        for org in orgs:
+            org_admin = self.client.get_user(org, "Admin")
+
+            response = self.client.query_info(
+                requestor=org_admin,
+                channel_name=self.channel_name,
+                peer_names=['peer0.' + org, 'peer1.' + org],
+            )
+
+            test_hash = binascii.b2a_hex(
+                response.previousBlockHash).decode('utf-8')
+
+            response = self.client.query_block_by_hash(
+                requestor=org_admin,
+                channel_name=self.channel_name,
+                peer_names=['peer0.' + org, 'peer1.' + org],
+                block_hash=test_hash
+            )
+            self.assertEqual(
+                response['header']['number'],
+                1,
+                "Query failed")
+
+        logger.info("E2E: Query block by block hash done")
+
+    def query_block(self):
+        """
+        Test querying block by block number
+
+        :return:
+        """
+        logger.info("E2E: Query block by block number start")
+
+        orgs = ["org1.example.com"]
+        for org in orgs:
+            org_admin = self.client.get_user(org, "Admin")
+            response = self.client.query_block(
+                requestor=org_admin,
+                channel_name=self.channel_name,
+                peer_names=['peer0.' + org, 'peer1.' + org],
+                block_number='1'
+            )
+            self.assertEqual(
+                response['header']['number'],
+                1,
+                "Query failed")
+
+        logger.info("E2E: Query block by block number done")
+
+    def query_transaction(self):
+        """
+        Test querying transaction by tx id
+
+        :return:
+        """
+        logger.info("E2E: Query transaction by tx id start")
+
+        orgs = ["org1.example.com"]
+        for org in orgs:
+            org_admin = self.client.get_user(org, "Admin")
+            response = self.client.query_transaction(
+                requestor=org_admin,
+                channel_name=self.channel_name,
+                peer_names=['peer0.' + org, 'peer1.' + org],
+                tx_id=self.client.txid_for_test
+            )
+            self.assertEqual(
+                response.get('transaction_envelope').get('payload').get(
+                    'header').get('channel_header').get('channel_id'),
+                self.channel_name,
+                "Query failed")
+
+        logger.info("E2E: Query transaction by tx id done")
+
+    def query_instantiated_chaincodes(self):
+        """
+        Test query instantiated chaincodes on peer
+
+        :return:
+        """
+        logger.info("E2E: Query installed chaincode start")
+
+        orgs = ["org1.example.com", "org2.example.com"]
+        for org in orgs:
+            org_admin = self.client.get_user(org, "Admin")
+            response = self.client.query_instantiated_chaincodes(
+                requestor=org_admin,
+                channel_name=self.channel_name,
+                peer_names=['peer0.' + org, 'peer1.' + org]
+            )
+            self.assertEqual(
+                response.chaincodes[0].name, CC_NAME, "Query failed")
+            self.assertEqual(
+                response.chaincodes[0].version, CC_VERSION, "Query failed")
+            self.assertEqual(
+                response.chaincodes[0].path, CC_PATH, "Query failed")
+
+        logger.info("E2E: Query installed chaincode done")
 
     def test_in_sequence(self):
 
@@ -201,7 +385,21 @@ class E2eTest(BaseTestCase):
 
         self.chaincode_invoke()
 
-        self.query_installed_cc()
+        self.query_installed_chaincodes()
+
+        self.query_channels()
+
+        self.query_info()
+
+        self.query_block_by_txid()
+
+        # self.query_block_by_hash() # failed
+
+        self.query_block()
+
+        self.query_transaction()
+
+        self.query_instantiated_chaincodes()
 
         logger.info("E2E all test cases done\n\n")
 

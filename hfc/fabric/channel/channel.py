@@ -393,37 +393,6 @@ class Channel(object):
         """
         pass
 
-    def query_info(self):
-        """Query the information of channel
-
-        Queries for various useful information on the state of the channel
-        (height, known peers).
-
-        Returns: :class:`ChannelInfo` channelinfo with height,
-            currently the only useful information.
-
-        """
-        pass
-
-    def query_block(self):
-        """Queries the ledger for Block by block number.
-
-        Returns: block number (long).
-
-        """
-        pass
-
-    def query_transaction(self, tx_id):
-        """Queries the ledger for Transaction by transaction ID.
-
-        Args:
-            tx_id: transaction ID (string)
-
-        Returns: TransactionInfo containing the transaction
-
-        """
-        pass
-
     def _package_chaincode(self, cc_path, cc_type):
         """ Package all chaincode env into a tar.gz file
 
@@ -716,24 +685,6 @@ class Channel(object):
         return rx.Observable.merge(send_executions).to_iterable() \
             .map(lambda responses: (responses, proposal, header))
 
-    def query_installed_chaincodes(self, tx_context, peers):
-        """
-        Args:
-            tx_context: tx_context instance
-            peers: peers in the channel
-
-        Returns: chain code response
-        """
-
-        request = create_tx_prop_req(
-            prop_type=CC_QUERY,
-            fcn='getinstalledchaincodes',
-            cc_name='lscc',
-            cc_type=CC_TYPE_GOLANG)
-
-        tx_context.tx_prop_req = request
-        return self.send_tx_proposal(tx_context, peers)
-
     def query_instantiated_chaincodes(self, tx_context, peers):
         """
         Args:
@@ -745,24 +696,26 @@ class Channel(object):
             prop_type=CC_QUERY,
             fcn='getchaincodes',
             cc_name='lscc',
-            cc_type=CC_TYPE_GOLANG)
+            cc_type=CC_TYPE_GOLANG,
+            args=[])
 
         tx_context.tx_prop_req = request
         return self.send_tx_proposal(tx_context, peers)
 
-    def query_transaction_by_id(self, tx_context, peers, transaction_id):
-        """
+    def query_transaction(self, tx_context, peers, tx_id):
+        """Queries the ledger for Transaction by transaction ID.
+
         Args:
             tx_context: tx_context instance
             peers: peers in the channel
-            transaction_id: transaction to query for
+            tx_id: transaction ID (string)
         Returns: chain code response
         """
         request = create_tx_prop_req(
             prop_type=CC_QUERY,
             fcn='GetTransactionByID',
             cc_name='qscc',
-            args=[self.name, transaction_id],
+            args=[self.name, tx_id],
             cc_type=CC_TYPE_GOLANG)
 
         tx_context.tx_prop_req = request
@@ -812,13 +765,16 @@ class Channel(object):
 
         return res.block
 
-    def query_block_by_number(self, tx_context, peers, block_number):
-        """
+    def query_block(self, tx_context, peers, block_number):
+        """Queries the ledger for Block by block number.
+
         Args:
             tx_context: tx_context instance
             peers: peers in the channel
             block_number: block to query for
-        Returns: chain code response
+
+        Returns:
+            :class: `BlockDecoder`
         """
         request = create_tx_prop_req(
             prop_type=CC_QUERY,
@@ -836,13 +792,16 @@ class Channel(object):
             tx_context: tx_context instance
             peers: peers in the channel
             block_hash: block to query for
-        Returns: chain code response
+
+        Returns:
+            :class: `ChaincodeQueryResponse`
         """
         request = create_tx_prop_req(
             prop_type=CC_QUERY,
             fcn='GetBlockByHash',
             cc_name='qscc',
             args=[self.name, block_hash],
+            # argbytes=block_hash, # missing  in the function
             cc_type=CC_TYPE_GOLANG)
 
         tx_context.tx_prop_req = request
@@ -854,7 +813,9 @@ class Channel(object):
             tx_context: tx_context instance
             peers: peers in the channel
             tx_id: transaction id
-        Returns: chain code response
+
+        Returns:
+            :class: `ChaincodeQueryResponse`
         """
         request = create_tx_prop_req(
             prop_type=CC_QUERY,
@@ -866,12 +827,19 @@ class Channel(object):
         tx_context.tx_prop_req = request
         return self.send_tx_proposal(tx_context, peers)
 
-    def query_chain_info(self, tx_context, peers):
-        """
+    def query_info(self, tx_context, peers):
+        """Query the information of channel
+
+        Queries for various useful information on the state of the channel
+        (height, known peers).
+
         Args:
             tx_context: tx_context instance
             peers: peers in the channel
-        Returns: chain code response
+
+        Returns:
+            :class:`ChaincodeQueryResponse` channelinfo with height,
+            currently the only useful information.
         """
         request = create_tx_prop_req(
             prop_type=CC_QUERY,

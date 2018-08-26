@@ -132,4 +132,5 @@ class QueryChainInfoTest(BaseTestCase):
         response.subscribe(on_next=lambda x: q.put(x),
                            on_error=lambda x: q.put(x))
         res = q.get(timeout=5)
+
         self.assertEqual(res[0][0][0].response.status, 200)

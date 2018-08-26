@@ -116,7 +116,7 @@ class ChaincodeInvokeTest(BaseTestCase):
 
         send_transaction(self.channel.orderers, tran_req, tx_context_tx)
 
-    def test_query_installed_chaincodes_sucess(self):
+    def test_query_instantiated_chaincodes_sucess(self):
 
         self.invoke_chaincode()
         sleep(5)
@@ -124,8 +124,8 @@ class ChaincodeInvokeTest(BaseTestCase):
         tx_context = create_tx_context(self.org1_admin,
                                        ecies(),
                                        TXProposalRequest())
-        response = self.channel.query_installed_chaincodes(tx_context,
-                                                           [self.org1_peer])
+        response = self.channel.query_instantiated_chaincodes(tx_context,
+                                                              [self.org1_peer])
 
         q = Queue(1)
         response.subscribe(on_next=lambda x: q.put(x),

@@ -27,8 +27,10 @@ from hfc.fabric.organization import create_org
 from hfc.fabric.transaction.tx_context import TXContext, create_tx_context
 from hfc.fabric.transaction.tx_proposal_request import TXProposalRequest, \
     create_tx_prop_req, CC_INSTALL, CC_TYPE_GOLANG, CC_INSTANTIATE, \
-    CC_INVOKE
-from hfc.protos.common import common_pb2, configtx_pb2
+    CC_INVOKE, CC_QUERY
+from hfc.protos.common import common_pb2, configtx_pb2, ledger_pb2
+from hfc.protos.peer import query_pb2
+from hfc.fabric.block_decoder import BlockDecoder
 from hfc.util import utils
 from hfc.util.crypto.crypto import Ecies, ecies
 from hfc.util.keyvaluestore import FileKeyValueStore
@@ -247,14 +249,14 @@ class Client(object):
         """
         return self._channels.get(name, None)
 
-    def channel_create(self, orderer_name, channel_name, requester,
+    def channel_create(self, orderer_name, channel_name, requestor,
                        config_yaml, channel_profile):
         """
         Create a channel, send request to orderer, and check the response
 
         :param orderer_name: Name of orderer to send request to
         :param channel_name: Name of channel to create
-        :param requester: Name of creator
+        :param requestor: Name of creator
         :param config_yaml: Directory path of config yaml to be set for FABRIC_
         CFG_PATH variable
         :param channel_profile: Name of the channel profile defined inside
@@ -283,7 +285,7 @@ class Client(object):
             config = utils.extract_channel_config(envelope)
 
         # convert envelope to config
-        self.tx_context = TXContext(requester, Ecies(), {})
+        self.tx_context = TXContext(requestor, Ecies(), {})
         tx_id = self.tx_context.tx_id
         nonce = self.tx_context.nonce
         signatures = []
@@ -311,12 +313,12 @@ class Client(object):
         else:
             return False
 
-    def channel_join(self, requester, channel_name, peer_names, orderer_name):
+    def channel_join(self, requestor, channel_name, peer_names, orderer_name):
         """
         Join a channel.
         Get genesis block from orderer, then send request to peer
 
-        :param requester: User to send the request
+        :param requestor: User to send the request
         :param channel_name: Name of channel to create
         :param peer_names: List of peers to join to the channel
         :param orderer_name: Name of orderer to get genesis block from
@@ -345,7 +347,7 @@ class Client(object):
             channel.name).SerializeToString()
 
         # create the peer
-        tx_context = TXContext(requester, ecies(), tx_prop_req)
+        tx_context = TXContext(requestor, ecies(), tx_prop_req)
 
         peers = []
         for peer_name in peer_names:
@@ -766,6 +768,8 @@ class Client(object):
 
         sleep(5)
 
+        self.txid_for_test = tx_context_dep.tx_id  # used only for query test
+
         queue = Queue(1)
         response.subscribe(
             on_next=lambda x: queue.put(x),
@@ -831,20 +835,32 @@ class Client(object):
         res = queue.get(timeout=timeout)
         return res[0][0][0].response.status == 200
 
-    def query_installed_chaincode(self, requestor, peer_names,
-                                  timeout=5, channel_name='businesschannel'):
+    def query_installed_chaincodes(self, requestor, peer_names, timeout=5):
         """
-        query installed chaincode
+        Queries installed chaincode, returns all chaincodes installed on a peer
 
+        :param requestor: User role who issue the request
+        :param peer_names: Names of the peers to query
+        :return: A `ChaincodeQueryResponse`
         """
         peers = []
         for peer_name in peer_names:
             peer = self.get_peer(peer_name)
             peers.append(peer)
 
+        request = create_tx_prop_req(
+            prop_type=CC_QUERY,
+            fcn='getinstalledchaincodes',
+            cc_name='lscc',
+            cc_type=CC_TYPE_GOLANG,
+            args=[]
+        )
+
         tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
-        response = self.get_channel(
-            channel_name).query_installed_chaincodes(tx_context, peers)
+        tx_context.tx_prop_req = request
+
+        response = Channel('businesschannel', self).send_tx_proposal(
+            tx_context, peers)
 
         queue = Queue(1)
         response.subscribe(
@@ -852,5 +868,336 @@ class Client(object):
             on_error=lambda x: queue.put(x)
         )
 
-        res = queue.get(timeout=timeout)
-        return res[0][0][0].response.status == 200
+        try:
+            res = queue.get(timeout=timeout)
+            response = res[0][0][0]
+            if response.response:
+                query_trans = query_pb2.ChaincodeQueryResponse()
+                query_trans.ParseFromString(res[0][0][0].response.payload)
+                for cc in query_trans.chaincodes:
+                    logging.debug('cc name {}, version {}, path {}'.format(
+                                  cc.name, cc.version, cc.path))
+                return query_trans
+            return response
+
+        except Exception:
+            logging.error(
+                "Failed to query installed chaincodes: {}", sys.exc_info()[0])
+            raise
+
+    def query_channels(self, requestor, peer_names, timeout=5):
+        """
+        Queries channel name joined by a peer
+
+        :param requestor: User role who issue the request
+        :param peer_names: Names of the peers to install
+        :return: A `ChannelQueryResponse`
+        """
+
+        peers = []
+        for peer_name in peer_names:
+            peer = self.get_peer(peer_name)
+            peers.append(peer)
+
+        request = create_tx_prop_req(
+            prop_type=CC_QUERY,
+            fcn='GetChannels',
+            cc_name='cscc',
+            cc_type=CC_TYPE_GOLANG,
+            args=[]
+        )
+
+        tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
+        tx_context.tx_prop_req = request
+
+        response = Channel('businesschannel', self).send_tx_proposal(
+            tx_context, peers)
+
+        queue = Queue(1)
+        response.subscribe(
+            on_next=lambda x: queue.put(x),
+            on_error=lambda x: queue.put(x)
+        )
+
+        try:
+            res = queue.get(timeout=timeout)
+            response = res[0][0][0]
+            if response.response:
+                query_trans = query_pb2.ChannelQueryResponse()
+                query_trans.ParseFromString(res[0][0][0].response.payload)
+                for ch in query_trans.channels:
+                    logging.debug('channel id {}'.format(
+                        ch.channel_id))
+                return query_trans
+            return response
+
+        except Exception:
+            logging.error(
+                "Failed to query channel: {}", sys.exc_info()[0])
+            raise
+
+    def query_info(self, requestor, channel_name,
+                   peer_names, timeout=5):
+        """
+        Queries information of a channel
+
+        :param requestor: User role who issue the request
+        :param channel_name: Name of channel to query
+        :param peer_names: Names of the peers to install
+        :return: A `BlockchainInfo`
+        """
+
+        peers = []
+        for peer_name in peer_names:
+            peer = self.get_peer(peer_name)
+            peers.append(peer)
+
+        channel = self.get_channel(channel_name)
+        tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
+
+        response = channel.query_info(tx_context, peers)
+
+        queue = Queue(1)
+        response.subscribe(
+            on_next=lambda x: queue.put(x),
+            on_error=lambda x: queue.put(x)
+        )
+
+        try:
+            res = queue.get(timeout=timeout)
+            response = res[0][0][0]
+            if response.response:
+                chain_info = ledger_pb2.BlockchainInfo()
+                chain_info.ParseFromString(response.response.payload)
+                logging.debug('response status {}'.format(
+                    response.response.status))
+                return chain_info
+            return response
+
+        except Exception:
+            logging.error(
+                "Failed to query info: {}", sys.exc_info()[0])
+            raise
+
+    def query_block_by_txid(self, requestor, channel_name,
+                            peer_names, tx_id, timeout=5):
+        """
+        Queries block by tx id
+
+        :param requestor: User role who issue the request
+        :param channel_name: Name of channel to query
+        :param peer_names: Names of the peers to install
+        :param tx_id: Transaction ID
+        :return: A `BlockDecoder`
+        """
+
+        peers = []
+        for peer_name in peer_names:
+            peer = self.get_peer(peer_name)
+            peers.append(peer)
+
+        channel = self.get_channel(channel_name)
+        tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
+
+        response = channel.query_block_by_txid(tx_context, peers, tx_id)
+
+        queue = Queue(1)
+        response.subscribe(
+            on_next=lambda x: queue.put(x),
+            on_error=lambda x: queue.put(x)
+        )
+
+        try:
+            res = queue.get(timeout=timeout)
+            response = res[0][0][0]
+            if response.response:
+                logging.debug('response status {}'.format(
+                    response.response.status))
+                block = BlockDecoder().decode(response.response.payload)
+                logging.debug('looking at block {}'.format(
+                    block['header']['number']))
+                return block
+            return response
+
+        except Exception:
+            logging.error(
+                "Failed to query block: {}", sys.exc_info()[0])
+            raise
+
+    def query_block_by_hash(self, requestor, channel_name,
+                            peer_names, block_hash, timeout=5):
+        """
+        Queries block by hash
+
+        :param requestor: User role who issue the request
+        :param channel_name: Name of channel to query
+        :param peer_names: Names of the peers to install
+        :param block_hash: Hash of a block
+        :return: A `BlockDecoder`
+        """
+
+        peers = []
+        for peer_name in peer_names:
+            peer = self.get_peer(peer_name)
+            peers.append(peer)
+
+        channel = self.get_channel(channel_name)
+        tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
+
+        response = channel.query_block_by_hash(tx_context, peers, block_hash)
+
+        queue = Queue(1)
+        response.subscribe(
+            on_next=lambda x: queue.put(x),
+            on_error=lambda x: queue.put(x)
+        )
+
+        try:
+            res = queue.get(timeout=timeout)
+            response = res[0][0][0]
+            if response.response:
+                logging.debug('response status {}'.format(
+                    response.response.status))
+                block = BlockDecoder().decode(response.response.payload)
+                logging.debug('looking at block {}'.format(
+                    block['header']['number']))
+                return block
+            return response
+
+        except Exception:
+            logging.error(
+                "Failed to query block: {}", sys.exc_info()[0])
+            raise
+
+    def query_block(self, requestor, channel_name,
+                    peer_names, block_number, timeout=5):
+        """
+        Queries block by number
+
+        :param requestor: User role who issue the request
+        :param channel_name: name of channel to query
+        :param peer_names: Names of the peers to install
+        :param block_number: Number of a block
+        :return: A `BlockDecoder`
+        """
+
+        peers = []
+        for peer_name in peer_names:
+            peer = self.get_peer(peer_name)
+            peers.append(peer)
+
+        channel = self.get_channel(channel_name)
+        tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
+
+        response = channel.query_block(tx_context, peers, block_number)
+
+        queue = Queue(1)
+        response.subscribe(
+            on_next=lambda x: queue.put(x),
+            on_error=lambda x: queue.put(x)
+        )
+
+        try:
+            res = queue.get(timeout=timeout)
+            response = res[0][0][0]
+            if response.response:
+                logging.debug('response status {}'.format(
+                    response.response.status))
+                block = BlockDecoder().decode(response.response.payload)
+                logging.debug('looking at block {}'.format(
+                    block['header']['number']))
+                return block
+            return response
+
+        except Exception:
+            logging.error(
+                "Failed to query block: {}", sys.exc_info()[0])
+            raise
+
+    def query_transaction(self, requestor, channel_name,
+                          peer_names, tx_id, timeout=5):
+        """
+        Queries block by number
+
+        :param requestor: User role who issue the request
+        :param channel_name: name of channel to query
+        :param peer_names: Names of the peers to install
+        :param tx_id: The id of the transaction
+        :return: A `BlockDecoder`
+        """
+
+        peers = []
+        for peer_name in peer_names:
+            peer = self.get_peer(peer_name)
+            peers.append(peer)
+
+        channel = self.get_channel(channel_name)
+        tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
+
+        response = channel.query_transaction(tx_context, peers, tx_id)
+
+        queue = Queue(1)
+        response.subscribe(
+            on_next=lambda x: queue.put(x),
+            on_error=lambda x: queue.put(x)
+        )
+
+        try:
+            res = queue.get(timeout=timeout)
+            response = res[0][0][0]
+            if response.response:
+                logging.debug('response status {}'.format(
+                    response.response.status))
+                process_trans = BlockDecoder().decode_transaction(
+                    response.response.payload)
+                return process_trans
+            return response
+
+        except Exception:
+            logging.error(
+                "Failed to query block: {}", sys.exc_info()[0])
+            raise
+
+    def query_instantiated_chaincodes(self, requestor, channel_name,
+                                      peer_names, timeout=5):
+        """
+        Queries instantiated chaincode
+
+        :param requestor: User role who issue the request
+        :param channel_name: name of channel to query
+        :param peer_names: Names of the peers to query
+        :return: A `ChaincodeQueryResponse`
+        """
+        peers = []
+        for peer_name in peer_names:
+            peer = self.get_peer(peer_name)
+            peers.append(peer)
+
+        channel = self.get_channel(channel_name)
+        tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
+
+        response = channel.query_instantiated_chaincodes(tx_context, peers)
+
+        queue = Queue(1)
+        response.subscribe(
+            on_next=lambda x: queue.put(x),
+            on_error=lambda x: queue.put(x)
+        )
+
+        try:
+            res = queue.get(timeout=timeout)
+            response = res[0][0][0]
+            if response.response:
+                query_trans = query_pb2.ChaincodeQueryResponse()
+                query_trans.ParseFromString(res[0][0][0].response.payload)
+                for cc in query_trans.chaincodes:
+                    logging.debug('cc name {}, version {}, path {}'.format(
+                                  cc.name, cc.version, cc.path))
+                return query_trans
+            return response
+
+        except Exception:
+            logging.error(
+                "Failed to query instantiated chaincodes: {}",
+                sys.exc_info()[0])
+            raise
