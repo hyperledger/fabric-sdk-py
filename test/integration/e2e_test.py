@@ -6,7 +6,6 @@ import docker
 import logging
 import time
 import unittest
-import binascii
 
 from test.integration.utils import BaseTestCase
 from test.integration.config import E2E_CONFIG
@@ -31,6 +30,7 @@ class E2eTest(BaseTestCase):
     def channel_create(self):
         """
         Create an channel for further testing.
+
         :return:
         """
         logger.info("E2E: Channel creation start: name={}".format(
@@ -50,6 +50,7 @@ class E2eTest(BaseTestCase):
     def channel_join(self):
         """
         Join peers of two orgs into an existing channels
+
         :return:
         """
 
@@ -193,7 +194,7 @@ class E2eTest(BaseTestCase):
 
     def query_channels(self):
         """
-        Test querying instantiated chaincode on peer
+        Test querying channel
 
         :return:
         """
@@ -262,7 +263,7 @@ class E2eTest(BaseTestCase):
 
     def query_block_by_hash(self):
         """
-        Test querying block by tx id
+        Test querying block by block hash
 
         :return:
         """
@@ -278,18 +279,15 @@ class E2eTest(BaseTestCase):
                 peer_names=['peer0.' + org, 'peer1.' + org],
             )
 
-            test_hash = binascii.b2a_hex(
-                response.previousBlockHash).decode('utf-8')
-
             response = self.client.query_block_by_hash(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peer_names=['peer0.' + org, 'peer1.' + org],
-                block_hash=test_hash
+                block_hash=response.currentBlockHash
             )
             self.assertEqual(
                 response['header']['number'],
-                1,
+                2,
                 "Query failed")
 
         logger.info("E2E: Query block by block hash done")
@@ -315,6 +313,7 @@ class E2eTest(BaseTestCase):
                 response['header']['number'],
                 1,
                 "Query failed")
+            self.blockheader = response['header']
 
         logger.info("E2E: Query block by block number done")
 
@@ -393,7 +392,7 @@ class E2eTest(BaseTestCase):
 
         self.query_block_by_txid()
 
-        # self.query_block_by_hash() # failed
+        self.query_block_by_hash()
 
         self.query_block()
 

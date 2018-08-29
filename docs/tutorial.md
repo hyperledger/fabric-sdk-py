@@ -254,7 +254,41 @@ response = cli.query_block_by_txid(
                channel_name='businesschannel',
                peer_names=['peer0.org1.example.com'],
                tx_id=cli.txid_for_test
-               )
+                                  )
+```
+
+### Query Block by block hash
+
+```python
+from hfc.fabric import Client
+
+cli = Client(net_profile="test/fixtures/network.json")
+org1_admin = cli.get_user('org1.example.com', 'Admin')
+
+# first get the hash by calling 'query_info'
+response = cli.query_info(
+               requestor=org1_admin,
+               channel_name='businesschannel',
+               peer_names=['peer0.org1.example.com'],
+                           )
+
+test_hash = response.currentBlockHash
+
+response = cli.query_block_by_hash(
+               requestor=org1_admin,
+               channel_name='businesschannel',
+               peer_names=['peer0.org1.example.com'],
+               block_hash=test_hash
+                           )
+```
+
+### Query Block by block number
+
+```python
+from hfc.fabric import Client
+
+cli = Client(net_profile="test/fixtures/network.json")
+org1_admin = cli.get_user('org1.example.com', 'Admin')
 
 # Query Block by block number
 response = cli.query_block(

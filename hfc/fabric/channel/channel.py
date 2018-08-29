@@ -646,7 +646,10 @@ class Channel(object):
             args.append(proto_b(CC_INVOKE))
 
         for arg in request.args:
-            args.append(proto_b(arg))
+            if isinstance(arg, bytes):
+                args.append(arg)
+            else:
+                args.append(proto_b(arg))
 
         cc_id = chaincode_pb2.ChaincodeID()
         cc_id.name = request.cc_name
