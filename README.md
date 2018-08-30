@@ -1,27 +1,23 @@
 # Fabric-SDK-Py
 
-**Note:** This is a **read-only mirror** of the formal [Gerrit](https://gerrit.hyperledger.org/r/#/admin/projects/fabric-sdk-py) repository, where active development is ongoing.
+**Note:** This is a **read-only mirror** of the [Gerrit](https://gerrit.hyperledger.org/r/#/admin/projects/fabric-sdk-py) repository, where active development is ongoing.
 
-Fabric-SDK-Py is an implementation of the Hyperledger fabric SDK in Python.
+Fabric-SDK-Py is an implementation of the Hyperledger fabric SDK in Python 3.x!
 
 ## Incubation Notice
 
-This project is a Hyperledger project in _Incubation_. It was proposed to the community and documented [here](https://docs.google.com/document/d/1N-KbwlFb7Oo_pTG2NjjLTqwlhqp_kjyv5fco7VH8WrE/), and was approved by [Hyperledger TSC at 2016-09-08](http://lists.hyperledger.org/pipermail/hyperledger-tsc/2016-September/000292.html). Information on what _Incubation_ entails can be found in the [Hyperledger Project Lifecycle document](https://goo.gl/4edNRc).
+This project is in [_Incubation_](https://goo.gl/4edNRc) now, and was [proposed](https://docs.google.com/document/d/1N-KbwlFb7Oo_pTG2NjjLTqwlhqp_kjyv5fco7VH8WrE/) and [approved](http://lists.hyperledger.org/pipermail/hyperledger-tsc/2016-September/000292.html) by Hyperledger TSC at Sep 08, 2016.
 
 ## Bug, Question and Code Contributions
-Welcome for any kind of contribution, including bugs, questions and documentation!
+Welcome for any kind of contributions, e.g., [bugs](https://jira.hyperledger.org/browse/FABP-164?jql=project%20%3D%20FABP%20AND%20status%20in%20(%22In%20Progress%22%2C%20%22To%20Do%22)%20), [questions](https://chat.hyperledger.org/channel/fabric-sdk-py) and [documentation](https://github.com/hyperledger/fabric-sdk-py/tree/master/docs)!
 
-Please see [How to Contribution](CONTRIBUTING.md).
-
-# Coding Style
-
-We're following [pep8 style guide](https://www.python.org/dev/peps/pep-0008/) and [Google style](https://google.github.io/styleguide/pyguide.html), please see [coding style](docs/code_style.md)
+Recommend to read [How to Contribution](CONTRIBUTING.md) before taking action.
 
 ## Pre-requisite
 
-The SDK requires the `python-dev` and `libssl-dev` pkgs, so please make sure it's already installed.
+The SDK requires the `python-dev` and `libssl-dev` pkgs.
 
-Run the following cmd according to ur OS type.
+Run the following cmd to install the pre-requisites:
 
 | OS | command |
 | -- | ---------- |
@@ -34,7 +30,11 @@ More details to build the crypto lib, can be found at
 * https://cryptography.io/en/latest/installation/#building-cryptography-on-linux
 * https://cryptography.io/en/latest/installation/#building-cryptography-on-macos
 
-## Testing
+## Tutorial
+
+See [Tutorial](docs/tutorial.md) to get familiar with the major SDK APIs.
+
+## Quick Testing
 
 ### Use Virtual Env
 
@@ -57,30 +57,21 @@ $ make test # Only run test cases
 $ tox -e py30 -- test/integration/ca_test.py  # Run specified test case
 ```
 
-## Tutorial
-
-See [Fabric SDK Tutorial](docs/tutorial.md).
-
 ## Generating Docker images
-The following command will build a Docker image `hyperledger/fabric-sdk-py` with the fabric-sdk-py installed.
+The following command will build the Docker image `hyperledger/fabric-sdk-py`.
 
 ```sh
 $ make image
 ```
 
 ## Change Logs
-See [Change Log](CHANGELOG.md).
+See [Change Log](CHANGELOG.md) for the commit logs. Run `make changelog` to update the changelog before new release.
 
-## Wiki
+## Other Important Links
 
-More information, please see the project [wiki](wiki.hyperledger.org/projects/fabric-sdk-py).
-
-## About Hyperledger Project
-
+* [Fabric SDK Python Wiki](wiki.hyperledger.org/projects/fabric-sdk-py)
 * [Hyperledger Project](https://www.hyperledger.org)
-* [Hyperledger mailing lists and archives](http://lists.hyperledger.org/)
-* [Hyperledger Chat](http://chat.hyperledger.org)
-* [Hyperledger Wiki](https://github.com/hyperledger/hyperledger/wiki)
+* [Hyperledger mailing lists](http://lists.hyperledger.org/)
 
 ## License <a name="license"></a>
 The Hyperledger Fabric-SDK-Py software uses the [Apache License Version 2.0](LICENSE) software license.

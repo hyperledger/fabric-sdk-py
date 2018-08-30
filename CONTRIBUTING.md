@@ -26,12 +26,15 @@ In brief, if you want to contribute, create or find some `To Do` item, and assig
 
 * [RocketChat](https://chat.hyperledger.org/channel/fabric-sdk-py): technical discussions and questions, login with your LF ID.
 
+## Coding Style
+
+We're following [pep8 style guide](https://www.python.org/dev/peps/pep-0008/) and [Google style](https://google.github.io/styleguide/pyguide.html), please see [coding style](docs/code_style.md)
 
 ## Code Commit Steps
 
 The project employs [Gerrit](https://gerrit.hyperledger.org) as the code commit/review system. More details about Gerrit can be learned from the [Hyperledger Fabric Gerrit Doc](https://github.com/hyperledger/fabric/blob/master/docs/Gerrit/).
 
-*Before committing code, please go to [Jira](https://jira.hyperledger.org/secure/RapidBoard.jspa?rapidView=85) to create a new task or check if there's related existing one, then assign yourself as the assignee. Notice each task will get a Jira number like [FAB-3082](https://jira.hyperledger.org/browse/FAB-3082).
+*Before committing code, please go to [Jira](https://jira.hyperledger.org/secure/RapidBoard.jspa?rapidView=85) to create a new task or check if there's related existing one, then assign yourself as the assignee. Notice each task will get a Jira number like [FAB-163](https://jira.hyperledger.org/browse/FABP-3082).
 
 
 * Clone the project into your working directory with your LF ID (`LF ID`).
@@ -52,12 +55,12 @@ $ git config user.email "your email"
 $ git review -s
 ```
 
-* Assign yourself a `To Do` Jira task, mark it as `In progress`, then create a branch with the Jira task number off of your cloned repository, e.g., for FAB-3082, it can be:
+* Assign yourself a `To Do` Jira task, mark it as `In progress`, then create a branch with the Jira task number off of your cloned repository, e.g., for FABP-164, it can be:
 
 ```sh
 $ cd fabric-sdk-py
 $ git pull
-$ git checkout -b FAB-3082
+$ git checkout -b FABP-164
 ```
 
 * After modifying the code, run `make check` to make sure all the checking is passed. Then Commit your code with `-s` to sign-off, and `-a` to automatically add changes (or run `git add .` to include all changes manually).
@@ -77,12 +80,12 @@ $ git commit -s -a
 Example commit msg may look like:
 
 ```sh
-[FAB-3082] A short description of your change with no period at the end
+[FABP-164] A short description of your change with no period at the end
 
 You can add more details here in several paragraphs, but please keep each line
 width less than 80 characters. A bug fix should include the issue number.
 
-Fix https://jira.hyperledger.org/browse/FAB-3082.
+Fix https://jira.hyperledger.org/browse/FABP-164.
 
 Change-Id: Ife0f1a3866a636991e36b0b5b25b8f58c9208b79
 Signed-off-by: Your Name <committer@email.address>
@@ -95,10 +98,10 @@ $ git review
 remote: Processing changes: new: 1, refs: 1, done
 remote:
 remote: New Changes:
-remote:   http://gerrit.hyperledger.org/r/7917 [FAB-3082] Enhance the contribution documentation
+remote:   http://gerrit.hyperledger.org/r/25966 [FABP-164] Enhance the contribution documentation
 remote:
 To ssh://gerrit.hyperledger.org:29418/fabric-sdk-py
- * [new branch]      HEAD -> refs/publish/master/FAB-3082
+ * [new branch]      HEAD -> refs/publish/master/FABP-164
 ```
 
 Notice you will get a [gerrit item url](http://gerrit.hyperledger.org/r/7917), open and check the status.
