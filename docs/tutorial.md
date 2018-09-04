@@ -83,7 +83,7 @@ SDK will get valid credentials from fabric-ca.
 from hfc.fabric import Client
 
 cli = Client(net_profile="test/fixtures/network.json")
-admin = cli.get_user(org_name='org1.example.com', name='Admin') # get the admin user from local path
+org1_admin = cli.get_user(org_name='org1.example.com', name='Admin') # get the admin user from local path
 ```
 
 #### 1.2.1 If no valid user exist yet, register and enroll from fabric-ca
@@ -123,10 +123,25 @@ response = cli.channel_join(
                requestor=org1_admin,
                channel_name='businesschannel',
                peer_names=['peer0.org1.example.com',
-                'peer1.org1.example.com']
+                           'peer1.org1.example.com']
                orderer_name='orderer.example.com'
                )
 print(response==True)
+
+
+# Join Peers from a different MSP into Channel
+org2_admin = cli.get_user(org_name='org2.example.com', name='Admin')
+
+# For operations on peers from org2.example.com, org2_admin is required as requestor
+response = cli.channel_join(
+               requestor=org2_admin,
+               channel_name='businesschannel',
+               peer_names=['peer0.org2.example.com',
+                           'peer1.org2.example.com']
+               orderer_name='orderer.example.com'
+               )
+print(response==True)
+
 ```
 
 ## 3. Operate Chaincodes with Fabric Network
@@ -153,7 +168,7 @@ os.environ['GOPATH'] = os.path.abspath(gopath)
 response = cli.chaincode_install(
                requestor=org1_admin,
                peer_names=['peer0.org1.example.com',
-               'peer1.org1.example.com']
+                           'peer1.org1.example.com']
                cc_path='github.com/example_cc',
                cc_name='example_cc',
                cc_version='v1.0'
