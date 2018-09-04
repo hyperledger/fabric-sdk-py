@@ -32,8 +32,7 @@ else:
 
 SYSTEM_CHANNEL_NAME = "testchainid"
 
-_logger = logging.getLogger(__name__ + ".channel")
-_logger.setLevel(logging.DEBUG)
+_logger = logging.getLogger(__name__)
 
 
 class Channel(object):
@@ -495,6 +494,7 @@ class Channel(object):
             r.subscribe(on_next=lambda x: q.put(x),
                         on_error=lambda x: q.put(x))
             res = q.get(timeout=5)
+            _logger.debug(res)
             proposal_res = res[0]
             result = result and (proposal_res.response.status == 200)
         if result:
@@ -754,6 +754,7 @@ class Channel(object):
                            on_error=lambda x: q.put(x))
 
         res, _ = q.get(timeout=5)
+        _logger.debug(res)
 
         if res.block is None or res.block == '':
             _logger.error("fail to get block start from %s to %s" %
@@ -801,7 +802,6 @@ class Channel(object):
             fcn='GetBlockByHash',
             cc_name='qscc',
             args=[self.name, block_hash],
-            # argbytes=block_hash, # missing  in the function
             cc_type=CC_TYPE_GOLANG)
 
         tx_context.tx_prop_req = request

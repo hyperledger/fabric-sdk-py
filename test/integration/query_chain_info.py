@@ -127,10 +127,10 @@ class QueryChainInfoTest(BaseTestCase):
         sleep(5)
         response = self.channel.query_chain_info(tx_context,
                                                  [self.org1_peer])
-
+        logger.debug(response)
         q = Queue(1)
         response.subscribe(on_next=lambda x: q.put(x),
                            on_error=lambda x: q.put(x))
         res = q.get(timeout=5)
-
+        logger.debug(res)
         self.assertEqual(res[0][0][0].response.status, 200)

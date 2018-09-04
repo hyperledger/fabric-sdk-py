@@ -131,4 +131,5 @@ class ChaincodeInvokeTest(BaseTestCase):
         response.subscribe(on_next=lambda x: q.put(x),
                            on_error=lambda x: q.put(x))
         res = q.get(timeout=5)
+        logger.debug(res)
         self.assertEqual(res[0][0][0].response.status, 200)

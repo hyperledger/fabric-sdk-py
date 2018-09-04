@@ -30,7 +30,7 @@ logger.setLevel(logging.DEBUG)
 test_network = E2E_CONFIG['test-network']
 CC_PATH = 'github.com/example_cc'
 CC_NAME = 'example_cc'
-CC_VERSION = 'v1'
+CC_VERSION = '1.0'
 
 
 class ChaincodeInvokeTest(BaseTestCase):
@@ -116,4 +116,5 @@ class ChaincodeInvokeTest(BaseTestCase):
         response.subscribe(on_next=lambda x: q.put(x),
                            on_error=lambda x: q.put(x))
         res, _ = q.get(timeout=5)
+        logger.debug(res)
         self.assertEqual(res.status, 200)

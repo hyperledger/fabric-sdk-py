@@ -30,7 +30,7 @@ from hfc.protos.utils import create_tx_payload
 CC_INSTALL = "install"
 CC_TYPE_GOLANG = "GOLANG"
 
-_logger = logging.getLogger(__name__ + '.utils')
+_logger = logging.getLogger(__name__)
 
 
 def proto_str(x):
@@ -279,28 +279,28 @@ def send_transaction(orderers, tran_req, tx_context, scheduler=None):
 
     """
     if not tran_req:
-        logging.warning("Missing input request object on the transaction "
+        _logger.warning("Missing input request object on the transaction "
                         "request")
         return rx.Observable.just(ValueError(
             "Missing input request object on the transaction request"
         ))
 
     if not tran_req.responses or len(tran_req.responses) < 1:
-        logging.warning("Missing 'proposalResponses' parameter in transaction "
+        _logger.warning("Missing 'proposalResponses' parameter in transaction "
                         "request")
         return rx.Observable.just(ValueError(
             "Missing 'proposalResponses' parameter in transaction request"
         ))
 
     if not tran_req.proposal:
-        logging.warning("Missing 'proposalResponses' parameter in transaction "
+        _logger.warning("Missing 'proposalResponses' parameter in transaction "
                         "request")
         return rx.Observable.just(ValueError(
             "Missing 'proposalResponses' parameter in transaction request"
         ))
 
     if len(orderers) < 1:
-        logging.warning("Missing orderer objects on this chain")
+        _logger.warning("Missing orderer objects on this chain")
         return rx.Observable.just(ValueError(
             "Missing orderer objects on this chain"
         ))
@@ -368,7 +368,8 @@ def build_tx_req(responses):
     responses.subscribe(on_next=lambda x: q.put(x),
                         on_error=lambda x: q.put(x))
 
-    res = q.get(timeout=20)
+    res = q.get(timeout=10)
+    _logger.debug(res)
     for r in res[0]:
         if r[0].response.status != 200:
             return None

@@ -45,7 +45,7 @@ if sys.version_info < (3, 0):
 else:
     from queue import Queue
 
-_logger = logging.getLogger(__name__ + ".client")
+_logger = logging.getLogger(__name__)
 
 
 class Client(object):
@@ -71,7 +71,7 @@ class Client(object):
         self._CAs = dict()
 
         if net_profile:
-            logging.debug("Init client with profile={}".format(net_profile))
+            _logger.debug("Init client with profile={}".format(net_profile))
             self.init_with_net_profile(net_profile)
 
     def init_with_net_profile(self, profile_path='network.json'):
@@ -93,13 +93,13 @@ class Client(object):
         if self.kv_store_path:
             self._state_store = FileKeyValueStore(self.kv_store_path)
         else:
-            logging.warning('No kv store path exists in profile {}'.format(
+            _logger.warning('No kv store path exists in profile {}'.format(
                 profile_path))
 
         # Init organizations
         orgs = self.get_net_info('organizations')
         for name in orgs:
-            logging.debug("create org with name={}".format(name))
+            _logger.debug("create org with name={}".format(name))
             org = create_org(name, orgs[name], self.state_store)
             self._organizations[name] = org
 
@@ -108,7 +108,7 @@ class Client(object):
 
         # Init orderer nodes
         orderers = self.get_net_info('orderers')
-        logging.debug("Import orderers = {}".format(orderers.keys()))
+        _logger.debug("Import orderers = {}".format(orderers.keys()))
         for name in orderers:
             orderer = Orderer(name=name, endpoint=orderers[name]['url'])
             orderer.init_with_bundle(orderers[name])
@@ -116,7 +116,7 @@ class Client(object):
 
         # Init peer nodes
         peers = self.get_net_info('peers')
-        logging.debug("Import peers = {}".format(peers.keys()))
+        _logger.debug("Import peers = {}".format(peers.keys()))
         for name in peers:
             peer = Peer(name=name)
             peer.init_with_bundle(peers[name])
@@ -144,7 +144,7 @@ class Client(object):
         if name in self.orderers:
             return self.orderers[name]
         else:
-            logging.warning("Cannot find orderer with name {}".format(name))
+            _logger.warning("Cannot find orderer with name {}".format(name))
             return None
 
     def get_peer(self, name):
@@ -156,7 +156,7 @@ class Client(object):
         if name in self._peers:
             return self._peers[name]
         else:
-            logging.warning("Cannot find peer with name {}".format(name))
+            _logger.warning("Cannot find peer with name {}".format(name))
             return None
 
     def export_net_profile(self, export_file='network_exported.json'):
@@ -180,7 +180,7 @@ class Client(object):
                 try:
                     result = result[k]
                 except KeyError:
-                    logging.warning('No key path {} exists in net info'.format(
+                    _logger.warning('No key path {} exists in net info'.format(
                         key_path))
                     return None
 
@@ -264,21 +264,22 @@ class Client(object):
         :return: True (creation succeeds) or False (creation failed)
         """
         if self.get_channel(channel_name):
-            logging.warning("channel {} already existed when creating".format(
+            _logger.warning("channel {} already existed when creating".format(
                 channel_name))
             return True
 
         orderer = self.get_orderer(orderer_name)
         if not orderer:
-            logging.error("No orderer_name instance found with name {}".format(
+            _logger.error("No orderer_name instance found with name {}".format(
                 orderer_name))
             return False
 
         tx = self.generate_channel_tx(channel_name, config_yaml,
                                       channel_profile)
         if tx is None:
+            _logger.error('Configtx is empty')
             return False
-        logging.info("Configtx file sucessfully created in current directory")
+        _logger.info("Configtx file sucessfully created in current directory")
 
         with open(tx, 'rb') as f:
             envelope = f.read()
@@ -307,6 +308,7 @@ class Client(object):
                            on_error=lambda x: q.put(x))
 
         status, _ = q.get(timeout=5)
+        _logger.debug(status)
         if status.status == 200:
             self.new_channel(channel_name)
             return True
@@ -327,13 +329,13 @@ class Client(object):
         """
         channel = self.get_channel(channel_name)
         if not channel:
-            logging.warning("channel {} not existed when join".format(
+            _logger.warning("channel {} not existed when join".format(
                 channel_name))
             return False
 
         orderer = self.get_orderer(orderer_name)
         if not orderer:
-            logging.warning("orderer {} not existed when channel join".format(
+            _logger.warning("orderer {} not existed when channel join".format(
                 orderer_name))
             return False
 
@@ -422,7 +424,7 @@ class Client(object):
 
         """
         have_envelope = False
-        logging.debug(request)
+        _logger.debug(request)
         if request and 'envelope' in request:
             _logger.debug('_create_channel - have envelope')
             have_envelope = True
@@ -700,14 +702,14 @@ class Client(object):
             )
 
         if not cmd_exists('configtxgen'):
-            logging.error("configtxgen not in PATH.")
+            _logger.error("configtxgen not in PATH.")
             return False
 
         # Generate channel.tx with configtxgen
         tx_path = "/tmp/channel.tx"
         config_yaml = config_yaml if os.path.isabs(config_yaml) else \
             os.getcwd() + "/" + config_yaml
-        logging.info("FABRIC_CFG_PATH set to {}".format(config_yaml))
+        _logger.info("FABRIC_CFG_PATH set to {}".format(config_yaml))
         new_env = dict(os.environ, FABRIC_CFG_PATH=config_yaml)
         output = subprocess.Popen(['configtxgen', '-profile', channel_profile,
                                    '-outputCreateChannelTx', tx_path,
@@ -716,7 +718,7 @@ class Client(object):
                                   stderr=subprocess.PIPE, env=new_env)
         err = output.communicate()[1]
         if output.returncode:
-            logging.error('Failed to generate transaction file', err)
+            _logger.error('Failed to generate transaction file', err)
             return None
         return tx_path
 
@@ -777,6 +779,7 @@ class Client(object):
         )
 
         res, _ = queue.get(timeout=timeout)
+        _logger.debug(res)
         return res.status == 200
 
     def chaincode_invoke(self, requestor, channel_name, peer_names, args,
@@ -833,6 +836,7 @@ class Client(object):
         )
 
         res = queue.get(timeout=timeout)
+        _logger.debug(res)
         return res[0][0][0].response.status == 200
 
     def query_installed_chaincodes(self, requestor, peer_names, timeout=5):
@@ -870,18 +874,19 @@ class Client(object):
 
         try:
             res = queue.get(timeout=timeout)
+            _logger.debug(res)
             response = res[0][0][0]
             if response.response:
                 query_trans = query_pb2.ChaincodeQueryResponse()
                 query_trans.ParseFromString(res[0][0][0].response.payload)
                 for cc in query_trans.chaincodes:
-                    logging.debug('cc name {}, version {}, path {}'.format(
+                    _logger.debug('cc name {}, version {}, path {}'.format(
                                   cc.name, cc.version, cc.path))
                 return query_trans
             return response
 
         except Exception:
-            logging.error(
+            _logger.error(
                 "Failed to query installed chaincodes: {}", sys.exc_info()[0])
             raise
 
@@ -921,18 +926,19 @@ class Client(object):
 
         try:
             res = queue.get(timeout=timeout)
+            _logger.debug(res)
             response = res[0][0][0]
             if response.response:
                 query_trans = query_pb2.ChannelQueryResponse()
                 query_trans.ParseFromString(res[0][0][0].response.payload)
                 for ch in query_trans.channels:
-                    logging.debug('channel id {}'.format(
+                    _logger.debug('channel id {}'.format(
                         ch.channel_id))
                 return query_trans
             return response
 
         except Exception:
-            logging.error(
+            _logger.error(
                 "Failed to query channel: {}", sys.exc_info()[0])
             raise
 
@@ -965,17 +971,18 @@ class Client(object):
 
         try:
             res = queue.get(timeout=timeout)
+            _logger.debug(res)
             response = res[0][0][0]
             if response.response:
                 chain_info = ledger_pb2.BlockchainInfo()
                 chain_info.ParseFromString(response.response.payload)
-                logging.debug('response status {}'.format(
+                _logger.debug('response status {}'.format(
                     response.response.status))
                 return chain_info
             return response
 
         except Exception:
-            logging.error(
+            _logger.error(
                 "Failed to query info: {}", sys.exc_info()[0])
             raise
 
@@ -1009,18 +1016,19 @@ class Client(object):
 
         try:
             res = queue.get(timeout=timeout)
+            _logger.debug(res)
             response = res[0][0][0]
             if response.response:
-                logging.debug('response status {}'.format(
+                _logger.debug('response status {}'.format(
                     response.response.status))
                 block = BlockDecoder().decode(response.response.payload)
-                logging.debug('looking at block {}'.format(
+                _logger.debug('looking at block {}'.format(
                     block['header']['number']))
                 return block
             return response
 
         except Exception:
-            logging.error(
+            _logger.error(
                 "Failed to query block: {}", sys.exc_info()[0])
             raise
 
@@ -1054,18 +1062,19 @@ class Client(object):
 
         try:
             res = queue.get(timeout=timeout)
+            _logger.debug(res)
             response = res[0][0][0]
             if response.response:
-                logging.debug('response status {}'.format(
+                _logger.debug('response status {}'.format(
                     response.response.status))
                 block = BlockDecoder().decode(response.response.payload)
-                logging.debug('looking at block {}'.format(
+                _logger.debug('looking at block {}'.format(
                     block['header']['number']))
                 return block
             return response
 
         except Exception:
-            logging.error(
+            _logger.error(
                 "Failed to query block: {}", sys.exc_info()[0])
             raise
 
@@ -1099,18 +1108,19 @@ class Client(object):
 
         try:
             res = queue.get(timeout=timeout)
+            _logger.debug(res)
             response = res[0][0][0]
             if response.response:
-                logging.debug('response status {}'.format(
+                _logger.debug('response status {}'.format(
                     response.response.status))
                 block = BlockDecoder().decode(response.response.payload)
-                logging.debug('looking at block {}'.format(
+                _logger.debug('looking at block {}'.format(
                     block['header']['number']))
                 return block
             return response
 
         except Exception:
-            logging.error(
+            _logger.error(
                 "Failed to query block: {}", sys.exc_info()[0])
             raise
 
@@ -1146,7 +1156,7 @@ class Client(object):
             res = queue.get(timeout=timeout)
             response = res[0][0][0]
             if response.response:
-                logging.debug('response status {}'.format(
+                _logger.debug('response status {}'.format(
                     response.response.status))
                 process_trans = BlockDecoder().decode_transaction(
                     response.response.payload)
@@ -1154,7 +1164,7 @@ class Client(object):
             return response
 
         except Exception:
-            logging.error(
+            _logger.error(
                 "Failed to query block: {}", sys.exc_info()[0])
             raise
 
@@ -1186,18 +1196,19 @@ class Client(object):
 
         try:
             res = queue.get(timeout=timeout)
+            _logger.debug(res)
             response = res[0][0][0]
             if response.response:
                 query_trans = query_pb2.ChaincodeQueryResponse()
                 query_trans.ParseFromString(res[0][0][0].response.payload)
                 for cc in query_trans.chaincodes:
-                    logging.debug('cc name {}, version {}, path {}'.format(
+                    _logger.debug('cc name {}, version {}, path {}'.format(
                                   cc.name, cc.version, cc.path))
                 return query_trans
             return response
 
         except Exception:
-            logging.error(
+            _logger.error(
                 "Failed to query instantiated chaincodes: {}",
                 sys.exc_info()[0])
             raise

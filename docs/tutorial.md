@@ -123,9 +123,7 @@ response = cli.channel_join(
                requestor=org1_admin,
                channel_name='businesschannel',
                peer_names=['peer0.org1.example.com',
-                'peer1.org1.example.com',
-                'peer0.org2.example.com',
-                'peer1.org2.example.com'],
+                'peer1.org1.example.com']
                orderer_name='orderer.example.com'
                )
 print(response==True)
@@ -145,17 +143,17 @@ org1_admin = cli.get_user('org1.example.com', 'Admin')
 # This is only needed if to use the example chaincode inside sdk
 import os
 gopath_bak = os.environ.get('GOPATH', '')
-gopath = os.path.normpath(os.path.join(os.path.dirname(__file__),
-																			 "test/fixtures/chaincode"))
+gopath = os.path.normpath(os.path.join(
+                      os.path.dirname(os.path.realpath('__file__')),
+                      'test/fixtures/chaincode'
+                     ))
 os.environ['GOPATH'] = os.path.abspath(gopath)
 
 # The response should be true if succeed
 response = cli.chaincode_install(
                requestor=org1_admin,
                peer_names=['peer0.org1.example.com',
-               'peer1.org1.example.com',
-               'peer0.org2.example.com',
-               'peer1.org2.example.com'],
+               'peer1.org1.example.com']
                cc_path='github.com/example_cc',
                cc_name='example_cc',
                cc_version='v1.0'
@@ -198,7 +196,7 @@ cli = Client(net_profile="test/fixtures/network.json")
 org1_admin = cli.get_user('org1.example.com', 'Admin')
 
 # Query Peer installed chaincodes, make sure the chaincode is installed
-response = cli.query_installed_cc(
+response = cli.query_installed_chaincodes(
                requestor=org1_admin,
                peer_names=['peer0.org1.example.com']
                )
