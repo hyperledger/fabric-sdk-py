@@ -27,7 +27,7 @@ logger.setLevel(logging.DEBUG)
 test_network = E2E_CONFIG['test-network']
 CC_PATH = 'github.com/example_cc'
 CC_NAME = 'example_cc'
-CC_VERSION = 'v1'
+CC_VERSION = '1.0'
 
 
 class QueryTransaction(BaseTestCase):

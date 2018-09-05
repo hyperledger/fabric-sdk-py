@@ -39,12 +39,12 @@ flake8: linter
 linter:
 	tox -e flake8
 
+PREV_VERSION?=0.7.0
+
 # changelog update
-# TODO (dpdornseifer): As long as there is no versioning, always write the changelog
-# starting with the initial commit INIT_VERSION (bug)
 changelog:
-	INIT_VERSION = 838e035
-	bash ./scripts/changelog.sh $(INIT_VERSION)
+	# bash scripts/changelog.sh 838e035 v$(PREV_VERSION)
+	bash scripts/changelog.sh v$(PREV_VERSION) HEAD
 
 # Generate the hyperledger/fabric-sdk-py image
 image:

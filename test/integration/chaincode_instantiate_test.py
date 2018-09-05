@@ -2,9 +2,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-import time
 import logging
 import sys
+from time import sleep
+
 from hfc.fabric.peer import create_peer
 from hfc.fabric.transaction.tx_context import create_tx_context
 from hfc.fabric.transaction.tx_proposal_request import create_tx_prop_req, \
@@ -36,10 +37,11 @@ class ChaincodeInstantiateTest(BaseTestCase):
 
         peer_config = test_network['org1.example.com']['peers']['peer0']
         tls_cacerts = peer_config['tls_cacerts']
-        endpoint = peer_config['grpc_request_endpoint']
 
         opts = (('grpc.ssl_target_name_override',
                  peer_config['server_hostname']),)
+
+        endpoint = peer_config['grpc_request_endpoint']
 
         peer = create_peer(endpoint=endpoint,
                            tls_cacerts=tls_cacerts,
@@ -69,19 +71,20 @@ class ChaincodeInstantiateTest(BaseTestCase):
         crypto = ecies()
         org1_admin = get_peer_org_user(org1, 'Admin',
                                        self.client.state_store)
+
         # create a channel
         request = build_channel_request(self.client,
                                         self.channel_tx,
                                         self.channel_name)
 
         self.client._create_channel(request)
-        time.sleep(5)
+        sleep(5)
 
         # join channel
         channel = self.client.new_channel(self.channel_name)
         join_req = build_join_channel_req(org1, channel, self.client)
         channel.join_channel(join_req)
-        time.sleep(5)
+        sleep(5)
 
         # install chain code
         tx_context_in = create_tx_context(org1_admin,
@@ -89,28 +92,26 @@ class ChaincodeInstantiateTest(BaseTestCase):
                                           tran_prop_req_in)
 
         self.client.send_install_proposal(tx_context_in, [peer])
-        time.sleep(5)
+        sleep(5)
 
         # deploy the chain code
         tx_context_dep = create_tx_context(org1_admin,
                                            crypto,
                                            tran_prop_req_dep)
-
         res = channel.send_instantiate_proposal(tx_context_dep, [peer])
-        time.sleep(5)
+        sleep(5)
 
         # send the transaction to the channel
         tx_context = create_tx_context(org1_admin,
                                        crypto,
                                        TXProposalRequest())
-
         tran_req = build_tx_req(res)
-
-        res = send_transaction(channel.orderers, tran_req, tx_context)
-        time.sleep(5)
+        response = send_transaction(channel.orderers, tran_req, tx_context)
+        sleep(5)
 
         q = Queue(1)
-        res.subscribe(on_next=lambda x: q.put(x),
-                      on_error=lambda x: q.put(x))
-        response, _ = q.get(timeout=5)
-        self.assertEqual(response.status, 200)
+        response.subscribe(on_next=lambda x: q.put(x),
+                           on_error=lambda x: q.put(x))
+        res, _ = q.get(timeout=5)
+        logger.debug(res)
+        self.assertEqual(res.status, 200)

@@ -43,6 +43,9 @@ Then you'll have a fabric network with topology of 3 organizations:
  * orderer.example.com
    * orderer.example.com
 
+* Note: make sure `configtxgen` is in the 'PATH' and the version of `configtxgen` is 1.0.0
+* Also, it is recmmended that you set logging level to DEBUG or INFO when you meet a problem
+
 If you want to understand more details on starting up a fabric network, feel free to see the [Building Your First Network](https://hyperledger-fabric.readthedocs.io/en/latest/build_network.html) tutorial.
 
 ### 0.3. Create the Connection Profile

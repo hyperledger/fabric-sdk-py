@@ -30,7 +30,7 @@ logger.setLevel(logging.DEBUG)
 test_network = E2E_CONFIG['test-network']
 CC_PATH = 'github.com/example_cc'
 CC_NAME = 'example_cc'
-CC_VERSION = 'v1'
+CC_VERSION = '1.0'
 
 
 class QueryChainInfoTest(BaseTestCase):
@@ -125,8 +125,8 @@ class QueryChainInfoTest(BaseTestCase):
                                        ecies(),
                                        TXProposalRequest())
         sleep(5)
-        response = self.channel.query_chain_info(tx_context,
-                                                 [self.org1_peer])
+        response = self.channel.query_info(tx_context,
+                                           [self.org1_peer])
         logger.debug(response)
         q = Queue(1)
         response.subscribe(on_next=lambda x: q.put(x),
