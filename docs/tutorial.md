@@ -55,7 +55,7 @@ A network connection profile helps SDK connect to the fabric network by providin
 * Service endpoints for peer, orderer, ca;
 * Credentials for identities that clients may act as;
 
-For example, [network.json](test/fixtures/network.json).
+For example, [network.json](../test/fixtures/network.json).
 
 ## 1. Get Credentials
 
