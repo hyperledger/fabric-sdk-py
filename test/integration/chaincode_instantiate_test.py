@@ -112,6 +112,6 @@ class ChaincodeInstantiateTest(BaseTestCase):
         q = Queue(1)
         response.subscribe(on_next=lambda x: q.put(x),
                            on_error=lambda x: q.put(x))
-        res, _ = q.get(timeout=5)
+        res, _ = q.get(timeout=10)
         logger.debug(res)
         self.assertEqual(res.status, 200)
