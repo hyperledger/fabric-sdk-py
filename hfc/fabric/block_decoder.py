@@ -27,7 +27,7 @@ from hfc.protos.peer import configuration_pb2 as peer_configuration_pb2
 
 # Import required MSP Protos
 from hfc.protos.msp import msp_principal_pb2
-from hfc.protos.msp import mspconfig_pb2
+from hfc.protos.msp import msp_config_pb2
 from hfc.protos.msp import identities_pb2
 
 # Import required Common Protos
@@ -607,7 +607,7 @@ def decode_config_value(proto_config_value, key):
             config_value['value']['anchor_peers'] = anchor_peers
     elif config_value_key == 'MSP':
         msp_config = {}
-        proto_msp_config = mspconfig_pb2.MSPConfig()
+        proto_msp_config = msp_config_pb2.MSPConfig()
         proto_msp_config.ParseFromString(proto_config_value.value)
         if proto_msp_config.type == 0:
             msp_config = decode_fabric_MSP_config(proto_msp_config.config)
@@ -842,7 +842,7 @@ def decode_fabric_MSP_config(msp_config_bytes):
     Returns: Deserialized MSP configuration and certs.
     """
     msp_config = {}
-    proto_msp_config = mspconfig_pb2.FabricMSPConfig()
+    proto_msp_config = msp_config_pb2.FabricMSPConfig()
     proto_msp_config.ParseFromString(msp_config_bytes)
     msp_config['name'] = proto_msp_config.name
     msp_config['root_certs'] = to_PEM_certs(proto_msp_config.root_certs)
@@ -908,7 +908,7 @@ def decode_signing_identity_info(signing_identity_info_bytes):
     """
     signing_identity_info = {}
     if signing_identity_info_bytes is not None:
-        proto_signing_identity_info = mspconfig_pb2.SigningIdentityInfo()
+        proto_signing_identity_info = msp_config_pb2.SigningIdentityInfo()
         proto_signing_identity_info.ParseFromString(
                                     signing_identity_info_bytes)
         signing_identity_info['public_signer'] = \
@@ -929,7 +929,7 @@ def decode_key_info(key_info_bytes):
     """
     key_info = {}
     if key_info_bytes:
-        proto_key_info = mspconfig_pb2.KeyInfo()
+        proto_key_info = msp_config_pb2.KeyInfo()
         proto_key_info.ParseFromString(key_info_bytes)
         key_info['key_identifier'] = proto_key_info.key_identifier
         key_info['key_material'] = 'private'

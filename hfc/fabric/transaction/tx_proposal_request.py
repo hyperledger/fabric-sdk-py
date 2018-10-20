@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from hfc.util.utils import current_timestamp
-
 CC_INSTALL = "install"
 CC_INSTANTIATE = "deploy"
 CC_INVOKE = "invoke"
@@ -23,12 +21,10 @@ class TXProposalRequest(object):
                  cc_type=CC_TYPE_GOLANG, cc_name=None,
                  cc_version=None, fcn=None, args=None,
                  cc_endorsement_policy=None,
-                 effective_date=current_timestamp(),
                  transient_map=None, packaged_cc=None):
         """ Construct transaction proposal request
 
         Args:
-            effective_date (object): grpc timestamp
             cc_type (str): chaincode type
             prop_type (str): proposal type
             packaged_cc (bytearray): chaincode gz.tar bytes
@@ -57,26 +53,6 @@ class TXProposalRequest(object):
             self._transient_map = []
         else:
             self._transient_map = transient_map
-        self._effective_date = effective_date
-
-    @property
-    def effective_date(self):
-        """Get effective date
-
-        Returns: return effective date
-
-        """
-        return self._effective_date
-
-    @effective_date.setter
-    def effective_date(self, effective_date):
-        """Set effective date
-
-        Args:
-            effective_date: effective date
-
-        """
-        self._effective_date = effective_date
 
     @property
     def cc_type(self):
@@ -312,7 +288,6 @@ def validate(tx_prop_req):
 def create_tx_prop_req(prop_type=None, cc_path=None, cc_type=CC_TYPE_GOLANG,
                        cc_name=None, cc_version=None, fcn=None, args=None,
                        cc_endorsement_policy=None,
-                       effective_date=current_timestamp(),
                        transient_map=None, packaged_cc=None):
     """Create a transaction proposal request
 
@@ -332,6 +307,6 @@ def create_tx_prop_req(prop_type=None, cc_path=None, cc_type=CC_TYPE_GOLANG,
     """
     tx_prop_req = TXProposalRequest(
         prop_type, cc_path, cc_type, cc_name, cc_version, fcn,
-        args, cc_endorsement_policy, effective_date, transient_map,
+        args, cc_endorsement_policy, transient_map,
         packaged_cc)
     return validate(tx_prop_req)

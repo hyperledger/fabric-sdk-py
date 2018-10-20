@@ -67,7 +67,7 @@ clean:
 # Enter a virtual env
 venv:
 	if [ ! -d venv ]; then \
-		virtualenv venv; \
+		virtualenv -p python3 venv; \
 	fi
 	@echo "Run 'source venv/bin/activate' to active the virtual env now."
 

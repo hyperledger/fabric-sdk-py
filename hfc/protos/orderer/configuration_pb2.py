@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/orderer/configuration.proto',
   package='orderer',
   syntax='proto3',
-  serialized_pb=_b('\n&hfc/protos/orderer/configuration.proto\x12\x07orderer\"\x1d\n\rConsensusType\x12\x0c\n\x04type\x18\x01 \x01(\t\"_\n\tBatchSize\x12\x19\n\x11max_message_count\x18\x01 \x01(\r\x12\x1a\n\x12\x61\x62solute_max_bytes\x18\x02 \x01(\r\x12\x1b\n\x13preferred_max_bytes\x18\x03 \x01(\r\"\x1f\n\x0c\x42\x61tchTimeout\x12\x0f\n\x07timeout\x18\x01 \x01(\t\"\x1f\n\x0cKafkaBrokers\x12\x0f\n\x07\x62rokers\x18\x01 \x03(\t\"(\n\x13\x43hannelRestrictions\x12\x11\n\tmax_count\x18\x01 \x01(\x04\x42U\n%org.hyperledger.fabric.protos.ordererZ,github.com/hyperledger/fabric/protos/ordererb\x06proto3')
+  serialized_pb=_b('\n&hfc/protos/orderer/configuration.proto\x12\x07orderer\"/\n\rConsensusType\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x10\n\x08metadata\x18\x02 \x01(\x0c\"_\n\tBatchSize\x12\x19\n\x11max_message_count\x18\x01 \x01(\r\x12\x1a\n\x12\x61\x62solute_max_bytes\x18\x02 \x01(\r\x12\x1b\n\x13preferred_max_bytes\x18\x03 \x01(\r\"\x1f\n\x0c\x42\x61tchTimeout\x12\x0f\n\x07timeout\x18\x01 \x01(\t\"\x1f\n\x0cKafkaBrokers\x12\x0f\n\x07\x62rokers\x18\x01 \x03(\t\"(\n\x13\x43hannelRestrictions\x12\x11\n\tmax_count\x18\x01 \x01(\x04\x42U\n%org.hyperledger.fabric.protos.ordererZ,github.com/hyperledger/fabric/protos/ordererb\x06proto3')
 )
 
 
@@ -39,6 +39,13 @@ _CONSENSUSTYPE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='metadata', full_name='orderer.ConsensusType.metadata', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -52,7 +59,7 @@ _CONSENSUSTYPE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=51,
-  serialized_end=80,
+  serialized_end=98,
 )
 
 
@@ -96,8 +103,8 @@ _BATCHSIZE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=82,
-  serialized_end=177,
+  serialized_start=100,
+  serialized_end=195,
 )
 
 
@@ -127,8 +134,8 @@ _BATCHTIMEOUT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=179,
-  serialized_end=210,
+  serialized_start=197,
+  serialized_end=228,
 )
 
 
@@ -158,8 +165,8 @@ _KAFKABROKERS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=212,
-  serialized_end=243,
+  serialized_start=230,
+  serialized_end=261,
 )
 
 
@@ -189,8 +196,8 @@ _CHANNELRESTRICTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=245,
-  serialized_end=285,
+  serialized_start=263,
+  serialized_end=303,
 )
 
 DESCRIPTOR.message_types_by_name['ConsensusType'] = _CONSENSUSTYPE

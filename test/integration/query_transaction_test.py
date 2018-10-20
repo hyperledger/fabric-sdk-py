@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-import sys
 import logging
 from time import sleep
 
@@ -17,10 +16,7 @@ from test.integration.utils import get_peer_org_user,\
 from test.integration.config import E2E_CONFIG
 from test.integration.e2e_utils import build_channel_request,\
     build_join_channel_req
-if sys.version_info < (3, 0):
-    from Queue import Queue
-else:
-    from queue import Queue
+from queue import Queue
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -125,5 +121,5 @@ class QueryTransaction(BaseTestCase):
         q = Queue(1)
         response.subscribe(on_next=lambda x: q.put(x),
                            on_error=lambda x: q.put(x))
-        res = q.get(timeout=5)
+        res = q.get(timeout=10)
         self.assertEqual(res[0][0][0].response.status, 200)

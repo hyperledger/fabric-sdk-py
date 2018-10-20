@@ -19,6 +19,7 @@ import sys
 import os
 import subprocess
 from time import sleep
+from queue import Queue
 
 from hfc.fabric.channel.channel import Channel
 from hfc.fabric.orderer import Orderer
@@ -39,11 +40,6 @@ from hfc.util.keyvaluestore import FileKeyValueStore
 from hfc.fabric.config.default import DEFAULT
 
 assert DEFAULT
-
-if sys.version_info < (3, 0):
-    from Queue import Queue
-else:
-    from queue import Queue
 
 _logger = logging.getLogger(__name__)
 
@@ -307,7 +303,7 @@ class Client(object):
         response.subscribe(on_next=lambda x: q.put(x),
                            on_error=lambda x: q.put(x))
 
-        status, _ = q.get(timeout=5)
+        status, _ = q.get(timeout=10)
         _logger.debug(status)
         if status.status == 200:
             self.new_channel(channel_name)
@@ -378,7 +374,7 @@ class Client(object):
         return channel.join_channel(request)
 
     def chaincode_install(self, requestor, peer_names, cc_path, cc_name,
-                          cc_version, timeout=5):
+                          cc_version, timeout=10):
         """
         Install chaincode to given peers by requestor role
 
@@ -723,7 +719,7 @@ class Client(object):
         return tx_path
 
     def chaincode_instantiate(self, requestor, channel_name, peer_names, args,
-                              cc_name, cc_version, timeout=5):
+                              cc_name, cc_version, timeout=10):
         """
             Instantiate installed chaincode to particular peer in
             particular channel
@@ -783,7 +779,7 @@ class Client(object):
         return res.status == 200
 
     def chaincode_invoke(self, requestor, channel_name, peer_names, args,
-                         cc_name, cc_version, timeout=5):
+                         cc_name, cc_version, timeout=10):
         """
         Invoke chaincode for ledger update
 
@@ -839,7 +835,7 @@ class Client(object):
         _logger.debug(res)
         return res[0][0][0].response.status == 200
 
-    def query_installed_chaincodes(self, requestor, peer_names, timeout=5):
+    def query_installed_chaincodes(self, requestor, peer_names, timeout=10):
         """
         Queries installed chaincode, returns all chaincodes installed on a peer
 
@@ -890,7 +886,7 @@ class Client(object):
                 "Failed to query installed chaincodes: {}", sys.exc_info()[0])
             raise
 
-    def query_channels(self, requestor, peer_names, timeout=5):
+    def query_channels(self, requestor, peer_names, timeout=10):
         """
         Queries channel name joined by a peer
 
@@ -943,7 +939,7 @@ class Client(object):
             raise
 
     def query_info(self, requestor, channel_name,
-                   peer_names, timeout=5):
+                   peer_names, timeout=10):
         """
         Queries information of a channel
 
@@ -987,7 +983,7 @@ class Client(object):
             raise
 
     def query_block_by_txid(self, requestor, channel_name,
-                            peer_names, tx_id, timeout=5):
+                            peer_names, tx_id, timeout=10):
         """
         Queries block by tx id
 
@@ -1033,7 +1029,7 @@ class Client(object):
             raise
 
     def query_block_by_hash(self, requestor, channel_name,
-                            peer_names, block_hash, timeout=5):
+                            peer_names, block_hash, timeout=10):
         """
         Queries block by hash
 
@@ -1079,7 +1075,7 @@ class Client(object):
             raise
 
     def query_block(self, requestor, channel_name,
-                    peer_names, block_number, timeout=5):
+                    peer_names, block_number, timeout=10):
         """
         Queries block by number
 
@@ -1125,7 +1121,7 @@ class Client(object):
             raise
 
     def query_transaction(self, requestor, channel_name,
-                          peer_names, tx_id, timeout=5):
+                          peer_names, tx_id, timeout=10):
         """
         Queries block by number
 
@@ -1169,7 +1165,7 @@ class Client(object):
             raise
 
     def query_instantiated_chaincodes(self, requestor, channel_name,
-                                      peer_names, timeout=5):
+                                      peer_names, timeout=10):
         """
         Queries instantiated chaincode
 

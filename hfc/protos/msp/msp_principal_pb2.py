@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/msp/msp_principal.proto',
   package='common',
   syntax='proto3',
-  serialized_pb=_b('\n\"hfc/protos/msp/msp_principal.proto\x12\x06\x63ommon\"\xa9\x01\n\x0cMSPPrincipal\x12\x45\n\x18principal_classification\x18\x01 \x01(\x0e\x32#.common.MSPPrincipal.Classification\x12\x11\n\tprincipal\x18\x02 \x01(\x0c\"?\n\x0e\x43lassification\x12\x08\n\x04ROLE\x10\x00\x12\x15\n\x11ORGANIZATION_UNIT\x10\x01\x12\x0c\n\x08IDENTITY\x10\x02\"q\n\x10OrganizationUnit\x12\x16\n\x0emsp_identifier\x18\x01 \x01(\t\x12&\n\x1eorganizational_unit_identifier\x18\x02 \x01(\t\x12\x1d\n\x15\x63\x65rtifiers_identifier\x18\x03 \x01(\x0c\"r\n\x07MSPRole\x12\x16\n\x0emsp_identifier\x18\x01 \x01(\t\x12)\n\x04role\x18\x02 \x01(\x0e\x32\x1b.common.MSPRole.MSPRoleType\"$\n\x0bMSPRoleType\x12\n\n\x06MEMBER\x10\x00\x12\t\n\x05\x41\x44MIN\x10\x01\x42P\n$org.hyperledger.fabric.protos.commonZ(github.com/hyperledger/fabric/protos/mspb\x06proto3')
+  serialized_pb=_b('\n\"hfc/protos/msp/msp_principal.proto\x12\x06\x63ommon\"\xc6\x01\n\x0cMSPPrincipal\x12\x45\n\x18principal_classification\x18\x01 \x01(\x0e\x32#.common.MSPPrincipal.Classification\x12\x11\n\tprincipal\x18\x02 \x01(\x0c\"\\\n\x0e\x43lassification\x12\x08\n\x04ROLE\x10\x00\x12\x15\n\x11ORGANIZATION_UNIT\x10\x01\x12\x0c\n\x08IDENTITY\x10\x02\x12\r\n\tANONYMITY\x10\x03\x12\x0c\n\x08\x43OMBINED\x10\x04\"q\n\x10OrganizationUnit\x12\x16\n\x0emsp_identifier\x18\x01 \x01(\t\x12&\n\x1eorganizational_unit_identifier\x18\x02 \x01(\t\x12\x1d\n\x15\x63\x65rtifiers_identifier\x18\x03 \x01(\x0c\"\x88\x01\n\x07MSPRole\x12\x16\n\x0emsp_identifier\x18\x01 \x01(\t\x12)\n\x04role\x18\x02 \x01(\x0e\x32\x1b.common.MSPRole.MSPRoleType\":\n\x0bMSPRoleType\x12\n\n\x06MEMBER\x10\x00\x12\t\n\x05\x41\x44MIN\x10\x01\x12\n\n\x06\x43LIENT\x10\x02\x12\x08\n\x04PEER\x10\x03\"\x9d\x01\n\x14MSPIdentityAnonymity\x12M\n\x0e\x61nonymity_type\x18\x01 \x01(\x0e\x32\x35.common.MSPIdentityAnonymity.MSPIdentityAnonymityType\"6\n\x18MSPIdentityAnonymityType\x12\x0b\n\x07NOMINAL\x10\x00\x12\r\n\tANONYMOUS\x10\x01\"=\n\x11\x43ombinedPrincipal\x12(\n\nprincipals\x18\x01 \x03(\x0b\x32\x14.common.MSPPrincipalBP\n$org.hyperledger.fabric.protos.commonZ(github.com/hyperledger/fabric/protos/mspb\x06proto3')
 )
 
 
@@ -42,11 +42,19 @@ _MSPPRINCIPAL_CLASSIFICATION = _descriptor.EnumDescriptor(
       name='IDENTITY', index=2, number=2,
       options=None,
       type=None),
+    _descriptor.EnumValueDescriptor(
+      name='ANONYMITY', index=3, number=3,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='COMBINED', index=4, number=4,
+      options=None,
+      type=None),
   ],
   containing_type=None,
   options=None,
   serialized_start=153,
-  serialized_end=216,
+  serialized_end=245,
 )
 _sym_db.RegisterEnumDescriptor(_MSPPRINCIPAL_CLASSIFICATION)
 
@@ -64,13 +72,43 @@ _MSPROLE_MSPROLETYPE = _descriptor.EnumDescriptor(
       name='ADMIN', index=1, number=1,
       options=None,
       type=None),
+    _descriptor.EnumValueDescriptor(
+      name='CLIENT', index=2, number=2,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PEER', index=3, number=3,
+      options=None,
+      type=None),
   ],
   containing_type=None,
   options=None,
-  serialized_start=411,
-  serialized_end=447,
+  serialized_start=441,
+  serialized_end=499,
 )
 _sym_db.RegisterEnumDescriptor(_MSPROLE_MSPROLETYPE)
+
+_MSPIDENTITYANONYMITY_MSPIDENTITYANONYMITYTYPE = _descriptor.EnumDescriptor(
+  name='MSPIdentityAnonymityType',
+  full_name='common.MSPIdentityAnonymity.MSPIdentityAnonymityType',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='NOMINAL', index=0, number=0,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='ANONYMOUS', index=1, number=1,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=605,
+  serialized_end=659,
+)
+_sym_db.RegisterEnumDescriptor(_MSPIDENTITYANONYMITY_MSPIDENTITYANONYMITYTYPE)
 
 
 _MSPPRINCIPAL = _descriptor.Descriptor(
@@ -108,7 +146,7 @@ _MSPPRINCIPAL = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=47,
-  serialized_end=216,
+  serialized_end=245,
 )
 
 
@@ -152,8 +190,8 @@ _ORGANIZATIONUNIT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=218,
-  serialized_end=331,
+  serialized_start=247,
+  serialized_end=360,
 )
 
 
@@ -191,17 +229,85 @@ _MSPROLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=333,
-  serialized_end=447,
+  serialized_start=363,
+  serialized_end=499,
+)
+
+
+_MSPIDENTITYANONYMITY = _descriptor.Descriptor(
+  name='MSPIdentityAnonymity',
+  full_name='common.MSPIdentityAnonymity',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='anonymity_type', full_name='common.MSPIdentityAnonymity.anonymity_type', index=0,
+      number=1, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _MSPIDENTITYANONYMITY_MSPIDENTITYANONYMITYTYPE,
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=502,
+  serialized_end=659,
+)
+
+
+_COMBINEDPRINCIPAL = _descriptor.Descriptor(
+  name='CombinedPrincipal',
+  full_name='common.CombinedPrincipal',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='principals', full_name='common.CombinedPrincipal.principals', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=661,
+  serialized_end=722,
 )
 
 _MSPPRINCIPAL.fields_by_name['principal_classification'].enum_type = _MSPPRINCIPAL_CLASSIFICATION
 _MSPPRINCIPAL_CLASSIFICATION.containing_type = _MSPPRINCIPAL
 _MSPROLE.fields_by_name['role'].enum_type = _MSPROLE_MSPROLETYPE
 _MSPROLE_MSPROLETYPE.containing_type = _MSPROLE
+_MSPIDENTITYANONYMITY.fields_by_name['anonymity_type'].enum_type = _MSPIDENTITYANONYMITY_MSPIDENTITYANONYMITYTYPE
+_MSPIDENTITYANONYMITY_MSPIDENTITYANONYMITYTYPE.containing_type = _MSPIDENTITYANONYMITY
+_COMBINEDPRINCIPAL.fields_by_name['principals'].message_type = _MSPPRINCIPAL
 DESCRIPTOR.message_types_by_name['MSPPrincipal'] = _MSPPRINCIPAL
 DESCRIPTOR.message_types_by_name['OrganizationUnit'] = _ORGANIZATIONUNIT
 DESCRIPTOR.message_types_by_name['MSPRole'] = _MSPROLE
+DESCRIPTOR.message_types_by_name['MSPIdentityAnonymity'] = _MSPIDENTITYANONYMITY
+DESCRIPTOR.message_types_by_name['CombinedPrincipal'] = _COMBINEDPRINCIPAL
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 MSPPrincipal = _reflection.GeneratedProtocolMessageType('MSPPrincipal', (_message.Message,), dict(
@@ -224,6 +330,20 @@ MSPRole = _reflection.GeneratedProtocolMessageType('MSPRole', (_message.Message,
   # @@protoc_insertion_point(class_scope:common.MSPRole)
   ))
 _sym_db.RegisterMessage(MSPRole)
+
+MSPIdentityAnonymity = _reflection.GeneratedProtocolMessageType('MSPIdentityAnonymity', (_message.Message,), dict(
+  DESCRIPTOR = _MSPIDENTITYANONYMITY,
+  __module__ = 'hfc.protos.msp.msp_principal_pb2'
+  # @@protoc_insertion_point(class_scope:common.MSPIdentityAnonymity)
+  ))
+_sym_db.RegisterMessage(MSPIdentityAnonymity)
+
+CombinedPrincipal = _reflection.GeneratedProtocolMessageType('CombinedPrincipal', (_message.Message,), dict(
+  DESCRIPTOR = _COMBINEDPRINCIPAL,
+  __module__ = 'hfc.protos.msp.msp_principal_pb2'
+  # @@protoc_insertion_point(class_scope:common.CombinedPrincipal)
+  ))
+_sym_db.RegisterMessage(CombinedPrincipal)
 
 
 DESCRIPTOR.has_options = True

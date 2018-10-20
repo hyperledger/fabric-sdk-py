@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/msp/identities.proto',
   package='msp',
   syntax='proto3',
-  serialized_pb=_b('\n\x1fhfc/protos/msp/identities.proto\x12\x03msp\"5\n\x12SerializedIdentity\x12\r\n\x05mspid\x18\x01 \x01(\t\x12\x10\n\x08id_bytes\x18\x02 \x01(\x0c\x42M\n!org.hyperledger.fabric.protos.mspZ(github.com/hyperledger/fabric/protos/mspb\x06proto3')
+  serialized_pb=_b('\n\x1fhfc/protos/msp/identities.proto\x12\x03msp\"5\n\x12SerializedIdentity\x12\r\n\x05mspid\x18\x01 \x01(\t\x12\x10\n\x08id_bytes\x18\x02 \x01(\x0c\"a\n\x18SerializedIdemixIdentity\x12\r\n\x05nym_x\x18\x01 \x01(\x0c\x12\r\n\x05nym_y\x18\x02 \x01(\x0c\x12\n\n\x02ou\x18\x03 \x01(\x0c\x12\x0c\n\x04role\x18\x04 \x01(\x0c\x12\r\n\x05proof\x18\x05 \x01(\x0c\x42M\n!org.hyperledger.fabric.protos.mspZ(github.com/hyperledger/fabric/protos/mspb\x06proto3')
 )
 
 
@@ -62,7 +62,67 @@ _SERIALIZEDIDENTITY = _descriptor.Descriptor(
   serialized_end=93,
 )
 
+
+_SERIALIZEDIDEMIXIDENTITY = _descriptor.Descriptor(
+  name='SerializedIdemixIdentity',
+  full_name='msp.SerializedIdemixIdentity',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='nym_x', full_name='msp.SerializedIdemixIdentity.nym_x', index=0,
+      number=1, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='nym_y', full_name='msp.SerializedIdemixIdentity.nym_y', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='ou', full_name='msp.SerializedIdemixIdentity.ou', index=2,
+      number=3, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='role', full_name='msp.SerializedIdemixIdentity.role', index=3,
+      number=4, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='proof', full_name='msp.SerializedIdemixIdentity.proof', index=4,
+      number=5, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=95,
+  serialized_end=192,
+)
+
 DESCRIPTOR.message_types_by_name['SerializedIdentity'] = _SERIALIZEDIDENTITY
+DESCRIPTOR.message_types_by_name['SerializedIdemixIdentity'] = _SERIALIZEDIDEMIXIDENTITY
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 SerializedIdentity = _reflection.GeneratedProtocolMessageType('SerializedIdentity', (_message.Message,), dict(
@@ -71,6 +131,13 @@ SerializedIdentity = _reflection.GeneratedProtocolMessageType('SerializedIdentit
   # @@protoc_insertion_point(class_scope:msp.SerializedIdentity)
   ))
 _sym_db.RegisterMessage(SerializedIdentity)
+
+SerializedIdemixIdentity = _reflection.GeneratedProtocolMessageType('SerializedIdemixIdentity', (_message.Message,), dict(
+  DESCRIPTOR = _SERIALIZEDIDEMIXIDENTITY,
+  __module__ = 'hfc.protos.msp.identities_pb2'
+  # @@protoc_insertion_point(class_scope:msp.SerializedIdemixIdentity)
+  ))
+_sym_db.RegisterMessage(SerializedIdemixIdentity)
 
 
 DESCRIPTOR.has_options = True

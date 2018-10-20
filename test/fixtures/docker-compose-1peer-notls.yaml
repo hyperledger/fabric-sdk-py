@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-# This compose file will start a Hyperledger Fabric 1.0.0-rc1 with peer create and peer join done. including
+# This compose file will start a Hyperledger Fabric 1.3.0 with peer create and peer join done. including
 # * 1 ca
 # * 1 orderer
 # * 1 peers in 1 orgs
@@ -11,7 +11,7 @@ version: '2.0'
 
 services:
   ca:
-    image: hyperledger/fabric-ca:x86_64-1.0.0
+    image: hyperledger/fabric-ca:1.3.0
     container_name: fabric-ca
     hostname: ca
   #  command: /go/src/github.com/hyperledger/fabric-ca/bin/ca server start -ca testdata/ec.pem -ca-key testdata/ec-key.pem -config testdata/testconfig.json
@@ -36,7 +36,7 @@ services:
   cli:
     container_name: fabric-cli
     hostname: fabric-cli
-    image: hyperledger/fabric-tools:x86_64-1.0.0
+    image: hyperledger/fabric-tools:1.3.0
     tty: true
     environment:
       - CORE_PEER_ID=fabric-cli

@@ -14,16 +14,14 @@ from google.protobuf import descriptor_pb2
 _sym_db = _symbol_database.Default()
 
 
-from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/chaincode.proto',
   package='protos',
   syntax='proto3',
-  serialized_pb=_b('\n\x1fhfc/protos/peer/chaincode.proto\x12\x06protos\x1a\x1fgoogle/protobuf/timestamp.proto\":\n\x0b\x43haincodeID\x12\x0c\n\x04path\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0f\n\x07version\x18\x03 \x01(\t\"\x1e\n\x0e\x43haincodeInput\x12\x0c\n\x04\x61rgs\x18\x01 \x03(\x0c\"\xdc\x01\n\rChaincodeSpec\x12(\n\x04type\x18\x01 \x01(\x0e\x32\x1a.protos.ChaincodeSpec.Type\x12)\n\x0c\x63haincode_id\x18\x02 \x01(\x0b\x32\x13.protos.ChaincodeID\x12%\n\x05input\x18\x03 \x01(\x0b\x32\x16.protos.ChaincodeInput\x12\x0f\n\x07timeout\x18\x04 \x01(\x05\">\n\x04Type\x12\r\n\tUNDEFINED\x10\x00\x12\n\n\x06GOLANG\x10\x01\x12\x08\n\x04NODE\x10\x02\x12\x07\n\x03\x43\x41R\x10\x03\x12\x08\n\x04JAVA\x10\x04\"\x8a\x02\n\x17\x43haincodeDeploymentSpec\x12-\n\x0e\x63haincode_spec\x18\x01 \x01(\x0b\x32\x15.protos.ChaincodeSpec\x12\x32\n\x0e\x65\x66\x66\x65\x63tive_date\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x14\n\x0c\x63ode_package\x18\x03 \x01(\x0c\x12\x46\n\x08\x65xec_env\x18\x04 \x01(\x0e\x32\x34.protos.ChaincodeDeploymentSpec.ExecutionEnvironment\".\n\x14\x45xecutionEnvironment\x12\n\n\x06\x44OCKER\x10\x00\x12\n\n\x06SYSTEM\x10\x01\"c\n\x17\x43haincodeInvocationSpec\x12-\n\x0e\x63haincode_spec\x18\x01 \x01(\x0b\x32\x15.protos.ChaincodeSpec\x12\x19\n\x11id_generation_alg\x18\x02 \x01(\t*4\n\x14\x43onfidentialityLevel\x12\n\n\x06PUBLIC\x10\x00\x12\x10\n\x0c\x43ONFIDENTIAL\x10\x01\x42O\n\"org.hyperledger.fabric.protos.peerZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
-  ,
-  dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,])
+  serialized_pb=_b('\n\x1fhfc/protos/peer/chaincode.proto\x12\x06protos\":\n\x0b\x43haincodeID\x12\x0c\n\x04path\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0f\n\x07version\x18\x03 \x01(\t\"\x90\x01\n\x0e\x43haincodeInput\x12\x0c\n\x04\x61rgs\x18\x01 \x03(\x0c\x12<\n\x0b\x64\x65\x63orations\x18\x02 \x03(\x0b\x32\'.protos.ChaincodeInput.DecorationsEntry\x1a\x32\n\x10\x44\x65\x63orationsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x0c:\x02\x38\x01\"\xdc\x01\n\rChaincodeSpec\x12(\n\x04type\x18\x01 \x01(\x0e\x32\x1a.protos.ChaincodeSpec.Type\x12)\n\x0c\x63haincode_id\x18\x02 \x01(\x0b\x32\x13.protos.ChaincodeID\x12%\n\x05input\x18\x03 \x01(\x0b\x32\x16.protos.ChaincodeInput\x12\x0f\n\x07timeout\x18\x04 \x01(\x05\">\n\x04Type\x12\r\n\tUNDEFINED\x10\x00\x12\n\n\x06GOLANG\x10\x01\x12\x08\n\x04NODE\x10\x02\x12\x07\n\x03\x43\x41R\x10\x03\x12\x08\n\x04JAVA\x10\x04\"\xec\x01\n\x17\x43haincodeDeploymentSpec\x12-\n\x0e\x63haincode_spec\x18\x01 \x01(\x0b\x32\x15.protos.ChaincodeSpec\x12\x14\n\x0c\x63ode_package\x18\x03 \x01(\x0c\x12\x46\n\x08\x65xec_env\x18\x04 \x01(\x0e\x32\x34.protos.ChaincodeDeploymentSpec.ExecutionEnvironment\".\n\x14\x45xecutionEnvironment\x12\n\n\x06\x44OCKER\x10\x00\x12\n\n\x06SYSTEM\x10\x01J\x04\x08\x02\x10\x03R\x0e\x65\x66\x66\x65\x63tive_date\"a\n\x17\x43haincodeInvocationSpec\x12-\n\x0e\x63haincode_spec\x18\x01 \x01(\x0b\x32\x15.protos.ChaincodeSpecJ\x04\x08\x02\x10\x03R\x11id_generation_alg\"(\n\x0eLifecycleEvent\x12\x16\n\x0e\x63haincode_name\x18\x01 \x01(\t*4\n\x14\x43onfidentialityLevel\x12\n\n\x06PUBLIC\x10\x00\x12\x10\n\x0c\x43ONFIDENTIAL\x10\x01\x42O\n\"org.hyperledger.fabric.protos.peerZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+)
 
 _CONFIDENTIALITYLEVEL = _descriptor.EnumDescriptor(
   name='ConfidentialityLevel',
@@ -42,8 +40,8 @@ _CONFIDENTIALITYLEVEL = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=761,
-  serialized_end=813,
+  serialized_start=853,
+  serialized_end=905,
 )
 _sym_db.RegisterEnumDescriptor(_CONFIDENTIALITYLEVEL)
 
@@ -81,8 +79,8 @@ _CHAINCODESPEC_TYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=327,
-  serialized_end=389,
+  serialized_start=409,
+  serialized_end=471,
 )
 _sym_db.RegisterEnumDescriptor(_CHAINCODESPEC_TYPE)
 
@@ -103,8 +101,8 @@ _CHAINCODEDEPLOYMENTSPEC_EXECUTIONENVIRONMENT = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=612,
-  serialized_end=658,
+  serialized_start=642,
+  serialized_end=688,
 )
 _sym_db.RegisterEnumDescriptor(_CHAINCODEDEPLOYMENTSPEC_EXECUTIONENVIRONMENT)
 
@@ -149,10 +147,47 @@ _CHAINCODEID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=76,
-  serialized_end=134,
+  serialized_start=43,
+  serialized_end=101,
 )
 
+
+_CHAINCODEINPUT_DECORATIONSENTRY = _descriptor.Descriptor(
+  name='DecorationsEntry',
+  full_name='protos.ChaincodeInput.DecorationsEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='protos.ChaincodeInput.DecorationsEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='protos.ChaincodeInput.DecorationsEntry.value', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=_descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001')),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=198,
+  serialized_end=248,
+)
 
 _CHAINCODEINPUT = _descriptor.Descriptor(
   name='ChaincodeInput',
@@ -168,10 +203,17 @@ _CHAINCODEINPUT = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='decorations', full_name='protos.ChaincodeInput.decorations', index=1,
+      number=2, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
-  nested_types=[],
+  nested_types=[_CHAINCODEINPUT_DECORATIONSENTRY, ],
   enum_types=[
   ],
   options=None,
@@ -180,8 +222,8 @@ _CHAINCODEINPUT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=136,
-  serialized_end=166,
+  serialized_start=104,
+  serialized_end=248,
 )
 
 
@@ -233,8 +275,8 @@ _CHAINCODESPEC = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=169,
-  serialized_end=389,
+  serialized_start=251,
+  serialized_end=471,
 )
 
 
@@ -253,21 +295,14 @@ _CHAINCODEDEPLOYMENTSPEC = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='effective_date', full_name='protos.ChaincodeDeploymentSpec.effective_date', index=1,
-      number=2, type=11, cpp_type=10, label=1,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='code_package', full_name='protos.ChaincodeDeploymentSpec.code_package', index=2,
+      name='code_package', full_name='protos.ChaincodeDeploymentSpec.code_package', index=1,
       number=3, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='exec_env', full_name='protos.ChaincodeDeploymentSpec.exec_env', index=3,
+      name='exec_env', full_name='protos.ChaincodeDeploymentSpec.exec_env', index=2,
       number=4, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -286,8 +321,8 @@ _CHAINCODEDEPLOYMENTSPEC = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=392,
-  serialized_end=658,
+  serialized_start=474,
+  serialized_end=710,
 )
 
 
@@ -305,9 +340,33 @@ _CHAINCODEINVOCATIONSPEC = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=712,
+  serialized_end=809,
+)
+
+
+_LIFECYCLEEVENT = _descriptor.Descriptor(
+  name='LifecycleEvent',
+  full_name='protos.LifecycleEvent',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
     _descriptor.FieldDescriptor(
-      name='id_generation_alg', full_name='protos.ChaincodeInvocationSpec.id_generation_alg', index=1,
-      number=2, type=9, cpp_type=9, label=1,
+      name='chaincode_name', full_name='protos.LifecycleEvent.chaincode_name', index=0,
+      number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -324,16 +383,17 @@ _CHAINCODEINVOCATIONSPEC = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=660,
-  serialized_end=759,
+  serialized_start=811,
+  serialized_end=851,
 )
 
+_CHAINCODEINPUT_DECORATIONSENTRY.containing_type = _CHAINCODEINPUT
+_CHAINCODEINPUT.fields_by_name['decorations'].message_type = _CHAINCODEINPUT_DECORATIONSENTRY
 _CHAINCODESPEC.fields_by_name['type'].enum_type = _CHAINCODESPEC_TYPE
 _CHAINCODESPEC.fields_by_name['chaincode_id'].message_type = _CHAINCODEID
 _CHAINCODESPEC.fields_by_name['input'].message_type = _CHAINCODEINPUT
 _CHAINCODESPEC_TYPE.containing_type = _CHAINCODESPEC
 _CHAINCODEDEPLOYMENTSPEC.fields_by_name['chaincode_spec'].message_type = _CHAINCODESPEC
-_CHAINCODEDEPLOYMENTSPEC.fields_by_name['effective_date'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
 _CHAINCODEDEPLOYMENTSPEC.fields_by_name['exec_env'].enum_type = _CHAINCODEDEPLOYMENTSPEC_EXECUTIONENVIRONMENT
 _CHAINCODEDEPLOYMENTSPEC_EXECUTIONENVIRONMENT.containing_type = _CHAINCODEDEPLOYMENTSPEC
 _CHAINCODEINVOCATIONSPEC.fields_by_name['chaincode_spec'].message_type = _CHAINCODESPEC
@@ -342,6 +402,7 @@ DESCRIPTOR.message_types_by_name['ChaincodeInput'] = _CHAINCODEINPUT
 DESCRIPTOR.message_types_by_name['ChaincodeSpec'] = _CHAINCODESPEC
 DESCRIPTOR.message_types_by_name['ChaincodeDeploymentSpec'] = _CHAINCODEDEPLOYMENTSPEC
 DESCRIPTOR.message_types_by_name['ChaincodeInvocationSpec'] = _CHAINCODEINVOCATIONSPEC
+DESCRIPTOR.message_types_by_name['LifecycleEvent'] = _LIFECYCLEEVENT
 DESCRIPTOR.enum_types_by_name['ConfidentialityLevel'] = _CONFIDENTIALITYLEVEL
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -353,11 +414,19 @@ ChaincodeID = _reflection.GeneratedProtocolMessageType('ChaincodeID', (_message.
 _sym_db.RegisterMessage(ChaincodeID)
 
 ChaincodeInput = _reflection.GeneratedProtocolMessageType('ChaincodeInput', (_message.Message,), dict(
+
+  DecorationsEntry = _reflection.GeneratedProtocolMessageType('DecorationsEntry', (_message.Message,), dict(
+    DESCRIPTOR = _CHAINCODEINPUT_DECORATIONSENTRY,
+    __module__ = 'hfc.protos.peer.chaincode_pb2'
+    # @@protoc_insertion_point(class_scope:protos.ChaincodeInput.DecorationsEntry)
+    ))
+  ,
   DESCRIPTOR = _CHAINCODEINPUT,
   __module__ = 'hfc.protos.peer.chaincode_pb2'
   # @@protoc_insertion_point(class_scope:protos.ChaincodeInput)
   ))
 _sym_db.RegisterMessage(ChaincodeInput)
+_sym_db.RegisterMessage(ChaincodeInput.DecorationsEntry)
 
 ChaincodeSpec = _reflection.GeneratedProtocolMessageType('ChaincodeSpec', (_message.Message,), dict(
   DESCRIPTOR = _CHAINCODESPEC,
@@ -380,7 +449,16 @@ ChaincodeInvocationSpec = _reflection.GeneratedProtocolMessageType('ChaincodeInv
   ))
 _sym_db.RegisterMessage(ChaincodeInvocationSpec)
 
+LifecycleEvent = _reflection.GeneratedProtocolMessageType('LifecycleEvent', (_message.Message,), dict(
+  DESCRIPTOR = _LIFECYCLEEVENT,
+  __module__ = 'hfc.protos.peer.chaincode_pb2'
+  # @@protoc_insertion_point(class_scope:protos.LifecycleEvent)
+  ))
+_sym_db.RegisterMessage(LifecycleEvent)
+
 
 DESCRIPTOR.has_options = True
 DESCRIPTOR._options = _descriptor._ParseOptions(descriptor_pb2.FileOptions(), _b('\n\"org.hyperledger.fabric.protos.peerZ)github.com/hyperledger/fabric/protos/peer'))
+_CHAINCODEINPUT_DECORATIONSENTRY.has_options = True
+_CHAINCODEINPUT_DECORATIONSENTRY._options = _descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001'))
 # @@protoc_insertion_point(module_scope)

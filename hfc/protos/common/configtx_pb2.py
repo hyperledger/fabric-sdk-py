@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/common/configtx.proto',
   package='common',
   syntax='proto3',
-  serialized_pb=_b('\n hfc/protos/common/configtx.proto\x12\x06\x63ommon\x1a\x1ehfc/protos/common/common.proto\x1a hfc/protos/common/policies.proto\"W\n\x0e\x43onfigEnvelope\x12\x1e\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x0e.common.Config\x12%\n\x0blast_update\x18\x02 \x01(\x0b\x32\x10.common.Envelope\"\x9d\x03\n\x11\x43onfigGroupSchema\x12\x35\n\x06groups\x18\x01 \x03(\x0b\x32%.common.ConfigGroupSchema.GroupsEntry\x12\x35\n\x06values\x18\x02 \x03(\x0b\x32%.common.ConfigGroupSchema.ValuesEntry\x12\x39\n\x08policies\x18\x03 \x03(\x0b\x32\'.common.ConfigGroupSchema.PoliciesEntry\x1aH\n\x0bGroupsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.common.ConfigGroupSchema:\x02\x38\x01\x1aH\n\x0bValuesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.common.ConfigValueSchema:\x02\x38\x01\x1aK\n\rPoliciesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12)\n\x05value\x18\x02 \x01(\x0b\x32\x1a.common.ConfigPolicySchema:\x02\x38\x01\"\x13\n\x11\x43onfigValueSchema\"\x14\n\x12\x43onfigPolicySchema\"F\n\x06\x43onfig\x12\x10\n\x08sequence\x18\x01 \x01(\x04\x12*\n\rchannel_group\x18\x02 \x01(\x0b\x32\x13.common.ConfigGroup\"Z\n\x14\x43onfigUpdateEnvelope\x12\x15\n\rconfig_update\x18\x01 \x01(\x0c\x12+\n\nsignatures\x18\x02 \x03(\x0b\x32\x17.common.ConfigSignature\"q\n\x0c\x43onfigUpdate\x12\x12\n\nchannel_id\x18\x01 \x01(\t\x12%\n\x08read_set\x18\x02 \x01(\x0b\x32\x13.common.ConfigGroup\x12&\n\twrite_set\x18\x03 \x01(\x0b\x32\x13.common.ConfigGroup\"\x98\x03\n\x0b\x43onfigGroup\x12\x0f\n\x07version\x18\x01 \x01(\x04\x12/\n\x06groups\x18\x02 \x03(\x0b\x32\x1f.common.ConfigGroup.GroupsEntry\x12/\n\x06values\x18\x03 \x03(\x0b\x32\x1f.common.ConfigGroup.ValuesEntry\x12\x33\n\x08policies\x18\x04 \x03(\x0b\x32!.common.ConfigGroup.PoliciesEntry\x12\x12\n\nmod_policy\x18\x05 \x01(\t\x1a\x42\n\x0bGroupsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\"\n\x05value\x18\x02 \x01(\x0b\x32\x13.common.ConfigGroup:\x02\x38\x01\x1a\x42\n\x0bValuesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\"\n\x05value\x18\x02 \x01(\x0b\x32\x13.common.ConfigValue:\x02\x38\x01\x1a\x45\n\rPoliciesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12#\n\x05value\x18\x02 \x01(\x0b\x32\x14.common.ConfigPolicy:\x02\x38\x01\"A\n\x0b\x43onfigValue\x12\x0f\n\x07version\x18\x01 \x01(\x04\x12\r\n\x05value\x18\x02 \x01(\x0c\x12\x12\n\nmod_policy\x18\x03 \x01(\t\"S\n\x0c\x43onfigPolicy\x12\x0f\n\x07version\x18\x01 \x01(\x04\x12\x1e\n\x06policy\x18\x02 \x01(\x0b\x32\x0e.common.Policy\x12\x12\n\nmod_policy\x18\x03 \x01(\t\">\n\x0f\x43onfigSignature\x12\x18\n\x10signature_header\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\x42S\n$org.hyperledger.fabric.protos.commonZ+github.com/hyperledger/fabric/protos/commonb\x06proto3')
+  serialized_pb=_b('\n hfc/protos/common/configtx.proto\x12\x06\x63ommon\x1a\x1ehfc/protos/common/common.proto\x1a hfc/protos/common/policies.proto\"W\n\x0e\x43onfigEnvelope\x12\x1e\n\x06\x63onfig\x18\x01 \x01(\x0b\x32\x0e.common.Config\x12%\n\x0blast_update\x18\x02 \x01(\x0b\x32\x10.common.Envelope\"\x9d\x03\n\x11\x43onfigGroupSchema\x12\x35\n\x06groups\x18\x01 \x03(\x0b\x32%.common.ConfigGroupSchema.GroupsEntry\x12\x35\n\x06values\x18\x02 \x03(\x0b\x32%.common.ConfigGroupSchema.ValuesEntry\x12\x39\n\x08policies\x18\x03 \x03(\x0b\x32\'.common.ConfigGroupSchema.PoliciesEntry\x1aH\n\x0bGroupsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.common.ConfigGroupSchema:\x02\x38\x01\x1aH\n\x0bValuesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12(\n\x05value\x18\x02 \x01(\x0b\x32\x19.common.ConfigValueSchema:\x02\x38\x01\x1aK\n\rPoliciesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12)\n\x05value\x18\x02 \x01(\x0b\x32\x1a.common.ConfigPolicySchema:\x02\x38\x01\"\x13\n\x11\x43onfigValueSchema\"\x14\n\x12\x43onfigPolicySchema\"R\n\x06\x43onfig\x12\x10\n\x08sequence\x18\x01 \x01(\x04\x12*\n\rchannel_group\x18\x02 \x01(\x0b\x32\x13.common.ConfigGroupJ\x04\x08\x03\x10\x04R\x04type\"Z\n\x14\x43onfigUpdateEnvelope\x12\x15\n\rconfig_update\x18\x01 \x01(\x0c\x12+\n\nsignatures\x18\x02 \x03(\x0b\x32\x17.common.ConfigSignature\"\xf1\x01\n\x0c\x43onfigUpdate\x12\x12\n\nchannel_id\x18\x01 \x01(\t\x12%\n\x08read_set\x18\x02 \x01(\x0b\x32\x13.common.ConfigGroup\x12&\n\twrite_set\x18\x03 \x01(\x0b\x32\x13.common.ConfigGroup\x12=\n\risolated_data\x18\x05 \x03(\x0b\x32&.common.ConfigUpdate.IsolatedDataEntry\x1a\x33\n\x11IsolatedDataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x0c:\x02\x38\x01J\x04\x08\x04\x10\x05R\x04type\"\x98\x03\n\x0b\x43onfigGroup\x12\x0f\n\x07version\x18\x01 \x01(\x04\x12/\n\x06groups\x18\x02 \x03(\x0b\x32\x1f.common.ConfigGroup.GroupsEntry\x12/\n\x06values\x18\x03 \x03(\x0b\x32\x1f.common.ConfigGroup.ValuesEntry\x12\x33\n\x08policies\x18\x04 \x03(\x0b\x32!.common.ConfigGroup.PoliciesEntry\x12\x12\n\nmod_policy\x18\x05 \x01(\t\x1a\x42\n\x0bGroupsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\"\n\x05value\x18\x02 \x01(\x0b\x32\x13.common.ConfigGroup:\x02\x38\x01\x1a\x42\n\x0bValuesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\"\n\x05value\x18\x02 \x01(\x0b\x32\x13.common.ConfigValue:\x02\x38\x01\x1a\x45\n\rPoliciesEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12#\n\x05value\x18\x02 \x01(\x0b\x32\x14.common.ConfigPolicy:\x02\x38\x01\"A\n\x0b\x43onfigValue\x12\x0f\n\x07version\x18\x01 \x01(\x04\x12\r\n\x05value\x18\x02 \x01(\x0c\x12\x12\n\nmod_policy\x18\x03 \x01(\t\"S\n\x0c\x43onfigPolicy\x12\x0f\n\x07version\x18\x01 \x01(\x04\x12\x1e\n\x06policy\x18\x02 \x01(\x0b\x32\x0e.common.Policy\x12\x12\n\nmod_policy\x18\x03 \x01(\t\">\n\x0f\x43onfigSignature\x12\x18\n\x10signature_header\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\x42S\n$org.hyperledger.fabric.protos.commonZ+github.com/hyperledger/fabric/protos/commonb\x06proto3')
   ,
   dependencies=[hfc_dot_protos_dot_common_dot_common__pb2.DESCRIPTOR,hfc_dot_protos_dot_common_dot_policies__pb2.DESCRIPTOR,])
 
@@ -304,7 +304,7 @@ _CONFIG = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=658,
-  serialized_end=728,
+  serialized_end=740,
 )
 
 
@@ -341,10 +341,47 @@ _CONFIGUPDATEENVELOPE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=730,
-  serialized_end=820,
+  serialized_start=742,
+  serialized_end=832,
 )
 
+
+_CONFIGUPDATE_ISOLATEDDATAENTRY = _descriptor.Descriptor(
+  name='IsolatedDataEntry',
+  full_name='common.ConfigUpdate.IsolatedDataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='common.ConfigUpdate.IsolatedDataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='common.ConfigUpdate.IsolatedDataEntry.value', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=_descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001')),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1013,
+  serialized_end=1064,
+)
 
 _CONFIGUPDATE = _descriptor.Descriptor(
   name='ConfigUpdate',
@@ -374,10 +411,17 @@ _CONFIGUPDATE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='isolated_data', full_name='common.ConfigUpdate.isolated_data', index=3,
+      number=5, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
-  nested_types=[],
+  nested_types=[_CONFIGUPDATE_ISOLATEDDATAENTRY, ],
   enum_types=[
   ],
   options=None,
@@ -386,8 +430,8 @@ _CONFIGUPDATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=822,
-  serialized_end=935,
+  serialized_start=835,
+  serialized_end=1076,
 )
 
 
@@ -424,8 +468,8 @@ _CONFIGGROUP_GROUPSENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1141,
-  serialized_end=1207,
+  serialized_start=1282,
+  serialized_end=1348,
 )
 
 _CONFIGGROUP_VALUESENTRY = _descriptor.Descriptor(
@@ -461,8 +505,8 @@ _CONFIGGROUP_VALUESENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1209,
-  serialized_end=1275,
+  serialized_start=1350,
+  serialized_end=1416,
 )
 
 _CONFIGGROUP_POLICIESENTRY = _descriptor.Descriptor(
@@ -498,8 +542,8 @@ _CONFIGGROUP_POLICIESENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1277,
-  serialized_end=1346,
+  serialized_start=1418,
+  serialized_end=1487,
 )
 
 _CONFIGGROUP = _descriptor.Descriptor(
@@ -556,8 +600,8 @@ _CONFIGGROUP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=938,
-  serialized_end=1346,
+  serialized_start=1079,
+  serialized_end=1487,
 )
 
 
@@ -601,8 +645,8 @@ _CONFIGVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1348,
-  serialized_end=1413,
+  serialized_start=1489,
+  serialized_end=1554,
 )
 
 
@@ -646,8 +690,8 @@ _CONFIGPOLICY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1415,
-  serialized_end=1498,
+  serialized_start=1556,
+  serialized_end=1639,
 )
 
 
@@ -684,8 +728,8 @@ _CONFIGSIGNATURE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1500,
-  serialized_end=1562,
+  serialized_start=1641,
+  serialized_end=1703,
 )
 
 _CONFIGENVELOPE.fields_by_name['config'].message_type = _CONFIG
@@ -701,8 +745,10 @@ _CONFIGGROUPSCHEMA.fields_by_name['values'].message_type = _CONFIGGROUPSCHEMA_VA
 _CONFIGGROUPSCHEMA.fields_by_name['policies'].message_type = _CONFIGGROUPSCHEMA_POLICIESENTRY
 _CONFIG.fields_by_name['channel_group'].message_type = _CONFIGGROUP
 _CONFIGUPDATEENVELOPE.fields_by_name['signatures'].message_type = _CONFIGSIGNATURE
+_CONFIGUPDATE_ISOLATEDDATAENTRY.containing_type = _CONFIGUPDATE
 _CONFIGUPDATE.fields_by_name['read_set'].message_type = _CONFIGGROUP
 _CONFIGUPDATE.fields_by_name['write_set'].message_type = _CONFIGGROUP
+_CONFIGUPDATE.fields_by_name['isolated_data'].message_type = _CONFIGUPDATE_ISOLATEDDATAENTRY
 _CONFIGGROUP_GROUPSENTRY.fields_by_name['value'].message_type = _CONFIGGROUP
 _CONFIGGROUP_GROUPSENTRY.containing_type = _CONFIGGROUP
 _CONFIGGROUP_VALUESENTRY.fields_by_name['value'].message_type = _CONFIGVALUE
@@ -793,11 +839,19 @@ ConfigUpdateEnvelope = _reflection.GeneratedProtocolMessageType('ConfigUpdateEnv
 _sym_db.RegisterMessage(ConfigUpdateEnvelope)
 
 ConfigUpdate = _reflection.GeneratedProtocolMessageType('ConfigUpdate', (_message.Message,), dict(
+
+  IsolatedDataEntry = _reflection.GeneratedProtocolMessageType('IsolatedDataEntry', (_message.Message,), dict(
+    DESCRIPTOR = _CONFIGUPDATE_ISOLATEDDATAENTRY,
+    __module__ = 'hfc.protos.common.configtx_pb2'
+    # @@protoc_insertion_point(class_scope:common.ConfigUpdate.IsolatedDataEntry)
+    ))
+  ,
   DESCRIPTOR = _CONFIGUPDATE,
   __module__ = 'hfc.protos.common.configtx_pb2'
   # @@protoc_insertion_point(class_scope:common.ConfigUpdate)
   ))
 _sym_db.RegisterMessage(ConfigUpdate)
+_sym_db.RegisterMessage(ConfigUpdate.IsolatedDataEntry)
 
 ConfigGroup = _reflection.GeneratedProtocolMessageType('ConfigGroup', (_message.Message,), dict(
 
@@ -860,6 +914,8 @@ _CONFIGGROUPSCHEMA_VALUESENTRY.has_options = True
 _CONFIGGROUPSCHEMA_VALUESENTRY._options = _descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001'))
 _CONFIGGROUPSCHEMA_POLICIESENTRY.has_options = True
 _CONFIGGROUPSCHEMA_POLICIESENTRY._options = _descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001'))
+_CONFIGUPDATE_ISOLATEDDATAENTRY.has_options = True
+_CONFIGUPDATE_ISOLATEDDATAENTRY._options = _descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001'))
 _CONFIGGROUP_GROUPSENTRY.has_options = True
 _CONFIGGROUP_GROUPSENTRY._options = _descriptor._ParseOptions(descriptor_pb2.MessageOptions(), _b('8\001'))
 _CONFIGGROUP_VALUESENTRY.has_options = True

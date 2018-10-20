@@ -15,15 +15,11 @@
 from __future__ import print_function
 
 import os
-import sys
 import unittest
 from shutil import rmtree
 from hfc.util.keyvaluestore import file_key_value_store
 
-if sys.version_info < (3, 0):
-    from Queue import Queue
-else:
-    from queue import Queue
+from queue import Queue
 
 
 class KeyValueStoreTest(unittest.TestCase):

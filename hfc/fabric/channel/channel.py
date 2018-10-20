@@ -23,11 +23,7 @@ from hfc.util import utils
 from hfc.util.utils import proto_str, current_timestamp, proto_b, \
     build_header, build_channel_header, build_cc_proposal, \
     send_transaction_proposal
-
-if sys.version_info < (3, 0):
-    from Queue import Queue
-else:
-    from queue import Queue
+from queue import Queue
 
 
 SYSTEM_CHANNEL_NAME = "testchainid"
@@ -304,11 +300,6 @@ class Channel(object):
                 cc_deployment_spec.code_package = \
                     tx_context.tx_prop_req.packaged_cc
 
-        cc_deployment_spec.effective_date.seconds = \
-            tx_context.tx_prop_req.effective_date.seconds
-        cc_deployment_spec.effective_date.nanos = \
-            tx_context.tx_prop_req.effective_date.nanos
-
         channel_header_extension = proposal_pb2.ChaincodeHeaderExtension()
         channel_header_extension.chaincode_id.name = \
             proto_str("lscc")
@@ -493,7 +484,7 @@ class Channel(object):
         for r in responses:
             r.subscribe(on_next=lambda x: q.put(x),
                         on_error=lambda x: q.put(x))
-            res = q.get(timeout=5)
+            res = q.get(timeout=10)
             _logger.debug(res)
             proposal_res = res[0]
             result = result and (proposal_res.response.status == 200)
@@ -557,10 +548,6 @@ class Channel(object):
 
         cc_dep_spec = chaincode_pb2.ChaincodeDeploymentSpec()
         cc_dep_spec.chaincode_spec.CopyFrom(cc_spec)
-        cc_dep_spec.effective_date.seconds = \
-            tx_context.tx_prop_req.effective_date.seconds
-        cc_dep_spec.effective_date.nanos = \
-            tx_context.tx_prop_req.effective_date.nanos
 
         # construct the invoke spec
         # TODO: if the policy not provided, new one should be built.
@@ -756,7 +743,7 @@ class Channel(object):
         response.subscribe(on_next=lambda x: q.put(x),
                            on_error=lambda x: q.put(x))
 
-        res, _ = q.get(timeout=5)
+        res, _ = q.get(timeout=10)
         _logger.debug(res)
 
         if res.block is None or res.block == '':

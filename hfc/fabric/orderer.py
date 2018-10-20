@@ -114,7 +114,7 @@ class Orderer(object):
         response.subscribe(on_next=lambda x: q.put(x),
                            on_error=lambda x: q.put(x))
 
-        res, _ = q.get(timeout=5)
+        res, _ = q.get(timeout=10)
 
         if res.block is None or res.block == '':
             _logger.error("fail to get genesis block")

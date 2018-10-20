@@ -35,7 +35,7 @@ configtxgen \
 
 configtxgen \
     -configPath e2e_cli \
-    -inspectChannelCreateTx ${APP_CHANNEL_TX} > e2e_cli/${CHANNEL_ARTIFACTS}/${APP_CHANNEL_TX}.json
+    -inspectChannelCreateTx e2e_cli/${CHANNEL_ARTIFACTS}/channel.tx > e2e_cli/${CHANNEL_ARTIFACTS}/channel.json
 
 
 echo "Create the anchor peer configuration tx for org1 and org2"

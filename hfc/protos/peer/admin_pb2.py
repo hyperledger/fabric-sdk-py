@@ -14,15 +14,16 @@ _sym_db = _symbol_database.Default()
 
 
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
+from hfc.protos.common import common_pb2 as hfc_dot_protos_dot_common_dot_common__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/admin.proto',
   package='protos',
   syntax='proto3',
-  serialized_pb=_b('\n\x1bhfc/protos/peer/admin.proto\x12\x06protos\x1a\x1bgoogle/protobuf/empty.proto\"\x9a\x01\n\x0cServerStatus\x12/\n\x06status\x18\x01 \x01(\x0e\x32\x1f.protos.ServerStatus.StatusCode\"Y\n\nStatusCode\x12\r\n\tUNDEFINED\x10\x00\x12\x0b\n\x07STARTED\x10\x01\x12\x0b\n\x07STOPPED\x10\x02\x12\n\n\x06PAUSED\x10\x03\x12\t\n\x05\x45RROR\x10\x04\x12\x0b\n\x07UNKNOWN\x10\x05\"8\n\x0fLogLevelRequest\x12\x12\n\nlog_module\x18\x01 \x01(\t\x12\x11\n\tlog_level\x18\x02 \x01(\t\"9\n\x10LogLevelResponse\x12\x12\n\nlog_module\x18\x01 \x01(\t\x12\x11\n\tlog_level\x18\x02 \x01(\t2\xdc\x02\n\x05\x41\x64min\x12;\n\tGetStatus\x12\x16.google.protobuf.Empty\x1a\x14.protos.ServerStatus\"\x00\x12=\n\x0bStartServer\x12\x16.google.protobuf.Empty\x1a\x14.protos.ServerStatus\"\x00\x12H\n\x11GetModuleLogLevel\x12\x17.protos.LogLevelRequest\x1a\x18.protos.LogLevelResponse\"\x00\x12H\n\x11SetModuleLogLevel\x12\x17.protos.LogLevelRequest\x1a\x18.protos.LogLevelResponse\"\x00\x12\x43\n\x0fRevertLogLevels\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x42]\n\"org.hyperledger.fabric.protos.peerB\x0c\x41\x64minPackageZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_pb=_b('\n\x1bhfc/protos/peer/admin.proto\x12\x06protos\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1ehfc/protos/common/common.proto\"\x9a\x01\n\x0cServerStatus\x12/\n\x06status\x18\x01 \x01(\x0e\x32\x1f.protos.ServerStatus.StatusCode\"Y\n\nStatusCode\x12\r\n\tUNDEFINED\x10\x00\x12\x0b\n\x07STARTED\x10\x01\x12\x0b\n\x07STOPPED\x10\x02\x12\n\n\x06PAUSED\x10\x03\x12\t\n\x05\x45RROR\x10\x04\x12\x0b\n\x07UNKNOWN\x10\x05\"8\n\x0fLogLevelRequest\x12\x12\n\nlog_module\x18\x01 \x01(\t\x12\x11\n\tlog_level\x18\x02 \x01(\t\"9\n\x10LogLevelResponse\x12\x12\n\nlog_module\x18\x01 \x01(\t\x12\x11\n\tlog_level\x18\x02 \x01(\t\"F\n\x0e\x41\x64minOperation\x12)\n\x06logReq\x18\x01 \x01(\x0b\x32\x17.protos.LogLevelRequestH\x00\x42\t\n\x07\x63ontent2\xbc\x02\n\x05\x41\x64min\x12\x35\n\tGetStatus\x12\x10.common.Envelope\x1a\x14.protos.ServerStatus\"\x00\x12\x37\n\x0bStartServer\x12\x10.common.Envelope\x1a\x14.protos.ServerStatus\"\x00\x12\x41\n\x11GetModuleLogLevel\x12\x10.common.Envelope\x1a\x18.protos.LogLevelResponse\"\x00\x12\x41\n\x11SetModuleLogLevel\x12\x10.common.Envelope\x1a\x18.protos.LogLevelResponse\"\x00\x12=\n\x0fRevertLogLevels\x12\x10.common.Envelope\x1a\x16.google.protobuf.Empty\"\x00\x42]\n\"org.hyperledger.fabric.protos.peerB\x0c\x41\x64minPackageZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
   ,
-  dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
+  dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,hfc_dot_protos_dot_common_dot_common__pb2.DESCRIPTOR,])
 
 
 
@@ -59,8 +60,8 @@ _SERVERSTATUS_STATUSCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=134,
-  serialized_end=223,
+  serialized_start=166,
+  serialized_end=255,
 )
 _sym_db.RegisterEnumDescriptor(_SERVERSTATUS_STATUSCODE)
 
@@ -92,8 +93,8 @@ _SERVERSTATUS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=69,
-  serialized_end=223,
+  serialized_start=101,
+  serialized_end=255,
 )
 
 
@@ -130,8 +131,8 @@ _LOGLEVELREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=225,
-  serialized_end=281,
+  serialized_start=257,
+  serialized_end=313,
 )
 
 
@@ -168,15 +169,54 @@ _LOGLEVELRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=283,
-  serialized_end=340,
+  serialized_start=315,
+  serialized_end=372,
+)
+
+
+_ADMINOPERATION = _descriptor.Descriptor(
+  name='AdminOperation',
+  full_name='protos.AdminOperation',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='logReq', full_name='protos.AdminOperation.logReq', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+    _descriptor.OneofDescriptor(
+      name='content', full_name='protos.AdminOperation.content',
+      index=0, containing_type=None, fields=[]),
+  ],
+  serialized_start=374,
+  serialized_end=444,
 )
 
 _SERVERSTATUS.fields_by_name['status'].enum_type = _SERVERSTATUS_STATUSCODE
 _SERVERSTATUS_STATUSCODE.containing_type = _SERVERSTATUS
+_ADMINOPERATION.fields_by_name['logReq'].message_type = _LOGLEVELREQUEST
+_ADMINOPERATION.oneofs_by_name['content'].fields.append(
+  _ADMINOPERATION.fields_by_name['logReq'])
+_ADMINOPERATION.fields_by_name['logReq'].containing_oneof = _ADMINOPERATION.oneofs_by_name['content']
 DESCRIPTOR.message_types_by_name['ServerStatus'] = _SERVERSTATUS
 DESCRIPTOR.message_types_by_name['LogLevelRequest'] = _LOGLEVELREQUEST
 DESCRIPTOR.message_types_by_name['LogLevelResponse'] = _LOGLEVELRESPONSE
+DESCRIPTOR.message_types_by_name['AdminOperation'] = _ADMINOPERATION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 ServerStatus = _reflection.GeneratedProtocolMessageType('ServerStatus', (_message.Message,), dict(
@@ -200,6 +240,13 @@ LogLevelResponse = _reflection.GeneratedProtocolMessageType('LogLevelResponse', 
   ))
 _sym_db.RegisterMessage(LogLevelResponse)
 
+AdminOperation = _reflection.GeneratedProtocolMessageType('AdminOperation', (_message.Message,), dict(
+  DESCRIPTOR = _ADMINOPERATION,
+  __module__ = 'hfc.protos.peer.admin_pb2'
+  # @@protoc_insertion_point(class_scope:protos.AdminOperation)
+  ))
+_sym_db.RegisterMessage(AdminOperation)
+
 
 DESCRIPTOR.has_options = True
 DESCRIPTOR._options = _descriptor._ParseOptions(descriptor_pb2.FileOptions(), _b('\n\"org.hyperledger.fabric.protos.peerB\014AdminPackageZ)github.com/hyperledger/fabric/protos/peer'))
@@ -210,15 +257,15 @@ _ADMIN = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=343,
-  serialized_end=691,
+  serialized_start=447,
+  serialized_end=763,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetStatus',
     full_name='protos.Admin.GetStatus',
     index=0,
     containing_service=None,
-    input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    input_type=hfc_dot_protos_dot_common_dot_common__pb2._ENVELOPE,
     output_type=_SERVERSTATUS,
     options=None,
   ),
@@ -227,7 +274,7 @@ _ADMIN = _descriptor.ServiceDescriptor(
     full_name='protos.Admin.StartServer',
     index=1,
     containing_service=None,
-    input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    input_type=hfc_dot_protos_dot_common_dot_common__pb2._ENVELOPE,
     output_type=_SERVERSTATUS,
     options=None,
   ),
@@ -236,7 +283,7 @@ _ADMIN = _descriptor.ServiceDescriptor(
     full_name='protos.Admin.GetModuleLogLevel',
     index=2,
     containing_service=None,
-    input_type=_LOGLEVELREQUEST,
+    input_type=hfc_dot_protos_dot_common_dot_common__pb2._ENVELOPE,
     output_type=_LOGLEVELRESPONSE,
     options=None,
   ),
@@ -245,7 +292,7 @@ _ADMIN = _descriptor.ServiceDescriptor(
     full_name='protos.Admin.SetModuleLogLevel',
     index=3,
     containing_service=None,
-    input_type=_LOGLEVELREQUEST,
+    input_type=hfc_dot_protos_dot_common_dot_common__pb2._ENVELOPE,
     output_type=_LOGLEVELRESPONSE,
     options=None,
   ),
@@ -254,7 +301,7 @@ _ADMIN = _descriptor.ServiceDescriptor(
     full_name='protos.Admin.RevertLogLevels',
     index=4,
     containing_service=None,
-    input_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    input_type=hfc_dot_protos_dot_common_dot_common__pb2._ENVELOPE,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     options=None,
   ),

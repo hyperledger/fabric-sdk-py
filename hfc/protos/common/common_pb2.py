@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/common/common.proto',
   package='common',
   syntax='proto3',
-  serialized_pb=_b('\n\x1ehfc/protos/common/common.proto\x12\x06\x63ommon\x1a\x1fgoogle/protobuf/timestamp.proto\"\x1b\n\nLastConfig\x12\r\n\x05index\x18\x01 \x01(\x04\"H\n\x08Metadata\x12\r\n\x05value\x18\x01 \x01(\x0c\x12-\n\nsignatures\x18\x02 \x03(\x0b\x32\x19.common.MetadataSignature\"@\n\x11MetadataSignature\x12\x18\n\x10signature_header\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\":\n\x06Header\x12\x16\n\x0e\x63hannel_header\x18\x01 \x01(\x0c\x12\x18\n\x10signature_header\x18\x02 \x01(\x0c\"\xa2\x01\n\rChannelHeader\x12\x0c\n\x04type\x18\x01 \x01(\x05\x12\x0f\n\x07version\x18\x02 \x01(\x05\x12-\n\ttimestamp\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x12\n\nchannel_id\x18\x04 \x01(\t\x12\r\n\x05tx_id\x18\x05 \x01(\t\x12\r\n\x05\x65poch\x18\x06 \x01(\x04\x12\x11\n\textension\x18\x07 \x01(\x0c\"1\n\x0fSignatureHeader\x12\x0f\n\x07\x63reator\x18\x01 \x01(\x0c\x12\r\n\x05nonce\x18\x02 \x01(\x0c\"7\n\x07Payload\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\".\n\x08\x45nvelope\x12\x0f\n\x07payload\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"v\n\x05\x42lock\x12#\n\x06header\x18\x01 \x01(\x0b\x32\x13.common.BlockHeader\x12\x1f\n\x04\x64\x61ta\x18\x02 \x01(\x0b\x32\x11.common.BlockData\x12\'\n\x08metadata\x18\x03 \x01(\x0b\x32\x15.common.BlockMetadata\"G\n\x0b\x42lockHeader\x12\x0e\n\x06number\x18\x01 \x01(\x04\x12\x15\n\rprevious_hash\x18\x02 \x01(\x0c\x12\x11\n\tdata_hash\x18\x03 \x01(\x0c\"\x19\n\tBlockData\x12\x0c\n\x04\x64\x61ta\x18\x01 \x03(\x0c\"!\n\rBlockMetadata\x12\x10\n\x08metadata\x18\x01 \x03(\x0c*\xaa\x01\n\x06Status\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0c\n\x07SUCCESS\x10\xc8\x01\x12\x10\n\x0b\x42\x41\x44_REQUEST\x10\x90\x03\x12\x0e\n\tFORBIDDEN\x10\x93\x03\x12\x0e\n\tNOT_FOUND\x10\x94\x03\x12\x1d\n\x18REQUEST_ENTITY_TOO_LARGE\x10\x9d\x03\x12\x1a\n\x15INTERNAL_SERVER_ERROR\x10\xf4\x03\x12\x18\n\x13SERVICE_UNAVAILABLE\x10\xf7\x03*\x99\x01\n\nHeaderType\x12\x0b\n\x07MESSAGE\x10\x00\x12\n\n\x06\x43ONFIG\x10\x01\x12\x11\n\rCONFIG_UPDATE\x10\x02\x12\x18\n\x14\x45NDORSER_TRANSACTION\x10\x03\x12\x17\n\x13ORDERER_TRANSACTION\x10\x04\x12\x15\n\x11\x44\x45LIVER_SEEK_INFO\x10\x05\x12\x15\n\x11\x43HAINCODE_PACKAGE\x10\x06*[\n\x12\x42lockMetadataIndex\x12\x0e\n\nSIGNATURES\x10\x00\x12\x0f\n\x0bLAST_CONFIG\x10\x01\x12\x17\n\x13TRANSACTIONS_FILTER\x10\x02\x12\x0b\n\x07ORDERER\x10\x03\x42S\n$org.hyperledger.fabric.protos.commonZ+github.com/hyperledger/fabric/protos/commonb\x06proto3')
+  serialized_pb=_b('\n\x1ehfc/protos/common/common.proto\x12\x06\x63ommon\x1a\x1fgoogle/protobuf/timestamp.proto\"\x1b\n\nLastConfig\x12\r\n\x05index\x18\x01 \x01(\x04\"H\n\x08Metadata\x12\r\n\x05value\x18\x01 \x01(\x0c\x12-\n\nsignatures\x18\x02 \x03(\x0b\x32\x19.common.MetadataSignature\"@\n\x11MetadataSignature\x12\x18\n\x10signature_header\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\":\n\x06Header\x12\x16\n\x0e\x63hannel_header\x18\x01 \x01(\x0c\x12\x18\n\x10signature_header\x18\x02 \x01(\x0c\"\xb9\x01\n\rChannelHeader\x12\x0c\n\x04type\x18\x01 \x01(\x05\x12\x0f\n\x07version\x18\x02 \x01(\x05\x12-\n\ttimestamp\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x12\n\nchannel_id\x18\x04 \x01(\t\x12\r\n\x05tx_id\x18\x05 \x01(\t\x12\r\n\x05\x65poch\x18\x06 \x01(\x04\x12\x11\n\textension\x18\x07 \x01(\x0c\x12\x15\n\rtls_cert_hash\x18\x08 \x01(\x0c\"1\n\x0fSignatureHeader\x12\x0f\n\x07\x63reator\x18\x01 \x01(\x0c\x12\r\n\x05nonce\x18\x02 \x01(\x0c\"7\n\x07Payload\x12\x1e\n\x06header\x18\x01 \x01(\x0b\x32\x0e.common.Header\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\".\n\x08\x45nvelope\x12\x0f\n\x07payload\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"v\n\x05\x42lock\x12#\n\x06header\x18\x01 \x01(\x0b\x32\x13.common.BlockHeader\x12\x1f\n\x04\x64\x61ta\x18\x02 \x01(\x0b\x32\x11.common.BlockData\x12\'\n\x08metadata\x18\x03 \x01(\x0b\x32\x15.common.BlockMetadata\"G\n\x0b\x42lockHeader\x12\x0e\n\x06number\x18\x01 \x01(\x04\x12\x15\n\rprevious_hash\x18\x02 \x01(\x0c\x12\x11\n\tdata_hash\x18\x03 \x01(\x0c\"\x19\n\tBlockData\x12\x0c\n\x04\x64\x61ta\x18\x01 \x03(\x0c\"!\n\rBlockMetadata\x12\x10\n\x08metadata\x18\x01 \x03(\x0c*\xc0\x01\n\x06Status\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x0c\n\x07SUCCESS\x10\xc8\x01\x12\x10\n\x0b\x42\x41\x44_REQUEST\x10\x90\x03\x12\x0e\n\tFORBIDDEN\x10\x93\x03\x12\x0e\n\tNOT_FOUND\x10\x94\x03\x12\x1d\n\x18REQUEST_ENTITY_TOO_LARGE\x10\x9d\x03\x12\x1a\n\x15INTERNAL_SERVER_ERROR\x10\xf4\x03\x12\x14\n\x0fNOT_IMPLEMENTED\x10\xf5\x03\x12\x18\n\x13SERVICE_UNAVAILABLE\x10\xf7\x03*\xca\x01\n\nHeaderType\x12\x0b\n\x07MESSAGE\x10\x00\x12\n\n\x06\x43ONFIG\x10\x01\x12\x11\n\rCONFIG_UPDATE\x10\x02\x12\x18\n\x14\x45NDORSER_TRANSACTION\x10\x03\x12\x17\n\x13ORDERER_TRANSACTION\x10\x04\x12\x15\n\x11\x44\x45LIVER_SEEK_INFO\x10\x05\x12\x15\n\x11\x43HAINCODE_PACKAGE\x10\x06\x12\x18\n\x14PEER_ADMIN_OPERATION\x10\x08\x12\x15\n\x11TOKEN_TRANSACTION\x10\t*[\n\x12\x42lockMetadataIndex\x12\x0e\n\nSIGNATURES\x10\x00\x12\x0f\n\x0bLAST_CONFIG\x10\x01\x12\x17\n\x13TRANSACTIONS_FILTER\x10\x02\x12\x0b\n\x07ORDERER\x10\x03\x42S\n$org.hyperledger.fabric.protos.commonZ+github.com/hyperledger/fabric/protos/commonb\x06proto3')
   ,
   dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,])
 
@@ -60,14 +60,18 @@ _STATUS = _descriptor.EnumDescriptor(
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='SERVICE_UNAVAILABLE', index=7, number=503,
+      name='NOT_IMPLEMENTED', index=7, number=501,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='SERVICE_UNAVAILABLE', index=8, number=503,
       options=None,
       type=None),
   ],
   containing_type=None,
   options=None,
-  serialized_start=881,
-  serialized_end=1051,
+  serialized_start=904,
+  serialized_end=1096,
 )
 _sym_db.RegisterEnumDescriptor(_STATUS)
 
@@ -106,11 +110,19 @@ _HEADERTYPE = _descriptor.EnumDescriptor(
       name='CHAINCODE_PACKAGE', index=6, number=6,
       options=None,
       type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PEER_ADMIN_OPERATION', index=7, number=8,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='TOKEN_TRANSACTION', index=8, number=9,
+      options=None,
+      type=None),
   ],
   containing_type=None,
   options=None,
-  serialized_start=1054,
-  serialized_end=1207,
+  serialized_start=1099,
+  serialized_end=1301,
 )
 _sym_db.RegisterEnumDescriptor(_HEADERTYPE)
 
@@ -140,8 +152,8 @@ _BLOCKMETADATAINDEX = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1209,
-  serialized_end=1300,
+  serialized_start=1303,
+  serialized_end=1394,
 )
 _sym_db.RegisterEnumDescriptor(_BLOCKMETADATAINDEX)
 
@@ -153,6 +165,7 @@ FORBIDDEN = 403
 NOT_FOUND = 404
 REQUEST_ENTITY_TOO_LARGE = 413
 INTERNAL_SERVER_ERROR = 500
+NOT_IMPLEMENTED = 501
 SERVICE_UNAVAILABLE = 503
 MESSAGE = 0
 CONFIG = 1
@@ -161,6 +174,8 @@ ENDORSER_TRANSACTION = 3
 ORDERER_TRANSACTION = 4
 DELIVER_SEEK_INFO = 5
 CHAINCODE_PACKAGE = 6
+PEER_ADMIN_OPERATION = 8
+TOKEN_TRANSACTION = 9
 SIGNATURES = 0
 LAST_CONFIG = 1
 TRANSACTIONS_FILTER = 2
@@ -369,6 +384,13 @@ _CHANNELHEADER = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='tls_cert_hash', full_name='common.ChannelHeader.tls_cert_hash', index=7,
+      number=8, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -382,7 +404,7 @@ _CHANNELHEADER = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=305,
-  serialized_end=467,
+  serialized_end=490,
 )
 
 
@@ -419,8 +441,8 @@ _SIGNATUREHEADER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=469,
-  serialized_end=518,
+  serialized_start=492,
+  serialized_end=541,
 )
 
 
@@ -457,8 +479,8 @@ _PAYLOAD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=520,
-  serialized_end=575,
+  serialized_start=543,
+  serialized_end=598,
 )
 
 
@@ -495,8 +517,8 @@ _ENVELOPE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=577,
-  serialized_end=623,
+  serialized_start=600,
+  serialized_end=646,
 )
 
 
@@ -540,8 +562,8 @@ _BLOCK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=625,
-  serialized_end=743,
+  serialized_start=648,
+  serialized_end=766,
 )
 
 
@@ -585,8 +607,8 @@ _BLOCKHEADER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=745,
-  serialized_end=816,
+  serialized_start=768,
+  serialized_end=839,
 )
 
 
@@ -616,8 +638,8 @@ _BLOCKDATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=818,
-  serialized_end=843,
+  serialized_start=841,
+  serialized_end=866,
 )
 
 
@@ -647,8 +669,8 @@ _BLOCKMETADATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=845,
-  serialized_end=878,
+  serialized_start=868,
+  serialized_end=901,
 )
 
 _METADATA.fields_by_name['signatures'].message_type = _METADATASIGNATURE

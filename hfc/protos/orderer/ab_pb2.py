@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/orderer/ab.proto',
   package='orderer',
   syntax='proto3',
-  serialized_pb=_b('\n\x1bhfc/protos/orderer/ab.proto\x12\x07orderer\x1a\x1ehfc/protos/common/common.proto\"3\n\x11\x42roadcastResponse\x12\x1e\n\x06status\x18\x01 \x01(\x0e\x32\x0e.common.Status\"\x0c\n\nSeekNewest\"\x0c\n\nSeekOldest\"\x1f\n\rSeekSpecified\x12\x0e\n\x06number\x18\x01 \x01(\x04\"\x91\x01\n\x0cSeekPosition\x12%\n\x06newest\x18\x01 \x01(\x0b\x32\x13.orderer.SeekNewestH\x00\x12%\n\x06oldest\x18\x02 \x01(\x0b\x32\x13.orderer.SeekOldestH\x00\x12+\n\tspecified\x18\x03 \x01(\x0b\x32\x16.orderer.SeekSpecifiedH\x00\x42\x06\n\x04Type\"\xc5\x01\n\x08SeekInfo\x12$\n\x05start\x18\x01 \x01(\x0b\x32\x15.orderer.SeekPosition\x12#\n\x04stop\x18\x02 \x01(\x0b\x32\x15.orderer.SeekPosition\x12\x30\n\x08\x62\x65havior\x18\x03 \x01(\x0e\x32\x1e.orderer.SeekInfo.SeekBehavior\"<\n\x0cSeekBehavior\x12\x15\n\x11\x42LOCK_UNTIL_READY\x10\x00\x12\x15\n\x11\x46\x41IL_IF_NOT_READY\x10\x01\"[\n\x0f\x44\x65liverResponse\x12 \n\x06status\x18\x01 \x01(\x0e\x32\x0e.common.StatusH\x00\x12\x1e\n\x05\x62lock\x18\x02 \x01(\x0b\x32\r.common.BlockH\x00\x42\x06\n\x04Type2\x8f\x01\n\x0f\x41tomicBroadcast\x12?\n\tBroadcast\x12\x10.common.Envelope\x1a\x1a.orderer.BroadcastResponse\"\x00(\x01\x30\x01\x12;\n\x07\x44\x65liver\x12\x10.common.Envelope\x1a\x18.orderer.DeliverResponse\"\x00(\x01\x30\x01\x42U\n%org.hyperledger.fabric.protos.ordererZ,github.com/hyperledger/fabric/protos/ordererb\x06proto3')
+  serialized_pb=_b('\n\x1bhfc/protos/orderer/ab.proto\x12\x07orderer\x1a\x1ehfc/protos/common/common.proto\"A\n\x11\x42roadcastResponse\x12\x1e\n\x06status\x18\x01 \x01(\x0e\x32\x0e.common.Status\x12\x0c\n\x04info\x18\x02 \x01(\t\"\x0c\n\nSeekNewest\"\x0c\n\nSeekOldest\"\x1f\n\rSeekSpecified\x12\x0e\n\x06number\x18\x01 \x01(\x04\"\x91\x01\n\x0cSeekPosition\x12%\n\x06newest\x18\x01 \x01(\x0b\x32\x13.orderer.SeekNewestH\x00\x12%\n\x06oldest\x18\x02 \x01(\x0b\x32\x13.orderer.SeekOldestH\x00\x12+\n\tspecified\x18\x03 \x01(\x0b\x32\x16.orderer.SeekSpecifiedH\x00\x42\x06\n\x04Type\"\xc5\x01\n\x08SeekInfo\x12$\n\x05start\x18\x01 \x01(\x0b\x32\x15.orderer.SeekPosition\x12#\n\x04stop\x18\x02 \x01(\x0b\x32\x15.orderer.SeekPosition\x12\x30\n\x08\x62\x65havior\x18\x03 \x01(\x0e\x32\x1e.orderer.SeekInfo.SeekBehavior\"<\n\x0cSeekBehavior\x12\x15\n\x11\x42LOCK_UNTIL_READY\x10\x00\x12\x15\n\x11\x46\x41IL_IF_NOT_READY\x10\x01\"[\n\x0f\x44\x65liverResponse\x12 \n\x06status\x18\x01 \x01(\x0e\x32\x0e.common.StatusH\x00\x12\x1e\n\x05\x62lock\x18\x02 \x01(\x0b\x32\r.common.BlockH\x00\x42\x06\n\x04Type2\x8f\x01\n\x0f\x41tomicBroadcast\x12?\n\tBroadcast\x12\x10.common.Envelope\x1a\x1a.orderer.BroadcastResponse\"\x00(\x01\x30\x01\x12;\n\x07\x44\x65liver\x12\x10.common.Envelope\x1a\x18.orderer.DeliverResponse\"\x00(\x01\x30\x01\x42U\n%org.hyperledger.fabric.protos.ordererZ,github.com/hyperledger/fabric/protos/ordererb\x06proto3')
   ,
   dependencies=[hfc_dot_protos_dot_common_dot_common__pb2.DESCRIPTOR,])
 
@@ -43,8 +43,8 @@ _SEEKINFO_SEEKBEHAVIOR = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=472,
-  serialized_end=532,
+  serialized_start=486,
+  serialized_end=546,
 )
 _sym_db.RegisterEnumDescriptor(_SEEKINFO_SEEKBEHAVIOR)
 
@@ -63,6 +63,13 @@ _BROADCASTRESPONSE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='info', full_name='orderer.BroadcastResponse.info', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -76,7 +83,7 @@ _BROADCASTRESPONSE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=72,
-  serialized_end=123,
+  serialized_end=137,
 )
 
 
@@ -99,8 +106,8 @@ _SEEKNEWEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=125,
-  serialized_end=137,
+  serialized_start=139,
+  serialized_end=151,
 )
 
 
@@ -123,8 +130,8 @@ _SEEKOLDEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=139,
-  serialized_end=151,
+  serialized_start=153,
+  serialized_end=165,
 )
 
 
@@ -154,8 +161,8 @@ _SEEKSPECIFIED = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=153,
-  serialized_end=184,
+  serialized_start=167,
+  serialized_end=198,
 )
 
 
@@ -202,8 +209,8 @@ _SEEKPOSITION = _descriptor.Descriptor(
       name='Type', full_name='orderer.SeekPosition.Type',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=187,
-  serialized_end=332,
+  serialized_start=201,
+  serialized_end=346,
 )
 
 
@@ -248,8 +255,8 @@ _SEEKINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=335,
-  serialized_end=532,
+  serialized_start=349,
+  serialized_end=546,
 )
 
 
@@ -289,8 +296,8 @@ _DELIVERRESPONSE = _descriptor.Descriptor(
       name='Type', full_name='orderer.DeliverResponse.Type',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=534,
-  serialized_end=625,
+  serialized_start=548,
+  serialized_end=639,
 )
 
 _BROADCASTRESPONSE.fields_by_name['status'].enum_type = hfc_dot_protos_dot_common_dot_common__pb2._STATUS
@@ -386,8 +393,8 @@ _ATOMICBROADCAST = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=628,
-  serialized_end=771,
+  serialized_start=642,
+  serialized_end=785,
   methods=[
   _descriptor.MethodDescriptor(
     name='Broadcast',

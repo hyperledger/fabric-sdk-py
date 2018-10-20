@@ -36,10 +36,10 @@ with open(os.path.join(os.path.dirname(__file__),
           'rb') as f:
     tx_data = f.read()
 
-with open(os.path.join(os.path.dirname(__file__),
-          "../fixtures/e2e_cli/channel-artifacts/businesschannel_4.block"),
-          'rb') as f:
-    metadata_block = f.read()
+# with open(os.path.join(os.path.dirname(__file__),
+#           "../fixtures/e2e_cli/channel-artifacts/businesschannel_4.block"),
+#           'rb') as f:
+#     metadata_block = f.read()
 
 
 class BlockDecoderTest(unittest.TestCase):
@@ -47,12 +47,12 @@ class BlockDecoderTest(unittest.TestCase):
 
     def setUp(self):
         self._data = data
-        self._metadata_block = metadata_block
+        # self._metadata_block = metadata_block
         self.decoder_instance = BlockDecoder.decode(self._data)
         self._tx_data = tx_data
         self.decode_transaction = \
             BlockDecoder.decode_transaction(self._tx_data)
-        self.decoded_metadata = BlockDecoder.decode(self._metadata_block)
+        # self.decoded_metadata = BlockDecoder.decode(self._metadata_block)
 
     def test_decode_failure(self):
         """
@@ -66,7 +66,7 @@ class BlockDecoderTest(unittest.TestCase):
         Checks if the block header has been decoded correctly.
         """
         data_hash = \
-            b'f2dabae6cbc541c519234b3a8a7cf17b885ac83d5a18807abdd2ce431573f53c'
+            b'e6a8b7ca7bf9aa5123e2d72bd3d55e0e32d6cefdf001bf31944061cef24c9ad3'
         previous_hash = b''
         number = 0
         header_info = self.decoder_instance['header']
@@ -80,11 +80,11 @@ class BlockDecoderTest(unittest.TestCase):
         This test case also verifies the results from other
         decode header and data calls while decoding the block.
         """
-        sh_nonce = b'cfa064bebe2a846b8f89a4fc82da2f652b9edb69eac65426'
+        sh_nonce = b'71fba48e569c9f9b3f393e5b4b803db6209cb5fb2956301e'
         channel_id = 'testchainid'
-        timestamp = '2017-06-23 09:45:18'
+        timestamp = '2018-10-19 03:53:04'
         tx_id = \
-            '70add6a845ab8a90d97d402a6c0de665e717ed1bb74d37c6bf32232d8339194f'
+            '094760b6a9c9fdbb5d231c3ca79fe28ba2fd62a1aa9d913d37f7938ac44ba52a'
         epoch = 0
         version = 1
         type_value = 1
@@ -138,6 +138,7 @@ class BlockDecoderTest(unittest.TestCase):
         self.assertIn('creator', tx_signature_header)
         self.assertIn('nonce', tx_signature_header)
 
+    @unittest.skip(reason='wait for generation')
     def test_decode_block_metadata(self):
         """
         Checks if the metadata for the block has been decoded properly.

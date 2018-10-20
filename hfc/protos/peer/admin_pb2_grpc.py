@@ -2,6 +2,7 @@
 import grpc
 
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
+from hfc.protos.common import common_pb2 as hfc_dot_protos_dot_common_dot_common__pb2
 from hfc.protos.peer import admin_pb2 as hfc_dot_protos_dot_peer_dot_admin__pb2
 
 
@@ -17,27 +18,27 @@ class AdminStub(object):
     """
     self.GetStatus = channel.unary_unary(
         '/protos.Admin/GetStatus',
-        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        request_serializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.SerializeToString,
         response_deserializer=hfc_dot_protos_dot_peer_dot_admin__pb2.ServerStatus.FromString,
         )
     self.StartServer = channel.unary_unary(
         '/protos.Admin/StartServer',
-        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        request_serializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.SerializeToString,
         response_deserializer=hfc_dot_protos_dot_peer_dot_admin__pb2.ServerStatus.FromString,
         )
     self.GetModuleLogLevel = channel.unary_unary(
         '/protos.Admin/GetModuleLogLevel',
-        request_serializer=hfc_dot_protos_dot_peer_dot_admin__pb2.LogLevelRequest.SerializeToString,
+        request_serializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.SerializeToString,
         response_deserializer=hfc_dot_protos_dot_peer_dot_admin__pb2.LogLevelResponse.FromString,
         )
     self.SetModuleLogLevel = channel.unary_unary(
         '/protos.Admin/SetModuleLogLevel',
-        request_serializer=hfc_dot_protos_dot_peer_dot_admin__pb2.LogLevelRequest.SerializeToString,
+        request_serializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.SerializeToString,
         response_deserializer=hfc_dot_protos_dot_peer_dot_admin__pb2.LogLevelResponse.FromString,
         )
     self.RevertLogLevels = channel.unary_unary(
         '/protos.Admin/RevertLogLevels',
-        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        request_serializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
 
@@ -47,8 +48,8 @@ class AdminServicer(object):
   """
 
   def GetStatus(self, request, context):
-    """Return the serve status.
-    """
+    # missing associated documentation comment in .proto file
+    pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
@@ -86,27 +87,27 @@ def add_AdminServicer_to_server(servicer, server):
   rpc_method_handlers = {
       'GetStatus': grpc.unary_unary_rpc_method_handler(
           servicer.GetStatus,
-          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          request_deserializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.FromString,
           response_serializer=hfc_dot_protos_dot_peer_dot_admin__pb2.ServerStatus.SerializeToString,
       ),
       'StartServer': grpc.unary_unary_rpc_method_handler(
           servicer.StartServer,
-          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          request_deserializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.FromString,
           response_serializer=hfc_dot_protos_dot_peer_dot_admin__pb2.ServerStatus.SerializeToString,
       ),
       'GetModuleLogLevel': grpc.unary_unary_rpc_method_handler(
           servicer.GetModuleLogLevel,
-          request_deserializer=hfc_dot_protos_dot_peer_dot_admin__pb2.LogLevelRequest.FromString,
+          request_deserializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.FromString,
           response_serializer=hfc_dot_protos_dot_peer_dot_admin__pb2.LogLevelResponse.SerializeToString,
       ),
       'SetModuleLogLevel': grpc.unary_unary_rpc_method_handler(
           servicer.SetModuleLogLevel,
-          request_deserializer=hfc_dot_protos_dot_peer_dot_admin__pb2.LogLevelRequest.FromString,
+          request_deserializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.FromString,
           response_serializer=hfc_dot_protos_dot_peer_dot_admin__pb2.LogLevelResponse.SerializeToString,
       ),
       'RevertLogLevels': grpc.unary_unary_rpc_method_handler(
           servicer.RevertLogLevels,
-          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          request_deserializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
   }

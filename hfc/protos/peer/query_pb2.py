@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/query.proto',
   package='protos',
   syntax='proto3',
-  serialized_pb=_b('\n\x1bhfc/protos/peer/query.proto\x12\x06protos\"C\n\x16\x43haincodeQueryResponse\x12)\n\nchaincodes\x18\x01 \x03(\x0b\x32\x15.protos.ChaincodeInfo\"g\n\rChaincodeInfo\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x0c\n\x04path\x18\x03 \x01(\t\x12\r\n\x05input\x18\x04 \x01(\t\x12\x0c\n\x04\x65scc\x18\x05 \x01(\t\x12\x0c\n\x04vscc\x18\x06 \x01(\t\"=\n\x14\x43hannelQueryResponse\x12%\n\x08\x63hannels\x18\x01 \x03(\x0b\x32\x13.protos.ChannelInfo\"!\n\x0b\x43hannelInfo\x12\x12\n\nchannel_id\x18\x01 \x01(\tBO\n\"org.hyperledger.fabric.protos.peerZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_pb=_b('\n\x1bhfc/protos/peer/query.proto\x12\x06protos\"C\n\x16\x43haincodeQueryResponse\x12)\n\nchaincodes\x18\x01 \x03(\x0b\x32\x15.protos.ChaincodeInfo\"s\n\rChaincodeInfo\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x0c\n\x04path\x18\x03 \x01(\t\x12\r\n\x05input\x18\x04 \x01(\t\x12\x0c\n\x04\x65scc\x18\x05 \x01(\t\x12\x0c\n\x04vscc\x18\x06 \x01(\t\x12\n\n\x02id\x18\x07 \x01(\x0c\"=\n\x14\x43hannelQueryResponse\x12%\n\x08\x63hannels\x18\x01 \x03(\x0b\x32\x13.protos.ChannelInfo\"!\n\x0b\x43hannelInfo\x12\x12\n\nchannel_id\x18\x01 \x01(\tBO\n\"org.hyperledger.fabric.protos.peerZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
 )
 
 
@@ -105,6 +105,13 @@ _CHAINCODEINFO = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='id', full_name='protos.ChaincodeInfo.id', index=6,
+      number=7, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -118,7 +125,7 @@ _CHAINCODEINFO = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=108,
-  serialized_end=211,
+  serialized_end=223,
 )
 
 
@@ -148,8 +155,8 @@ _CHANNELQUERYRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=213,
-  serialized_end=274,
+  serialized_start=225,
+  serialized_end=286,
 )
 
 
@@ -179,8 +186,8 @@ _CHANNELINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=276,
-  serialized_end=309,
+  serialized_start=288,
+  serialized_end=321,
 )
 
 _CHAINCODEQUERYRESPONSE.fields_by_name['chaincodes'].message_type = _CHAINCODEINFO
