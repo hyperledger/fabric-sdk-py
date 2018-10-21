@@ -20,6 +20,7 @@ import os
 import subprocess
 from time import sleep
 from queue import Queue
+import shutil
 
 from hfc.fabric.channel.channel import Channel
 from hfc.fabric.orderer import Orderer
@@ -689,17 +690,11 @@ class Client(object):
         Returns: path to tx file if success else None
 
         """
-
         # check if configtxgen is in PATH
-        def cmd_exists(cmd):
-            return any(
-                os.access(os.path.join(path, cmd), os.X_OK)
-                for path in os.environ["PATH"].split(os.pathsep)
-            )
 
-        if not cmd_exists('configtxgen'):
+        if shutil.which('configtxgen') is None:
             _logger.error("configtxgen not in PATH.")
-            return False
+            return None
 
         # Generate channel.tx with configtxgen
         tx_path = "/tmp/channel.tx"

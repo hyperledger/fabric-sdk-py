@@ -36,10 +36,10 @@ with open(os.path.join(os.path.dirname(__file__),
           'rb') as f:
     tx_data = f.read()
 
-# with open(os.path.join(os.path.dirname(__file__),
-#           "../fixtures/e2e_cli/channel-artifacts/businesschannel_4.block"),
-#           'rb') as f:
-#     metadata_block = f.read()
+with open(os.path.join(os.path.dirname(__file__),
+          "../fixtures/e2e_cli/channel-artifacts/businesschannel_4.block"),
+          'rb') as f:
+    metadata_block = f.read()
 
 
 class BlockDecoderTest(unittest.TestCase):
@@ -47,12 +47,12 @@ class BlockDecoderTest(unittest.TestCase):
 
     def setUp(self):
         self._data = data
-        # self._metadata_block = metadata_block
+        self._metadata_block = metadata_block
         self.decoder_instance = BlockDecoder.decode(self._data)
         self._tx_data = tx_data
         self.decode_transaction = \
             BlockDecoder.decode_transaction(self._tx_data)
-        # self.decoded_metadata = BlockDecoder.decode(self._metadata_block)
+        self.decoded_metadata = BlockDecoder.decode(self._metadata_block)
 
     def test_decode_failure(self):
         """
@@ -138,7 +138,6 @@ class BlockDecoderTest(unittest.TestCase):
         self.assertIn('creator', tx_signature_header)
         self.assertIn('nonce', tx_signature_header)
 
-    @unittest.skip(reason='wait for generation')
     def test_decode_block_metadata(self):
         """
         Checks if the metadata for the block has been decoded properly.
