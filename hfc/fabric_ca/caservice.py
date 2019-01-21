@@ -13,7 +13,10 @@
 # limitations under the License.
 #
 import base64
+import json
 import logging
+
+from numbers import Number
 
 import requests
 import six
@@ -32,7 +35,8 @@ _logger = logging.getLogger(__name__)
 class Enrollment(object):
     """ Class represents enrollment. """
 
-    def __init__(self, private_key, cert):
+    def __init__(self, private_key, cert, service=None):
+        self._service = service
         self._private_key = private_key
         self._cert = cert
 
@@ -79,6 +83,26 @@ class Enrollment(object):
                         .format(k, getattr(self, k))
                         for k in self.__dict__.keys())
 
+    def register(self, enrollmentID, enrollmentSecret=None, role=None,
+                 affiliation=None, maxEnrollments=-1, attrs=None):
+
+        # TODO, default should be equal to registrar
+        # https://hyperledger-fabric-ca.readthedocs.io/en/latest/users-guide.ht
+        # ml#registering-a-new-identity
+        if affiliation is None:
+            affiliation = ''
+
+        if not enrollmentID:
+            msg = 'Missing required parameter. \'enrollmentID\' is required.'
+            raise ValueError(msg)
+        if not isinstance(maxEnrollments, Number):
+            msg = 'Wrong parameter. \'maxEnrollments\' must be a' \
+                  ' number'
+            raise ValueError(msg)
+
+        return self._service.register(enrollmentID, enrollmentSecret, role,
+                                      affiliation, maxEnrollments, attrs, self)
+
     def __str__(self):
         return "[{}:{}]".format(self.__class__.__name__, self.get_attrs())
 
@@ -112,7 +136,8 @@ class CAClient(object):
         Returns: the response body in json
 
         """
-        return requests.post(url=self._base_url + path, **param).json()
+        r = requests.post(url=self._base_url + path, **param)
+        return r.json(), r.status_code
 
     def get_cainfo(self):
         """Query the ca service information.
@@ -126,18 +151,20 @@ class CAClient(object):
             body_data = {"caname": self._ca_name}
         else:
             body_data = {}
-        response = self._send_ca_post(path="cainfo", json=body_data,
-                                      verify=self._ca_certs_path)
-        _logger.debug("Raw response json {0}".format(response))
-        if (response['success'] and response['result']['CAName']
-                == self._ca_name):
-            return base64.b64decode(response['result']['CAChain'])
+        res, st = self._send_ca_post(path="cainfo", json=body_data,
+                                     verify=self._ca_certs_path)
+        _logger.debug("Response status {0}".format(st))
+        _logger.debug("Raw response json {0}".format(res))
+
+        if (res['success'] and res['result']['CAName'] == self._ca_name):
+            return base64.b64decode(res['result']['CAChain'])
         else:
             raise ValueError("get_cainfo failed with errors {0}"
-                             .format(response['errors']))
+                             .format(res['errors']))
 
     def enroll(self, enrollment_id, enrollment_secret, csr):
-        """Enroll a registered user in order to receive a signed X509 certificate
+        """Enroll a registered user in order to receive a signed X509
+         certificate
 
         Args:
             enrollment_id (str): The registered ID to use for enrollment
@@ -158,25 +185,40 @@ class CAClient(object):
                              "'enrollmentID', 'enrollmentSecret' and 'csr'"
                              " are all required.")
 
+        req = {"certificate_request": csr}
         if self._ca_name != "":
-            req = {
-                "caName": self._ca_name,
-                "certificate_request": csr
-            }
-        else:
-            req = {"certificate_request": csr}
+            req.update({
+                "caName": self._ca_name
+            })
 
-        response = self._send_ca_post(path="enroll", json=req,
-                                      auth=(enrollment_id, enrollment_secret),
-                                      verify=self._ca_certs_path)
+        res, st = self._send_ca_post(path="enroll",
+                                     json=req,
+                                     auth=(enrollment_id, enrollment_secret),
+                                     verify=self._ca_certs_path)
 
-        _logger.debug("Raw response json {0}".format(response))
+        _logger.debug("Response status {0}".format(st))
+        _logger.debug("Raw response json {0}".format(res))
 
-        if response['success']:
-            return base64.b64decode(response['result']['Cert'])
+        if res['success']:
+            return base64.b64decode(res['result']['Cert'])
         else:
             raise ValueError("Enrollment failed with errors {0}"
-                             .format(response['errors']))
+                             .format(res['errors']))
+
+    def register(self, req, authorization):
+        res, st = self._send_ca_post(path="register",
+                                     json=req,
+                                     headers={'Authorization': authorization},
+                                     verify=self._ca_certs_path)
+
+        _logger.debug("Response status {0}".format(st))
+        _logger.debug("Raw response json {0}".format(res))
+
+        if res['success']:
+            return res['result']['secret']
+        else:
+            raise ValueError("Registering failed with errors {0}"
+                             .format(res['errors']))
 
 
 class CAService(object):
@@ -199,7 +241,8 @@ class CAService(object):
         self._crypto = crypto
 
     def enroll(self, enrollment_id, enrollment_secret):
-        """Enroll a registered user in order to receive a signed X509 certificate
+        """Enroll a registered user in order to receive a signed X509
+         certificate
 
         Args:
             enrollment_id (str): The registered ID to use for enrollment
@@ -220,7 +263,68 @@ class CAService(object):
             enrollment_id, enrollment_secret,
             csr.public_bytes(Encoding.PEM).decode("utf-8"))
 
-        return Enrollment(private_key, cert)
+        return Enrollment(private_key, cert, self)
+
+    def register(self, enrollmentID, enrollmentSecret, role, affiliation,
+                 maxEnrollments, attrs, registrar):
+        """Register a user in order to receive a secret
+
+        Args:
+            registrar (Enrollment): The registrar
+            enrollmentID (str): enrollmentID ID which will be used for
+             enrollment
+            enrollmentSecret (str): enrollmentSecret Optional enrollment secret
+             to set for the registered user.
+             If not provided, the server will generate one.
+             When not including, use a null for this parameter.
+            role (str): Optional type of role for this user.
+                        When not including, use a null for this parameter.
+            affiliation (str):  Affiliation with which this user will be
+             associated
+            maxEnrollments (number): The maximum number of times the user is
+             permitted to enroll
+            attrs (dict):  Array of key/value attributes to assign to the user
+
+        Returns: secret (str): The enrollment secret to use when this user
+         enrolls
+
+        Raises:
+            RequestException: errors in requests.exceptions
+            ValueError: Failed response, json parse error, args missing
+
+        """
+        req = {
+            "id": enrollmentID,
+            "affiliation": affiliation,
+            "max_enrollments": maxEnrollments,
+        }
+
+        if role:
+            req['type'] = role
+
+        if attrs:
+            req['attrs'] = attrs
+
+        if isinstance(enrollmentSecret, str) and len(enrollmentSecret):
+            req['secret'] = enrollmentSecret
+
+        reqJson = json.dumps(req, ensure_ascii=False)
+
+        b64Cert = base64.b64encode(registrar._cert)
+        b64Body = base64.b64encode(reqJson.encode())
+
+        # /!\ cannot mix f format and b
+        # https://stackoverflow.com/questions/45360480/is-there-a-formatted-byte
+        # -string-literal-in-python-3-6
+        bodyAndCert = b'%s.%s' % (b64Body, b64Cert)
+
+        sig = self._crypto.sign(registrar._private_key, bodyAndCert)
+        b64Sign = base64.b64encode(sig)
+
+        # /!\ cannot mix f format and b
+        authorization = b'%s.%s' % (b64Cert, b64Sign)
+
+        return self._ca_client.register(req, authorization)
 
 
 def ca_service(target=DEFAULT_CA_ENDPOINT,

@@ -18,7 +18,8 @@ import unittest
 
 from requests.exceptions import RequestException
 
-from hfc.fabric_ca.caservice import CAClient
+from hfc.fabric_ca.caservice import CAClient, Enrollment, CAService
+from hfc.util.crypto.crypto import ecies
 
 with open(os.path.join(os.path.dirname(__file__),
                        "../fixtures/ca/enroll-csr.pem")) as f:
@@ -26,6 +27,8 @@ with open(os.path.join(os.path.dirname(__file__),
 
 ENROLLMENT_ID = "admin"
 ENROLLMENT_SECRET = "adminpw"
+
+private_key = ecies().generate_private_key()
 
 
 class CATest(unittest.TestCase):
@@ -38,6 +41,9 @@ class CATest(unittest.TestCase):
             self._ca_server_address = os.getenv("CA_ADDR")
         else:
             self._ca_server_address = "localhost:7054"
+
+        # get an enrollment for registering
+        self._enrollment = Enrollment(None, '')
 
     def test_enroll_missing_enrollment_id(self):
         """Test enroll missing enrollment id.
@@ -82,6 +88,27 @@ class CATest(unittest.TestCase):
         with self.assertRaises(RequestException):
             ca_client.enroll(self._enrollment_id,
                              self._enrollment_secret, test_pem)
+
+    def test_register_missing_enrollment_id(self):
+        """Test register missing enrollment id.
+        """
+        with self.assertRaises(ValueError):
+            self._enrollment.register('')
+
+    def test_register_wrong_maxEnrollments(self):
+        """Test register wrong maxEnrollments.
+        """
+        with self.assertRaises(ValueError):
+            self._enrollment.register('foo', maxEnrollments='bar')
+
+    def test_register_unreachable_server_address(self):
+        """Test register unreachable server address.
+        """
+        self._ca_server_address = "test:80"
+        ca_service = CAService("http://" + self._ca_server_address)
+        enrollment = Enrollment(None, '', ca_service)
+        with self.assertRaises(Exception):
+            enrollment.register('foo')
 
 
 if __name__ == '__main__':

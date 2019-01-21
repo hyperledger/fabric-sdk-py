@@ -71,7 +71,7 @@ cli = Client(net_profile="test/fixtures/network.json")
 cli.organizations  # orgs in the network
 cli.peers  # peers in the network
 cli.orderers  # orderers in the network
-cli.CAs  # ca nodes in the network
+cli.CAs  # ca nodes in the network, TODO
 ```
 
 ### 1.2 Prepare User Id (Optionally)
@@ -93,12 +93,12 @@ org1_admin = cli.get_user(org_name='org1.example.com', name='Admin') # get the a
 SDK will login with default admin role and register a user.
 
 ```python
-from hfc.fabric_ca import CAClient
+from hfc.fabric_ca.caservice import ca_service
 
-cli = CAClient(server_addr="127.0.0.1:7050")
-admin = cli.enroll(username="admin", password="pass") # now local will have the admin user
-admin.register(username="user1", password="pass1", attributions={}) # register a user to ca
-user1 = cli.enroll(username="user1", password="pass1") # now local will have the user
+cli = ca_service(target="https://127.0.0.1:7054")
+admin = cli.enroll("admin", "pass") # now local will have the admin user
+secret = admin.register("user1") # register a user to ca
+user1 = cli.enroll("user1", secret) # now local will have the user
 ```
 
 ## 2. Operate Channels with Fabric Network

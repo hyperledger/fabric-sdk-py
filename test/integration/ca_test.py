@@ -15,6 +15,9 @@
 import os
 import time
 import unittest
+import random
+import string
+
 
 from hfc.fabric_ca.caservice import CAClient, CAService
 from test.integration.utils import cli_call
@@ -78,6 +81,54 @@ class CATest(unittest.TestCase):
                                        self._enrollment_secret)
         self.assertTrue(enrollment.cert
                         .startswith(b"-----BEGIN CERTIFICATE-----"))
+
+    def test_register_success(self):
+        """Test register success.
+        """
+        time.sleep(5)
+        ca_service = CAService("http://" + self._ca_server_address)
+        enrollment = ca_service.enroll(self._enrollment_id,
+                                       self._enrollment_secret)
+        # use a random username for registering for avoiding already register
+        # issues when test suite ran several times
+        username = ''.join(
+            [random.choice(string.ascii_letters + string.digits) for n in
+             range(9)])
+        secret = enrollment.register(username, 'pass')
+        self.assertTrue(secret == 'pass')
+
+    def test_register_without_password_success(self):
+        """Test register without password success.
+        """
+        time.sleep(5)
+        ca_service = CAService("http://" + self._ca_server_address)
+        enrollment = ca_service.enroll(self._enrollment_id,
+                                       self._enrollment_secret)
+        # use a random username for registering for avoiding already register
+        # issues when test suite ran several times
+        username = ''.join(
+            [random.choice(string.ascii_letters + string.digits) for n in
+             range(9)])
+        secret = enrollment.register(username)
+        self.assertTrue(len(secret) == 12)
+
+    def test_already_register(self):
+        """Test register a second time.
+        """
+        time.sleep(5)
+        ca_service = CAService("http://" + self._ca_server_address)
+        enrollment = ca_service.enroll(self._enrollment_id,
+                                       self._enrollment_secret)
+        # use a random username for registering for avoiding already register
+        # issues when test suite ran several times
+        username = ''.join(
+            [random.choice(string.ascii_letters + string.digits) for n in
+             range(9)])
+        enrollment.register(username)
+
+        # register a second time
+        with self.assertRaises(Exception):
+            enrollment.register(username)
 
 
 if __name__ == '__main__':
