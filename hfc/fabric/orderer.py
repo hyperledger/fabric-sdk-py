@@ -14,9 +14,6 @@
 #
 import logging
 
-import rx
-import sys
-
 from hfc.protos.common import common_pb2
 from hfc.protos.orderer import ab_pb2_grpc
 from hfc.protos.utils import create_seek_info, create_seek_payload, \
@@ -25,11 +22,6 @@ from hfc.util.channel import create_grpc_channel
 
 from hfc.util.utils import current_timestamp, \
     build_header, build_channel_header
-
-if sys.version_info < (3, 0):
-    from Queue import Queue
-else:
-    from queue import Queue
 
 DEFAULT_ORDERER_ENDPOINT = 'localhost:7050'
 
@@ -107,24 +99,18 @@ class Orderer(object):
 
         seek_payload_bytes = create_seek_payload(seek_header, seek_info)
         sig = tx_context.sign(seek_payload_bytes)
-
         envelope = create_envelope(sig, seek_payload_bytes)
-        q = Queue(1)
         response = self.delivery(envelope)
-        response.subscribe(on_next=lambda x: q.put(x),
-                           on_error=lambda x: q.put(x))
 
-        res, _ = q.get(timeout=10)
-
-        if res.block is None or res.block == '':
+        if response[0].block is None or response[0].block == '':
             _logger.error("fail to get genesis block")
             return None
 
         _logger.info("get genesis block successfully, block=%s",
-                     res.block.header)
-        return res.block
+                     response[0].block.header)
+        return response[0].block
 
-    def broadcast(self, envelope, scheduler=None):
+    def broadcast(self, envelope):
         """Send an broadcast envelope to orderer.
 
         Args:
@@ -135,9 +121,7 @@ class Orderer(object):
         """
         _logger.debug("Send envelope={}".format(envelope))
 
-        return rx.Observable.start(
-            lambda: self._orderer_client.Broadcast(iter([envelope])),
-            scheduler).map(self._handle_response_stream)
+        return list(self._orderer_client.Broadcast(iter([envelope])))
 
     def delivery(self, envelope, scheduler=None):
         """ Send an delivery envelop to orderer.
@@ -149,9 +133,8 @@ class Orderer(object):
 
         """
         _logger.debug("Send envelope={}".format(envelope))
-        return rx.Observable.start(
-            lambda: self._orderer_client.Deliver(iter([envelope])),
-            scheduler).map(self._handle_response_stream)
+
+        return list(self._orderer_client.Deliver(iter([envelope])))
 
     def get_attrs(self):
         return ",".join("{}={}"

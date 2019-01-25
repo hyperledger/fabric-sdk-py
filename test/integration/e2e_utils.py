@@ -9,9 +9,7 @@ from hfc.fabric.transaction.tx_context import TXContext
 from hfc.fabric.transaction.tx_proposal_request import TXProposalRequest
 from hfc.util.crypto.crypto import ecies
 from hfc.util import utils
-
 from test.integration.utils import get_orderer_org_user, get_peer_org_user
-
 from test.integration.config import E2E_CONFIG
 test_network = E2E_CONFIG['test-network']
 
@@ -112,7 +110,6 @@ def build_join_channel_req(org, channel, client):
 
     org_admin = client.get_user(org, 'Admin')
     tx_context = TXContext(org_admin, ecies(), tx_prop_req)
-    # print(org, 'Admin', tx_context.identity)
 
     peer = client.get_peer('peer0.'+org)
 

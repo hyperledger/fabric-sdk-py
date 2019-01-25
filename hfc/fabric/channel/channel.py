@@ -8,8 +8,7 @@ import os
 import random
 import sys
 import tarfile
-
-import rx
+from time import sleep
 
 from hfc.fabric.transaction.tx_proposal_request import \
     create_tx_prop_req, CC_INSTALL, CC_TYPE_GOLANG, \
@@ -23,7 +22,6 @@ from hfc.util import utils
 from hfc.util.utils import proto_str, current_timestamp, proto_b, \
     build_header, build_channel_header, build_cc_proposal, \
     send_transaction_proposal
-from queue import Queue
 
 
 SYSTEM_CHANNEL_NAME = "testchainid"
@@ -259,11 +257,10 @@ class Channel(object):
         for peer in peers:
             self._validate_peer(peer)
 
-    def send_install_proposal(self, tx_context, peers=None, scheduler=None):
+    def send_install_proposal(self, tx_context, peers=None):
         """ Send install chaincode proposal
 
         Args:
-            schedule: Rx schedule
             install_proposal_req: install proposal request
             targets: a set of peer to send
 
@@ -327,11 +324,10 @@ class Channel(object):
             tx_context.tx_prop_req.transient_map)
         signed_proposal = utils.sign_proposal(tx_context, proposal)
 
-        send_executions = [peer.send_proposal(signed_proposal, scheduler)
-                           for peer in targets]
+        responses = [peer.send_proposal(signed_proposal)
+                     for peer in targets]
 
-        return rx.Observable.merge(send_executions).to_iterable() \
-            .map(lambda responses: (responses, proposal, header))
+        return responses, proposal, header
 
     def _build_channel_header(type, tx_id, channel_id,
                               timestamp, epoch=0, extension=None):
@@ -473,21 +469,15 @@ class Channel(object):
                                      request['transient_map'])
 
         try:
+            sleep(1)
             responses = send_transaction_proposal(proposal,
                                                   tx_context,
                                                   request['targets'])
         except Exception as e:
-            raise IOError("fail to send transanction proposal", e)
+            raise IOError("fail to send transaction proposal", e)
 
-        q = Queue(1)
-        result = True
-        for r in responses:
-            r.subscribe(on_next=lambda x: q.put(x),
-                        on_error=lambda x: q.put(x))
-            res = q.get(timeout=10)
-            _logger.debug(res)
-            proposal_res = res[0]
-            result = result and (proposal_res.response.status == 200)
+        result = responses and responses[0].response.status == 200
+
         if result:
             _logger.info("successfully join the peers")
 
@@ -594,11 +584,9 @@ class Channel(object):
             request.transient_map)
 
         signed_proposal = utils.sign_proposal(tx_context, proposal)
-        send_executions = [peer.send_proposal(signed_proposal)
-                           for peer in peers]
-
-        return rx.Observable.merge(send_executions).to_iterable() \
-            .map(lambda responses: (responses, proposal, header))
+        response = [peer.send_proposal(signed_proposal)
+                    for peer in peers]
+        return response, proposal, header
 
     def send_tx_proposal(self, tx_context, peers):
         """
@@ -669,11 +657,9 @@ class Channel(object):
         proposal = build_cc_proposal(cc_invoke_spec, header,
                                      request.transient_map)
         signed_proposal = utils.sign_proposal(tx_context, proposal)
-        send_executions = [peer.send_proposal(signed_proposal)
-                           for peer in peers]
-
-        return rx.Observable.merge(send_executions).to_iterable() \
-            .map(lambda responses: (responses, proposal, header))
+        response = [peer.send_proposal(signed_proposal)
+                    for peer in peers]
+        return response, proposal, header
 
     def query_instantiated_chaincodes(self, tx_context, peers):
         """
@@ -738,15 +724,9 @@ class Channel(object):
         sig = tx_context.sign(seek_payload_bytes)
 
         envelope = create_envelope(sig, seek_payload_bytes)
-        q = Queue(1)
         response = orderer.delivery(envelope)
-        response.subscribe(on_next=lambda x: q.put(x),
-                           on_error=lambda x: q.put(x))
 
-        res, _ = q.get(timeout=10)
-        _logger.debug(res)
-
-        if res.block is None or res.block == '':
+        if response[0].block is None or response[0].block == '':
             _logger.error("fail to get block start from %s to %s" %
                           (str(start), str(end)))
             return None
@@ -754,7 +734,7 @@ class Channel(object):
         _logger.info("get block successfully, start from %s to %s" %
                      (str(start), str(end)))
 
-        return res.block
+        return response[0].block
 
     def query_block(self, tx_context, peers, block_number):
         """Queries the ledger for Block by block number.

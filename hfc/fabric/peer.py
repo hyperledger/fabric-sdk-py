@@ -5,8 +5,6 @@
 import logging
 import threading
 
-import rx
-
 from hfc.protos.peer import peer_pb2_grpc
 from hfc.util.channel import create_grpc_channel
 
@@ -40,20 +38,17 @@ class Peer(object):
         self._channel = create_grpc_channel(self._endpoint, tls_cacerts, opts)
         self._endorser_client = peer_pb2_grpc.EndorserStub(self._channel)
 
-    def send_proposal(self, proposal, scheduler=None):
+    def send_proposal(self, proposal):
         """ Send an endorsement proposal to endorser
 
         Args:
-            scheduler: rx scheduler
             proposal: The endorsement proposal
 
-        Returns: proposal_response or exception
+        Returns: ProposalResponse or exception
 
         """
         _logger.debug("Send proposal={}".format(proposal))
-        return rx.Observable.start(
-            lambda: self._endorser_client.ProcessProposal(proposal),
-            scheduler).map(lambda response: (response, self))
+        return self._endorser_client.ProcessProposal(proposal)
 
     def init_with_bundle(self, info):
         """

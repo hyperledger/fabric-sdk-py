@@ -18,8 +18,6 @@ import json
 import sys
 import os
 import subprocess
-from time import sleep
-from queue import Queue
 import shutil
 
 from hfc.fabric.channel.channel import Channel
@@ -299,14 +297,9 @@ class Client(object):
             'orderer': orderer,
             'channel_name': channel_name
         }
-        q = Queue(1)
         response = self._create_channel(request)
-        response.subscribe(on_next=lambda x: q.put(x),
-                           on_error=lambda x: q.put(x))
 
-        status, _ = q.get(timeout=10)
-        _logger.debug(status)
-        if status.status == 200:
+        if response[0].status == 200:
             self.new_channel(channel_name)
             return True
         else:
@@ -375,7 +368,7 @@ class Client(object):
         return channel.join_channel(request)
 
     def chaincode_install(self, requestor, peer_names, cc_path, cc_name,
-                          cc_version, timeout=10):
+                          cc_version):
         """
         Install chaincode to given peers by requestor role
 
@@ -384,7 +377,6 @@ class Client(object):
         :param cc_path: chaincode path
         :param cc_name: chaincode name
         :param cc_version: chaincode version
-        :param timeout: Timeout to wait
         :return: True or False
         """
         peers = []
@@ -396,18 +388,8 @@ class Client(object):
                                            cc_name, cc_version)
         tx_context = create_tx_context(requestor, ecies(), tran_prop_req)
 
-        sleep(5)
-        response = self.send_install_proposal(tx_context, peers)
-
-        queue = Queue(1)
-        response.subscribe(
-            on_next=lambda x: queue.put(x),
-            on_error=lambda x: queue.put(x)
-        )
-
-        res = queue.get(timeout=timeout)
-        proposal_response, _ = res[0][0]
-        return proposal_response.response.status == 200
+        responses = self.send_install_proposal(tx_context, peers)
+        return responses
 
     def _create_channel(self, request):
         """Calls the orderer to start building the new channel.
@@ -416,8 +398,7 @@ class Client(object):
             request (dct): The create channel request.
 
         Returns:
-            rx.Observable: An observable for the orderer_response
-                or an error.
+            OrdererResponse or an error.
 
         """
         have_envelope = False
@@ -435,8 +416,7 @@ class Client(object):
             request (dct): The update channel request.
 
         Returns:
-            rx.Observable: An observable for the orderer_response
-                or an error.
+            OrdererResponse or an error.
 
         """
         have_envelope = False
@@ -652,7 +632,7 @@ class Client(object):
         """
         self._state_store = state_store
 
-    def send_install_proposal(self, tx_context, peers, scheduler=None):
+    def send_install_proposal(self, tx_context, peers):
         """ Send install proposal
         Args:
             tx_context: transaction context
@@ -660,7 +640,7 @@ class Client(object):
             scheduler: rx scheduler
         Returns: A set of proposal_response
         """
-        return utils.send_install_proposal(tx_context, peers, scheduler)
+        return utils.send_install_proposal(tx_context, peers)
 
     def send_instantiate_proposal(self, tx_context, peers,
                                   channel_name='businesschannel'):
@@ -751,27 +731,15 @@ class Client(object):
         res = self.send_instantiate_proposal(
             tx_context_dep, peers, channel_name)
 
-        sleep(5)
-
         tx_context = create_tx_context(requestor,
                                        ecies(),
                                        TXProposalRequest())
         tran_req = utils.build_tx_req(res)
-        response = utils.send_transaction(self.orderers, tran_req, tx_context)
-
-        sleep(5)
+        responses = utils.send_transaction(self.orderers, tran_req, tx_context)
 
         self.txid_for_test = tx_context_dep.tx_id  # used only for query test
 
-        queue = Queue(1)
-        response.subscribe(
-            on_next=lambda x: queue.put(x),
-            on_error=lambda x: queue.put(x)
-        )
-
-        res, _ = queue.get(timeout=timeout)
-        _logger.debug(res)
-        return res.status == 200
+        return responses[0].status == 200
 
     def chaincode_invoke(self, requestor, channel_name, peer_names, args,
                          cc_name, cc_version, timeout=10):
@@ -817,18 +785,9 @@ class Client(object):
             tran_req
         )
 
-        utils.send_transaction(self.orderers, tran_req, tx_context_tx)
-        sleep(5)
-
-        queue = Queue(1)
-        res.subscribe(
-            on_next=lambda x: queue.put(x),
-            on_error=lambda x: queue.put(x)
-        )
-
-        res = queue.get(timeout=timeout)
-        _logger.debug(res)
-        return res[0][0][0].response.status == 200
+        responses = utils.send_transaction(
+            self.orderers, tran_req, tx_context_tx)
+        return responses[0].status == 200
 
     def query_installed_chaincodes(self, requestor, peer_names, timeout=10):
         """
@@ -854,34 +813,25 @@ class Client(object):
         tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
         tx_context.tx_prop_req = request
 
-        response = Channel('businesschannel', self).send_tx_proposal(
+        responses = Channel('businesschannel', self).send_tx_proposal(
             tx_context, peers)
 
-        queue = Queue(1)
-        response.subscribe(
-            on_next=lambda x: queue.put(x),
-            on_error=lambda x: queue.put(x)
-        )
-
         try:
-            res = queue.get(timeout=timeout)
-            _logger.debug(res)
-            response = res[0][0][0]
-            if response.response:
+            if responses[0][0].response:
                 query_trans = query_pb2.ChaincodeQueryResponse()
-                query_trans.ParseFromString(res[0][0][0].response.payload)
+                query_trans.ParseFromString(responses[0][0].response.payload)
                 for cc in query_trans.chaincodes:
                     _logger.debug('cc name {}, version {}, path {}'.format(
                                   cc.name, cc.version, cc.path))
                 return query_trans
-            return response
+            return responses[0][0]
 
         except Exception:
             _logger.error(
                 "Failed to query installed chaincodes: {}", sys.exc_info()[0])
             raise
 
-    def query_channels(self, requestor, peer_names, timeout=10):
+    def query_channels(self, requestor, peer_names):
         """
         Queries channel name joined by a peer
 
@@ -906,27 +856,18 @@ class Client(object):
         tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
         tx_context.tx_prop_req = request
 
-        response = Channel('businesschannel', self).send_tx_proposal(
+        responses = Channel('businesschannel', self).send_tx_proposal(
             tx_context, peers)
 
-        queue = Queue(1)
-        response.subscribe(
-            on_next=lambda x: queue.put(x),
-            on_error=lambda x: queue.put(x)
-        )
-
         try:
-            res = queue.get(timeout=timeout)
-            _logger.debug(res)
-            response = res[0][0][0]
-            if response.response:
+            if responses[0][0].response:
                 query_trans = query_pb2.ChannelQueryResponse()
-                query_trans.ParseFromString(res[0][0][0].response.payload)
+                query_trans.ParseFromString(responses[0][0].response.payload)
                 for ch in query_trans.channels:
                     _logger.debug('channel id {}'.format(
                         ch.channel_id))
                 return query_trans
-            return response
+            return responses[0][0]
 
         except Exception:
             _logger.error(
@@ -934,7 +875,7 @@ class Client(object):
             raise
 
     def query_info(self, requestor, channel_name,
-                   peer_names, timeout=10):
+                   peer_names):
         """
         Queries information of a channel
 
@@ -952,25 +893,16 @@ class Client(object):
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
 
-        response = channel.query_info(tx_context, peers)
-
-        queue = Queue(1)
-        response.subscribe(
-            on_next=lambda x: queue.put(x),
-            on_error=lambda x: queue.put(x)
-        )
+        responses = channel.query_info(tx_context, peers)
 
         try:
-            res = queue.get(timeout=timeout)
-            _logger.debug(res)
-            response = res[0][0][0]
-            if response.response:
+            if responses[0][0].response:
                 chain_info = ledger_pb2.BlockchainInfo()
-                chain_info.ParseFromString(response.response.payload)
+                chain_info.ParseFromString(responses[0][0].response.payload)
                 _logger.debug('response status {}'.format(
-                    response.response.status))
+                    responses[0][0].response.status))
                 return chain_info
-            return response
+            return responses[0][0]
 
         except Exception:
             _logger.error(
@@ -997,26 +929,17 @@ class Client(object):
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
 
-        response = channel.query_block_by_txid(tx_context, peers, tx_id)
-
-        queue = Queue(1)
-        response.subscribe(
-            on_next=lambda x: queue.put(x),
-            on_error=lambda x: queue.put(x)
-        )
+        responses = channel.query_block_by_txid(tx_context, peers, tx_id)
 
         try:
-            res = queue.get(timeout=timeout)
-            _logger.debug(res)
-            response = res[0][0][0]
-            if response.response:
+            if responses[0][0].response:
                 _logger.debug('response status {}'.format(
-                    response.response.status))
-                block = BlockDecoder().decode(response.response.payload)
+                    responses[0][0].response.status))
+                block = BlockDecoder().decode(responses[0][0].response.payload)
                 _logger.debug('looking at block {}'.format(
                     block['header']['number']))
                 return block
-            return response
+            return responses[0][0]
 
         except Exception:
             _logger.error(
@@ -1024,7 +947,7 @@ class Client(object):
             raise
 
     def query_block_by_hash(self, requestor, channel_name,
-                            peer_names, block_hash, timeout=10):
+                            peer_names, block_hash):
         """
         Queries block by hash
 
@@ -1043,26 +966,17 @@ class Client(object):
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
 
-        response = channel.query_block_by_hash(tx_context, peers, block_hash)
-
-        queue = Queue(1)
-        response.subscribe(
-            on_next=lambda x: queue.put(x),
-            on_error=lambda x: queue.put(x)
-        )
+        responses = channel.query_block_by_hash(tx_context, peers, block_hash)
 
         try:
-            res = queue.get(timeout=timeout)
-            _logger.debug(res)
-            response = res[0][0][0]
-            if response.response:
+            if responses[0][0].response:
                 _logger.debug('response status {}'.format(
-                    response.response.status))
-                block = BlockDecoder().decode(response.response.payload)
+                    responses[0][0].response.status))
+                block = BlockDecoder().decode(responses[0][0].response.payload)
                 _logger.debug('looking at block {}'.format(
                     block['header']['number']))
                 return block
-            return response
+            return responses[0][0]
 
         except Exception:
             _logger.error(
@@ -1070,7 +984,7 @@ class Client(object):
             raise
 
     def query_block(self, requestor, channel_name,
-                    peer_names, block_number, timeout=10):
+                    peer_names, block_number):
         """
         Queries block by number
 
@@ -1089,26 +1003,17 @@ class Client(object):
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
 
-        response = channel.query_block(tx_context, peers, block_number)
-
-        queue = Queue(1)
-        response.subscribe(
-            on_next=lambda x: queue.put(x),
-            on_error=lambda x: queue.put(x)
-        )
+        responses = channel.query_block(tx_context, peers, block_number)
 
         try:
-            res = queue.get(timeout=timeout)
-            _logger.debug(res)
-            response = res[0][0][0]
-            if response.response:
+            if responses[0][0].response:
                 _logger.debug('response status {}'.format(
-                    response.response.status))
-                block = BlockDecoder().decode(response.response.payload)
+                    responses[0][0].response.status))
+                block = BlockDecoder().decode(responses[0][0].response.payload)
                 _logger.debug('looking at block {}'.format(
                     block['header']['number']))
                 return block
-            return response
+            return responses[0][0]
 
         except Exception:
             _logger.error(
@@ -1116,7 +1021,7 @@ class Client(object):
             raise
 
     def query_transaction(self, requestor, channel_name,
-                          peer_names, tx_id, timeout=10):
+                          peer_names, tx_id):
         """
         Queries block by number
 
@@ -1135,24 +1040,17 @@ class Client(object):
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
 
-        response = channel.query_transaction(tx_context, peers, tx_id)
-
-        queue = Queue(1)
-        response.subscribe(
-            on_next=lambda x: queue.put(x),
-            on_error=lambda x: queue.put(x)
-        )
+        responses = channel.query_transaction(tx_context, peers, tx_id)
+        print(responses)
 
         try:
-            res = queue.get(timeout=timeout)
-            response = res[0][0][0]
-            if response.response:
+            if responses[0][0].response:
                 _logger.debug('response status {}'.format(
-                    response.response.status))
+                    responses[0][0].response.status))
                 process_trans = BlockDecoder().decode_transaction(
-                    response.response.payload)
+                    responses[0][0].response.payload)
                 return process_trans
-            return response
+            return responses[0][0]
 
         except Exception:
             _logger.error(
@@ -1160,7 +1058,7 @@ class Client(object):
             raise
 
     def query_instantiated_chaincodes(self, requestor, channel_name,
-                                      peer_names, timeout=10):
+                                      peer_names):
         """
         Queries instantiated chaincode
 
@@ -1177,26 +1075,17 @@ class Client(object):
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
 
-        response = channel.query_instantiated_chaincodes(tx_context, peers)
-
-        queue = Queue(1)
-        response.subscribe(
-            on_next=lambda x: queue.put(x),
-            on_error=lambda x: queue.put(x)
-        )
+        responses = channel.query_instantiated_chaincodes(tx_context, peers)
 
         try:
-            res = queue.get(timeout=timeout)
-            _logger.debug(res)
-            response = res[0][0][0]
-            if response.response:
+            if responses[0][0].response:
                 query_trans = query_pb2.ChaincodeQueryResponse()
-                query_trans.ParseFromString(res[0][0][0].response.payload)
+                query_trans.ParseFromString(responses[0][0].response.payload)
                 for cc in query_trans.chaincodes:
                     _logger.debug('cc name {}, version {}, path {}'.format(
                                   cc.name, cc.version, cc.path))
                 return query_trans
-            return response
+            return responses[0][0]
 
         except Exception:
             _logger.error(

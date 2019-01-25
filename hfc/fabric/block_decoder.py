@@ -504,7 +504,7 @@ def decode_config_update_envelope(config_update_envelope_bytes):
     for signature in proto_config_update_envelope.signatures:
         proto_config_signature = signature
         config_signature = decode_config_signature(proto_config_signature)
-        signatures.push(config_signature)
+        signatures.append(config_signature)
     config_update_envelope['signatures'] = signatures
     return config_update_envelope
 

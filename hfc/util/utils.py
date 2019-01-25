@@ -14,12 +14,10 @@
 #
 import sys
 import logging
-import rx
 import random
 import os
 import tarfile
 import io
-from queue import Queue
 
 from google.protobuf.message import DecodeError
 from google.protobuf.timestamp_pb2 import Timestamp
@@ -233,7 +231,7 @@ def sign_proposal(tx_context, proposal):
     return signed_proposal
 
 
-def send_transaction_proposal(proposal, tx_context, peers, scheduler=None):
+def send_transaction_proposal(proposal, tx_context, peers):
     """Send transaction proposal
 
     Args:
@@ -241,20 +239,19 @@ def send_transaction_proposal(proposal, tx_context, peers, scheduler=None):
         tx_context: transaction context
         proposal: transaction proposal
         peers: peers
-        scheduler: see rx.Scheduler
 
     Returns: a list containing all the proposal response
 
     """
     signed_proposal = sign_proposal(tx_context, proposal)
 
-    send_executions = [peer.send_proposal(signed_proposal, scheduler)[0]
+    send_executions = [peer.send_proposal(signed_proposal)
                        for peer in peers]
 
     return send_executions
 
 
-def send_transaction(orderers, tran_req, tx_context, scheduler=None):
+def send_transaction(orderers, tran_req, tx_context):
     """Send a transaction to the chain's orderer service (one or more
     orderer endpoints) for consensus and committing to the ledger.
 
@@ -264,7 +261,6 @@ def send_transaction(orderers, tran_req, tx_context, scheduler=None):
     'transaction submitted', 'transaction complete' and 'error' events.
 
     Args:
-        scheduler: scheduler
         tx_context: transaction context
         orderers: orderers
         tran_req (TransactionRequest): The transaction object
@@ -277,31 +273,31 @@ def send_transaction(orderers, tran_req, tx_context, scheduler=None):
     if not tran_req:
         _logger.warning("Missing input request object on the transaction "
                         "request")
-        return rx.Observable.just(ValueError(
+        raise ValueError(
             "Missing input request object on the transaction request"
-        ))
+        )
 
     if not tran_req.responses or len(tran_req.responses) < 1:
         _logger.warning("Missing 'proposalResponses' parameter in transaction "
                         "request")
-        return rx.Observable.just(ValueError(
+        raise ValueError(
             "Missing 'proposalResponses' parameter in transaction request"
-        ))
+        )
 
     if not tran_req.proposal:
         _logger.warning("Missing 'proposalResponses' parameter in transaction "
                         "request")
-        return rx.Observable.just(ValueError(
+        raise ValueError(
             "Missing 'proposalResponses' parameter in transaction request"
-        ))
+        )
 
     if len(orderers) < 1:
         _logger.warning("Missing orderer objects on this chain")
-        return rx.Observable.just(ValueError(
+        raise ValueError(
             "Missing orderer objects on this chain"
-        ))
+        )
 
-    endorsements = map(lambda res: res[0].endorsement, tran_req.responses)
+    endorsements = map(lambda res: res.endorsement, tran_req.responses)
 
     tran_payload_bytes = create_tx_payload(endorsements, tran_req)
     envelope = sign_tran_payload(tx_context, tran_payload_bytes)
@@ -310,7 +306,7 @@ def send_transaction(orderers, tran_req, tx_context, scheduler=None):
         orderer = random.choice(orderers.values())
     else:
         orderer = random.choice(list(orderers.values()))
-    return orderer.broadcast(envelope, scheduler)
+    return orderer.broadcast(envelope)
 
 
 def sign_tran_payload(tx_context, tran_payload_bytes):
@@ -336,7 +332,7 @@ def build_tx_req(responses):
     """ Check the endorsements from peers
 
     Args:
-        reponses: rx.Oberservable instance from endorsers
+        reponses: ProposalResponse from endorsers
 
     Return: transaction request or None for endorser failure
     """
@@ -360,26 +356,16 @@ def build_tx_req(responses):
         def header(self):
             return self._header
 
-    q = Queue(1)
-    responses.subscribe(on_next=lambda x: q.put(x),
-                        on_error=lambda x: q.put(x))
-
-    response, proposal, header = q.get(timeout=20)
-    _logger.debug(response)
-    for r in response:
-        if r[0].response.status != 200:
-            return None
-
+    response, proposal, header = responses
     return TXRequest(response, proposal, header)
 
 
-def send_install_proposal(tx_context, peers, scheduler=None):
+def send_install_proposal(tx_context, peers):
     """Send install chaincode proposal
 
     Args:
         tx_context: transaction context
         peers: peers to install chaincode
-        scheduler: Rx scheduler
 
     Returns: a set of proposal response
     """
@@ -437,11 +423,9 @@ def send_install_proposal(tx_context, peers, scheduler=None):
         tx_context.tx_prop_req.transient_map)
     signed_proposal = sign_proposal(tx_context, proposal)
 
-    send_executions = [peer.send_proposal(signed_proposal, scheduler)
-                       for peer in peers]
-
-    return rx.Observable.merge(send_executions).to_iterable() \
-        .map(lambda responses: (responses, proposal, header))
+    response = [peer.send_proposal(signed_proposal)
+                for peer in peers]
+    return response, proposal, header
 
 
 def package_chaincode(cc_path, cc_type):

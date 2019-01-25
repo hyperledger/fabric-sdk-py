@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
-from time import sleep
 
 from hfc.fabric.peer import create_peer
 from hfc.fabric.transaction.tx_context import create_tx_context
@@ -16,7 +15,6 @@ from test.integration.utils import get_peer_org_user,\
 from test.integration.config import E2E_CONFIG
 from test.integration.e2e_utils import build_channel_request,\
     build_join_channel_req
-from queue import Queue
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -81,22 +79,17 @@ class QueryTransaction(BaseTestCase):
                                         self.channel_tx,
                                         self.channel_name)
         self.client._create_channel(request)
-        sleep(5)
 
         join_req = build_join_channel_req(org1, self.channel, self.client)
         self.channel.join_channel(join_req)
-        sleep(5)
 
         self.client.send_install_proposal(tx_context_install, [self.org1_peer])
-        sleep(5)
 
         res = self.channel.send_instantiate_proposal(tx_context_dep,
                                                      [self.org1_peer])
-        sleep(5)
         tx_id = tx_context_dep.tx_id
         tran_req = build_tx_req(res)
         send_transaction(self.channel.orderers, tran_req, tx_context)
-        sleep(5)
 
         tx_context_tx = create_tx_context(self.org1_admin,
                                           crypto,
@@ -104,7 +97,6 @@ class QueryTransaction(BaseTestCase):
         res = self.channel.send_tx_proposal(tx_context, [self.org1_peer])
 
         tran_req = build_tx_req(res)
-        sleep(5)
 
         send_transaction(self.channel.orderers, tran_req, tx_context_tx)
         return tx_id
@@ -115,11 +107,9 @@ class QueryTransaction(BaseTestCase):
                                        ecies(),
                                        TXProposalRequest())
 
-        response = self.channel.query_transaction(tx_context,
-                                                  [self.org1_peer],
-                                                  tx_id)
-        q = Queue(1)
-        response.subscribe(on_next=lambda x: q.put(x),
-                           on_error=lambda x: q.put(x))
-        res = q.get(timeout=10)
-        self.assertEqual(res[0][0][0].response.status, 200)
+        responses = self.channel.query_transaction(tx_context,
+                                                   [self.org1_peer],
+                                                   tx_id)
+        logger.debug('Responses of query transaction:\n {}'.format(responses))
+        # TODO(dex): fix id missing
+        self.assertEqual(responses[0][0].response.status, 200)

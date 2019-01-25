@@ -49,7 +49,7 @@ def create_cc_spec(chaincode_input, chaincode_id, type):
 def create_tx_payload(endorsements, tran_req):
 
     cc_action_payload = transaction_pb2.ChaincodeActionPayload()
-    response, _ = tran_req.responses[0]
+    response = tran_req.responses[0]
     cc_action_payload.action.proposal_response_payload = \
         response.payload
     cc_action_payload.action.endorsements.extend(endorsements)

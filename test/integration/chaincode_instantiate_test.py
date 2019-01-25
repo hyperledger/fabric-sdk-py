@@ -3,8 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
-from time import sleep
-
 from hfc.fabric.peer import create_peer
 from hfc.fabric.transaction.tx_context import create_tx_context
 from hfc.fabric.transaction.tx_proposal_request import create_tx_prop_req, \
@@ -16,7 +14,6 @@ from test.integration.utils import get_peer_org_user, \
 from test.integration.config import E2E_CONFIG
 from test.integration.e2e_utils import build_channel_request, \
     build_join_channel_req
-from queue import Queue
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -81,15 +78,12 @@ class ChaincodeInstantiateTest(BaseTestCase):
                                         self.channel_name)
 
         self.client._create_channel(request)
-        sleep(5)
 
         # join channel
         join_req = build_join_channel_req(org1, channel, self.client)
         channel.join_channel(join_req)
-        sleep(5)
 
         self.client.send_install_proposal(tx_context_in, [peer])
-        sleep(5)
 
         # send the transaction to the channel
         res = channel.send_instantiate_proposal(tx_context_dep, [peer])
@@ -100,9 +94,4 @@ class ChaincodeInstantiateTest(BaseTestCase):
                                        TXProposalRequest())
         response = send_transaction(channel.orderers, tran_req, tx_context)
 
-        q = Queue(1)
-        response.subscribe(on_next=lambda x: q.put(x),
-                           on_error=lambda x: q.put(x))
-        res, _ = q.get(timeout=20)
-        logger.debug(res)
-        self.assertEqual(res.status, 200)
+        self.assertEqual(response[0].status, 200)
