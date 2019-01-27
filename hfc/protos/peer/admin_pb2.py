@@ -7,7 +7,6 @@ from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
-from google.protobuf import descriptor_pb2
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
@@ -21,7 +20,8 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/admin.proto',
   package='protos',
   syntax='proto3',
-  serialized_pb=_b('\n\x1bhfc/protos/peer/admin.proto\x12\x06protos\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1ehfc/protos/common/common.proto\"\x9a\x01\n\x0cServerStatus\x12/\n\x06status\x18\x01 \x01(\x0e\x32\x1f.protos.ServerStatus.StatusCode\"Y\n\nStatusCode\x12\r\n\tUNDEFINED\x10\x00\x12\x0b\n\x07STARTED\x10\x01\x12\x0b\n\x07STOPPED\x10\x02\x12\n\n\x06PAUSED\x10\x03\x12\t\n\x05\x45RROR\x10\x04\x12\x0b\n\x07UNKNOWN\x10\x05\"8\n\x0fLogLevelRequest\x12\x12\n\nlog_module\x18\x01 \x01(\t\x12\x11\n\tlog_level\x18\x02 \x01(\t\"9\n\x10LogLevelResponse\x12\x12\n\nlog_module\x18\x01 \x01(\t\x12\x11\n\tlog_level\x18\x02 \x01(\t\"F\n\x0e\x41\x64minOperation\x12)\n\x06logReq\x18\x01 \x01(\x0b\x32\x17.protos.LogLevelRequestH\x00\x42\t\n\x07\x63ontent2\xbc\x02\n\x05\x41\x64min\x12\x35\n\tGetStatus\x12\x10.common.Envelope\x1a\x14.protos.ServerStatus\"\x00\x12\x37\n\x0bStartServer\x12\x10.common.Envelope\x1a\x14.protos.ServerStatus\"\x00\x12\x41\n\x11GetModuleLogLevel\x12\x10.common.Envelope\x1a\x18.protos.LogLevelResponse\"\x00\x12\x41\n\x11SetModuleLogLevel\x12\x10.common.Envelope\x1a\x18.protos.LogLevelResponse\"\x00\x12=\n\x0fRevertLogLevels\x12\x10.common.Envelope\x1a\x16.google.protobuf.Empty\"\x00\x42]\n\"org.hyperledger.fabric.protos.peerB\x0c\x41\x64minPackageZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_options=_b('\n\"org.hyperledger.fabric.protos.peerB\014AdminPackageZ)github.com/hyperledger/fabric/protos/peer'),
+  serialized_pb=_b('\n\x1bhfc/protos/peer/admin.proto\x12\x06protos\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1ehfc/protos/common/common.proto\"\x9a\x01\n\x0cServerStatus\x12/\n\x06status\x18\x01 \x01(\x0e\x32\x1f.protos.ServerStatus.StatusCode\"Y\n\nStatusCode\x12\r\n\tUNDEFINED\x10\x00\x12\x0b\n\x07STARTED\x10\x01\x12\x0b\n\x07STOPPED\x10\x02\x12\n\n\x06PAUSED\x10\x03\x12\t\n\x05\x45RROR\x10\x04\x12\x0b\n\x07UNKNOWN\x10\x05\"8\n\x0fLogLevelRequest\x12\x12\n\nlog_module\x18\x01 \x01(\t\x12\x11\n\tlog_level\x18\x02 \x01(\t\"9\n\x10LogLevelResponse\x12\x12\n\nlog_module\x18\x01 \x01(\t\x12\x11\n\tlog_level\x18\x02 \x01(\t\"\"\n\x0eLogSpecRequest\x12\x10\n\x08log_spec\x18\x01 \x01(\t\"2\n\x0fLogSpecResponse\x12\x10\n\x08log_spec\x18\x01 \x01(\t\x12\r\n\x05\x65rror\x18\x02 \x01(\t\"t\n\x0e\x41\x64minOperation\x12)\n\x06logReq\x18\x01 \x01(\x0b\x32\x17.protos.LogLevelRequestH\x00\x12,\n\nlogSpecReq\x18\x02 \x01(\x0b\x32\x16.protos.LogSpecRequestH\x00\x42\t\n\x07\x63ontent2\xb2\x03\n\x05\x41\x64min\x12\x35\n\tGetStatus\x12\x10.common.Envelope\x1a\x14.protos.ServerStatus\"\x00\x12\x37\n\x0bStartServer\x12\x10.common.Envelope\x1a\x14.protos.ServerStatus\"\x00\x12\x41\n\x11GetModuleLogLevel\x12\x10.common.Envelope\x1a\x18.protos.LogLevelResponse\"\x00\x12\x41\n\x11SetModuleLogLevel\x12\x10.common.Envelope\x1a\x18.protos.LogLevelResponse\"\x00\x12=\n\x0fRevertLogLevels\x12\x10.common.Envelope\x1a\x16.google.protobuf.Empty\"\x00\x12\x39\n\nGetLogSpec\x12\x10.common.Envelope\x1a\x17.protos.LogSpecResponse\"\x00\x12\x39\n\nSetLogSpec\x12\x10.common.Envelope\x1a\x17.protos.LogSpecResponse\"\x00\x42]\n\"org.hyperledger.fabric.protos.peerB\x0c\x41\x64minPackageZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
   ,
   dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,hfc_dot_protos_dot_common_dot_common__pb2.DESCRIPTOR,])
 
@@ -35,31 +35,31 @@ _SERVERSTATUS_STATUSCODE = _descriptor.EnumDescriptor(
   values=[
     _descriptor.EnumValueDescriptor(
       name='UNDEFINED', index=0, number=0,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='STARTED', index=1, number=1,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='STOPPED', index=2, number=2,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='PAUSED', index=3, number=3,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='ERROR', index=4, number=4,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='UNKNOWN', index=5, number=5,
-      options=None,
+      serialized_options=None,
       type=None),
   ],
   containing_type=None,
-  options=None,
+  serialized_options=None,
   serialized_start=166,
   serialized_end=255,
 )
@@ -79,7 +79,7 @@ _SERVERSTATUS = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -87,7 +87,7 @@ _SERVERSTATUS = _descriptor.Descriptor(
   enum_types=[
     _SERVERSTATUS_STATUSCODE,
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -111,21 +111,21 @@ _LOGLEVELREQUEST = _descriptor.Descriptor(
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='log_level', full_name='protos.LogLevelRequest.log_level', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -149,21 +149,21 @@ _LOGLEVELRESPONSE = _descriptor.Descriptor(
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='log_level', full_name='protos.LogLevelResponse.log_level', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -171,6 +171,75 @@ _LOGLEVELRESPONSE = _descriptor.Descriptor(
   ],
   serialized_start=315,
   serialized_end=372,
+)
+
+
+_LOGSPECREQUEST = _descriptor.Descriptor(
+  name='LogSpecRequest',
+  full_name='protos.LogSpecRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='log_spec', full_name='protos.LogSpecRequest.log_spec', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=374,
+  serialized_end=408,
+)
+
+
+_LOGSPECRESPONSE = _descriptor.Descriptor(
+  name='LogSpecResponse',
+  full_name='protos.LogSpecResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='log_spec', full_name='protos.LogSpecResponse.log_spec', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='error', full_name='protos.LogSpecResponse.error', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=410,
+  serialized_end=460,
 )
 
 
@@ -187,14 +256,21 @@ _ADMINOPERATION = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='logSpecReq', full_name='protos.AdminOperation.logSpecReq', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -203,19 +279,25 @@ _ADMINOPERATION = _descriptor.Descriptor(
       name='content', full_name='protos.AdminOperation.content',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=374,
-  serialized_end=444,
+  serialized_start=462,
+  serialized_end=578,
 )
 
 _SERVERSTATUS.fields_by_name['status'].enum_type = _SERVERSTATUS_STATUSCODE
 _SERVERSTATUS_STATUSCODE.containing_type = _SERVERSTATUS
 _ADMINOPERATION.fields_by_name['logReq'].message_type = _LOGLEVELREQUEST
+_ADMINOPERATION.fields_by_name['logSpecReq'].message_type = _LOGSPECREQUEST
 _ADMINOPERATION.oneofs_by_name['content'].fields.append(
   _ADMINOPERATION.fields_by_name['logReq'])
 _ADMINOPERATION.fields_by_name['logReq'].containing_oneof = _ADMINOPERATION.oneofs_by_name['content']
+_ADMINOPERATION.oneofs_by_name['content'].fields.append(
+  _ADMINOPERATION.fields_by_name['logSpecReq'])
+_ADMINOPERATION.fields_by_name['logSpecReq'].containing_oneof = _ADMINOPERATION.oneofs_by_name['content']
 DESCRIPTOR.message_types_by_name['ServerStatus'] = _SERVERSTATUS
 DESCRIPTOR.message_types_by_name['LogLevelRequest'] = _LOGLEVELREQUEST
 DESCRIPTOR.message_types_by_name['LogLevelResponse'] = _LOGLEVELRESPONSE
+DESCRIPTOR.message_types_by_name['LogSpecRequest'] = _LOGSPECREQUEST
+DESCRIPTOR.message_types_by_name['LogSpecResponse'] = _LOGSPECRESPONSE
 DESCRIPTOR.message_types_by_name['AdminOperation'] = _ADMINOPERATION
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -240,6 +322,20 @@ LogLevelResponse = _reflection.GeneratedProtocolMessageType('LogLevelResponse', 
   ))
 _sym_db.RegisterMessage(LogLevelResponse)
 
+LogSpecRequest = _reflection.GeneratedProtocolMessageType('LogSpecRequest', (_message.Message,), dict(
+  DESCRIPTOR = _LOGSPECREQUEST,
+  __module__ = 'hfc.protos.peer.admin_pb2'
+  # @@protoc_insertion_point(class_scope:protos.LogSpecRequest)
+  ))
+_sym_db.RegisterMessage(LogSpecRequest)
+
+LogSpecResponse = _reflection.GeneratedProtocolMessageType('LogSpecResponse', (_message.Message,), dict(
+  DESCRIPTOR = _LOGSPECRESPONSE,
+  __module__ = 'hfc.protos.peer.admin_pb2'
+  # @@protoc_insertion_point(class_scope:protos.LogSpecResponse)
+  ))
+_sym_db.RegisterMessage(LogSpecResponse)
+
 AdminOperation = _reflection.GeneratedProtocolMessageType('AdminOperation', (_message.Message,), dict(
   DESCRIPTOR = _ADMINOPERATION,
   __module__ = 'hfc.protos.peer.admin_pb2'
@@ -248,17 +344,16 @@ AdminOperation = _reflection.GeneratedProtocolMessageType('AdminOperation', (_me
 _sym_db.RegisterMessage(AdminOperation)
 
 
-DESCRIPTOR.has_options = True
-DESCRIPTOR._options = _descriptor._ParseOptions(descriptor_pb2.FileOptions(), _b('\n\"org.hyperledger.fabric.protos.peerB\014AdminPackageZ)github.com/hyperledger/fabric/protos/peer'))
+DESCRIPTOR._options = None
 
 _ADMIN = _descriptor.ServiceDescriptor(
   name='Admin',
   full_name='protos.Admin',
   file=DESCRIPTOR,
   index=0,
-  options=None,
-  serialized_start=447,
-  serialized_end=763,
+  serialized_options=None,
+  serialized_start=581,
+  serialized_end=1015,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetStatus',
@@ -267,7 +362,7 @@ _ADMIN = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=hfc_dot_protos_dot_common_dot_common__pb2._ENVELOPE,
     output_type=_SERVERSTATUS,
-    options=None,
+    serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
     name='StartServer',
@@ -276,7 +371,7 @@ _ADMIN = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=hfc_dot_protos_dot_common_dot_common__pb2._ENVELOPE,
     output_type=_SERVERSTATUS,
-    options=None,
+    serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
     name='GetModuleLogLevel',
@@ -285,7 +380,7 @@ _ADMIN = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=hfc_dot_protos_dot_common_dot_common__pb2._ENVELOPE,
     output_type=_LOGLEVELRESPONSE,
-    options=None,
+    serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
     name='SetModuleLogLevel',
@@ -294,7 +389,7 @@ _ADMIN = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=hfc_dot_protos_dot_common_dot_common__pb2._ENVELOPE,
     output_type=_LOGLEVELRESPONSE,
-    options=None,
+    serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
     name='RevertLogLevels',
@@ -303,7 +398,25 @@ _ADMIN = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=hfc_dot_protos_dot_common_dot_common__pb2._ENVELOPE,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
-    options=None,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='GetLogSpec',
+    full_name='protos.Admin.GetLogSpec',
+    index=5,
+    containing_service=None,
+    input_type=hfc_dot_protos_dot_common_dot_common__pb2._ENVELOPE,
+    output_type=_LOGSPECRESPONSE,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='SetLogSpec',
+    full_name='protos.Admin.SetLogSpec',
+    index=6,
+    containing_service=None,
+    input_type=hfc_dot_protos_dot_common_dot_common__pb2._ENVELOPE,
+    output_type=_LOGSPECRESPONSE,
+    serialized_options=None,
   ),
 ])
 _sym_db.RegisterServiceDescriptor(_ADMIN)

@@ -52,6 +52,7 @@ image:
 
 # Generate the protobuf python files
 proto:
+	shopt -s globstar
 	python3 -m grpc.tools.protoc \
 		-I./\
 		--python_out=./ \
@@ -71,7 +72,12 @@ venv:
 	fi
 	@echo "Run 'source venv/bin/activate' to active the virtual env now."
 
-install: # Install sdk to local python env
+# Install sdk to local python env
+install:
 	python3 setup.py install
 
-.PHONY: check clean proto image install test venv
+# Auto-format to pep8
+format:
+	python3 -m autopep8 --in-place --recursive --exclude=./hfc/protos .
+
+.PHONY: check clean proto image install format test venv

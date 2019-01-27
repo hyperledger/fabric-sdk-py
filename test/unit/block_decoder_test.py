@@ -27,17 +27,20 @@ from hfc.protos.ledger.rwset.kvrwset import kv_rwset_pb2
 
 # Load a genesis block as input to test the decoders
 with open(os.path.join(os.path.dirname(__file__),
-          "../fixtures/e2e_cli/channel-artifacts/orderer.genesis.block"),
+                       "../fixtures/e2e_cli/" +
+                       "channel-artifacts/orderer.genesis.block"),
           'rb') as f:
     data = f.read()
 
 with open(os.path.join(os.path.dirname(__file__),
-          "../fixtures/e2e_cli/channel-artifacts/channel.tx"),
+                       "../fixtures/e2e_cli/" +
+                       "channel-artifacts/channel.tx"),
           'rb') as f:
     tx_data = f.read()
 
 with open(os.path.join(os.path.dirname(__file__),
-          "../fixtures/e2e_cli/channel-artifacts/businesschannel_4.block"),
+                       "../fixtures/e2e_cli/" +
+                       "channel-artifacts/businesschannel_4.block"),
           'rb') as f:
     metadata_block = f.read()
 

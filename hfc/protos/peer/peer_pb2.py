@@ -7,7 +7,6 @@ from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
-from google.protobuf import descriptor_pb2
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
@@ -21,6 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/peer.proto',
   package='protos',
   syntax='proto3',
+  serialized_options=_b('\n\"org.hyperledger.fabric.protos.peerZ)github.com/hyperledger/fabric/protos/peer'),
   serialized_pb=_b('\n\x1ahfc/protos/peer/peer.proto\x12\x06protos\x1a\x1ehfc/protos/peer/proposal.proto\x1a\'hfc/protos/peer/proposal_response.proto\"\x16\n\x06PeerID\x12\x0c\n\x04name\x18\x01 \x01(\t\";\n\x0cPeerEndpoint\x12\x1a\n\x02id\x18\x01 \x01(\x0b\x32\x0e.protos.PeerID\x12\x0f\n\x07\x61\x64\x64ress\x18\x02 \x01(\t2Q\n\x08\x45ndorser\x12\x45\n\x0fProcessProposal\x12\x16.protos.SignedProposal\x1a\x18.protos.ProposalResponse\"\x00\x42O\n\"org.hyperledger.fabric.protos.peerZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
   ,
   dependencies=[hfc_dot_protos_dot_peer_dot_proposal__pb2.DESCRIPTOR,hfc_dot_protos_dot_peer_dot_proposal__response__pb2.DESCRIPTOR,])
@@ -41,14 +41,14 @@ _PEERID = _descriptor.Descriptor(
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -72,21 +72,21 @@ _PEERENDPOINT = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='address', full_name='protos.PeerEndpoint.address', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -116,15 +116,14 @@ PeerEndpoint = _reflection.GeneratedProtocolMessageType('PeerEndpoint', (_messag
 _sym_db.RegisterMessage(PeerEndpoint)
 
 
-DESCRIPTOR.has_options = True
-DESCRIPTOR._options = _descriptor._ParseOptions(descriptor_pb2.FileOptions(), _b('\n\"org.hyperledger.fabric.protos.peerZ)github.com/hyperledger/fabric/protos/peer'))
+DESCRIPTOR._options = None
 
 _ENDORSER = _descriptor.ServiceDescriptor(
   name='Endorser',
   full_name='protos.Endorser',
   file=DESCRIPTOR,
   index=0,
-  options=None,
+  serialized_options=None,
   serialized_start=196,
   serialized_end=277,
   methods=[
@@ -135,7 +134,7 @@ _ENDORSER = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=hfc_dot_protos_dot_peer_dot_proposal__pb2._SIGNEDPROPOSAL,
     output_type=hfc_dot_protos_dot_peer_dot_proposal__response__pb2._PROPOSALRESPONSE,
-    options=None,
+    serialized_options=None,
   ),
 ])
 _sym_db.RegisterServiceDescriptor(_ENDORSER)

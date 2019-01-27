@@ -7,7 +7,6 @@ from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
-from google.protobuf import descriptor_pb2
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
@@ -23,6 +22,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/peer/events.proto',
   package='protos',
   syntax='proto3',
+  serialized_options=_b('\n\"org.hyperledger.fabric.protos.peerB\rEventsPackageZ)github.com/hyperledger/fabric/protos/peer'),
   serialized_pb=_b('\n\x1chfc/protos/peer/events.proto\x12\x06protos\x1a\x1ehfc/protos/common/common.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a%hfc/protos/peer/chaincode_event.proto\x1a!hfc/protos/peer/transaction.proto\"o\n\rFilteredBlock\x12\x12\n\nchannel_id\x18\x01 \x01(\t\x12\x0e\n\x06number\x18\x02 \x01(\x04\x12:\n\x15\x66iltered_transactions\x18\x04 \x03(\x0b\x32\x1b.protos.FilteredTransaction\"\xc6\x01\n\x13\x46ilteredTransaction\x12\x0c\n\x04txid\x18\x01 \x01(\t\x12 \n\x04type\x18\x02 \x01(\x0e\x32\x12.common.HeaderType\x12\x34\n\x12tx_validation_code\x18\x03 \x01(\x0e\x32\x18.protos.TxValidationCode\x12\x41\n\x13transaction_actions\x18\x04 \x01(\x0b\x32\".protos.FilteredTransactionActionsH\x00\x42\x06\n\x04\x44\x61ta\"X\n\x1a\x46ilteredTransactionActions\x12:\n\x11\x63haincode_actions\x18\x01 \x03(\x0b\x32\x1f.protos.FilteredChaincodeAction\"J\n\x17\x46ilteredChaincodeAction\x12/\n\x0f\x63haincode_event\x18\x01 \x01(\x0b\x32\x16.protos.ChaincodeEvent\"\x8c\x01\n\x0f\x44\x65liverResponse\x12 \n\x06status\x18\x01 \x01(\x0e\x32\x0e.common.StatusH\x00\x12\x1e\n\x05\x62lock\x18\x02 \x01(\x0b\x32\r.common.BlockH\x00\x12/\n\x0e\x66iltered_block\x18\x03 \x01(\x0b\x32\x15.protos.FilteredBlockH\x00\x42\x06\n\x04Type2\x89\x01\n\x07\x44\x65liver\x12:\n\x07\x44\x65liver\x12\x10.common.Envelope\x1a\x17.protos.DeliverResponse\"\x00(\x01\x30\x01\x12\x42\n\x0f\x44\x65liverFiltered\x12\x10.common.Envelope\x1a\x17.protos.DeliverResponse\"\x00(\x01\x30\x01\x42^\n\"org.hyperledger.fabric.protos.peerB\rEventsPackageZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
   ,
   dependencies=[hfc_dot_protos_dot_common_dot_common__pb2.DESCRIPTOR,google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,hfc_dot_protos_dot_peer_dot_chaincode__event__pb2.DESCRIPTOR,hfc_dot_protos_dot_peer_dot_transaction__pb2.DESCRIPTOR,])
@@ -43,28 +43,28 @@ _FILTEREDBLOCK = _descriptor.Descriptor(
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='number', full_name='protos.FilteredBlock.number', index=1,
       number=2, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='filtered_transactions', full_name='protos.FilteredBlock.filtered_transactions', index=2,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -88,35 +88,35 @@ _FILTEREDTRANSACTION = _descriptor.Descriptor(
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='type', full_name='protos.FilteredTransaction.type', index=1,
       number=2, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='tx_validation_code', full_name='protos.FilteredTransaction.tx_validation_code', index=2,
       number=3, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='transaction_actions', full_name='protos.FilteredTransaction.transaction_actions', index=3,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -143,14 +143,14 @@ _FILTEREDTRANSACTIONACTIONS = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -174,14 +174,14 @@ _FILTEREDCHAINCODEACTION = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -205,28 +205,28 @@ _DELIVERRESPONSE = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='block', full_name='protos.DeliverResponse.block', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='filtered_block', full_name='protos.DeliverResponse.filtered_block', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -303,15 +303,14 @@ DeliverResponse = _reflection.GeneratedProtocolMessageType('DeliverResponse', (_
 _sym_db.RegisterMessage(DeliverResponse)
 
 
-DESCRIPTOR.has_options = True
-DESCRIPTOR._options = _descriptor._ParseOptions(descriptor_pb2.FileOptions(), _b('\n\"org.hyperledger.fabric.protos.peerB\rEventsPackageZ)github.com/hyperledger/fabric/protos/peer'))
+DESCRIPTOR._options = None
 
 _DELIVER = _descriptor.ServiceDescriptor(
   name='Deliver',
   full_name='protos.Deliver',
   file=DESCRIPTOR,
   index=0,
-  options=None,
+  serialized_options=None,
   serialized_start=803,
   serialized_end=940,
   methods=[
@@ -322,7 +321,7 @@ _DELIVER = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=hfc_dot_protos_dot_common_dot_common__pb2._ENVELOPE,
     output_type=_DELIVERRESPONSE,
-    options=None,
+    serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
     name='DeliverFiltered',
@@ -331,7 +330,7 @@ _DELIVER = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=hfc_dot_protos_dot_common_dot_common__pb2._ENVELOPE,
     output_type=_DELIVERRESPONSE,
-    options=None,
+    serialized_options=None,
   ),
 ])
 _sym_db.RegisterServiceDescriptor(_DELIVER)

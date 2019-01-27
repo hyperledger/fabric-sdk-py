@@ -7,7 +7,6 @@ from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
-from google.protobuf import descriptor_pb2
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
@@ -20,6 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/common/policies.proto',
   package='common',
   syntax='proto3',
+  serialized_options=_b('\n$org.hyperledger.fabric.protos.commonZ+github.com/hyperledger/fabric/protos/common'),
   serialized_pb=_b('\n hfc/protos/common/policies.proto\x12\x06\x63ommon\x1a\"hfc/protos/msp/msp_principal.proto\"k\n\x06Policy\x12\x0c\n\x04type\x18\x01 \x01(\x05\x12\r\n\x05value\x18\x02 \x01(\x0c\"D\n\nPolicyType\x12\x0b\n\x07UNKNOWN\x10\x00\x12\r\n\tSIGNATURE\x10\x01\x12\x07\n\x03MSP\x10\x02\x12\x11\n\rIMPLICIT_META\x10\x03\"{\n\x17SignaturePolicyEnvelope\x12\x0f\n\x07version\x18\x01 \x01(\x05\x12%\n\x04rule\x18\x02 \x01(\x0b\x32\x17.common.SignaturePolicy\x12(\n\nidentities\x18\x03 \x03(\x0b\x32\x14.common.MSPPrincipal\"\x9f\x01\n\x0fSignaturePolicy\x12\x13\n\tsigned_by\x18\x01 \x01(\x05H\x00\x12\x32\n\x08n_out_of\x18\x02 \x01(\x0b\x32\x1e.common.SignaturePolicy.NOutOfH\x00\x1a;\n\x06NOutOf\x12\t\n\x01n\x18\x01 \x01(\x05\x12&\n\x05rules\x18\x02 \x03(\x0b\x32\x17.common.SignaturePolicyB\x06\n\x04Type\"\x7f\n\x12ImplicitMetaPolicy\x12\x12\n\nsub_policy\x18\x01 \x01(\t\x12-\n\x04rule\x18\x02 \x01(\x0e\x32\x1f.common.ImplicitMetaPolicy.Rule\"&\n\x04Rule\x12\x07\n\x03\x41NY\x10\x00\x12\x07\n\x03\x41LL\x10\x01\x12\x0c\n\x08MAJORITY\x10\x02\x42S\n$org.hyperledger.fabric.protos.commonZ+github.com/hyperledger/fabric/protos/commonb\x06proto3')
   ,
   dependencies=[hfc_dot_protos_dot_msp_dot_msp__principal__pb2.DESCRIPTOR,])
@@ -34,23 +34,23 @@ _POLICY_POLICYTYPE = _descriptor.EnumDescriptor(
   values=[
     _descriptor.EnumValueDescriptor(
       name='UNKNOWN', index=0, number=0,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='SIGNATURE', index=1, number=1,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='MSP', index=2, number=2,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='IMPLICIT_META', index=3, number=3,
-      options=None,
+      serialized_options=None,
       type=None),
   ],
   containing_type=None,
-  options=None,
+  serialized_options=None,
   serialized_start=119,
   serialized_end=187,
 )
@@ -64,19 +64,19 @@ _IMPLICITMETAPOLICY_RULE = _descriptor.EnumDescriptor(
   values=[
     _descriptor.EnumValueDescriptor(
       name='ANY', index=0, number=0,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='ALL', index=1, number=1,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='MAJORITY', index=2, number=2,
-      options=None,
+      serialized_options=None,
       type=None),
   ],
   containing_type=None,
-  options=None,
+  serialized_options=None,
   serialized_start=565,
   serialized_end=603,
 )
@@ -96,14 +96,14 @@ _POLICY = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='value', full_name='common.Policy.value', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -111,7 +111,7 @@ _POLICY = _descriptor.Descriptor(
   enum_types=[
     _POLICY_POLICYTYPE,
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -135,28 +135,28 @@ _SIGNATUREPOLICYENVELOPE = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='rule', full_name='common.SignaturePolicyEnvelope.rule', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='identities', full_name='common.SignaturePolicyEnvelope.identities', index=2,
       number=3, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -180,21 +180,21 @@ _SIGNATUREPOLICY_NOUTOF = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='rules', full_name='common.SignaturePolicy.NOutOf.rules', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -217,21 +217,21 @@ _SIGNATUREPOLICY = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='n_out_of', full_name='common.SignaturePolicy.n_out_of', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[_SIGNATUREPOLICY_NOUTOF, ],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -258,14 +258,14 @@ _IMPLICITMETAPOLICY = _descriptor.Descriptor(
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='rule', full_name='common.ImplicitMetaPolicy.rule', index=1,
       number=2, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -273,7 +273,7 @@ _IMPLICITMETAPOLICY = _descriptor.Descriptor(
   enum_types=[
     _IMPLICITMETAPOLICY_RULE,
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -340,6 +340,5 @@ ImplicitMetaPolicy = _reflection.GeneratedProtocolMessageType('ImplicitMetaPolic
 _sym_db.RegisterMessage(ImplicitMetaPolicy)
 
 
-DESCRIPTOR.has_options = True
-DESCRIPTOR._options = _descriptor._ParseOptions(descriptor_pb2.FileOptions(), _b('\n$org.hyperledger.fabric.protos.commonZ+github.com/hyperledger/fabric/protos/common'))
+DESCRIPTOR._options = None
 # @@protoc_insertion_point(module_scope)

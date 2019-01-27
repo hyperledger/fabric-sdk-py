@@ -17,6 +17,7 @@ class InvocationTest(unittest.TestCase):
     """ Chaincode related Test cases
     """
     # @unittest.expectedFailure
+
     def test_create_invocation(self):
         # TODO impl
         # trans_act_prop

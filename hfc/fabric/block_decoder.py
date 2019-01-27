@@ -208,7 +208,7 @@ def decode_block_metadata(proto_block_metadata):
 
         last_config = {}
         last_config = decode_last_config_sequence_number(
-           proto_block_metadata.metadata[1])
+            proto_block_metadata.metadata[1])
         metadata['metadata'].append(last_config)
 
         transaction_filter = {}
@@ -648,7 +648,7 @@ def decode_config_value(proto_config_value, key):
         proto_blockdata_hashing_structure = \
             common_configuration_pb2.BlockDataHashingStructure()
         proto_blockdata_hashing_structure.ParseFromString(
-                                            proto_config_value.value)
+            proto_config_value.value)
         config_value['value']['width'] = \
             proto_blockdata_hashing_structure.width
     elif config_value_key == 'OrdererAddresses':
@@ -698,7 +698,7 @@ def decode_config_policy(proto_config_policy):
         if (proto_config_policy.policy.type == policies_pb2.Policy.SIGNATURE):
             config_policy['policy']['value'] = \
                 decode_signature_policy_envelope(
-                                    proto_config_policy.policy.value)
+                proto_config_policy.policy.value)
         elif (proto_config_policy.policy.type == policies_pb2.Policy.MSP):
             proto_msp = policies_pb2.Policy()
             proto_msp.ParseFromString(proto_config_policy.policy.value)
@@ -740,7 +740,7 @@ def decode_signature_policy_envelope(signature_policy_envelope_bytes):
     signature_policy_envelope = {}
     proto_signature_policy_envelope = policies_pb2.SignaturePolicyEnvelope()
     proto_signature_policy_envelope.ParseFromString(
-                                    signature_policy_envelope_bytes)
+        signature_policy_envelope_bytes)
     signature_policy_envelope['version'] = \
         decode_version(proto_signature_policy_envelope.version)
     signature_policy_envelope['rule'] = \
@@ -853,10 +853,10 @@ def decode_fabric_MSP_config(msp_config_bytes):
         to_PEM_certs(proto_msp_config.revocation_list)
     msp_config['signing_identity'] = \
         decode_signing_identity_info(
-                proto_msp_config.signing_identity.SerializeToString())
+        proto_msp_config.signing_identity.SerializeToString())
     msp_config['organizational_unit_identifiers'] = \
         decode_fabric_OU_identifier(
-                proto_msp_config.organizational_unit_identifiers)
+        proto_msp_config.organizational_unit_identifiers)
     msp_config['tls_root_certs'] = \
         to_PEM_certs(proto_msp_config.tls_root_certs)
     msp_config['tls_intermediate_certs'] = \
@@ -910,7 +910,7 @@ def decode_signing_identity_info(signing_identity_info_bytes):
     if signing_identity_info_bytes is not None:
         proto_signing_identity_info = msp_config_pb2.SigningIdentityInfo()
         proto_signing_identity_info.ParseFromString(
-                                    signing_identity_info_bytes)
+            signing_identity_info_bytes)
         signing_identity_info['public_signer'] = \
             proto_signing_identity_info.public_signer
         signing_identity_info['private_signer'] = \
@@ -949,7 +949,7 @@ def decode_chaincode_action_payload(payload_bytes):
     proto_chaincode_action_payload.ParseFromString(payload_bytes)
     payload['chaincode_proposal_payload'] = \
         decode_chaincode_proposal_payload(
-                    proto_chaincode_action_payload.chaincode_proposal_payload)
+        proto_chaincode_action_payload.chaincode_proposal_payload)
     payload['action'] = \
         decode_chaincode_endorsed_action(proto_chaincode_action_payload.action)
     return payload
@@ -966,7 +966,7 @@ def decode_chaincode_proposal_payload(chaincode_proposal_payload_bytes):
     chaincode_proposal_payload = {}
     proto_chaincode_proposal_payload = proposal_pb2.ChaincodeProposalPayload()
     proto_chaincode_proposal_payload.ParseFromString(
-                                    chaincode_proposal_payload_bytes)
+        chaincode_proposal_payload_bytes)
     chaincode_proposal_payload['input'] = \
         proto_chaincode_proposal_payload.input
     # Transient map is not allowed to be included on the ledger.
@@ -984,7 +984,7 @@ def decode_chaincode_endorsed_action(proto_chaincode_endorsed_action):
     action = {}
     action['proposal_response_payload'] = \
         decode_proposal_response_payload(
-                proto_chaincode_endorsed_action.proposal_response_payload)
+        proto_chaincode_endorsed_action.proposal_response_payload)
     action['endorsements'] = []
     for endorsement in proto_chaincode_endorsed_action.endorsements:
         endorsement = decode_endorsement(endorsement)
@@ -1019,7 +1019,7 @@ def decode_proposal_response_payload(proposal_response_payload_bytes):
     proto_proposal_response_payload = \
         proposal_response_pb2.ProposalResponsePayload()
     proto_proposal_response_payload.ParseFromString(
-                                        proposal_response_payload_bytes)
+        proposal_response_payload_bytes)
     proposal_response_payload['proposal_hash'] = \
         binascii.b2a_hex(proto_proposal_response_payload.proposal_hash)
     proposal_response_payload['extension'] = \

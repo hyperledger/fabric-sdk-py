@@ -7,7 +7,6 @@ from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
-from google.protobuf import descriptor_pb2
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
@@ -19,6 +18,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='hfc/protos/msp/msp_principal.proto',
   package='common',
   syntax='proto3',
+  serialized_options=_b('\n$org.hyperledger.fabric.protos.commonZ(github.com/hyperledger/fabric/protos/msp'),
   serialized_pb=_b('\n\"hfc/protos/msp/msp_principal.proto\x12\x06\x63ommon\"\xc6\x01\n\x0cMSPPrincipal\x12\x45\n\x18principal_classification\x18\x01 \x01(\x0e\x32#.common.MSPPrincipal.Classification\x12\x11\n\tprincipal\x18\x02 \x01(\x0c\"\\\n\x0e\x43lassification\x12\x08\n\x04ROLE\x10\x00\x12\x15\n\x11ORGANIZATION_UNIT\x10\x01\x12\x0c\n\x08IDENTITY\x10\x02\x12\r\n\tANONYMITY\x10\x03\x12\x0c\n\x08\x43OMBINED\x10\x04\"q\n\x10OrganizationUnit\x12\x16\n\x0emsp_identifier\x18\x01 \x01(\t\x12&\n\x1eorganizational_unit_identifier\x18\x02 \x01(\t\x12\x1d\n\x15\x63\x65rtifiers_identifier\x18\x03 \x01(\x0c\"\x88\x01\n\x07MSPRole\x12\x16\n\x0emsp_identifier\x18\x01 \x01(\t\x12)\n\x04role\x18\x02 \x01(\x0e\x32\x1b.common.MSPRole.MSPRoleType\":\n\x0bMSPRoleType\x12\n\n\x06MEMBER\x10\x00\x12\t\n\x05\x41\x44MIN\x10\x01\x12\n\n\x06\x43LIENT\x10\x02\x12\x08\n\x04PEER\x10\x03\"\x9d\x01\n\x14MSPIdentityAnonymity\x12M\n\x0e\x61nonymity_type\x18\x01 \x01(\x0e\x32\x35.common.MSPIdentityAnonymity.MSPIdentityAnonymityType\"6\n\x18MSPIdentityAnonymityType\x12\x0b\n\x07NOMINAL\x10\x00\x12\r\n\tANONYMOUS\x10\x01\"=\n\x11\x43ombinedPrincipal\x12(\n\nprincipals\x18\x01 \x03(\x0b\x32\x14.common.MSPPrincipalBP\n$org.hyperledger.fabric.protos.commonZ(github.com/hyperledger/fabric/protos/mspb\x06proto3')
 )
 
@@ -32,27 +32,27 @@ _MSPPRINCIPAL_CLASSIFICATION = _descriptor.EnumDescriptor(
   values=[
     _descriptor.EnumValueDescriptor(
       name='ROLE', index=0, number=0,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='ORGANIZATION_UNIT', index=1, number=1,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='IDENTITY', index=2, number=2,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='ANONYMITY', index=3, number=3,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='COMBINED', index=4, number=4,
-      options=None,
+      serialized_options=None,
       type=None),
   ],
   containing_type=None,
-  options=None,
+  serialized_options=None,
   serialized_start=153,
   serialized_end=245,
 )
@@ -66,23 +66,23 @@ _MSPROLE_MSPROLETYPE = _descriptor.EnumDescriptor(
   values=[
     _descriptor.EnumValueDescriptor(
       name='MEMBER', index=0, number=0,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='ADMIN', index=1, number=1,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='CLIENT', index=2, number=2,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='PEER', index=3, number=3,
-      options=None,
+      serialized_options=None,
       type=None),
   ],
   containing_type=None,
-  options=None,
+  serialized_options=None,
   serialized_start=441,
   serialized_end=499,
 )
@@ -96,15 +96,15 @@ _MSPIDENTITYANONYMITY_MSPIDENTITYANONYMITYTYPE = _descriptor.EnumDescriptor(
   values=[
     _descriptor.EnumValueDescriptor(
       name='NOMINAL', index=0, number=0,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='ANONYMOUS', index=1, number=1,
-      options=None,
+      serialized_options=None,
       type=None),
   ],
   containing_type=None,
-  options=None,
+  serialized_options=None,
   serialized_start=605,
   serialized_end=659,
 )
@@ -124,14 +124,14 @@ _MSPPRINCIPAL = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='principal', full_name='common.MSPPrincipal.principal', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -139,7 +139,7 @@ _MSPPRINCIPAL = _descriptor.Descriptor(
   enum_types=[
     _MSPPRINCIPAL_CLASSIFICATION,
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -163,28 +163,28 @@ _ORGANIZATIONUNIT = _descriptor.Descriptor(
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='organizational_unit_identifier', full_name='common.OrganizationUnit.organizational_unit_identifier', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='certifiers_identifier', full_name='common.OrganizationUnit.certifiers_identifier', index=2,
       number=3, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -208,14 +208,14 @@ _MSPROLE = _descriptor.Descriptor(
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='role', full_name='common.MSPRole.role', index=1,
       number=2, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -223,7 +223,7 @@ _MSPROLE = _descriptor.Descriptor(
   enum_types=[
     _MSPROLE_MSPROLETYPE,
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -247,7 +247,7 @@ _MSPIDENTITYANONYMITY = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -255,7 +255,7 @@ _MSPIDENTITYANONYMITY = _descriptor.Descriptor(
   enum_types=[
     _MSPIDENTITYANONYMITY_MSPIDENTITYANONYMITYTYPE,
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -279,14 +279,14 @@ _COMBINEDPRINCIPAL = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
@@ -346,6 +346,5 @@ CombinedPrincipal = _reflection.GeneratedProtocolMessageType('CombinedPrincipal'
 _sym_db.RegisterMessage(CombinedPrincipal)
 
 
-DESCRIPTOR.has_options = True
-DESCRIPTOR._options = _descriptor._ParseOptions(descriptor_pb2.FileOptions(), _b('\n$org.hyperledger.fabric.protos.commonZ(github.com/hyperledger/fabric/protos/msp'))
+DESCRIPTOR._options = None
 # @@protoc_insertion_point(module_scope)

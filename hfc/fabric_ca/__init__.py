@@ -15,7 +15,7 @@
 
 # Set default logging handler to avoid "No handler found" warnings.
 import logging
-from .caservice import CAClient # noqa
+from .caservice import CAClient  # noqa
 
 try:  # Python 2.7+
     from logging import NullHandler

@@ -41,6 +41,16 @@ class AdminStub(object):
         request_serializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
+    self.GetLogSpec = channel.unary_unary(
+        '/protos.Admin/GetLogSpec',
+        request_serializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.SerializeToString,
+        response_deserializer=hfc_dot_protos_dot_peer_dot_admin__pb2.LogSpecResponse.FromString,
+        )
+    self.SetLogSpec = channel.unary_unary(
+        '/protos.Admin/SetLogSpec',
+        request_serializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.SerializeToString,
+        response_deserializer=hfc_dot_protos_dot_peer_dot_admin__pb2.LogSpecResponse.FromString,
+        )
 
 
 class AdminServicer(object):
@@ -82,6 +92,20 @@ class AdminServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetLogSpec(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def SetLogSpec(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_AdminServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -109,6 +133,16 @@ def add_AdminServicer_to_server(servicer, server):
           servicer.RevertLogLevels,
           request_deserializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'GetLogSpec': grpc.unary_unary_rpc_method_handler(
+          servicer.GetLogSpec,
+          request_deserializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.FromString,
+          response_serializer=hfc_dot_protos_dot_peer_dot_admin__pb2.LogSpecResponse.SerializeToString,
+      ),
+      'SetLogSpec': grpc.unary_unary_rpc_method_handler(
+          servicer.SetLogSpec,
+          request_deserializer=hfc_dot_protos_dot_common_dot_common__pb2.Envelope.FromString,
+          response_serializer=hfc_dot_protos_dot_peer_dot_admin__pb2.LogSpecResponse.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

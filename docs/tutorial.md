@@ -26,10 +26,10 @@ $ python
 To start an example fabric network you can simply run the following command:
 
 ```bash
-$ docker pull hyperledger/fabric-peer:1.3.0
-$ docker pull hyperledger/fabric-orderer:1.3.0
-$ docker pull hyperledger/fabric-ca:1.3.0
-$ docker pull hyperledger/fabric-ccenv:1.3.0
+$ docker pull hyperledger/fabric-peer:1.4.0
+$ docker pull hyperledger/fabric-orderer:1.4.0
+$ docker pull hyperledger/fabric-ca:1.4.0
+$ docker pull hyperledger/fabric-ccenv:1.4.0
 $ docker-compose -f test/fixtures/docker-compose-2orgs-4peers-tls.yaml up
 ```
 
@@ -43,8 +43,8 @@ Then you'll have a fabric network with topology of 3 organizations:
  * orderer.example.com
    * orderer.example.com
 
-* Note: make sure `configtxgen` is in the 'PATH' and the recommended version of `configtxgen` is 1.3.0
-* It is recmmended to use `configtxgen` 1.3.0 and set logging level to DEBUG or INFO when you meet a problem
+* Note: make sure `configtxgen` is in the 'PATH' and the recommended version of `configtxgen` is 1.4.0
+* It is recmmended to use `configtxgen` 1.4.0 and set logging level to DEBUG or INFO when you meet a problem
 
 If you want to understand more details on starting up a fabric network, feel free to see the [Building Your First Network](https://hyperledger-fabric.readthedocs.io/en/latest/build_network.html) tutorial.
 
