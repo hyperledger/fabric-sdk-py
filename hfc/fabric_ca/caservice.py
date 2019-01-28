@@ -31,6 +31,19 @@ DEFAULT_CA_BASE_URL = '/api/v1/'
 
 _logger = logging.getLogger(__name__)
 
+reasons = (
+    (1, 'unspecified'),
+    (2, 'keycompromise'),
+    (3, 'cacompromise'),
+    (4, 'affiliationchange'),
+    (5, 'superseded'),
+    (6, 'cessationofoperation'),
+    (7, 'certificatehold'),
+    (8, 'removefromcrl'),
+    (9, 'privilegewithdrawn'),
+    (10, 'aacompromise')
+)
+
 
 class Enrollment(object):
     """ Class represents enrollment. """
@@ -102,6 +115,22 @@ class Enrollment(object):
 
         return self._service.register(enrollmentID, enrollmentSecret, role,
                                       affiliation, maxEnrollments, attrs, self)
+
+    # https://hyperledger-fabric-ca.readthedocs.io/en/latest/users-guide.html
+    # #revoking-a-certificate-or-identity
+    def revoke(self, enrollmentID=None, aki=None, serial=None, reason=None):
+        if not enrollmentID:
+            if not aki or not serial:
+                msg = 'Enrollment ID is empty, thus both "aki" and "serial"' \
+                      ' must have non-empty values'
+                raise ValueError(msg)
+
+        if reason and reason not in [r[1] for r in reasons]:
+            msg = 'Reason is not a valid one. Please review reasons listed' \
+                  ' in fabric-ca specifications.'
+            raise ValueError(msg)
+
+        return self._service.revoke(enrollmentID, aki, serial, reason, self)
 
     def __str__(self):
         return "[{}:{}]".format(self.__class__.__name__, self.get_attrs())
@@ -220,6 +249,21 @@ class CAClient(object):
             raise ValueError("Registering failed with errors {0}"
                              .format(res['errors']))
 
+    def revoke(self, req, authorization):
+        res, st = self._send_ca_post(path="revoke",
+                                     json=req,
+                                     headers={'Authorization': authorization},
+                                     verify=self._ca_certs_path)
+
+        _logger.debug("Response status {0}".format(st))
+        _logger.debug("Raw response json {0}".format(res))
+
+        if res['success']:
+            return res['result']['RevokedCerts'], res['result']['CRL']
+        else:
+            raise ValueError("Revoking failed with errors {0}"
+                             .format(res['errors']))
+
 
 class CAService(object):
     """This is a ca server delegate."""
@@ -239,6 +283,23 @@ class CAService(object):
         """
         self._ca_client = CAClient(target, ca_certs_path, ca_name=ca_name)
         self._crypto = crypto
+
+    def generateAuthToken(self, req, registrar):
+        reqJson = json.dumps(req, ensure_ascii=False)
+
+        b64Cert = base64.b64encode(registrar._cert)
+        b64Body = base64.b64encode(reqJson.encode())
+
+        # /!\ cannot mix f format and b
+        # https://stackoverflow.com/questions/45360480/is-there-a-
+        # formatted-byte-string-literal-in-python-3-6
+        bodyAndCert = b'%s.%s' % (b64Body, b64Cert)
+
+        sig = self._crypto.sign(registrar._private_key, bodyAndCert)
+        b64Sign = base64.b64encode(sig)
+
+        # /!\ cannot mix f format and b
+        return b'%s.%s' % (b64Cert, b64Sign)
 
     def enroll(self, enrollment_id, enrollment_secret):
         """Enroll a registered user in order to receive a signed X509
@@ -308,23 +369,45 @@ class CAService(object):
         if isinstance(enrollmentSecret, str) and len(enrollmentSecret):
             req['secret'] = enrollmentSecret
 
-        reqJson = json.dumps(req, ensure_ascii=False)
-
-        b64Cert = base64.b64encode(registrar._cert)
-        b64Body = base64.b64encode(reqJson.encode())
-
-        # /!\ cannot mix f format and b
-        # https://stackoverflow.com/questions/45360480/is-there-a-formatted-byte
-        # -string-literal-in-python-3-6
-        bodyAndCert = b'%s.%s' % (b64Body, b64Cert)
-
-        sig = self._crypto.sign(registrar._private_key, bodyAndCert)
-        b64Sign = base64.b64encode(sig)
-
-        # /!\ cannot mix f format and b
-        authorization = b'%s.%s' % (b64Cert, b64Sign)
+        authorization = self.generateAuthToken(req, registrar)
 
         return self._ca_client.register(req, authorization)
+
+    def revoke(self, enrollmentID, aki, serial, reason, registrar):
+        """Revoke an existing certificate (enrollment certificate or
+         transaction certificate), or revoke all certificates issued to an
+          enrollment id. If revoking a particular certificate, then both the
+           Authority Key Identifier and serial number are required. If
+            revoking by enrollment id, then all future requests to enroll this
+             id will be rejected.
+
+        Args:
+            registrar (Enrollment): The registrar
+            enrollmentID (str): enrollmentID ID to revoke
+            aki (str): Authority Key Identifier string, hex encoded, for the
+             specific certificate to revoke
+            serial (str): Serial number string, hex encoded, for the specific
+             certificate to revoke
+            reason (str): The reason for revocation.
+             See https://godoc.org/golang.org/x/crypto/ocsp for valid values
+
+        Returns: results (str): The revocation results
+
+        Raises:
+            RequestException: errors in requests.exceptions
+            ValueError: Failed response, json parse error, args missing
+
+        """
+        req = {
+            "id": enrollmentID,
+            "aki": aki,
+            "serial": serial,
+            "reason": reason,
+        }
+
+        authorization = self.generateAuthToken(req, registrar)
+
+        return self._ca_client.revoke(req, authorization)
 
 
 def ca_service(target=DEFAULT_CA_ENDPOINT,

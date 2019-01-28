@@ -18,7 +18,6 @@ import unittest
 import random
 import string
 
-
 from hfc.fabric_ca.caservice import CAClient, CAService
 from test.integration.utils import cli_call
 
@@ -28,6 +27,12 @@ with open(os.path.join(os.path.dirname(__file__),
 
 ENROLLMENT_ID = "admin"
 ENROLLMENT_SECRET = "adminpw"
+
+
+def get_random_username():
+    return ''.join(
+        [random.choice(string.ascii_letters + string.digits)
+         for n in range(9)])
 
 
 class CATest(unittest.TestCase):
@@ -53,12 +58,12 @@ class CATest(unittest.TestCase):
 
     def start_test_env(self):
         cli_call(["docker-compose", "-f", self.compose_file_path, "up", "-d"])
+        time.sleep(5)
 
     def shutdown_test_env(self):
         cli_call(["docker-compose", "-f", self.compose_file_path, "down"])
 
     def test_get_ca_info(self):
-        time.sleep(5)
         ca_client = CAClient("http://" + self._ca_server_address)
         ca_chain = ca_client.get_cainfo()
         self.assertTrue(ca_chain.startswith(b"-----BEGIN CERTIFICATE-----"))
@@ -66,7 +71,6 @@ class CATest(unittest.TestCase):
     def test_enroll_success(self):
         """Test enroll success.
         """
-        time.sleep(5)
         ca_client = CAClient("http://" + self._ca_server_address)
         ecert = ca_client.enroll(self._enrollment_id,
                                  self._enrollment_secret, test_pem)
@@ -75,7 +79,6 @@ class CATest(unittest.TestCase):
     def test_enroll_with_generated_csr_success(self):
         """Test enroll with generated csr success.
         """
-        time.sleep(5)
         ca_service = CAService("http://" + self._ca_server_address)
         enrollment = ca_service.enroll(self._enrollment_id,
                                        self._enrollment_secret)
@@ -85,50 +88,64 @@ class CATest(unittest.TestCase):
     def test_register_success(self):
         """Test register success.
         """
-        time.sleep(5)
         ca_service = CAService("http://" + self._ca_server_address)
         enrollment = ca_service.enroll(self._enrollment_id,
                                        self._enrollment_secret)
         # use a random username for registering for avoiding already register
         # issues when test suite ran several times
-        username = ''.join(
-            [random.choice(string.ascii_letters + string.digits) for n in
-             range(9)])
+        username = get_random_username()
         secret = enrollment.register(username, 'pass')
         self.assertTrue(secret == 'pass')
 
     def test_register_without_password_success(self):
         """Test register without password success.
         """
-        time.sleep(5)
         ca_service = CAService("http://" + self._ca_server_address)
         enrollment = ca_service.enroll(self._enrollment_id,
                                        self._enrollment_secret)
         # use a random username for registering for avoiding already register
         # issues when test suite ran several times
-        username = ''.join(
-            [random.choice(string.ascii_letters + string.digits) for n in
-             range(9)])
+        username = get_random_username()
         secret = enrollment.register(username)
         self.assertTrue(len(secret) == 12)
 
     def test_already_register(self):
         """Test register a second time.
         """
-        time.sleep(5)
         ca_service = CAService("http://" + self._ca_server_address)
         enrollment = ca_service.enroll(self._enrollment_id,
                                        self._enrollment_secret)
         # use a random username for registering for avoiding already register
         # issues when test suite ran several times
-        username = ''.join(
-            [random.choice(string.ascii_letters + string.digits) for n in
-             range(9)])
+        username = get_random_username()
         enrollment.register(username)
 
         # register a second time
         with self.assertRaises(Exception):
             enrollment.register(username)
+
+    def test_revoke_success(self):
+        """Test revoke success.
+        """
+        ca_service = CAService("http://" + self._ca_server_address)
+        enrollment = ca_service.enroll(self._enrollment_id,
+                                       self._enrollment_secret)
+        # use a random username for registering for avoiding already register
+        # issues when test suite ran several times
+        username = get_random_username()
+        secret = enrollment.register(username)
+
+        # enroll new user
+        ca_service.enroll(username, secret)
+
+        # now revoke
+        RevokedCerts, CRL = enrollment.revoke(username)
+        self.assertTrue(CRL == '')
+        self.assertTrue(len(RevokedCerts) == 1)
+        self.assertTrue('Serial' in RevokedCerts[0])
+        self.assertTrue('AKI' in RevokedCerts[0])
+        self.assertTrue(len(RevokedCerts[0]['AKI']) > 0)
+        self.assertTrue(len(RevokedCerts[0]['Serial']) > 0)
 
 
 if __name__ == '__main__':

@@ -110,6 +110,42 @@ class CATest(unittest.TestCase):
         with self.assertRaises(Exception):
             enrollment.register('foo')
 
+    def test_revoke_missing_enrollment_id(self):
+        """Test revoke missing enrollment id.
+        """
+        with self.assertRaises(ValueError):
+            self._enrollment.revoke()
+
+    def test_revoke_missing_aki(self):
+        """Test revoke missing aki.
+        """
+        serial = 'c8bd471cfd8ea393ecf5c35099ad3c074920652'
+        with self.assertRaises(ValueError):
+            self._enrollment.revoke(aki=None, serial=serial)
+
+    def test_revoke_missing_serial(self):
+        """Test revoke missing serial.
+        """
+        aki = '7943138249940b7255d4bd020e7071d31b9c16ed'
+        with self.assertRaises(ValueError):
+            self._enrollment.revoke(aki=aki, serial=None)
+
+    def test_revoke_wrong_reason(self):
+        """Test revoke wrong reason.
+        """
+        reason = 'foo'
+        with self.assertRaises(ValueError):
+            self._enrollment.revoke('user', reason=reason)
+
+    def test_revoke_unreachable_server_address(self):
+        """Test revoke unreachable server address.
+        """
+        self._ca_server_address = "test:80"
+        ca_service = CAService("http://" + self._ca_server_address)
+        enrollment = Enrollment(None, '', ca_service)
+        with self.assertRaises(Exception):
+            enrollment.revoke('foo')
+
 
 if __name__ == '__main__':
     unittest.main()

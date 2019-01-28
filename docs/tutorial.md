@@ -99,6 +99,7 @@ cli = ca_service(target="https://127.0.0.1:7054")
 admin = cli.enroll("admin", "pass") # now local will have the admin user
 secret = admin.register("user1") # register a user to ca
 user1 = cli.enroll("user1", secret) # now local will have the user
+RevokedCerts, CRL = admin.revoke("user1") # revoke the user
 ```
 
 ## 2. Operate Channels with Fabric Network
