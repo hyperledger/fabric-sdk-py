@@ -116,6 +116,7 @@ registry:
           hf.Revoker: true
           hf.IntermediateCA: true
           hf.AffiliationMgr: true
+          hf.GenCRL: true
      - name: user
        pass: userpw
        type: client
