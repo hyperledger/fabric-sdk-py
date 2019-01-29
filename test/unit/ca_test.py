@@ -43,7 +43,7 @@ class CATest(unittest.TestCase):
             self._ca_server_address = "localhost:7054"
 
         # get an enrollment for registering
-        self._enrollment = Enrollment(None, '')
+        self._enrollment = Enrollment(None, '', '')
 
     def test_enroll_missing_enrollment_id(self):
         """Test enroll missing enrollment id.
@@ -145,6 +145,28 @@ class CATest(unittest.TestCase):
         enrollment = Enrollment(None, '', ca_service)
         with self.assertRaises(Exception):
             enrollment.revoke('foo')
+
+    def test_reenroll_no_user(self):
+        """Test reenroll no user
+        """
+        ca_service = CAService("http://" + self._ca_server_address)
+        with self.assertRaises(ValueError):
+            ca_service.reenroll('foo')
+
+    def test_reenroll_wrong_attr_req(self):
+        """Test reenroll wrong attr_req
+        """
+        ca_service = CAService("http://" + self._ca_server_address)
+        with self.assertRaises(AttributeError):
+            ca_service.reenroll(self._enrollment, [''])
+
+    def test_reenroll_unreachable_server_address(self):
+        """Test reenroll unreachable server address.
+        """
+        self._ca_server_address = "test:80"
+        ca_service = CAService("http://" + self._ca_server_address)
+        with self.assertRaises(Exception):
+            ca_service.reenroll(self._enrollment)
 
 
 if __name__ == '__main__':

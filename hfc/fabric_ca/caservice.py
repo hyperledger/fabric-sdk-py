@@ -21,6 +21,7 @@ from numbers import Number
 import requests
 import six
 from cryptography import x509
+from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.serialization import Encoding
 from cryptography.x509 import NameOID
 
@@ -49,10 +50,12 @@ reasons = (
 class Enrollment(object):
     """ Class represents enrollment. """
 
-    def __init__(self, private_key, cert, service=None):
+    def __init__(self, private_key, enrollmentCert, caCertChain=None,
+                 service=None):
         self._service = service
         self._private_key = private_key
-        self._cert = cert
+        self._cert = enrollmentCert
+        self._caCert = caCertChain
 
     @property
     def private_key(self):
@@ -91,6 +94,25 @@ class Enrollment(object):
 
         """
         self._cert = cert
+
+    @property
+    def caCert(self):
+        """ Get caCert
+
+        Returns: caCert
+
+        """
+        return self._caCert
+
+    @caCert.setter
+    def caCert(self, caCert):
+        """ Set caCert
+
+        Args:
+            cert: caCert
+
+        """
+        self._caCert = caCert
 
     def get_attrs(self):
         return ",".join("{}={}"
@@ -254,36 +276,28 @@ class CAClient(object):
             raise ValueError("get_cainfo failed with errors {0}"
                              .format(res['errors']))
 
-    def enroll(self, enrollment_id, enrollment_secret, csr):
-        """Enroll a registered user in order to receive a signed X509
-         certificate
-
-        Args:
-            enrollment_id (str): The registered ID to use for enrollment
-            enrollment_secret (str): The secret associated with the
-                                     enrollment ID
-            csr (bytes or file-like object): PEM-encoded PKCS#10 certificate
-                                             signing request
-
-        Returns: PEM-encoded X509 certificate
-
-        Raises:
-            RequestException: errors in requests.exceptions
-            ValueError: Failed response, json parse error, args missing
-
-        """
+    def enroll(self, enrollment_id, enrollment_secret, csr, profile='',
+               attr_reqs=None):
         if not enrollment_id or not enrollment_secret or not csr:
             raise ValueError("Missing required parameters. "
                              "'enrollmentID', 'enrollmentSecret' and 'csr'"
                              " are all required.")
 
-        req = {"certificate_request": csr}
-        if self._ca_name != "":
+        req = {'certificate_request': csr}
+        if self._ca_name != '':
             req.update({
-                "caName": self._ca_name
+                'caName': self._ca_name
+            })
+        if profile:
+            req.update({
+                'profile': profile
+            })
+        if attr_reqs:
+            req.update({
+                'attr_reqs': attr_reqs
             })
 
-        res, st = self._send_ca_post(path="enroll",
+        res, st = self._send_ca_post(path='enroll',
                                      json=req,
                                      auth=(enrollment_id, enrollment_secret),
                                      verify=self._ca_certs_path)
@@ -292,7 +306,8 @@ class CAClient(object):
         _logger.debug("Raw response json {0}".format(res))
 
         if res['success']:
-            return base64.b64decode(res['result']['Cert'])
+            return base64.b64decode(res['result']['Cert']), \
+                   base64.b64decode(res['result']['ServerInfo']['CAChain'])
         else:
             raise ValueError("Enrollment failed with errors {0}"
                              .format(res['errors']))
@@ -312,6 +327,24 @@ class CAClient(object):
             return res['result']['secret']
         else:
             raise ValueError("Registering failed with errors {0}"
+                             .format(res['errors']))
+
+    def reenroll(self, req, registrar):
+        authorization = self.generateAuthToken(req, registrar)
+
+        res, st = self._send_ca_post(path='reenroll',
+                                     json=req,
+                                     headers={'Authorization': authorization},
+                                     verify=self._ca_certs_path)
+
+        _logger.debug("Response status {0}".format(st))
+        _logger.debug("Raw response json {0}".format(res))
+
+        if res['success']:
+            return base64.b64decode(res['result']['Cert']), \
+                   base64.b64decode(res['result']['ServerInfo']['CAChain'])
+        else:
+            raise ValueError("Reenrollment failed with errors {0}"
                              .format(res['errors']))
 
     def revoke(self, req, registrar):
@@ -355,7 +388,8 @@ class CAService(object):
         self._ca_client = CAClient(target, ca_certs_path, ca_name=ca_name,
                                    cryptoPrimitives=self._crypto)
 
-    def enroll(self, enrollment_id, enrollment_secret):
+    def enroll(self, enrollment_id, enrollment_secret, csr=None, profile='',
+               attr_reqs=None):
         """Enroll a registered user in order to receive a signed X509
          certificate
 
@@ -363,6 +397,12 @@ class CAService(object):
             enrollment_id (str): The registered ID to use for enrollment
             enrollment_secret (str): The secret associated with the
                                      enrollment ID
+            profile (str): The profile name.  Specify the 'tls' profile for a
+             TLS certificate; otherwise, an enrollment certificate is issued.
+            csr (str): Optional. PEM-encoded PKCS#10 Certificate Signing
+             Request. The message sent from client side to Fabric-ca for the
+              digital identity certificate.
+            attr_reqs (list): An array of AttributeRequest
 
         Returns: PEM-encoded X509 certificate
 
@@ -371,14 +411,83 @@ class CAService(object):
             ValueError: Failed response, json parse error, args missing
 
         """
-        private_key = self._crypto.generate_private_key()
-        csr = self._crypto.generate_csr(private_key, x509.Name(
-            [x509.NameAttribute(NameOID.COMMON_NAME, six.u(enrollment_id))]))
-        cert = self._ca_client.enroll(
-            enrollment_id, enrollment_secret,
-            csr.public_bytes(Encoding.PEM).decode("utf-8"))
 
-        return Enrollment(private_key, cert, self)
+        if attr_reqs:
+            if not isinstance(attr_reqs, list):
+                raise ValueError("attr_reqs must be an array of"
+                                 " AttributeRequest objects")
+            else:
+                for attr in attr_reqs:
+                    if not attr.name:
+                        raise ValueError("attr_reqs object is missing the name"
+                                         " of the attribute")
+
+        private_key = None
+        if csr:
+            _logger.debug("try to enroll with a csr")
+        else:
+            private_key = self._crypto.generate_private_key()
+            csr = self._crypto.generate_csr(private_key, x509.Name(
+                [x509.NameAttribute(NameOID.COMMON_NAME,
+                                    six.u(enrollment_id))]))
+
+        enrollmentCert, caCertChain = self._ca_client.enroll(
+            enrollment_id,
+            enrollment_secret,
+            csr.public_bytes(Encoding.PEM).decode('utf-8'),
+            profile,
+            attr_reqs)
+
+        return Enrollment(private_key, enrollmentCert, caCertChain, self)
+
+    def reenroll(self, currentUser, attr_reqs=None):
+        """Re-enroll the member in cases such as the existing enrollment
+         certificate is about to expire, or it has been compromised
+
+        Args:
+            currentUser (Enrollment): The identity of the current user that
+             holds the existing enrollment certificate
+            attr_reqs (list): Optional. An array of AttributeRequest that
+             indicate attributes to be included in the certificate
+
+        Returns: PEM-encoded X509 certificate
+
+        Raises:
+            RequestException: errors in requests.exceptions
+            ValueError: Failed response, json parse error, args missing
+
+        """
+
+        if not isinstance(currentUser, Enrollment):
+            raise ValueError('"currentUser" is not a valid Enrollment object')
+
+        if attr_reqs:
+            if not isinstance(attr_reqs, list):
+                raise ValueError("attr_reqs must be an array of"
+                                 " AttributeRequest objects")
+            else:
+                for attr in attr_reqs:
+                    if not attr.name:
+                        raise ValueError("attr_reqs object is missing the name"
+                                         " of the attribute")
+
+        cert = currentUser.cert
+        cert = x509.load_pem_x509_certificate(cert, default_backend())
+
+        private_key = self._crypto.generate_private_key()
+        csr = self._crypto.generate_csr(private_key, cert.subject)
+
+        req = {'certificate_request': csr.public_bytes(Encoding.PEM).decode(
+            'utf-8')}
+        if attr_reqs:
+            req.update({
+                'attr_reqs': attr_reqs
+            })
+
+        enrollmentCert, caCertChain = self._ca_client.reenroll(req,
+                                                               currentUser)
+
+        return Enrollment(private_key, enrollmentCert, caCertChain, self)
 
     def register(self, enrollmentID, enrollmentSecret, role, affiliation,
                  maxEnrollments, attrs, registrar):

@@ -72,9 +72,12 @@ class CATest(unittest.TestCase):
         """Test enroll success.
         """
         ca_client = CAClient("http://" + self._ca_server_address)
-        ecert = ca_client.enroll(self._enrollment_id,
-                                 self._enrollment_secret, test_pem)
-        self.assertTrue(ecert.startswith(b"-----BEGIN CERTIFICATE-----"))
+        enrollmentCert, caCertChain = ca_client.enroll(self._enrollment_id,
+                                                       self._enrollment_secret,
+                                                       test_pem)
+        self.assertTrue(enrollmentCert
+                        .startswith(b"-----BEGIN CERTIFICATE-----"))
+        self.assertTrue(caCertChain.startswith(b"-----BEGIN CERTIFICATE-----"))
 
     def test_enroll_with_generated_csr_success(self):
         """Test enroll with generated csr success.
@@ -146,6 +149,47 @@ class CATest(unittest.TestCase):
         self.assertTrue('AKI' in RevokedCerts[0])
         self.assertTrue(len(RevokedCerts[0]['AKI']) > 0)
         self.assertTrue(len(RevokedCerts[0]['Serial']) > 0)
+
+    def test_reenroll_success(self):
+        """Test revoke success.
+        """
+        ca_service = CAService("http://" + self._ca_server_address)
+        enrollment = ca_service.enroll(self._enrollment_id,
+                                       self._enrollment_secret)
+        # use a random username for registering for avoiding already register
+        # issues when test suite ran several times
+        username = get_random_username()
+        secret = enrollment.register(username)
+
+        # enroll new user
+        enrollment = ca_service.enroll(username, secret)
+
+        # reenroll
+        reenrollment = ca_service.reenroll(enrollment)
+
+        self.assertTrue(reenrollment.cert
+                        .startswith(b"-----BEGIN CERTIFICATE-----"))
+
+    def test_reenroll_after_revoke_success(self):
+        """Test revoke success.
+        """
+        ca_service = CAService("http://" + self._ca_server_address)
+        enrollment = ca_service.enroll(self._enrollment_id,
+                                       self._enrollment_secret)
+        # use a random username for registering for avoiding already register
+        # issues when test suite ran several times
+        username = get_random_username()
+        secret = enrollment.register(username)
+
+        # enroll new user
+        enrollment = ca_service.enroll(username, secret)
+
+        # now revoke
+        enrollment.revoke(username)
+
+        # reenroll
+        with self.assertRaises(Exception):
+            ca_service.reenroll(enrollment)
 
 
 if __name__ == '__main__':
