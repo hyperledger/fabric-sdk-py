@@ -6,6 +6,7 @@ import logging
 import threading
 
 from hfc.protos.peer import peer_pb2_grpc
+from hfc.protos.discovery import protocol_pb2_grpc
 from hfc.util.channel import create_grpc_channel
 
 DEFAULT_PEER_ENDPOINT = 'localhost:7051'
@@ -46,6 +47,7 @@ class Peer(object):
                                             client_key_file, client_cert_file,
                                             opts)
         self._endorser_client = peer_pb2_grpc.EndorserStub(self._channel)
+        self._discovery_client = protocol_pb2_grpc.DiscoveryStub(self._channel)
 
     def send_proposal(self, proposal):
         """ Send an endorsement proposal to endorser
@@ -58,6 +60,18 @@ class Peer(object):
         """
         _logger.debug("Send proposal={}".format(proposal))
         return self._endorser_client.ProcessProposal(proposal)
+
+    def send_discovery(self, request):
+        """Send an request to discovery server
+
+        Args:
+            request: a signed request
+
+        Returns:
+            QueryResult or exception
+        """
+        _logger.debug("Send discovery={}".format(request))
+        return self._discovery_client.Discover(request)
 
     def init_with_bundle(self, info):
         """

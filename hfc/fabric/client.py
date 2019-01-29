@@ -31,6 +31,8 @@ from hfc.fabric.transaction.tx_proposal_request import TXProposalRequest, \
     CC_INVOKE, CC_QUERY
 from hfc.protos.common import common_pb2, configtx_pb2, ledger_pb2
 from hfc.protos.peer import query_pb2
+from hfc.protos.msp import identities_pb2
+from hfc.protos.gossip import message_pb2
 from hfc.fabric.block_decoder import BlockDecoder
 from hfc.util import utils
 from hfc.util.crypto.crypto import Ecies, ecies
@@ -264,7 +266,7 @@ class Client(object):
         if self.get_channel(channel_name):
             _logger.warning("channel {} already existed when creating".format(
                 channel_name))
-            return True
+            return False
 
         orderer = self.get_orderer(orderer_name)
         if not orderer:
@@ -1202,3 +1204,92 @@ class Client(object):
                 "Failed to query instantiated chaincodes: {}",
                 sys.exc_info()[0])
             raise
+
+    def query_peers(self, requestor, target_peer,
+                    crypto=ecies(), decode=True):
+        """Queries peers with discovery api
+
+        :param requestor: User role who issue the request
+        :param target_peer: Name of the peers to send request
+        :param crypto: crypto method to sign the request
+        :param deocode: Decode the response payload
+        :return result: a nested dict of query result
+        """
+
+        dummy_channel = self.new_channel('discover-local')
+
+        response = dummy_channel._discovery(
+            requestor, target_peer, crypto, local=True)
+
+        try:
+            results = {}
+            if response and decode:
+                for index in range(len(response.results)):
+                    result = response.results[index]
+                    if not result:
+                        raise Exception("Discovery results are missing")
+                    if hasattr(result, 'error'):
+                        _logger.error(
+                            "Channel {} received discovery error: {}".format(
+                                dummy_channel.name, result.error.content))
+                    if hasattr(result, 'members'):
+                        results['local_peers'] =  \
+                            self._process_discovery_membership_result(
+                                result.members)
+            return results
+
+        except Exception:
+            _logger.error(
+                "Failed to query instantiated chaincodes: {}",
+                sys.exc_info()[0])
+            raise
+
+    def _process_discovery_membership_result(self, q_members):
+        peers_by_org = {}
+        if hasattr(q_members, 'peers_by_org'):
+            for mspid in q_members.peers_by_org:
+                peers_by_org[mspid] = {}
+                peers_by_org[mspid]['peers'] = self._process_peers(
+                    q_members.peers_by_org[mspid].peers)
+
+        return peers_by_org
+
+    def _process_peers(self, q_peers):
+        peers = []
+        for q_peer in q_peers:
+            peer = {}
+
+            # IDENTITY
+            q_identity = identities_pb2.SerializedIdentity()
+            q_identity.ParseFromString(q_peer.identity)
+            peer['mspid'] = q_identity.mspid
+
+            # MEMBERSHIP
+            q_membership_msg = message_pb2.GossipMessage()
+            q_membership_msg.ParseFromString(q_peer.membership_info.payload)
+            peer['endpoint'] = q_membership_msg.alive_msg.membership.endpoint
+
+            # STATE
+            if hasattr(q_peer, 'state_info'):
+                message_s = message_pb2.GossipMessage()
+                message_s.ParseFromString(
+                    q_peer.state_info.payload)
+                try:
+                    peer['ledger_height'] = int(
+                        message_s.state_info.properties.ledger_height)
+                except AttributeError as e:
+                    peer['ledger_height'] = 0
+                    _logger.debug(
+                        'missing ledger_height: {}'.format(e))
+
+                peer['chaincodes'] = []
+                for index in message_s.state_info.properties.chaincodes:
+                    q_cc = message_s.info.properties.chaincodes[index]
+                    cc = {}
+                    cc['name'] = q_cc.name
+                    cc['version'] = q_cc.version
+                    peer['chaincodes'].append(cc)
+
+            peers.append(peer)
+
+        return sorted(peers, key=lambda k: k['endpoint'])

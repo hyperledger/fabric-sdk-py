@@ -8,6 +8,7 @@ import os
 import random
 import sys
 import tarfile
+import re
 from time import sleep
 
 from hfc.fabric.transaction.tx_proposal_request import \
@@ -16,6 +17,7 @@ from hfc.fabric.transaction.tx_proposal_request import \
 from hfc.protos.common import common_pb2
 from hfc.protos.orderer import ab_pb2
 from hfc.protos.peer import chaincode_pb2, proposal_pb2
+from hfc.protos.discovery import protocol_pb2
 from hfc.protos.utils import create_cc_spec, create_seek_info, \
     create_seek_payload, create_envelope
 from hfc.util import utils
@@ -23,10 +25,10 @@ from hfc.util.utils import proto_str, current_timestamp, proto_b, \
     build_header, build_channel_header, build_cc_proposal, \
     send_transaction_proposal
 
-
 SYSTEM_CHANNEL_NAME = "testchainid"
 
 _logger = logging.getLogger(__name__)
+_logger.setLevel(logging.DEBUG)
 
 
 class Channel(object):
@@ -35,30 +37,31 @@ class Channel(object):
     call client._create_channel().
     """
 
-    def __init__(self, name, client, is_sys_chan=False):
+    def __init__(self, name, client):
         """Construct channel instance
 
         Args:
-            is_sys_chan (bool): if system channel
-            client (object): fabric client instance
-            name (str): channel name
+            client (object): fabric client instance, which provides
+            operational context
+            name (str): a unique name serves as the identifier of the channel
         """
+        pat = "^[a-z][a-z0-9.-]*$"  # matching patter for regex checker
+        if not re.match(pat, name):
+            raise ValueError(
+                "ERROR: Channel name is invalid. It should be a \
+                    string and match {}, but got {}".format(pat, name)
+            )
+
+        self._name = name
         self._client = client
         self._orderers = {}
         self._peers = {}
+        # enable communication between peers of different orgs and discovery
+        self._anchor_peers = []
+        self._kafka_brokers = []
+        # self._msp_manager = MSPManger() # TODO: use something instead
         self._initialized = False
-        self._shutdown = False
-        self._is_sys_chan = is_sys_chan
         self._is_dev_mode = False
-
-        if self._is_sys_chan:
-            self._name = SYSTEM_CHANNEL_NAME
-            self._initialized = True
-        else:
-            if not name:
-                raise ValueError(
-                    "Channel name is invalid can not be null or empty.")
-            self._name = name
 
     def add_orderer(self, orderer):
         """Add orderer endpoint to a channel object.
@@ -198,10 +201,6 @@ class Channel(object):
             ValueError
 
         """
-        if self._shutdown:
-            raise ValueError(
-                "Channel {} has been shutdown.".format(self._name))
-
         if not self._initialized:
             raise ValueError(
                 "Channel {} has not been initialized.".format(self._name))
@@ -280,7 +279,7 @@ class Channel(object):
         cc_deployment_spec = chaincode_pb2.ChaincodeDeploymentSpec()
         cc_deployment_spec.chaincode_spec.type = \
             chaincode_pb2.ChaincodeSpec.Type.Value(
-                proto_str(tx_context.tx_prop_req.cc_type))
+                utils.proto_str(tx_context.tx_prop_req.cc_type))
         cc_deployment_spec.chaincode_spec.chaincode_id.name = \
             proto_str(tx_context.tx_prop_req.cc_name)
         cc_deployment_spec.chaincode_spec.chaincode_id.path = \
@@ -355,16 +354,6 @@ class Channel(object):
             channel_header.extension = extension
 
         return channel_header
-
-    def initialize(self):
-        """Initialize a new channel
-
-        start the channel and connect the event hubs.
-        :return: True if the channel initialization process was successful,
-            False otherwise.
-
-        """
-        return True
 
     def is_readonly(self):
         """Check the channel if read-only
@@ -820,6 +809,101 @@ class Channel(object):
 
         tx_context.tx_prop_req = request
         return self.send_tx_proposal(tx_context, peers)
+
+    def _discovery(self, requestor, target, crypto,
+                   local=False, config=False, interests=None):
+        """Send a request from a target peer to discover information about the network
+
+        Args:
+            requestor: a user to make the request
+
+        Returns:
+            Response from Discovery Service
+        """
+
+        auth = protocol_pb2.AuthInfo()
+        sig = utils.create_serialized_identity(requestor)
+        auth.client_identity = sig
+        # TODO: add tls certificate in client and there
+        discovery_req = protocol_pb2.Request()
+        discovery_req.authentication.CopyFrom(auth)
+        queries = []
+
+        if local:
+            q = protocol_pb2.Query()
+            queries.append(q)
+
+            local_peers = protocol_pb2.LocalPeerQuery()
+            q.local_peers.CopyFrom(local_peers)
+            _logger.info("DISCOVERY: adding local peers query")
+
+        if config:
+            q = protocol_pb2.Query()
+            queries.append(q)
+            q.channel = self._name
+
+            config_query = protocol_pb2.ConfigQuery()
+            q.config_query.CopyFrom(config_query)
+            _logger.info("DISCOVERY: adding config query")
+
+            q = protocol_pb2.Query()
+            queries.append(q)
+            q.channel = self._name
+            peer_query = protocol_pb2.PeerMembershipQuery()
+            q.peer_query.CopyFrom(peer_query)
+            _logger.info("DISCOVERY: adding channel peers query")
+
+        if interests and len(interests) > 0:
+            q = protocol_pb2.Query()
+            queries.append(q)
+            q.channel = self._name
+
+            interests = []
+            for interest in interests:
+                proto_interest = self._build_proto_cc_interest(interest)
+                interests.append(proto_interest)
+
+            cc_query = protocol_pb2.ChaincodeQuery()
+            cc_query.interests.extend(interests)
+            q.cc_query.CopyFrom(cc_query)
+            _logger.info("DISCOVERY: adding chaincodes/collection query")
+
+        discovery_req.queries.extend(queries)
+
+        request_bytes = discovery_req.SerializeToString()
+        sig = crypto.sign(requestor.enrollment.private_key, request_bytes)
+        envelope = create_envelope(sig, request_bytes)
+
+        return target.send_discovery(envelope)
+
+    def _build_proto_cc_interest(self, interest):
+        """Use a list of DiscoveryChaincodeCall to build an interest.
+        """
+        cc_calls = []
+        for cc in interest.chaincodes:
+            cc_call = protocol_pb2.ChaincodeCall()
+
+            if hasattr(cc, 'name') and not isinstance(cc.name, str):
+                raise ValueError("chaincode names must be a string")
+
+            if hasattr(cc, 'collection_names') and \
+                    not isinstance(cc.collection_names, list):
+                raise ValueError(
+                    "collection_names must be an array of strings")
+
+            if hasattr(cc, 'collection_names') and \
+                    not all(isinstance(x, str) for x in cc.collection_names):
+                raise ValueError("collection name must be a string")
+
+            cc_call.name = cc.name
+            cc_call.collection_names.extend(cc.collection_names)
+
+            cc_calls.append(cc_call)
+
+        interest_proto = protocol_pb2.ChaincodeInterest()
+        interest_proto.chaincodes.extend(cc_calls)
+
+        return interest_proto
 
 
 def create_system_channel(client, name=SYSTEM_CHANNEL_NAME):
