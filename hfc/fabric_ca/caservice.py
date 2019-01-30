@@ -26,6 +26,7 @@ from cryptography.hazmat.primitives.serialization import Encoding
 from cryptography.x509 import NameOID
 
 from hfc.fabric_ca.identityService import IdentityService
+from hfc.fabric_ca.affiliationService import AffiliationService
 from hfc.util.crypto.crypto import ecies
 
 DEFAULT_CA_ENDPOINT = 'http://localhost:7054'
@@ -181,7 +182,12 @@ class CAClient(object):
         self._cryptoPrimitives = cryptoPrimitives
 
     def generateAuthToken(self, req, registrar):
-
+        """Generate authorization token required for accessing fabric-ca APIs
+        Args:
+            req (dict): request body
+            registrar (Enrollment): Required. The identity of the registrar
+         (i.e. who is performing the request)
+        """
         b64Cert = base64.b64encode(registrar._cert)
 
         if req:
@@ -366,6 +372,9 @@ class CAClient(object):
 
     def newIdentityService(self):
         return IdentityService(self)
+
+    def newAffiliationService(self):
+        return AffiliationService(self)
 
 
 class CAService(object):
@@ -570,6 +579,9 @@ class CAService(object):
 
     def newIdentityService(self):
         return self._ca_client.newIdentityService()
+
+    def newAffiliationService(self):
+        return self._ca_client.newAffiliationService()
 
 
 def ca_service(target=DEFAULT_CA_ENDPOINT,
