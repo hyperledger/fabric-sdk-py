@@ -253,3 +253,10 @@ bccsp:
 cacount:
 
 cafiles:
+
+
+cfg:
+  affiliations:
+    allowremove: true
+  identities:
+    allowremove: true

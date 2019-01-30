@@ -21,6 +21,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
 from hfc.fabric_ca.caservice import Enrollment
+from hfc.util.crypto.crypto import ecies
 
 _logger = logging.getLogger(__name__ + ".user")
 
@@ -47,6 +48,7 @@ class User(object):
         self._enrollment_secret = None
         self._enrollment = None
         self._msp_id = None
+        self._cryptoSuite = None
 
         user_state = state_store.get_value(self._state_store_key)
 
@@ -181,6 +183,24 @@ class User(object):
         self._msp_id = msp_id
         self._save_state()
 
+    @property
+    def cryptoSuite(self):
+        """Get the cryptoSuite
+
+        Return: The cryptoSuite
+        """
+        return self._msp_id
+
+    @cryptoSuite.setter
+    def cryptoSuite(self, cryptoSuite):
+        """Set the cryptoSuite
+
+        Args:
+            msp_id: the cryptoSuite
+        """
+        self._cryptoSuite = cryptoSuite
+        self._save_state()
+
     def is_registered(self):
         """Check if user registered
 
@@ -289,10 +309,14 @@ def validate(user):
     if not user.msp_id:
         raise ValueError("Missing msp id.")
 
+    if not user.crypto_suite:
+        raise ValueError("Missing crypto suite.")
+
     return user
 
 
-def create_user(name, org, state_store, msp_id, key_path, cert_path):
+def create_user(name, org, state_store, msp_id, key_path, cert_path,
+                crypto_suite=ecies()):
     """Create user
 
     Args:
@@ -300,6 +324,8 @@ def create_user(name, org, state_store, msp_id, key_path, cert_path):
         org: org name
         state_store: user state store
         msp_id: msp id for the user
+        crypto_suite: the cryptoSuite used to store crypto and key store
+         settings
         key_path: identity private key path
         cert_path: identity public cert path
 
@@ -322,5 +348,6 @@ def create_user(name, org, state_store, msp_id, key_path, cert_path):
     user = User(name, org, state_store)
     user.enrollment = enrollment
     user.msp_id = msp_id
+    user.crypto_suite = crypto_suite
 
     return validate(user)

@@ -24,6 +24,7 @@ from cryptography import x509
 from cryptography.hazmat.primitives.serialization import Encoding
 from cryptography.x509 import NameOID
 
+from hfc.fabric_ca.identityService import IdentityService
 from hfc.util.crypto.crypto import ecies
 
 DEFAULT_CA_ENDPOINT = 'http://localhost:7054'
@@ -97,7 +98,7 @@ class Enrollment(object):
                         for k in self.__dict__.keys())
 
     def register(self, enrollmentID, enrollmentSecret=None, role=None,
-                 affiliation=None, maxEnrollments=-1, attrs=None):
+                 affiliation=None, maxEnrollments=1, attrs=None):
 
         # TODO, default should be equal to registrar
         # https://hyperledger-fabric-ca.readthedocs.io/en/latest/users-guide.ht
@@ -140,7 +141,8 @@ class CAClient(object):
     """Client for communicating with the Fabric CA APIs."""
 
     def __init__(self, target=DEFAULT_CA_ENDPOINT, ca_certs_path=None,
-                 base_url=DEFAULT_CA_BASE_URL, ca_name=""):
+                 base_url=DEFAULT_CA_BASE_URL, ca_name="",
+                 cryptoPrimitives=ecies()):
         """ Init CA client.
 
         Args:
@@ -154,6 +156,28 @@ class CAClient(object):
         self._ca_certs_path = ca_certs_path
         self._base_url = target + base_url
         self._ca_name = ca_name
+        self._cryptoPrimitives = cryptoPrimitives
+
+    def generateAuthToken(self, req, registrar):
+
+        b64Cert = base64.b64encode(registrar._cert)
+
+        if req:
+            reqJson = json.dumps(req, ensure_ascii=False)
+            b64Body = base64.b64encode(reqJson.encode())
+
+            # /!\ cannot mix f format and b
+            # https://stackoverflow.com/questions/45360480/is-there-a-
+            # formatted-byte-string-literal-in-python-3-6
+            bodyAndCert = b'%s.%s' % (b64Body, b64Cert)
+        else:
+            bodyAndCert = b'.%s' % b64Cert
+
+        sig = self._cryptoPrimitives.sign(registrar._private_key, bodyAndCert)
+        b64Sign = base64.b64encode(sig)
+
+        # /!\ cannot mix f format and b
+        return b'%s.%s' % (b64Cert, b64Sign)
 
     def _send_ca_post(self, path, **param):
         """ Send a post request to the ca service
@@ -166,6 +190,45 @@ class CAClient(object):
 
         """
         r = requests.post(url=self._base_url + path, **param)
+        return r.json(), r.status_code
+
+    def _send_ca_get(self, path, **param):
+        """ Send a get request to the ca service
+
+        Args:
+            path: sub path after the base_url
+            **param: get request params
+
+        Returns: the response body in json
+
+        """
+        r = requests.get(url=self._base_url + path, **param)
+        return r.json(), r.status_code
+
+    def _send_ca_delete(self, path, **param):
+        """ Send a delete request to the ca service
+
+        Args:
+            path: sub path after the base_url
+            **param: delete request params
+
+        Returns: the response body in json
+
+        """
+        r = requests.delete(url=self._base_url + path, **param)
+        return r.json(), r.status_code
+
+    def _send_ca_update(self, path, **param):
+        """ Send a update request to the ca service
+
+        Args:
+            path: sub path after the base_url
+            **param: update request params
+
+        Returns: the response body in json
+
+        """
+        r = requests.put(url=self._base_url + path, **param)
         return r.json(), r.status_code
 
     def get_cainfo(self):
@@ -234,7 +297,9 @@ class CAClient(object):
             raise ValueError("Enrollment failed with errors {0}"
                              .format(res['errors']))
 
-    def register(self, req, authorization):
+    def register(self, req, registrar):
+        authorization = self.generateAuthToken(req, registrar)
+
         res, st = self._send_ca_post(path="register",
                                      json=req,
                                      headers={'Authorization': authorization},
@@ -249,7 +314,9 @@ class CAClient(object):
             raise ValueError("Registering failed with errors {0}"
                              .format(res['errors']))
 
-    def revoke(self, req, authorization):
+    def revoke(self, req, registrar):
+        authorization = self.generateAuthToken(req, registrar)
+
         res, st = self._send_ca_post(path="revoke",
                                      json=req,
                                      headers={'Authorization': authorization},
@@ -264,12 +331,15 @@ class CAClient(object):
             raise ValueError("Revoking failed with errors {0}"
                              .format(res['errors']))
 
+    def newIdentityService(self):
+        return IdentityService(self)
+
 
 class CAService(object):
     """This is a ca server delegate."""
 
     def __init__(self, target=DEFAULT_CA_ENDPOINT,
-                 ca_certs_path=None, crypto=ecies(), ca_name=""):
+                 ca_certs_path=None, crypto=ecies(), ca_name=''):
         """ Init CA service.
 
         Args:
@@ -281,25 +351,9 @@ class CAService(object):
             If omitted or null or an empty string, then the default CA
             is the target of requests
         """
-        self._ca_client = CAClient(target, ca_certs_path, ca_name=ca_name)
         self._crypto = crypto
-
-    def generateAuthToken(self, req, registrar):
-        reqJson = json.dumps(req, ensure_ascii=False)
-
-        b64Cert = base64.b64encode(registrar._cert)
-        b64Body = base64.b64encode(reqJson.encode())
-
-        # /!\ cannot mix f format and b
-        # https://stackoverflow.com/questions/45360480/is-there-a-
-        # formatted-byte-string-literal-in-python-3-6
-        bodyAndCert = b'%s.%s' % (b64Body, b64Cert)
-
-        sig = self._crypto.sign(registrar._private_key, bodyAndCert)
-        b64Sign = base64.b64encode(sig)
-
-        # /!\ cannot mix f format and b
-        return b'%s.%s' % (b64Cert, b64Sign)
+        self._ca_client = CAClient(target, ca_certs_path, ca_name=ca_name,
+                                   cryptoPrimitives=self._crypto)
 
     def enroll(self, enrollment_id, enrollment_secret):
         """Enroll a registered user in order to receive a signed X509
@@ -369,9 +423,7 @@ class CAService(object):
         if isinstance(enrollmentSecret, str) and len(enrollmentSecret):
             req['secret'] = enrollmentSecret
 
-        authorization = self.generateAuthToken(req, registrar)
-
-        return self._ca_client.register(req, authorization)
+        return self._ca_client.register(req, registrar)
 
     def revoke(self, enrollmentID, aki, serial, reason, registrar):
         """Revoke an existing certificate (enrollment certificate or
@@ -405,9 +457,10 @@ class CAService(object):
             "reason": reason,
         }
 
-        authorization = self.generateAuthToken(req, registrar)
+        return self._ca_client.revoke(req, registrar)
 
-        return self._ca_client.revoke(req, authorization)
+    def newIdentityService(self):
+        return self._ca_client.newIdentityService()
 
 
 def ca_service(target=DEFAULT_CA_ENDPOINT,

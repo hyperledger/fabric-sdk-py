@@ -102,6 +102,21 @@ user1 = cli.enroll("user1", secret) # now local will have the user
 RevokedCerts, CRL = admin.revoke("user1") # revoke the user
 ```
 
+You can also use the identity management system:
+```python
+from hfc.fabric_ca.caservice import ca_service
+
+cacli = ca_service(target="https://127.0.0.1:7054")
+identityService = cacli.newIdentityService()
+
+admin = cacli.enroll("admin", "pass") # now local will have the admin user
+secret = identityService.create(admin, 'foo') # create user foo
+res = identityService.getOne('foo', admin) # get user foo
+res = identityService.getAll(admin) # get all users
+res = identityService.update('foo', admin, maxEnrollments=3, affiliation='.', enrollmentSecret='bar') # update user foo
+res = identityService.delete('foo', admin) # delete user foo
+```
+
 ## 2. Operate Channels with Fabric Network
 
 Use sdk to create a new channel and let peers join it.
