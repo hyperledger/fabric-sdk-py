@@ -1,7 +1,6 @@
 # Copyright IBM Corp. 2017 All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
-
 import docker
 import logging
 import unittest
@@ -140,7 +139,6 @@ class E2eTest(BaseTestCase):
             logger.info(
                 "E2E: Chaincode instantiation response {}".format(response))
             self.assertTrue(response)
-
         logger.info("E2E: chaincode instantiation done")
 
     def chaincode_invoke(self):
@@ -166,6 +164,30 @@ class E2eTest(BaseTestCase):
             self.assertTrue(response)
 
         logger.info("E2E: chaincode invoke done")
+
+    def chaincode_query(self):
+        """
+        Test invoking an example chaincode to peer
+
+        :return:
+        """
+        logger.info("E2E: Chaincode query start")
+
+        orgs = ["org1.example.com"]
+        args = ['b']
+        for org in orgs:
+            org_admin = self.client.get_user(org, "Admin")
+            response = self.client.chaincode_query(
+                requestor=org_admin,
+                channel_name=self.channel_name,
+                peer_names=['peer0.' + org],
+                args=args,
+                cc_name=CC_NAME,
+                cc_version=CC_VERSION
+            )
+            self.assertEqual(int(response), 300)
+
+        logger.info("E2E: chaincode query done")
 
     def query_installed_chaincodes(self):
         """
@@ -231,7 +253,7 @@ class E2eTest(BaseTestCase):
             )
             self.assertEqual(
                 response.height,
-                1,
+                2,
                 "Query failed")
 
         logger.info("E2E: Query info done")
@@ -255,7 +277,7 @@ class E2eTest(BaseTestCase):
             )
             self.assertEqual(
                 response['header']['number'],
-                0,
+                1,
                 "Query failed")
 
         logger.info("E2E: Query block by tx id done")
@@ -286,7 +308,7 @@ class E2eTest(BaseTestCase):
             )
             self.assertEqual(
                 response['header']['number'],
-                0,
+                1,
                 "Query failed")
 
         logger.info("E2E: Query block by block hash done")
@@ -381,6 +403,8 @@ class E2eTest(BaseTestCase):
         self.chaincode_instantiate()
 
         self.chaincode_invoke()
+
+        self.chaincode_query()
 
         self.query_installed_chaincodes()
 

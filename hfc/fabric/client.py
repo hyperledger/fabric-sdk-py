@@ -19,6 +19,7 @@ import sys
 import os
 import subprocess
 import shutil
+import time
 
 from hfc.fabric.channel.channel import Channel
 from hfc.fabric.orderer import Orderer
@@ -39,7 +40,6 @@ from hfc.util.keyvaluestore import FileKeyValueStore
 from hfc.fabric.config.default import DEFAULT
 
 assert DEFAULT
-
 _logger = logging.getLogger(__name__)
 
 
@@ -643,7 +643,7 @@ class Client(object):
         return utils.send_install_proposal(tx_context, peers)
 
     def send_instantiate_proposal(self, tx_context, peers,
-                                  channel_name='businesschannel'):
+                                  channel_name):
         """ Send instantiate proposal
 
         Args:
@@ -739,7 +739,24 @@ class Client(object):
 
         self.txid_for_test = tx_context_dep.tx_id  # used only for query test
 
-        return responses[0].status == 200
+        if not(tran_req.responses[0].response.status == 200
+                and responses[0].status == 200):
+            return False
+
+        # Wait until chaincode is really instantiated
+        starttime = int(time.time())
+        while int(time.time()) - starttime < 30:
+            response = self.query_instantiated_chaincodes(
+                requestor=requestor,
+                channel_name=channel_name,
+                peer_names=peer_names
+            )
+            for chaincode in response.chaincodes:
+                if chaincode.name == cc_name \
+                        and chaincode.version == cc_version:
+                    return True
+
+        return False
 
     def chaincode_invoke(self, requestor, channel_name, peer_names, args,
                          cc_name, cc_version, timeout=10):
@@ -779,15 +796,52 @@ class Client(object):
             channel_name).send_tx_proposal(tx_context, peers)
 
         tran_req = utils.build_tx_req(res)
-        tx_context_tx = create_tx_context(
-            requestor,
-            ecies(),
-            tran_req
+
+        return tran_req.responses[0].response.status == 200
+
+    def chaincode_query(self, requestor, channel_name, peer_names, args,
+                        cc_name, cc_version, timeout=10):
+        """
+        Query chaincode
+
+        :param requestor: User role who issue the request
+        :param channel_name: the name of the channel to send tx proposal
+        :param peer_names: Names of the peers to install
+        :param args (list): arguments (keys and values) for initialization
+        :param cc_name: chaincode name
+        :param cc_version: chaincode version
+        :param timeout: Timeout to wait
+        :return: True or False
+        """
+        peers = []
+        for peer_name in peer_names:
+            peer = self.get_peer(peer_name)
+            peers.append(peer)
+
+        tran_prop_req = create_tx_prop_req(
+            prop_type=CC_QUERY,
+            cc_type=CC_TYPE_GOLANG,
+            cc_name=cc_name,
+            cc_version=cc_version,
+            fcn='query',
+            args=args
         )
 
-        responses = utils.send_transaction(
-            self.orderers, tran_req, tx_context_tx)
-        return responses[0].status == 200
+        tx_context = create_tx_context(
+            requestor,
+            ecies(),
+            tran_prop_req
+        )
+
+        res = self.get_channel(
+            channel_name).send_tx_proposal(tx_context, peers)
+
+        tran_req = utils.build_tx_req(res)
+        if tran_req.responses[0].response.status == 200:
+            payload = tran_req.responses[0].response.payload
+            return payload.decode('utf-8')
+        else:
+            return ''
 
     def query_installed_chaincodes(self, requestor, peer_names, timeout=10):
         """
@@ -813,8 +867,7 @@ class Client(object):
         tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
         tx_context.tx_prop_req = request
 
-        responses = Channel('businesschannel', self).send_tx_proposal(
-            tx_context, peers)
+        responses = Channel._send_tx_proposal('', tx_context, peers)
 
         try:
             if responses[0][0].response:
@@ -856,8 +909,7 @@ class Client(object):
         tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
         tx_context.tx_prop_req = request
 
-        responses = Channel('businesschannel', self).send_tx_proposal(
-            tx_context, peers)
+        responses = Channel._send_tx_proposal('', tx_context, peers)
 
         try:
             if responses[0][0].response:
