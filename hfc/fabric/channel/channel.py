@@ -834,7 +834,7 @@ def create_system_channel(client, name=SYSTEM_CHANNEL_NAME):
     return Channel(name, client, True)
 
 
-def create_app_channel(client, name="businesschannel"):
+def create_app_channel(client, name):
     """ Create application channel instance
 
     Args:

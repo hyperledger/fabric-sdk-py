@@ -211,3 +211,6 @@ local.properties
 
 # .db files from tests
 *.db
+
+# vscode
+.vscode
