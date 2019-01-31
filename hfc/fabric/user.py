@@ -189,7 +189,7 @@ class User(object):
 
         Return: The cryptoSuite
         """
-        return self._msp_id
+        return self._cryptoSuite
 
     @cryptoSuite.setter
     def cryptoSuite(self, cryptoSuite):

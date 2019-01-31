@@ -24,6 +24,7 @@ from hfc.protos.peer import transaction_pb2
 from hfc.protos.peer import proposal_pb2
 from hfc.protos.peer import proposal_response_pb2
 from hfc.protos.peer import configuration_pb2 as peer_configuration_pb2
+from hfc.protos.peer import events_pb2
 
 # Import required MSP Protos
 from hfc.protos.msp import msp_principal_pb2
@@ -42,7 +43,6 @@ from hfc.protos.orderer import configuration_pb2 as orderer_configuration_pb2
 # Import required Ledger Protos
 from hfc.protos.ledger.rwset import rwset_pb2
 from hfc.protos.ledger.rwset.kvrwset import kv_rwset_pb2
-
 
 _logger = logging.getLogger(__name__ + ".block_decoder")
 
@@ -101,6 +101,85 @@ class BlockDecoder(object):
         return processed_tx
 
 
+class FilteredBlockDecoder(object):
+    """
+        An object of a fully decoded protobuf message "FilteredBlock"
+    """
+
+    @staticmethod
+    def decode(block_bytes):
+        """
+        Constructs a JSON Object containing all decoded values from
+        protobuf encoded `FilteredBlock` bytes.
+
+        Args:
+            block_bytes (bytes): FilteredBlock instance
+
+        Returns: Dictionary containing decoded Filtered Block instance.
+        """
+
+        filtered_block = {}
+
+        try:
+            proto_block = events_pb2.FilteredBlock()
+            proto_block.ParseFromString(block_bytes)
+            filtered_block['channel_id'] = proto_block.channel_id
+            filtered_block['number'] = proto_block.number
+            filtered_block['filtered_transactions'] = []
+            fts = proto_block.filtered_transactions
+
+            for ft in fts:
+                code = tx_validation_code.get(ft.tx_validation_code,
+                                              'UNKNOWN_VALIDATION_CODE')
+                ft_decoded = {
+                    'txid': ft.txid,
+                    'type': HeaderType.convert_to_string(ft.type),
+                    'tx_validation_code': code
+                }
+
+                if hasattr(ft, 'transaction_actions'):
+                    ft_decoded['transaction_actions'] = [
+                        decode_chaincode_action(
+                            ca.chaincode_event.SerializeToString())
+                        for ca in ft.transaction_actions.chaincode_actions
+                    ]
+                filtered_block['filtered_transactions'].append(ft_decoded)
+
+        except Exception as e:
+            raise ValueError("FilteredBlockDecoder :: decode failed", e)
+        return filtered_block
+
+
+tx_validation_code = {
+    0: 'VALID',
+    1: 'NIL_ENVELOPE',
+    2: 'BAD_PAYLOAD',
+    3: 'BAD_COMMON_HEADER',
+    4: 'BAD_CREATOR_SIGNATURE',
+    5: 'INVALID_ENDORSER_TRANSACTION',
+    6: 'INVALID_CONFIG_TRANSACTION',
+    7: 'UNSUPPORTED_TX_PAYLOAD',
+    8: 'BAD_PROPOSAL_TXID',
+    9: 'DUPLICATE_TXID',
+    10: 'ENDORSEMENT_POLICY_FAILURE',
+    11: 'MVCC_READ_CONFLICT',
+    12: 'PHANTOM_READ_CONFLICT',
+    13: 'UNKNOWN_TX_TYPE',
+    14: 'TARGET_CHAIN_NOT_FOUND',
+    15: 'MARSHAL_TX_ERROR',
+    16: 'NIL_TXACTION',
+    17: 'EXPIRED_CHAINCODE',
+    18: 'CHAINCODE_VERSION_CONFLICT',
+    19: 'BAD_HEADER_EXTENSION',
+    20: 'BAD_CHANNEL_HEADER',
+    21: 'BAD_RESPONSE_PAYLOAD',
+    22: 'BAD_RWSET',
+    23: 'ILLEGAL_WRITESET',
+    24: 'INVALID_WRITESET',
+    254: 'NOT_VALIDATED',
+    255: 'INVALID_OTHER_REASON',
+}
+
 type_as_string = {
     0: 'MESSAGE',  # Used for messages which are signed but opaque
     1: 'CONFIG',  # Used for messages which express the channel config
@@ -120,15 +199,10 @@ class HeaderType(object):
     """
         HeaderType class having decodePayload and convertToString methods
     """
+
     @staticmethod
     def convert_to_string(type_value):
-        result = None
-        try:
-            result = type_as_string[type_value]
-        except Exception:
-            if not result:
-                result = 'UNKNOWN_TYPE'
-        return result
+        return type_as_string.get(type_value, 'UNKNOWN_TYPE')
 
     @staticmethod
     def decode_payload_based_on_type(proto_data, type_value):
@@ -294,7 +368,7 @@ def timestamp_to_date(timestamp):
     # WARNING: this will break on Windows because of the fromtimestamp()
     # restriction of values by C `localtime()` or `gmtime()` calls.
     millis = timestamp.seconds * 1000 + timestamp.nanos / 1000000
-    date = datetime.datetime.fromtimestamp(millis/1e3, tz=timezone.utc)
+    date = datetime.datetime.fromtimestamp(millis / 1e3, tz=timezone.utc)
     return date.strftime("%Y-%m-%d %H:%M:%S")
 
 
@@ -698,12 +772,12 @@ def decode_config_policy(proto_config_policy):
         if (proto_config_policy.policy.type == policies_pb2.Policy.SIGNATURE):
             config_policy['policy']['value'] = \
                 decode_signature_policy_envelope(
-                proto_config_policy.policy.value)
+                    proto_config_policy.policy.value)
         elif (proto_config_policy.policy.type == policies_pb2.Policy.MSP):
             proto_msp = policies_pb2.Policy()
             proto_msp.ParseFromString(proto_config_policy.policy.value)
         elif (proto_config_policy.policy.type ==
-                policies_pb2.Policy.IMPLICIT_META):
+              policies_pb2.Policy.IMPLICIT_META):
             config_policy['policy']['value'] = \
                 decode_implicit_meta_policy(proto_config_policy.policy.value)
         else:
@@ -803,7 +877,7 @@ def decode_MSP_principal(proto_msp_principal):
         else:
             pass
     elif (msp_principal['principal_classification'] ==
-            msp_principal_pb2.MSPPrincipal.ORGANIZATION_UNIT):
+          msp_principal_pb2.MSPPrincipal.ORGANIZATION_UNIT):
         proto_principal = msp_principal_pb2.OrganizationUnit()
         proto_principal.ParseFromString(proto_msp_principal.principal)
         msp_principal['msp_identifier'] = \
@@ -853,10 +927,10 @@ def decode_fabric_MSP_config(msp_config_bytes):
         to_PEM_certs(proto_msp_config.revocation_list)
     msp_config['signing_identity'] = \
         decode_signing_identity_info(
-        proto_msp_config.signing_identity.SerializeToString())
+            proto_msp_config.signing_identity.SerializeToString())
     msp_config['organizational_unit_identifiers'] = \
         decode_fabric_OU_identifier(
-        proto_msp_config.organizational_unit_identifiers)
+            proto_msp_config.organizational_unit_identifiers)
     msp_config['tls_root_certs'] = \
         to_PEM_certs(proto_msp_config.tls_root_certs)
     msp_config['tls_intermediate_certs'] = \
@@ -949,7 +1023,7 @@ def decode_chaincode_action_payload(payload_bytes):
     proto_chaincode_action_payload.ParseFromString(payload_bytes)
     payload['chaincode_proposal_payload'] = \
         decode_chaincode_proposal_payload(
-        proto_chaincode_action_payload.chaincode_proposal_payload)
+            proto_chaincode_action_payload.chaincode_proposal_payload)
     payload['action'] = \
         decode_chaincode_endorsed_action(proto_chaincode_action_payload.action)
     return payload
@@ -984,7 +1058,7 @@ def decode_chaincode_endorsed_action(proto_chaincode_endorsed_action):
     action = {}
     action['proposal_response_payload'] = \
         decode_proposal_response_payload(
-        proto_chaincode_endorsed_action.proposal_response_payload)
+            proto_chaincode_endorsed_action.proposal_response_payload)
     action['endorsements'] = []
     for endorsement in proto_chaincode_endorsed_action.endorsements:
         endorsement = decode_endorsement(endorsement)

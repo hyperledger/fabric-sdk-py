@@ -33,7 +33,7 @@ from hfc.protos.common import common_pb2, configtx_pb2, ledger_pb2
 from hfc.protos.peer import query_pb2
 from hfc.protos.msp import identities_pb2
 from hfc.protos.gossip import message_pb2
-from hfc.fabric.block_decoder import BlockDecoder
+from hfc.fabric.block_decoder import BlockDecoder, FilteredBlockDecoder
 from hfc.util import utils
 from hfc.util.crypto.crypto import Ecies, ecies
 from hfc.util.keyvaluestore import FileKeyValueStore
@@ -44,6 +44,8 @@ from hfc.fabric.config.default import DEFAULT
 assert DEFAULT
 # consoleHandler = logging.StreamHandler()
 _logger = logging.getLogger(__name__)
+
+
 # _logger.setLevel(logging.DEBUG)
 # _logger.addHandler(consoleHandler)
 
@@ -775,7 +777,7 @@ class Client(object):
 
     def chaincode_invoke(self, requestor, channel_name, peer_names, args,
                          cc_name, cc_version, cc_type=CC_TYPE_GOLANG,
-                         fcn='invoke', timeout=10):
+                         fcn='invoke', waitForEvent=False, timeout=30):
         """
         Invoke chaincode for ledger update
 
@@ -810,10 +812,17 @@ class Client(object):
             tran_prop_req
         )
 
-        res = self.get_channel(
-            channel_name).send_tx_proposal(tx_context, peers)
+        channel = self.get_channel(channel_name)
+
+        # send proposal
+        res = channel.send_tx_proposal(tx_context, peers)
 
         tran_req = utils.build_tx_req(res)
+        res = tran_req.responses[0].response
+
+        # if proposal wat not good, return
+        if not res.status == 200:
+            return res.message
 
         tx_context_tx = create_tx_context(
             requestor,
@@ -821,37 +830,43 @@ class Client(object):
             tran_req
         )
 
-        responses = utils.send_transaction(
-            self.orderers, tran_req, tx_context_tx)
+        responses = utils.send_transaction(self.orderers, tran_req,
+                                           tx_context_tx)
 
-        res = tran_req.responses[0].response
-        if not (res.status == 200 and responses[0].status == 200):
+        if not responses[0].status == 200:
             return res.message
 
-        # Wait until chaincode invoke is really effective
-        # Note : we will remove this part when we have channel event hub
-        starttime = int(time.time())
-        payload = None
-        while int(time.time()) - starttime < timeout:
-            try:
-                response = self.query_transaction(
-                    requestor=requestor,
-                    channel_name=channel_name,
-                    peer_names=peer_names,
-                    tx_id=tx_context.tx_id,
-                    decode=False
-                )
+        if waitForEvent:
+            # wait for transaction id proposal available in ledger and block
+            # commited
+            start_seek = 0
+            starttime = int(time.time())
+            while int(time.time()) - starttime < timeout:
 
-                if response.response.status == 200:
-                    payload = tran_req.responses[0].response.payload
-                    return payload.decode('utf-8')
+                # get peer events
+                count = len(peers)
+                for peer in peers:
+                    events = self.get_events(requestor, peer, channel_name,
+                                             start=start_seek, filtered=True)
 
+                    for event in events:
+                        for ft in event['filtered_transactions']:
+                            if tx_context.tx_id == ft['txid']:
+                                if ft['tx_validation_code'] == 'VALID':
+                                    count -= 1
+                                    # all peers must have the valid event
+                                    if count == 0:
+                                        return res.payload.decode('utf-8')
+                                else:
+                                    return res.message
+
+                        start_seek = max(start_seek, event['number'])
                 time.sleep(1)
-            except Exception:
-                time.sleep(1)
 
-        msg = 'Failed to invoke chaincode. Query check returned: %s'
-        return msg % payload.message
+            # TODO handle mutual TLS failed, but can we?
+            raise Exception('timeout')
+        else:
+            return res.payload.decode('utf-8')
 
     def chaincode_query(self, requestor, channel_name, peer_names, args,
                         cc_name, cc_version, cc_type=CC_TYPE_GOLANG,
@@ -1310,7 +1325,7 @@ class Client(object):
                             "Channel {} received discovery error: {}".format(
                                 dummy_channel.name, result.error.content))
                     if hasattr(result, 'members'):
-                        results['local_peers'] =  \
+                        results['local_peers'] = \
                             self._process_discovery_membership_result(
                                 result.members)
             return results
@@ -1370,3 +1385,34 @@ class Client(object):
             peers.append(peer)
 
         return sorted(peers, key=lambda k: k['endpoint'])
+
+    def get_events(self, requestor, peer, channel_name, start=0, stop=None,
+                   filtered=False):
+        """Get Event
+
+        Args:
+            requestor (str): Description
+            peer (str): Description
+            channel_name (str): Description
+            start (int, optional): Description
+            stop (int, optional): Description
+            filtered (bool, optional): Description
+
+        Returns:
+            TYPE: Description
+        """
+        channel = self.get_channel(channel_name)
+
+        tx_prop_req = TXProposalRequest()
+        tx_context = TXContext(requestor, ecies(), tx_prop_req)
+
+        events = peer.get_events(tx_context, channel.name,
+                                 start=start, stop=stop, filtered=filtered)
+
+        if filtered:
+            return [FilteredBlockDecoder().decode(
+                event.filtered_block.SerializeToString())
+                for event in events]
+        else:
+            return [BlockDecoder().decode(event.block.SerializeToString())
+                    for event in events]

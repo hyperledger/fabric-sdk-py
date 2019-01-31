@@ -157,7 +157,8 @@ class E2eTest(BaseTestCase):
                 peer_names=['peer1.' + org],
                 args=args,
                 cc_name=CC_NAME,
-                cc_version=CC_VERSION
+                cc_version=CC_VERSION,
+                waitForEvent=True
             )
             self.assertEqual(response, '')
 
@@ -449,6 +450,16 @@ class E2eTest(BaseTestCase):
 
         logger.info("E2E: Query installed chaincode done")
 
+    def get_events(self):
+
+        org = 'org1.example.com'
+        peer = self.client.get_peer('peer0.' + org)
+
+        org_admin = self.client.get_user(org, 'Admin')
+        events = self.client.get_events(org_admin, peer, self.channel_name)
+
+        self.assertTrue(len(events))
+
     def test_in_sequence(self):
 
         logger.info("\n\nE2E testing started...")
@@ -484,6 +495,8 @@ class E2eTest(BaseTestCase):
         self.query_transaction()
 
         self.get_channel_config()
+
+        self.get_events()
 
         logger.info("E2E all test cases done\n\n")
 

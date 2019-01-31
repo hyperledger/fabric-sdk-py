@@ -83,7 +83,8 @@ def build_header(creator, channel_header, nonce):
 
 
 def build_channel_header(type, tx_id, channel_id,
-                         timestamp, epoch=0, extension=None):
+                         timestamp, epoch=0, extension=None,
+                         tls_cert_hash=None):
     """Build channel header.
 
     Args:
@@ -105,6 +106,10 @@ def build_channel_header(type, tx_id, channel_id,
     channel_header.tx_id = proto_str(tx_id)
     channel_header.epoch = epoch
     channel_header.timestamp.CopyFrom(timestamp)
+
+    if tls_cert_hash:
+        channel_header.tls_cert_hash = tls_cert_hash
+
     if extension:
         channel_header.extension = extension
     return channel_header

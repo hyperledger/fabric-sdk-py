@@ -1,18 +1,27 @@
 # Copyright 281165273@qq.com. All Rights Reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
-
+import base64
 import logging
 import threading
+from hashlib import sha256
 
-from hfc.protos.peer import peer_pb2_grpc
 from hfc.protos.discovery import protocol_pb2_grpc
+from hfc.protos.common import common_pb2
+from hfc.protos.peer import peer_pb2_grpc, events_pb2_grpc
+from hfc.protos.utils import create_seek_info, create_seek_payload, \
+    create_envelope
 from hfc.util.channel import create_grpc_channel
+from hfc.util.utils import current_timestamp, \
+    build_header, build_channel_header
 
 DEFAULT_PEER_ENDPOINT = 'localhost:7051'
 
+
 _logger = logging.getLogger(__name__ + ".peer")
 
+
+# TODO should extend Remote base class as in fabric-node-sdk
 
 class Peer(object):
     """ A peer node in the network.
@@ -37,7 +46,6 @@ class Peer(object):
         self._lock = threading.RLock()
         self._channels = []
         self._endpoint = endpoint
-        self._eh_url = None
         self._grpc_options = dict()
         self._ssl_target_name = None
         self._tls_ca_certs_path = tls_ca_cert_file
@@ -48,6 +56,7 @@ class Peer(object):
                                             opts)
         self._endorser_client = peer_pb2_grpc.EndorserStub(self._channel)
         self._discovery_client = protocol_pb2_grpc.DiscoveryStub(self._channel)
+        self._event_client = events_pb2_grpc.DeliverStub(self._channel)
 
     def send_proposal(self, proposal):
         """ Send an endorsement proposal to endorser
@@ -81,7 +90,6 @@ class Peer(object):
         """
         try:
             self._endpoint = info['url']
-            self._eh_url = info['eventUrl']
             self._grpc_options = info['grpcOptions']
             self._tls_ca_certs_path = info['tlsCACerts']['path']
             if 'clientKey' in info:
@@ -98,6 +106,8 @@ class Peer(object):
                 opts=[(opt, value) for opt, value in
                       self._grpc_options.items()])
             self._endorser_client = peer_pb2_grpc.EndorserStub(self._channel)
+            self._event_client = events_pb2_grpc.DeliverStub(self._channel)
+
         except KeyError as e:
             print(e)
             return False
@@ -120,6 +130,19 @@ class Peer(object):
         """
         return self._endpoint
 
+    @endpoint.setter
+    def endpoint(self, endpoint):
+        self._endpoint = endpoint
+
+    @property
+    def name(self):
+        """Get the peer name
+
+        Return: The peer name
+
+        """
+        return self._name
+
     def join(self, chan):
         """ Join a channel
 
@@ -134,6 +157,72 @@ class Peer(object):
     def channels(self):
         with self._lock:
             return self._channels
+
+    def delivery(self, envelope, scheduler=None, filtered=False):
+        """ Send an delivery envelop to event service.
+
+        Args:
+            envelope: The message envelope
+
+        Returns: orderer_response or exception
+
+        """
+        _logger.debug("Send envelope={}".format(envelope))
+
+        if filtered:
+            delivery_result = list(self._event_client.DeliverFiltered(
+                iter([envelope])))
+        else:
+            delivery_result = list(self._event_client.Deliver(
+                iter([envelope])))
+        return delivery_result
+
+    def get_events(self, tx_context, channel_name,
+                   start=None, stop=None, filtered=False):
+        """ get the events of the channel.
+        Return: the events in success or None in fail.
+        """
+        _logger.info("get events")
+
+        seek_info = create_seek_info(start, stop)
+
+        kwargs = {}
+        if self._client_cert_path:
+            with open(self._client_cert_path, 'rb') as f:
+                client_cert = f.read()
+                arr = client_cert.split(b'\n')
+                der = b''.join(arr[1:-2])
+                b64der = base64.b64decode(der)
+                kwargs['tls_cert_hash'] = sha256(b64der).digest()
+
+        seek_info_header = build_channel_header(
+            common_pb2.HeaderType.Value('DELIVER_SEEK_INFO'),
+            tx_context.tx_id,
+            channel_name,
+            current_timestamp(),
+            tx_context.epoch,
+            **kwargs
+        )
+
+        seek_header = build_header(
+            tx_context.identity,
+            seek_info_header,
+            tx_context.nonce)
+
+        seek_payload_bytes = create_seek_payload(seek_header, seek_info)
+        sig = tx_context.sign(seek_payload_bytes)
+        envelope = create_envelope(sig, seek_payload_bytes)
+
+        response = self.delivery(envelope, filtered=filtered)
+
+        if (len(response) > 0 and
+                (response[0].block is None or response[0].block == '')):
+            _logger.error("fail to get event blocks")
+            return None
+
+        _logger.info("get %s event blocks successfully" % len(response))
+
+        return response
 
 
 def create_peer(endpoint=DEFAULT_PEER_ENDPOINT, tls_cacerts=None,

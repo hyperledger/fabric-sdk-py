@@ -183,7 +183,8 @@ class E2eTest(BaseTestCase):
                 peer_names=['peer1.' + org],
                 args=args,
                 cc_name=CC_NAME,
-                cc_version=CC_VERSION
+                cc_version=CC_VERSION,
+                waitForEvent=True
             )
             self.assertEqual(response, '')
 
