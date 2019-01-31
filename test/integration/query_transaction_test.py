@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
-
+import time
 from hfc.fabric.peer import create_peer
 from hfc.fabric.transaction.tx_context import create_tx_context
 from hfc.fabric.transaction.tx_proposal_request import create_tx_prop_req, \
@@ -24,7 +24,7 @@ CC_NAME = 'example_cc'
 CC_VERSION = '1.0'
 
 
-class QueryTransaction(BaseTestCase):
+class QueryTransactionTest(BaseTestCase):
     def invoke_chaincode(self):
 
         self.channel = self.client.new_channel(self.channel_name)
@@ -87,29 +87,38 @@ class QueryTransaction(BaseTestCase):
 
         res = self.channel.send_instantiate_proposal(tx_context_dep,
                                                      [self.org1_peer])
-        tx_id = tx_context_dep.tx_id
         tran_req = build_tx_req(res)
         send_transaction(self.channel.orderers, tran_req, tx_context)
 
         tx_context_tx = create_tx_context(self.org1_admin,
                                           crypto,
                                           TXProposalRequest())
+
         res = self.channel.send_tx_proposal(tx_context, [self.org1_peer])
 
         tran_req = build_tx_req(res)
 
-        send_transaction(self.channel.orderers, tran_req, tx_context_tx)
+        res = send_transaction(self.channel.orderers, tran_req, tx_context_tx)
+
+        tx_id = tx_context_dep.tx_id
+
         return tx_id
 
-    def test_query_transaction_id_success(self):
+    def test_query_transaction_id_success(self, timeout=30):
         tx_id = self.invoke_chaincode()
+
         tx_context = create_tx_context(self.org1_admin,
                                        ecies(),
                                        TXProposalRequest())
 
-        responses = self.channel.query_transaction(tx_context,
-                                                   [self.org1_peer],
-                                                   tx_id)
+        starttime = int(time.time())
+        while int(time.time()) - starttime < timeout:
+            responses = self.channel.query_transaction(tx_context,
+                                                       [self.org1_peer],
+                                                       tx_id)
+            if responses[0][0].response.status == 200:
+                break
+
         logger.debug('Responses of query transaction:\n {}'.format(responses))
-        # TODO(dex): fix id missing
+
         self.assertEqual(responses[0][0].response.status, 200)

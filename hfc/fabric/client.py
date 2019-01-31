@@ -444,8 +444,7 @@ class Client(object):
             protobuf envelope.
 
         Returns:
-            rx.Observable: An observable for the orderer_response
-                or an error.
+            BroadcastResponse which includes status and info
 
         """
         _logger.debug('_create_or_update_channel - start')
@@ -693,8 +692,8 @@ class Client(object):
             return None
         return tx_path
 
-    def chaincode_instantiate(self, requestor, channel_name, peer_names, args,
-                              cc_name, cc_version, timeout=10):
+    def chaincode_instantiate(self, requestor, channel_name, peer_names,
+                              args, cc_name, cc_version):
         """
             Instantiate installed chaincode to particular peer in
             particular channel
@@ -705,7 +704,6 @@ class Client(object):
         :param args (list): arguments (keys and values) for initialization
         :param cc_name: chaincode name
         :param cc_version: chaincode version
-        :param timeout: Timeout to wait
         :return: True or False
         """
         peers = []
@@ -758,8 +756,8 @@ class Client(object):
 
         return False
 
-    def chaincode_invoke(self, requestor, channel_name, peer_names, args,
-                         cc_name, cc_version, timeout=10):
+    def chaincode_invoke(self, requestor, channel_name, peer_names,
+                         args, cc_name, cc_version):
         """
         Invoke chaincode for ledger update
 
@@ -769,7 +767,6 @@ class Client(object):
         :param args (list): arguments (keys and values) for initialization
         :param cc_name: chaincode name
         :param cc_version: chaincode version
-        :param timeout: Timeout to wait
         :return: True or False
         """
         peers = []
@@ -796,11 +793,15 @@ class Client(object):
             channel_name).send_tx_proposal(tx_context, peers)
 
         tran_req = utils.build_tx_req(res)
+        tx_context_tx = create_tx_context(requestor, ecies(), tran_req)
 
-        return tran_req.responses[0].response.status == 200
+        responses = utils.send_transaction(
+            self.orderers, tran_req, tx_context_tx)
+
+        return responses[0].status == 200
 
     def chaincode_query(self, requestor, channel_name, peer_names, args,
-                        cc_name, cc_version, timeout=10):
+                        cc_name, cc_version):
         """
         Query chaincode
 
@@ -810,7 +811,6 @@ class Client(object):
         :param args (list): arguments (keys and values) for initialization
         :param cc_name: chaincode name
         :param cc_version: chaincode version
-        :param timeout: Timeout to wait
         :return: True or False
         """
         peers = []
@@ -843,7 +843,7 @@ class Client(object):
         else:
             return ''
 
-    def query_installed_chaincodes(self, requestor, peer_names, timeout=10):
+    def query_installed_chaincodes(self, requestor, peer_names):
         """
         Queries installed chaincode, returns all chaincodes installed on a peer
 
@@ -962,7 +962,7 @@ class Client(object):
             raise
 
     def query_block_by_txid(self, requestor, channel_name,
-                            peer_names, tx_id, timeout=10):
+                            peer_names, tx_id):
         """
         Queries block by tx id
 
@@ -1093,7 +1093,6 @@ class Client(object):
         tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
 
         responses = channel.query_transaction(tx_context, peers, tx_id)
-        print(responses)
 
         try:
             if responses[0][0].response:
