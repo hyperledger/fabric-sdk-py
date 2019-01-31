@@ -131,7 +131,7 @@ class E2eTest(BaseTestCase):
             response = self.client.chaincode_instantiate(
                 requestor=org_admin,
                 channel_name=self.channel_name,
-                peer_names=['peer0.' + org, 'peer1.' + org],
+                peer_names=['peer0.' + org],
                 args=args,
                 cc_name=CC_NAME,
                 cc_version=CC_VERSION
@@ -156,7 +156,7 @@ class E2eTest(BaseTestCase):
             response = self.client.chaincode_invoke(
                 requestor=org_admin,
                 channel_name=self.channel_name,
-                peer_names=['peer0.' + org, 'peer1.' + org],
+                peer_names=['peer1.' + org],
                 args=args,
                 cc_name=CC_NAME,
                 cc_version=CC_VERSION
@@ -180,12 +180,12 @@ class E2eTest(BaseTestCase):
             response = self.client.chaincode_query(
                 requestor=org_admin,
                 channel_name=self.channel_name,
-                peer_names=['peer0.' + org, 'peer1.' + org],
+                peer_names=['peer0.' + org],
                 args=args,
                 cc_name=CC_NAME,
                 cc_version=CC_VERSION
             )
-            self.assertEqual(response, '300')
+            self.assertEqual(response, '400')
 
         logger.info("E2E: chaincode query done")
 
@@ -253,7 +253,7 @@ class E2eTest(BaseTestCase):
             )
             self.assertEqual(
                 response.height,
-                2,
+                3,
                 "Query failed")
 
         logger.info("E2E: Query info done")
@@ -269,15 +269,36 @@ class E2eTest(BaseTestCase):
         orgs = ["org1.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
+
+            response = self.client.query_info(
+                requestor=org_admin,
+                channel_name=self.channel_name,
+                peer_names=['peer0.' + org, 'peer1.' + org],
+            )
+
+            response = self.client.query_block_by_hash(
+                requestor=org_admin,
+                channel_name=self.channel_name,
+                peer_names=['peer0.' + org, 'peer1.' + org],
+                block_hash=response.currentBlockHash
+            )
+
+            tx_id = response.get('data').get('data')[0].get(
+                'payload').get('header').get(
+                'channel_header').get('tx_id')
+
             response = self.client.query_block_by_txid(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peer_names=['peer0.' + org, 'peer1.' + org],
-                tx_id=self.client.txid_for_test
+                tx_id=tx_id
             )
+
             self.assertEqual(
-                response['header']['number'],
-                1,
+                response.get('data').get('data')[0].get(
+                    'payload').get('header').get(
+                    'channel_header').get('tx_id'),
+                tx_id,
                 "Query failed")
 
         logger.info("E2E: Query block by tx id done")
@@ -300,15 +321,18 @@ class E2eTest(BaseTestCase):
                 peer_names=['peer0.' + org, 'peer1.' + org],
             )
 
+            previous_block_hash = response.previousBlockHash
+            current_block_hash = response.currentBlockHash
             response = self.client.query_block_by_hash(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peer_names=['peer0.' + org, 'peer1.' + org],
-                block_hash=response.currentBlockHash
+                block_hash=current_block_hash
             )
+
             self.assertEqual(
-                response['header']['number'],
-                1,
+                response['header']['previous_hash'].decode('utf-8'),
+                previous_block_hash.hex(),
                 "Query failed")
 
         logger.info("E2E: Query block by block hash done")
@@ -345,16 +369,34 @@ class E2eTest(BaseTestCase):
         :return:
         """
         logger.info("E2E: Query transaction by tx id start")
-
         orgs = ["org1.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
+
+            response = self.client.query_info(
+                requestor=org_admin,
+                channel_name=self.channel_name,
+                peer_names=['peer0.' + org, 'peer1.' + org],
+            )
+
+            response = self.client.query_block_by_hash(
+                requestor=org_admin,
+                channel_name=self.channel_name,
+                peer_names=['peer0.' + org, 'peer1.' + org],
+                block_hash=response.currentBlockHash
+            )
+
+            tx_id = response.get('data').get('data')[0].get(
+                'payload').get('header').get(
+                'channel_header').get('tx_id')
+
             response = self.client.query_transaction(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peer_names=['peer0.' + org, 'peer1.' + org],
-                tx_id=self.client.txid_for_test
+                tx_id=tx_id
             )
+
             self.assertEqual(
                 response.get('transaction_envelope').get('payload').get(
                     'header').get('channel_header').get('channel_id'),

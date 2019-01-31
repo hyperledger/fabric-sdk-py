@@ -693,7 +693,7 @@ class Client(object):
         return tx_path
 
     def chaincode_instantiate(self, requestor, channel_name, peer_names,
-                              args, cc_name, cc_version):
+                              args, cc_name, cc_version, timeout=10):
         """
             Instantiate installed chaincode to particular peer in
             particular channel
@@ -704,6 +704,7 @@ class Client(object):
         :param args (list): arguments (keys and values) for initialization
         :param cc_name: chaincode name
         :param cc_version: chaincode version
+        :param timeout: Timeout to wait
         :return: True or False
         """
         peers = []
@@ -735,29 +736,34 @@ class Client(object):
         tran_req = utils.build_tx_req(res)
         responses = utils.send_transaction(self.orderers, tran_req, tx_context)
 
-        self.txid_for_test = tx_context_dep.tx_id  # used only for query test
-
         if not(tran_req.responses[0].response.status == 200
-                and responses[0].status == 200):
+               and responses[0].status == 200):
             return False
 
         # Wait until chaincode is really instantiated
+        # Note : we will remove this part when we have channel event hub
         starttime = int(time.time())
-        while int(time.time()) - starttime < 30:
-            response = self.query_instantiated_chaincodes(
-                requestor=requestor,
-                channel_name=channel_name,
-                peer_names=peer_names
-            )
-            for chaincode in response.chaincodes:
-                if chaincode.name == cc_name \
-                        and chaincode.version == cc_version:
+        while int(time.time()) - starttime < timeout:
+            try:
+                response = self.query_transaction(
+                    requestor=requestor,
+                    channel_name=channel_name,
+                    peer_names=peer_names,
+                    tx_id=tx_context_dep.tx_id,
+                    decode=False
+                )
+
+                if response.response.status == 200:
                     return True
+
+                time.sleep(1)
+            except Exception:
+                time.sleep(1)
 
         return False
 
-    def chaincode_invoke(self, requestor, channel_name, peer_names,
-                         args, cc_name, cc_version):
+    def chaincode_invoke(self, requestor, channel_name, peer_names, args,
+                         cc_name, cc_version, fcn='invoke', timeout=10):
         """
         Invoke chaincode for ledger update
 
@@ -767,6 +773,8 @@ class Client(object):
         :param args (list): arguments (keys and values) for initialization
         :param cc_name: chaincode name
         :param cc_version: chaincode version
+        :param fcn: chaincode function
+        :param timeout: Timeout to wait
         :return: True or False
         """
         peers = []
@@ -779,7 +787,7 @@ class Client(object):
             cc_type=CC_TYPE_GOLANG,
             cc_name=cc_name,
             cc_version=cc_version,
-            fcn='invoke',
+            fcn=fcn,
             args=args
         )
 
@@ -793,15 +801,44 @@ class Client(object):
             channel_name).send_tx_proposal(tx_context, peers)
 
         tran_req = utils.build_tx_req(res)
-        tx_context_tx = create_tx_context(requestor, ecies(), tran_req)
+
+        tx_context_tx = create_tx_context(
+            requestor,
+            ecies(),
+            tran_req
+        )
 
         responses = utils.send_transaction(
             self.orderers, tran_req, tx_context_tx)
 
-        return responses[0].status == 200
+        if not(tran_req.responses[0].response.status == 200
+               and responses[0].status == 200):
+            return False
+
+        # Wait until chaincode invoke is really effective
+        # Note : we will remove this part when we have channel event hub
+        starttime = int(time.time())
+        while int(time.time()) - starttime < timeout:
+            try:
+                response = self.query_transaction(
+                    requestor=requestor,
+                    channel_name=channel_name,
+                    peer_names=peer_names,
+                    tx_id=tx_context.tx_id,
+                    decode=False
+                )
+
+                if response.response.status == 200:
+                    return True
+
+                time.sleep(1)
+            except Exception:
+                time.sleep(1)
+
+        return False
 
     def chaincode_query(self, requestor, channel_name, peer_names, args,
-                        cc_name, cc_version):
+                        cc_name, cc_version, fcn='query'):
         """
         Query chaincode
 
@@ -811,6 +848,7 @@ class Client(object):
         :param args (list): arguments (keys and values) for initialization
         :param cc_name: chaincode name
         :param cc_version: chaincode version
+        :param fcn: chaincode function
         :return: True or False
         """
         peers = []
@@ -823,7 +861,7 @@ class Client(object):
             cc_type=CC_TYPE_GOLANG,
             cc_name=cc_name,
             cc_version=cc_version,
-            fcn='query',
+            fcn=fcn,
             args=args
         )
 
@@ -843,13 +881,14 @@ class Client(object):
         else:
             return ''
 
-    def query_installed_chaincodes(self, requestor, peer_names):
+    def query_installed_chaincodes(self, requestor, peer_names, decode=True):
         """
         Queries installed chaincode, returns all chaincodes installed on a peer
 
         :param requestor: User role who issue the request
         :param peer_names: Names of the peers to query
-        :return: A `ChaincodeQueryResponse`
+        :param deocode: Decode the response payload
+        :return: A `ChaincodeQueryResponse` or `ProposalResponse`
         """
         peers = []
         for peer_name in peer_names:
@@ -870,7 +909,7 @@ class Client(object):
         responses = Channel._send_tx_proposal('', tx_context, peers)
 
         try:
-            if responses[0][0].response:
+            if responses[0][0].response and decode:
                 query_trans = query_pb2.ChaincodeQueryResponse()
                 query_trans.ParseFromString(responses[0][0].response.payload)
                 for cc in query_trans.chaincodes:
@@ -884,13 +923,14 @@ class Client(object):
                 "Failed to query installed chaincodes: {}", sys.exc_info()[0])
             raise
 
-    def query_channels(self, requestor, peer_names):
+    def query_channels(self, requestor, peer_names, decode=True):
         """
         Queries channel name joined by a peer
 
         :param requestor: User role who issue the request
         :param peer_names: Names of the peers to install
-        :return: A `ChannelQueryResponse`
+        :param deocode: Decode the response payload
+        :return: A `ChannelQueryResponse` or `ProposalResponse`
         """
 
         peers = []
@@ -912,7 +952,7 @@ class Client(object):
         responses = Channel._send_tx_proposal('', tx_context, peers)
 
         try:
-            if responses[0][0].response:
+            if responses[0][0].response and decode:
                 query_trans = query_pb2.ChannelQueryResponse()
                 query_trans.ParseFromString(responses[0][0].response.payload)
                 for ch in query_trans.channels:
@@ -927,14 +967,15 @@ class Client(object):
             raise
 
     def query_info(self, requestor, channel_name,
-                   peer_names):
+                   peer_names, decode=True):
         """
         Queries information of a channel
 
         :param requestor: User role who issue the request
         :param channel_name: Name of channel to query
         :param peer_names: Names of the peers to install
-        :return: A `BlockchainInfo`
+        :param deocode: Decode the response payload
+        :return: A `BlockchainInfo` or `ProposalResponse`
         """
 
         peers = []
@@ -948,7 +989,7 @@ class Client(object):
         responses = channel.query_info(tx_context, peers)
 
         try:
-            if responses[0][0].response:
+            if responses[0][0].response and decode:
                 chain_info = ledger_pb2.BlockchainInfo()
                 chain_info.ParseFromString(responses[0][0].response.payload)
                 _logger.debug('response status {}'.format(
@@ -962,7 +1003,7 @@ class Client(object):
             raise
 
     def query_block_by_txid(self, requestor, channel_name,
-                            peer_names, tx_id):
+                            peer_names, tx_id, decode=True):
         """
         Queries block by tx id
 
@@ -970,7 +1011,8 @@ class Client(object):
         :param channel_name: Name of channel to query
         :param peer_names: Names of the peers to install
         :param tx_id: Transaction ID
-        :return: A `BlockDecoder`
+        :param deocode: Decode the response payload
+        :return: A `BlockDecoder` or `ProposalResponse`
         """
 
         peers = []
@@ -984,7 +1026,7 @@ class Client(object):
         responses = channel.query_block_by_txid(tx_context, peers, tx_id)
 
         try:
-            if responses[0][0].response:
+            if responses[0][0].response and decode:
                 _logger.debug('response status {}'.format(
                     responses[0][0].response.status))
                 block = BlockDecoder().decode(responses[0][0].response.payload)
@@ -999,7 +1041,7 @@ class Client(object):
             raise
 
     def query_block_by_hash(self, requestor, channel_name,
-                            peer_names, block_hash):
+                            peer_names, block_hash, decode=True):
         """
         Queries block by hash
 
@@ -1007,7 +1049,8 @@ class Client(object):
         :param channel_name: Name of channel to query
         :param peer_names: Names of the peers to install
         :param block_hash: Hash of a block
-        :return: A `BlockDecoder`
+        :param deocode: Decode the response payload
+        :return: A `BlockDecoder` or `ProposalResponse`
         """
 
         peers = []
@@ -1021,7 +1064,7 @@ class Client(object):
         responses = channel.query_block_by_hash(tx_context, peers, block_hash)
 
         try:
-            if responses[0][0].response:
+            if responses[0][0].response and decode:
                 _logger.debug('response status {}'.format(
                     responses[0][0].response.status))
                 block = BlockDecoder().decode(responses[0][0].response.payload)
@@ -1036,7 +1079,7 @@ class Client(object):
             raise
 
     def query_block(self, requestor, channel_name,
-                    peer_names, block_number):
+                    peer_names, block_number, decode=True):
         """
         Queries block by number
 
@@ -1044,7 +1087,8 @@ class Client(object):
         :param channel_name: name of channel to query
         :param peer_names: Names of the peers to install
         :param block_number: Number of a block
-        :return: A `BlockDecoder`
+        :param deocode: Decode the response payload
+        :return: A `BlockDecoder` or `ProposalResponse`
         """
 
         peers = []
@@ -1058,7 +1102,7 @@ class Client(object):
         responses = channel.query_block(tx_context, peers, block_number)
 
         try:
-            if responses[0][0].response:
+            if responses[0][0].response and decode:
                 _logger.debug('response status {}'.format(
                     responses[0][0].response.status))
                 block = BlockDecoder().decode(responses[0][0].response.payload)
@@ -1073,7 +1117,7 @@ class Client(object):
             raise
 
     def query_transaction(self, requestor, channel_name,
-                          peer_names, tx_id):
+                          peer_names, tx_id, decode=True):
         """
         Queries block by number
 
@@ -1081,7 +1125,8 @@ class Client(object):
         :param channel_name: name of channel to query
         :param peer_names: Names of the peers to install
         :param tx_id: The id of the transaction
-        :return: A `BlockDecoder`
+        :param deocode: Decode the response payload
+        :return:  A `BlockDecoder` or `ProposalResponse`
         """
 
         peers = []
@@ -1095,12 +1140,13 @@ class Client(object):
         responses = channel.query_transaction(tx_context, peers, tx_id)
 
         try:
-            if responses[0][0].response:
+            if responses[0][0].response and decode:
                 _logger.debug('response status {}'.format(
                     responses[0][0].response.status))
                 process_trans = BlockDecoder().decode_transaction(
                     responses[0][0].response.payload)
                 return process_trans
+
             return responses[0][0]
 
         except Exception:
@@ -1109,14 +1155,15 @@ class Client(object):
             raise
 
     def query_instantiated_chaincodes(self, requestor, channel_name,
-                                      peer_names):
+                                      peer_names, decode=True):
         """
         Queries instantiated chaincode
 
         :param requestor: User role who issue the request
         :param channel_name: name of channel to query
         :param peer_names: Names of the peers to query
-        :return: A `ChaincodeQueryResponse`
+        :param deocode: Decode the response payload
+        :return: A `ChaincodeQueryResponse` or `ProposalResponse`
         """
         peers = []
         for peer_name in peer_names:
@@ -1129,7 +1176,7 @@ class Client(object):
         responses = channel.query_instantiated_chaincodes(tx_context, peers)
 
         try:
-            if responses[0][0].response:
+            if responses[0][0].response and decode:
                 query_trans = query_pb2.ChaincodeQueryResponse()
                 query_trans.ParseFromString(responses[0][0].response.payload)
                 for cc in query_trans.chaincodes:

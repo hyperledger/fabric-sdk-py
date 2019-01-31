@@ -216,13 +216,25 @@ response = cli.chaincode_invoke(
                cc_name='example_cc',
                cc_version='v1.0'
                )
+
+# Query a chaincode
+args = ['b']
+# The response should be true if succeed
+response = cli.chaincode_query(
+               requestor=org1_admin,
+               channel_name='businesschannel',
+               peer_names=['peer0.org1.example.com'],
+               args=args,
+               cc_name='example_cc',
+               cc_version='v1.0'
+               )
 ```
 
-### Query a Chaincode
-
-TBD.
-
 ## 4. Query Informations
+
+By default, `query` methods, if successful, return a decode response.
+But if you need to get the raw response from the ledger you can add `decode=False` in `query` method argument.
+
 
 ```python
 from hfc.fabric import Client

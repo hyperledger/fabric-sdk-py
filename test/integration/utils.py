@@ -37,6 +37,7 @@ class BaseTestCase(unittest.TestCase):
 
         # Boot up the testing network
         self.start_test_env()
+        time.sleep(1)
 
     def tearDown(self):
         time.sleep(1)
