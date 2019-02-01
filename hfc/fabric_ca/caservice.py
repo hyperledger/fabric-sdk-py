@@ -25,6 +25,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.serialization import Encoding
 from cryptography.x509 import NameOID
 
+from hfc.fabric_ca.certificateService import CertificateService
 from hfc.fabric_ca.identityService import IdentityService
 from hfc.fabric_ca.affiliationService import AffiliationService
 from hfc.util.crypto.crypto import ecies
@@ -376,6 +377,9 @@ class CAClient(object):
     def newAffiliationService(self):
         return AffiliationService(self)
 
+    def newCertificateService(self):
+        return CertificateService(self)
+
 
 class CAService(object):
     """This is a ca server delegate."""
@@ -582,6 +586,9 @@ class CAService(object):
 
     def newAffiliationService(self):
         return self._ca_client.newAffiliationService()
+
+    def newCertificateService(self):
+        return self._ca_client.newCertificateService()
 
 
 def ca_service(target=DEFAULT_CA_ENDPOINT,
