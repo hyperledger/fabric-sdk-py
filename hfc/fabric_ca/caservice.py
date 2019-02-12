@@ -330,7 +330,7 @@ class CAClient(object):
         req = {'certificate_request': csr}
         if self._ca_name != '':
             req.update({
-                'caName': self._ca_name
+                'caname': self._ca_name
             })
         if profile:
             req.update({
@@ -410,12 +410,6 @@ class CAClient(object):
 
     def generateCRL(self, req, registrar):
         authorization = self.generateAuthToken(req, registrar)
-
-        if self._ca_name != '':
-            req.update({
-                'caName': self._ca_name
-            })
-
         res, st = self._send_ca_post(path='gencrl',
                                      json=req,
                                      headers={'Authorization': authorization},
@@ -662,6 +656,11 @@ class CAService(object):
             'expireBefore': expireBefore,
             'expireAfter': expireAfter
         }
+
+        if self._ca_client._ca_name != '':
+            req.update({
+                'caname': self._ca_client._ca_name
+            })
 
         return self._ca_client.generateCRL(req, registrar)
 
