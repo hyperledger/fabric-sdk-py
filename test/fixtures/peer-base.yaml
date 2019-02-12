@@ -12,6 +12,8 @@ services:
   peer-base:
     image: hyperledger/fabric-peer:1.4.0
     environment:
+      - GODEBUG=netdns=go+1
+      - FABRIC_LOGGING_SPEC=debug
      #- CORE_PEER_ID=peer0
       - CORE_PEER_ADDRESSAUTODETECT=false
       - CORE_LOGGING_LEVEL=DEBUG
@@ -21,6 +23,7 @@ services:
       - CORE_PEER_GOSSIP_ORGLEADER=false  # this node is the group leader, default to false
       - CORE_PEER_PROFILE_ENABLED=false
       - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=false # passing it to true will triger a SSLV3_ALERT_BAD_CERTIFICATE
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt

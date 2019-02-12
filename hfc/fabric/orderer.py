@@ -66,11 +66,11 @@ class Orderer(object):
             self._grpc_options = info['grpcOptions']
             self._tls_ca_certs_path = info['tlsCACerts']['path']
             self._ssl_target_name = self._grpc_options[
-                'ssl-target-name-override']
+                'grpc.ssl_target_name_override']
             self._channel = create_grpc_channel(
                 self._endpoint, self._tls_ca_certs_path,
-                opts=(('grpc.ssl_target_name_override',
-                       self._ssl_target_name),))
+                opts=[(opt, value) for opt, value in
+                      self._grpc_options.items()])
             self._orderer_client = ab_pb2_grpc.AtomicBroadcastStub(
                 self._channel)
         except KeyError as e:

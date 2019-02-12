@@ -274,7 +274,7 @@ class Client(object):
         if tx is None:
             _logger.error('Configtx is empty')
             return False
-        _logger.info("Configtx file sucessfully created in current directory")
+        _logger.info("Configtx file successfully created in current directory")
 
         with open(tx, 'rb') as f:
             envelope = f.read()
@@ -813,7 +813,7 @@ class Client(object):
 
         if not(tran_req.responses[0].response.status == 200
                and responses[0].status == 200):
-            return False
+            return tran_req.responses[0].response.message
 
         # Wait until chaincode invoke is really effective
         # Note : we will remove this part when we have channel event hub
@@ -829,7 +829,8 @@ class Client(object):
                 )
 
                 if response.response.status == 200:
-                    return True
+                    payload = tran_req.responses[0].response.payload
+                    return payload.decode('utf-8')
 
                 time.sleep(1)
             except Exception:

@@ -72,7 +72,7 @@
     "orderer.example.com":{
       "url":"localhost:7050",
       "grpcOptions":{
-        "ssl-target-name-override":"orderer.example.com",
+        "grpc.ssl_target_name_override":"orderer.example.com",
         "grpc-max-send-message-length":15
       },
       "tlsCACerts":{
@@ -85,7 +85,7 @@
       "url":"localhost:7051",
       "eventUrl":"localhost:7053",
       "grpcOptions":{
-        "ssl-target-name-override":"peer0.org1.example.com",
+        "grpc.ssl_target_name_override":"peer0.org1.example.com",
         "grpc.http2.keepalive_time":15
       },
       "tlsCACerts":{
@@ -96,7 +96,7 @@
       "url":"localhost:8051",
       "eventUrl":"localhost:8053",
       "grpcOptions":{
-        "ssl-target-name-override":"peer1.org1.example.com"
+        "grpc.ssl_target_name_override":"peer1.org1.example.com"
       },
       "tlsCACerts":{
         "path":"test/fixtures/e2e_cli/crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/msp/tlscacerts/tlsca.org1.example.com-cert.pem"
@@ -106,7 +106,7 @@
       "url":"localhost:9051",
       "eventUrl":"localhost:9053",
       "grpcOptions":{
-        "ssl-target-name-override":"peer0.org2.example.com",
+        "grpc.ssl_target_name_override":"peer0.org2.example.com",
         "grpc.http2.keepalive_time":15
       },
       "tlsCACerts":{
@@ -117,7 +117,7 @@
       "url":"localhost:10051",
       "eventUrl":"localhost:10053",
       "grpcOptions":{
-        "ssl-target-name-override":"peer1.org2.example.com"
+        "grpc.ssl_target_name_override":"peer1.org2.example.com"
       },
       "tlsCACerts":{
         "path":"test/fixtures/e2e_cli/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/msp/tlscacerts/tlsca.org2.example.com-cert.pem"

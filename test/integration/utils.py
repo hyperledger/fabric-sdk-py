@@ -36,6 +36,7 @@ class BaseTestCase(unittest.TestCase):
         self.assertIsNotNone(self.user, 'org1 admin should not be None')
 
         # Boot up the testing network
+        self.shutdown_test_env()
         self.start_test_env()
         time.sleep(1)
 

@@ -6,11 +6,9 @@ import logging
 import unittest
 
 from test.integration.utils import BaseTestCase
-from test.integration.config import E2E_CONFIG
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-test_network = E2E_CONFIG['test-network']
 
 CC_PATH = 'github.com/example_cc'
 CC_NAME = 'example_cc'
@@ -161,7 +159,7 @@ class E2eTest(BaseTestCase):
                 cc_name=CC_NAME,
                 cc_version=CC_VERSION
             )
-            self.assertTrue(response)
+            self.assertEqual(response, '')
 
         logger.info("E2E: chaincode invoke done")
 
@@ -185,7 +183,7 @@ class E2eTest(BaseTestCase):
                 cc_name=CC_NAME,
                 cc_version=CC_VERSION
             )
-            self.assertEqual(response, '400')
+            self.assertEqual(response, '400')  # 300 + 100
 
         logger.info("E2E: chaincode query done")
 
