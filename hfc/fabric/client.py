@@ -736,8 +736,8 @@ class Client(object):
         tran_req = utils.build_tx_req(res)
         responses = utils.send_transaction(self.orderers, tran_req, tx_context)
 
-        if not(tran_req.responses[0].response.status == 200
-               and responses[0].status == 200):
+        if not (tran_req.responses[0].response.status == 200
+                and responses[0].status == 200):
             return False
 
         # Wait until chaincode is really instantiated
@@ -763,7 +763,8 @@ class Client(object):
         return False
 
     def chaincode_invoke(self, requestor, channel_name, peer_names, args,
-                         cc_name, cc_version, fcn='invoke', timeout=10):
+                         cc_name, cc_version, cc_type=CC_TYPE_GOLANG,
+                         fcn='invoke', timeout=10):
         """
         Invoke chaincode for ledger update
 
@@ -773,6 +774,7 @@ class Client(object):
         :param args (list): arguments (keys and values) for initialization
         :param cc_name: chaincode name
         :param cc_version: chaincode version
+        :param cc_type: chaincode type language
         :param fcn: chaincode function
         :param timeout: Timeout to wait
         :return: True or False
@@ -784,9 +786,9 @@ class Client(object):
 
         tran_prop_req = create_tx_prop_req(
             prop_type=CC_INVOKE,
-            cc_type=CC_TYPE_GOLANG,
             cc_name=cc_name,
             cc_version=cc_version,
+            cc_type=cc_type,
             fcn=fcn,
             args=args
         )
@@ -811,13 +813,14 @@ class Client(object):
         responses = utils.send_transaction(
             self.orderers, tran_req, tx_context_tx)
 
-        if not(tran_req.responses[0].response.status == 200
-               and responses[0].status == 200):
-            return tran_req.responses[0].response.message
+        res = tran_req.responses[0].response
+        if not (res.status == 200 and responses[0].status == 200):
+            return res.message
 
         # Wait until chaincode invoke is really effective
         # Note : we will remove this part when we have channel event hub
         starttime = int(time.time())
+        payload = None
         while int(time.time()) - starttime < timeout:
             try:
                 response = self.query_transaction(
@@ -836,10 +839,12 @@ class Client(object):
             except Exception:
                 time.sleep(1)
 
-        return False
+        msg = 'Failed to invoke chaincode. Query check returned: %s'
+        return msg % payload.message
 
     def chaincode_query(self, requestor, channel_name, peer_names, args,
-                        cc_name, cc_version, fcn='query'):
+                        cc_name, cc_version, cc_type=CC_TYPE_GOLANG,
+                        fcn='query'):
         """
         Query chaincode
 
@@ -849,6 +854,7 @@ class Client(object):
         :param args (list): arguments (keys and values) for initialization
         :param cc_name: chaincode name
         :param cc_version: chaincode version
+        :param cc_type: chaincode type language
         :param fcn: chaincode function
         :return: True or False
         """
@@ -859,9 +865,9 @@ class Client(object):
 
         tran_prop_req = create_tx_prop_req(
             prop_type=CC_QUERY,
-            cc_type=CC_TYPE_GOLANG,
             cc_name=cc_name,
             cc_version=cc_version,
+            cc_type=cc_type,
             fcn=fcn,
             args=args
         )
@@ -876,11 +882,11 @@ class Client(object):
             channel_name).send_tx_proposal(tx_context, peers)
 
         tran_req = utils.build_tx_req(res)
-        if tran_req.responses[0].response.status == 200:
-            payload = tran_req.responses[0].response.payload
-            return payload.decode('utf-8')
-        else:
-            return ''
+        res = tran_req.responses[0].response
+        if res.status == 200:
+            return res.payload.decode('utf-8')
+
+        return res.message
 
     def query_installed_chaincodes(self, requestor, peer_names, decode=True):
         """
@@ -915,7 +921,7 @@ class Client(object):
                 query_trans.ParseFromString(responses[0][0].response.payload)
                 for cc in query_trans.chaincodes:
                     _logger.debug('cc name {}, version {}, path {}'.format(
-                                  cc.name, cc.version, cc.path))
+                        cc.name, cc.version, cc.path))
                 return query_trans
             return responses[0][0]
 
@@ -1182,7 +1188,7 @@ class Client(object):
                 query_trans.ParseFromString(responses[0][0].response.payload)
                 for cc in query_trans.chaincodes:
                     _logger.debug('cc name {}, version {}, path {}'.format(
-                                  cc.name, cc.version, cc.path))
+                        cc.name, cc.version, cc.path))
                 return query_trans
             return responses[0][0]
 

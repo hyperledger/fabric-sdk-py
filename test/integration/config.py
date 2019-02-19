@@ -21,7 +21,8 @@ E2E_CONFIG = {
         'docker': {
             'compose_file_no_tls': 'test/fixtures/docker-compose-1peer-notls.yaml',
             'compose_file_tls': 'test/fixtures/docker-compose-2orgs-4peers-tls.yaml',
-            'compose_file_tls_cli': 'test/fixtures/docker-compose-2orgs-4peers-tls-cli.yaml'
+            'compose_file_tls_cli': 'test/fixtures/docker-compose-2orgs-4peers-tls-cli.yaml',
+            'compose_file_mutual_tls': 'test/fixtures/docker-compose-2orgs-4peers-mutual-tls.yaml',
         },
         'channel-artifacts': {
             'channel_id': 'businesschannel',

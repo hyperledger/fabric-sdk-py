@@ -25,7 +25,7 @@ services:
       - CORE_PEER_TLS_ENABLED=true
       # passing the following option to true will trigger a SSLV3_ALERT_BAD_CERTIFICATE
       # if you do not specify clientCert and clientKey in network.json for the peer making the query
-      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=false
+      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=true
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt

@@ -35,13 +35,18 @@ class Orderer(object):
     """
 
     def __init__(self, name='orderer', endpoint=DEFAULT_ORDERER_ENDPOINT,
-                 tls_ca_cert_file=None, opts=None):
+                 tls_ca_cert_file=None, client_key_file=None,
+                 client_cert_file=None, opts=None):
         """Creates an orderer object.
 
         Args:
             endpoint (str): The grpc endpoint of the orderer.
             tls_ca_cert_file (str): The tls certificate for the given
                 orderer as bytes.
+            client_key (str): file path for Private key used for TLS when
+                making client connections
+            client_cert (str): file path for X.509 certificate used for TLS
+                when making client connections
             opts (tuple): Additional grpc config options as
                 tuple e.g. ((key, val),).
 
@@ -51,8 +56,11 @@ class Orderer(object):
         self._grpc_options = dict()
         self._ssl_target_name = None
         self._tls_ca_certs_path = tls_ca_cert_file
+        self._client_key_path = client_key_file
+        self._client_cert_path = client_cert_file
         self._channel = create_grpc_channel(self._endpoint, tls_ca_cert_file,
-                                            opts)
+                                            client_key_file,
+                                            client_cert_file, opts)
         self._orderer_client = ab_pb2_grpc.AtomicBroadcastStub(self._channel)
 
     def init_with_bundle(self, info):
@@ -65,10 +73,17 @@ class Orderer(object):
             self._endpoint = info['url']
             self._grpc_options = info['grpcOptions']
             self._tls_ca_certs_path = info['tlsCACerts']['path']
+            if 'clientKey' in info:
+                self._client_key_path = info['clientKey']['path']
+            if 'clientCert' in info:
+                self._client_cert_path = info['clientCert']['path']
             self._ssl_target_name = self._grpc_options[
                 'grpc.ssl_target_name_override']
             self._channel = create_grpc_channel(
-                self._endpoint, self._tls_ca_certs_path,
+                self._endpoint,
+                self._tls_ca_certs_path,
+                self._client_key_path,
+                self._client_cert_path,
                 opts=[(opt, value) for opt, value in
                       self._grpc_options.items()])
             self._orderer_client = ab_pb2_grpc.AtomicBroadcastStub(
