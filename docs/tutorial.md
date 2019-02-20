@@ -1,6 +1,16 @@
 # Tutorial of using Fabric SDK
 
-**Notice: The tutorial is still in-progress, and example code can be found at [e2e_test.py](test/integration/e2e_test.py).**
+**Notice: The tutorial is still in-progress, and the full version sample code can be found at [sample.py](docs/sample.py).**
+
+TLDR, run a quick example testing.
+
+```bash
+$ pip3 install virtualenv; make venv
+$ source venv/bin/activate
+$ make install
+$ python docs/sample.py
+$ deactive
+```
 
 ## 0. Pre-requisites
 

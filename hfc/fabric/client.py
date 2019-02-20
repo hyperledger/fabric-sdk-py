@@ -40,7 +40,10 @@ from hfc.util.keyvaluestore import FileKeyValueStore
 from hfc.fabric.config.default import DEFAULT
 
 assert DEFAULT
+# consoleHandler = logging.StreamHandler()
 _logger = logging.getLogger(__name__)
+# _logger.setLevel(logging.DEBUG)
+# _logger.addHandler(consoleHandler)
 
 
 class Client(object):
@@ -657,12 +660,12 @@ class Client(object):
         _logger.debug("context {}".format(tx_context))
         return app_channel.send_instantiate_proposal(tx_context, peers)
 
-    def generate_channel_tx(self, channel_name, config_yaml, channel_profile):
+    def generate_channel_tx(self, channel_name, cfg_path, channel_profile):
         """ Creates channel configuration transaction
 
         Args:
             :param channel_name: Name of the channel
-            :param config_yaml: Directory path of config yaml to be set for
+            :param cfg_path: Directory path of config yaml to be set for
             FABRIC_CFG_PATH variable
             :param channel_profile: Name of the channel profile defined inside
             config yaml file
@@ -677,13 +680,15 @@ class Client(object):
 
         # Generate channel.tx with configtxgen
         tx_path = "/tmp/channel.tx"
-        config_yaml = config_yaml if os.path.isabs(config_yaml) else \
-            os.getcwd() + "/" + config_yaml
-        _logger.info("FABRIC_CFG_PATH set to {}".format(config_yaml))
-        new_env = dict(os.environ, FABRIC_CFG_PATH=config_yaml)
-        output = subprocess.Popen(['configtxgen', '-profile', channel_profile,
-                                   '-outputCreateChannelTx', tx_path,
-                                   '-channelID', channel_name],
+        cfg_path = cfg_path if os.path.isabs(cfg_path) else \
+            os.getcwd() + "/" + cfg_path
+        _logger.info("FABRIC_CFG_PATH set to {}".format(cfg_path))
+        new_env = dict(os.environ, FABRIC_CFG_PATH=cfg_path)
+        output = subprocess.Popen(['configtxgen',
+                                   '-configPath', cfg_path,
+                                   '-profile', channel_profile,
+                                   '-channelID', channel_name,
+                                  '-outputCreateChannelTx', tx_path],
                                   stdout=open(os.devnull, "w"),
                                   stderr=subprocess.PIPE, env=new_env)
         err = output.communicate()[1]

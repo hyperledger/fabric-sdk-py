@@ -67,10 +67,14 @@ clean:
 
 # Enter a virtual env
 venv:
+	@echo "virtualenv can be installed by: pip3 install virtualenv"
 	if [ ! -d venv ]; then \
 		virtualenv -p python3 venv; \
+		pip install -r requirements.txt; \
+		pip install -r requirements-test.txt; \
 	fi
-	@echo "Run 'source venv/bin/activate' to active the virtual env now."
+	@echo "Active the virtual env: source venv/bin/activate"
+	@echo "Deactive when done: deactivate"
 
 # Install sdk to local python env
 install:
