@@ -1,8 +1,8 @@
-# Tutorial of using Fabric SDK
+# Tutorial of Using Fabric Python SDK
 
 **Notice: The tutorial is still in-progress, and example code can be found at [e2e_test.py](test/integration/e2e_test.py).**
 
-## 0. Pre-requisites
+## 0. Prepare a Testing Environment
 
 ### 0.1. Install Fabric SDK
 
@@ -12,28 +12,34 @@ $ cd fabric-sdk-py
 $ make install
 ```
 
-After installation, you can optionally verify the installation by checking the version number.
+Optionally, you can also verify the version number or run all testing cases.
 
 ```bash
 $ python
 >>> import hfc
 >>> print(hfc.VERSION)
 0.7.0
+>>> exit()
+
+$ make check
 ```
 
-### 0.2. Start a Fabric Network
+### 0.2. Setup a Fabric Network
+
+If you already have a running fabric network, ignore this.
 
 To start an example fabric network you can simply run the following command:
 
 ```bash
-$ docker pull hyperledger/fabric-peer:1.4.0
-$ docker pull hyperledger/fabric-orderer:1.4.0
-$ docker pull hyperledger/fabric-ca:1.4.0
-$ docker pull hyperledger/fabric-ccenv:1.4.0
+$ HLF_VERSION=1.4.0
+$ docker pull hyperledger/fabric-peer:${HLF_VERSION}
+$ docker pull hyperledger/fabric-orderer:${HLF_VERSION}
+$ docker pull hyperledger/fabric-ca:${HLF_VERSION}
+$ docker pull hyperledger/fabric-ccenv:${HLF_VERSION}
 $ docker-compose -f test/fixtures/docker-compose-2orgs-4peers-tls.yaml up
 ```
 
-Then you'll have a fabric network with topology of 3 organizations:
+Then you'll have a fabric network with 3 organizations, 4 peers and 1 orderer:
  * org1.example.com
    * peer0.org1.example.com
    * peer1.org1.example.com
@@ -43,8 +49,7 @@ Then you'll have a fabric network with topology of 3 organizations:
  * orderer.example.com
    * orderer.example.com
 
-* Note: make sure `configtxgen` is in the 'PATH' and the recommended version of `configtxgen` is 1.4.0
-* It is recmmended to use `configtxgen` 1.4.0 and set logging level to DEBUG or INFO when you meet a problem
+* Note: make sure `configtxgen` is in the '$PATH'.
 
 If you want to understand more details on starting up a fabric network, feel free to see the [Building Your First Network](https://hyperledger-fabric.readthedocs.io/en/latest/build_network.html) tutorial.
 
@@ -52,35 +57,39 @@ If you want to understand more details on starting up a fabric network, feel fre
 
 A network connection profile helps SDK connect to the fabric network by providing all required information to operate with a fabric network, including:
 
-* Service endpoints for peer, orderer, ca;
-* Credentials for identities that clients may act as;
+* Client credentials file location;
+* Service endpoints for peer, orderer and ca;
 
-For example, [network.json](test/fixtures/network.json).
+The [network.json](test/fixtures/network.json) is an example, please modify the content accordingly.
+
+Now you can use the Python SDK to work with the fabric network!
 
 ## 1. Get Credentials
 
-### 1.1 Load Connection Profile
+### 1.1 Load the Connection Profile
 
-SDK can load all network information from the profile, and check the resources in the network.
+Load all network information from the profile, and check the resources.
 
 ```python
 from hfc.fabric import Client
 
 cli = Client(net_profile="test/fixtures/network.json")
 
-cli.organizations  # orgs in the network
-cli.peers  # peers in the network
-cli.orderers  # orderers in the network
-cli.CAs  # ca nodes in the network, TODO
+print(cli.organizations)  # orgs in the network
+print(cli.peers)  # peers in the network
+print(cli.orderers)  # orderers in the network
+print(cli.CAs)  # ca nodes in the network, TODO
 ```
 
 ### 1.2 Prepare User Id (Optionally)
 
-SDK will try to get the credential of a valid network user first.
+SDK need the credential file as a valid network user.
 
-#### 1.2.2 There's user in profile, just get the credential
+Typically there are two ways: using cryptogen or using Fabric-CA. That will depend on how your network boots up with.
 
-SDK will get valid credentials from fabric-ca.
+#### 1.2.1 Using Local Credential
+
+SDK will load the valid credential from local path (the credentail files must be put there in advance).
 
 ```python
 from hfc.fabric import Client
@@ -89,8 +98,15 @@ cli = Client(net_profile="test/fixtures/network.json")
 org1_admin = cli.get_user(org_name='org1.example.com', name='Admin') # get the admin user from local path
 ```
 
-#### 1.2.1 If no valid user exist yet, register and enroll from fabric-ca
-SDK will login with default admin role and register a user.
+#### 1.2.2 Get Credentail from Fabric CA
+
+Here demos how to interact with Fabric CA.
+
+* Enroll into Fabric CA with admin role;
+* Register a user `user1`;
+* Enroll with the new user `user1` and get local credential;
+* Re-enroll the `user1`;
+* Revoke the `user1`.
 
 ```python
 from hfc.fabric_ca.caservice import ca_service
@@ -100,10 +116,11 @@ adminEnrollment = cli.enroll("admin", "pass") # now local will have the admin en
 secret = adminEnrollment.register("user1") # register a user to ca
 user1Enrollment = cli.enroll("user1", secret) # now local will have the user enrollment
 user1ReEnrollment = cli.reenroll(user1Enrollment) # now local will have the user reenrolled object
-RevokedCerts, CRL = adminEnrollment.revoke("user1") # revoke the user
+RevokedCerts, CRL = adminEnrollment.revoke("user1") # revoke the user if you need
 ```
 
-You can also use the identity management system:
+You can also use the new identity management system:
+
 ```python
 from hfc.fabric_ca.caservice import ca_service
 
@@ -119,6 +136,9 @@ res = identityService.delete('foo', admin) # delete user foo
 ```
 
 ## 2. Operate Channels with Fabric Network
+
+
+### 2.1 Create a new channel and join it
 
 Use sdk to create a new channel and let peers join it.
 
@@ -161,8 +181,11 @@ response = cli.channel_join(
                orderer_name='orderer.example.com'
                )
 print(response==True)
-
 ```
+
+### 2.2 Update the Channel Configuration
+
+TBD. [Help on this](https://jira.hyperledger.org/browse/FABP-199).
 
 ## 3. Operate Chaincodes with Fabric Network
 
@@ -174,8 +197,8 @@ from hfc.fabric import Client
 cli = Client(net_profile="test/fixtures/network.json")
 org1_admin = cli.get_user('org1.example.com', 'Admin')
 
-# Install Chaincode to Peers
-# This is only needed if to use the example chaincode inside sdk
+# Install Example Chaincode to Peers
+# GOPATH setting is only needed to use the example chaincode inside sdk
 import os
 gopath_bak = os.environ.get('GOPATH', '')
 gopath = os.path.normpath(os.path.join(
@@ -232,9 +255,11 @@ response = cli.chaincode_query(
 
 ## 4. Query Informations
 
-By default, `query` methods, if successful, return a decode response.
-But if you need to get the raw response from the ledger you can add `decode=False` in `query` method argument.
+By default, `query` methods returns a decoded response.
 
+If you need to get the raw response from the ledger you can add `decode=False` param.
+
+### 4.1 Basic Usage
 
 ```python
 from hfc.fabric import Client
@@ -245,7 +270,8 @@ org1_admin = cli.get_user('org1.example.com', 'Admin')
 # Query Peer installed chaincodes, make sure the chaincode is installed
 response = cli.query_installed_chaincodes(
                requestor=org1_admin,
-               peer_names=['peer0.org1.example.com']
+               peer_names=['peer0.org1.example.com'],
+               decode=True
                )
 
 """
@@ -261,7 +287,8 @@ chaincodes {
 # Query Peer Joined channel
 response = cli.query_channels(
                requestor=org1_admin,
-               peer_names=['peer0.org1.example.com']
+               peer_names=['peer0.org1.example.com'],
+               decode=True
                )
 
 """
@@ -276,7 +303,8 @@ channels {
 response = cli.query_info(
                requestor=org1_admin,
                channel_name='businesschannel',
-               peer_names=['peer0.org1.example.com']
+               peer_names=['peer0.org1.example.com'],
+               decode=True
                )
 
 # Query Block by tx id
@@ -285,11 +313,12 @@ response = cli.query_block_by_txid(
                requestor=org1_admin,
                channel_name='businesschannel',
                peer_names=['peer0.org1.example.com'],
-               tx_id=cli.txid_for_test
-                                  )
+               tx_id=cli.txid_for_test,
+               decode=True
+               )
 ```
 
-### Query Block by block hash
+### 4.2 Query Block by block hash
 
 ```python
 from hfc.fabric import Client
@@ -302,7 +331,8 @@ response = cli.query_info(
                requestor=org1_admin,
                channel_name='businesschannel',
                peer_names=['peer0.org1.example.com'],
-                           )
+               decode=True
+               )
 
 test_hash = response.currentBlockHash
 
@@ -310,11 +340,12 @@ response = cli.query_block_by_hash(
                requestor=org1_admin,
                channel_name='businesschannel',
                peer_names=['peer0.org1.example.com'],
-               block_hash=test_hash
-                           )
+               block_hash=test_hash,
+               decode=True
+               )
 ```
 
-### Query Block by block number
+### 4.3 Query Block, Transaction and Instantiated Chaincodes
 
 ```python
 from hfc.fabric import Client
@@ -327,7 +358,8 @@ response = cli.query_block(
                requestor=org1_admin,
                channel_name='businesschannel',
                peer_names=['peer0.org1.example.com'],
-               block_number='1'
+               block_number='1',
+               decode=True
                )
 
 # Query Transaction by tx id
@@ -336,14 +368,16 @@ response = cli.query_transaction(
                requestor=org1_admin,
                channel_name='businesschannel',
                peer_names=['peer0.org1.example.com'],
-               tx_id=cli.txid_for_test
+               tx_id=cli.txid_for_test,
+               decode=True
                )
 
 # Query Instantiated Chaincodes
 response = cli.query_instantiated_chaincodes(
                requestor=org1_admin,
                channel_name='businesschannel',
-               peer_names=['peer0.org1.example.com']
+               peer_names=['peer0.org1.example.com'],
+               decode=True
                )
 ```
 

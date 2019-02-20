@@ -10,7 +10,7 @@ version: '2'
 
 services:
   peer-base:
-    image: hyperledger/fabric-peer:1.4.0
+    image: hyperledger/fabric-peer:${HLF_VERSION}
     environment:
       - GODEBUG=netdns=go+1
       - FABRIC_LOGGING_SPEC=debug

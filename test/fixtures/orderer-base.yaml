@@ -10,7 +10,7 @@ version: '2'
 
 services:
   orderer-base:
-    image: hyperledger/fabric-orderer:1.4.0
+    image: hyperledger/fabric-orderer:${HLF_VERSION}
     environment:
       - ORDERER_GENERAL_LOGLEVEL=DEBUG
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
