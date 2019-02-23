@@ -15,7 +15,8 @@
 import grpc
 
 
-def create_grpc_channel(target, cert_file=None, opts=None):
+def create_grpc_channel(target, cert_file=None, client_key=None,
+                        client_cert=None, opts=None):
     """Construct a grpc channel.
 
     Args:
@@ -35,8 +36,21 @@ def create_grpc_channel(target, cert_file=None, opts=None):
         with open(cert_file, 'rb') as f:
             root_cert = f.read()
 
+    if client_key:
+        with open(client_key, 'rb') as f:
+            client_key = f.read()
+
+    if client_cert:
+        with open(client_cert, 'rb') as f:
+            client_cert = f.read()
+
     if root_cert is None:
         return grpc.insecure_channel(target, opts)
     else:
-        creds = grpc.ssl_channel_credentials(root_cert)
+        if client_cert and client_key:
+            creds = grpc.ssl_channel_credentials(root_cert,
+                                                 private_key=client_key,
+                                                 certificate_chain=client_cert)
+        else:
+            creds = grpc.ssl_channel_credentials(root_cert)
         return grpc.secure_channel(target, creds, opts)
