@@ -1,6 +1,6 @@
 # Tutorial of Using Fabric Python SDK
 
-**Notice: The tutorial is still in-progress, and the full version sample code can be found at [sample.py](docs/sample.py).**
+**Note: The tutorial is still in-progress, and the full version example code can be found at [sample.py](sample.py).**
 
 TLDR, run a quick example testing.
 
