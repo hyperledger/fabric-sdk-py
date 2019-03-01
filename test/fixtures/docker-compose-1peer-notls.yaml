@@ -11,7 +11,7 @@ version: '2.0'
 
 services:
   ca:
-    image: hyperledger/fabric-ca:1.4.0
+    image: hyperledger/fabric-ca:${HLF_VERSION}
     container_name: fabric-ca
     hostname: ca
   #  command: /go/src/github.com/hyperledger/fabric-ca/bin/ca server start -ca testdata/ec.pem -ca-key testdata/ec-key.pem -config testdata/testconfig.json
@@ -36,7 +36,7 @@ services:
   cli:
     container_name: fabric-cli
     hostname: fabric-cli
-    image: hyperledger/fabric-tools:1.4.0
+    image: hyperledger/fabric-tools:${HLF_VERSION}
     tty: true
     environment:
       - CORE_PEER_ID=fabric-cli
