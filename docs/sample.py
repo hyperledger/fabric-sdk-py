@@ -129,3 +129,12 @@ if __name__ == "__main__":
     )
     print("Query installed chaincode.")
     print(response)
+
+    # Get channel config
+    response = cli.get_channel_config(
+        requestor=org1_admin,
+        channel_name='businesschannel',
+        peer_names=['peer0.org1.example.com']
+    )
+    print("Get channel config done.")
+    print(response)

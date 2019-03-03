@@ -1205,6 +1205,48 @@ class Client(object):
                 sys.exc_info()[0])
             raise
 
+    def get_channel_config(self, requestor, channel_name,
+                           peer_names, decode=True):
+        """
+        Get configuration block for the channel
+
+        :param requestor: User role who issue the request
+        :param channel_name: name of channel to query
+        :param peer_names: Names of the peers to query
+        :param deocode: Decode the response payload
+        :return: A `ChaincodeQueryResponse` or `ProposalResponse`
+        """
+        peers = []
+        for peer_name in peer_names:
+            peer = self.get_peer(peer_name)
+            peers.append(peer)
+
+        channel = self.get_channel(channel_name)
+        tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
+
+        responses = channel.get_channel_config(tx_context, peers)
+
+        try:
+            if responses[0][0].response and decode:
+                _logger.debug('response status {}'.format(
+                    responses[0][0].response.status))
+                block = common_pb2.Block()
+                block.ParseFromString(responses[0][0].response.payload)
+                envelope = common_pb2.Envelope()
+                envelope.ParseFromString(block.data.data[0])
+                payload = common_pb2.Payload()
+                payload.ParseFromString(envelope.payload)
+                config_envelope = configtx_pb2.ConfigEnvelope()
+                config_envelope.ParseFromString(payload.data)
+                return config_envelope
+
+            return responses[0][0]
+
+        except Exception:
+            _logger.error(
+                "Failed to get channel config block: {}", sys.exc_info()[0])
+            raise
+
     def query_peers(self, requestor, target_peer,
                     crypto=ecies(), decode=True):
         """Queries peers with discovery api

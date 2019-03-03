@@ -409,7 +409,7 @@ class E2eTest(BaseTestCase):
 
         :return:
         """
-        logger.info("E2E: Query installed chaincode start")
+        logger.info("E2E: Query instantiated chaincode start")
 
         orgs = ["org1.example.com"]
         for org in orgs:
@@ -425,6 +425,27 @@ class E2eTest(BaseTestCase):
                 response.chaincodes[0].version, CC_VERSION, "Query failed")
             self.assertEqual(
                 response.chaincodes[0].path, CC_PATH, "Query failed")
+
+        logger.info("E2E: Query installed chaincode done")
+
+    def get_channel_config(self):
+        """
+        Test get channel config on peer
+
+        :return:
+        """
+        logger.info("E2E: Get channel config start")
+
+        orgs = ["org1.example.com"]
+        for org in orgs:
+            org_admin = self.client.get_user(org, "Admin")
+            response = self.client.get_channel_config(
+                requestor=org_admin,
+                channel_name=self.channel_name,
+                peer_names=['peer0.' + org, 'peer1.' + org]
+            )
+            self.assertEqual(response.config.sequence,
+                             1, "Get Config Failed")
 
         logger.info("E2E: Query installed chaincode done")
 
@@ -461,6 +482,8 @@ class E2eTest(BaseTestCase):
         self.query_block()
 
         self.query_transaction()
+
+        self.get_channel_config()
 
         logger.info("E2E all test cases done\n\n")
 

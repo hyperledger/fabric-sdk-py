@@ -810,6 +810,27 @@ class Channel(object):
         tx_context.tx_prop_req = request
         return self.send_tx_proposal(tx_context, peers)
 
+    def get_channel_config(self, tx_context, peers):
+        """Query the current config block for this channel
+
+        Args:
+            tx_context: tx_context instance
+            peers: peers in the channel
+
+        Returns:
+            :class:`ChaincodeQueryResponse` channelinfo with height,
+            currently the only useful information.
+        """
+        request = create_tx_prop_req(
+            prop_type=CC_QUERY,
+            fcn='GetConfigBlock',
+            cc_name='cscc',
+            args=[self.name],
+            cc_type=CC_TYPE_GOLANG)
+
+        tx_context.tx_prop_req = request
+        return self.send_tx_proposal(tx_context, peers)
+
     def _discovery(self, requestor, target, crypto,
                    local=False, config=False, interests=None):
         """Send a request from a target peer to discover information about the network
