@@ -1247,6 +1247,37 @@ class Client(object):
                 "Failed to get channel config block: {}", sys.exc_info()[0])
             raise
 
+    def extract_channel_config(config_envelope):
+        """Extracts the protobuf 'ConfigUpdate' out of
+        the 'ConfigEnvelope' that is produced by the configtxgen tool
+
+        The returned object may then be signed using sign_channel_config()
+        method.
+
+        Once all the signatures have been collected, the 'ConfigUpdate' object
+        and the signatures may be used on create_channel() or update_channel()
+        calls
+
+        Args:
+            config_envelope (bytes): encoded bytes of the ConfigEnvelope
+            protobuf
+
+        Returns:
+            config_update (bytes): encoded bytes of ConfigUpdate protobuf,
+            ready to be signed
+        """
+        _logger.debug('extract_channel_config start')
+
+        envelope = common_pb2.Envelope()
+        envelope.ParseFromString(config_envelope)
+        payload = common_pb2.Payload()
+        payload.ParseFromString(envelope.payload)
+        configtx = configtx_pb2.ConfigUpdateEnvelope()
+        configtx.ParseFromString(payload.data)
+        config_update = configtx.ConfigUpdate
+
+        return config_update.SerializeToString()
+
     def query_peers(self, requestor, target_peer,
                     crypto=ecies(), decode=True):
         """Queries peers with discovery api

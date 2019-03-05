@@ -836,7 +836,12 @@ class Channel(object):
         """Send a request from a target peer to discover information about the network
 
         Args:
-            requestor: a user to make the request
+            requestor (instance): a user to make the request
+            target (instance): target peer to send discovery request
+            crypto (instance): crypto
+            local (bool): include local endpoints in the query
+            config (bool): include channel configuration in the query
+            interests (list): interests about an endorsement for cc
 
         Returns:
             Response from Discovery Service
@@ -879,13 +884,13 @@ class Channel(object):
             queries.append(q)
             q.channel = self._name
 
-            interests = []
+            cc_interests = []
             for interest in interests:
                 proto_interest = self._build_proto_cc_interest(interest)
-                interests.append(proto_interest)
+                cc_interests.append(proto_interest)
 
             cc_query = protocol_pb2.ChaincodeQuery()
-            cc_query.interests.extend(interests)
+            cc_query.interests.extend(cc_interests)
             q.cc_query.CopyFrom(cc_query)
             _logger.info("DISCOVERY: adding chaincodes/collection query")
 
@@ -901,25 +906,33 @@ class Channel(object):
         """Use a list of DiscoveryChaincodeCall to build an interest.
         """
         cc_calls = []
-        for cc in interest.chaincodes:
-            cc_call = protocol_pb2.ChaincodeCall()
+        try:
+            for cc in interest['chaincodes']:
+                cc_call = protocol_pb2.ChaincodeCall()
 
-            if hasattr(cc, 'name') and not isinstance(cc.name, str):
-                raise ValueError("chaincode names must be a string")
+                if cc.get('name'):
+                    if not isinstance(cc['name'], str):
+                        raise ValueError("chaincode names must be a string")
+                    cc_call.name = cc['name']
 
-            if hasattr(cc, 'collection_names') and \
-                    not isinstance(cc.collection_names, list):
-                raise ValueError(
-                    "collection_names must be an array of strings")
+                if cc.get('collection_names'):
+                    if not isinstance(cc['collection_names'], list):
+                        raise ValueError(
+                            "collection_names must be an array of strings")
+                    if not all(isinstance(x, str)
+                               for x in cc['collection_names']):
+                        raise ValueError("collection name must be a string")
+                    cc_call.collection_names.extend(cc['collection_names'])
 
-            if hasattr(cc, 'collection_names') and \
-                    not all(isinstance(x, str) for x in cc.collection_names):
-                raise ValueError("collection name must be a string")
+                cc_calls.append(cc_call)
 
-            cc_call.name = cc.name
-            cc_call.collection_names.extend(cc.collection_names)
+        except AttributeError as e:
+            _logger.error("The key 'chaincodes' is missing, {}".format(e))
+            raise
 
-            cc_calls.append(cc_call)
+        except KeyError as e:
+            _logger.error("The key is missing, {}".format(e))
+            raise
 
         interest_proto = protocol_pb2.ChaincodeInterest()
         interest_proto.chaincodes.extend(cc_calls)
