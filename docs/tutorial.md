@@ -2,9 +2,17 @@
 
 **Note: The tutorial is still in-progress, and the full version example code can be found at [sample.py](sample.py).**
 
+**Note: Python3 is required.**
+
 TLDR, run a quick example testing.
 
 ```bash
+$ HLF_VERSION=1.4.0
+$ docker pull hyperledger/fabric-peer:${HLF_VERSION}
+$ docker pull hyperledger/fabric-orderer:${HLF_VERSION}
+$ docker pull hyperledger/fabric-ca:${HLF_VERSION}
+$ docker pull hyperledger/fabric-ccenv:${HLF_VERSION}
+$ docker-compose -f test/fixtures/docker-compose-2orgs-4peers-tls.yaml up
 $ pip3 install virtualenv; make venv
 $ source venv/bin/activate
 $ make install
