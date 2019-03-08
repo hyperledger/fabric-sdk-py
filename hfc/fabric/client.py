@@ -24,6 +24,7 @@ import time
 from hfc.fabric.channel.channel import Channel
 from hfc.fabric.orderer import Orderer
 from hfc.fabric.peer import Peer
+from hfc.fabric.user import User
 from hfc.fabric.organization import create_org
 from hfc.fabric.transaction.tx_context import TXContext, create_tx_context
 from hfc.fabric.transaction.tx_proposal_request import TXProposalRequest, \
@@ -31,11 +32,9 @@ from hfc.fabric.transaction.tx_proposal_request import TXProposalRequest, \
     CC_INVOKE, CC_QUERY
 from hfc.protos.common import common_pb2, configtx_pb2, ledger_pb2
 from hfc.protos.peer import query_pb2
-from hfc.protos.msp import identities_pb2
-from hfc.protos.gossip import message_pb2
-from hfc.fabric.block_decoder import BlockDecoder, FilteredBlockDecoder
+from hfc.fabric.block_decoder import BlockDecoder, FilteredBlockDecoder, \
+    decode_fabric_peers_info, decode_fabric_MSP_config, decode_fabric_endpoints
 from hfc.util import utils
-from hfc.util.crypto.crypto import Ecies, ecies
 from hfc.util.keyvaluestore import FileKeyValueStore
 
 # inject global default config
@@ -114,7 +113,7 @@ class Client(object):
         for name in orderers:
             orderer = Orderer(name=name, endpoint=orderers[name]['url'])
             orderer.init_with_bundle(orderers[name])
-            self.orderers[name] = orderer
+            self._orderers[name] = orderer
 
         # Init peer nodes
         peers = self.get_net_info('peers')
@@ -123,6 +122,147 @@ class Client(object):
             peer = Peer(name=name)
             peer.init_with_bundle(peers[name])
             self._peers[name] = peer
+
+    def init_with_discovery(self, requestor, peer_target, channel_name=None):
+        """
+        Load the connection profile from discover.
+
+        Init the handlers for orgs, peers, orderers, ca nodes
+
+        :param profile_path: The connection profile file path
+        :return:
+        """
+
+        if not isinstance(requestor, User):
+            return
+
+        if not isinstance(peer_target, Peer):
+            return
+        else:
+            self._peers[peer_target._name] = peer_target
+
+        # read kv store path from requestor
+        self.kv_store_path = requestor._state_store.path
+        if self.kv_store_path:
+            self._state_store = FileKeyValueStore(self.kv_store_path)
+        else:
+            _logger.warning('No kv store path exists in requestor {}'.format(
+                requestor))
+
+        # Init from Local Config
+        if channel_name is None:
+            members = Channel('discovery', '').\
+                _discovery(requestor,
+                           peer_target,
+                           config=False,
+                           local=True).results[0].members
+
+            config_result = None
+        else:
+            self.new_channel(channel_name)
+            channel = self.get_channel(channel_name)
+            response = channel._discovery(requestor,
+                                          peer_target,
+                                          config=True,
+                                          local=False)
+
+            members = response.results[0].members
+            config_result = response.results[1].config_result
+
+        # Members parsing
+        peers = []
+        for msp_name in members.peers_by_org:
+            peers.append(decode_fabric_peers_info(
+                members.peers_by_org[msp_name].peers))
+
+        # Config parsing
+        if config_result is not None:
+            results = {'msps': {},
+                       'orderers': {}}
+
+            for msp_name in config_result.msps:
+                results['msps'][msp_name] = decode_fabric_MSP_config(
+                    config_result.msps[msp_name].SerializeToString())
+
+            for orderer_msp in config_result.orderers:
+                results['orderers'][orderer_msp] = decode_fabric_endpoints(
+                    config_result.orderers[orderer_msp].endpoint)
+
+        # # Init organizations
+        for msp_name in results['msps']:
+
+            _logger.debug("create org with name={}".format(msp_name))
+
+            info = {
+                "mspid": msp_name
+            }
+
+            org_peers = [peer_info['endpoint'].split(':')[0]
+                         for peers_by_org in peers
+                         for peer_info in peers_by_org
+                         if peer_info['mspid'] == msp_name]
+
+            if org_peers:
+                info['peers'] = org_peers
+
+            if msp_name in results['orderers']:
+                org_orderers = [orderer_info['host']
+                                for orderer_info in results[
+                                'orderers'][msp_name]]
+
+                info['orderers'] = org_orderers
+
+            org = create_org(msp_name, info, self._state_store)
+            if msp_name not in self._organizations:
+                self._organizations[msp_name] = org
+
+        # Init orderer nodes
+        _logger.debug("Import orderers = {}".format(results[
+                                                    'orderers'].keys()))
+        for orderer_msp in results['orderers']:
+            for orderer_info in results['orderers'][orderer_msp]:
+                orderer_endpoint = '%s:%s' % (orderer_info['host'],
+                                              orderer_info['port'])
+                info = {'url': orderer_endpoint,
+                        'tlsCACerts': {'path': results['msps'][
+                            orderer_msp]['tls_root_certs'][0]},
+                        'grpcOptions': {
+                            'grpc.ssl_target_name_override': orderer_info[
+                                'host']}
+                        }
+
+                orderer = Orderer(name=orderer_info['host'],
+                                  endpoint=orderer_endpoint)
+                orderer.init_with_bundle(info)
+
+                if orderer_info['host'] not in self._orderers:
+                    self._orderers[orderer_info['host']] = orderer
+
+        # Init peer nodes
+        peers_name = [peer_info['endpoint'].split(':')[0]
+                      for peers_by_org in peers
+                      for peer_info in peers_by_org]
+
+        _logger.debug("Import peers = {}".format(peers_name))
+
+        for peers_by_org in peers:
+            for peer_info in peers_by_org:
+                target_name = peer_info['endpoint'].split(':')[0]
+                info = {'url': peer_info['endpoint'],
+                        'grpcOptions': {
+                            'grpc.ssl_target_name_override': target_name}
+                        }
+
+                if config_result:
+                    tlsCACerts = results['msps'][
+                        peer_info['mspid']]['tls_root_certs'][0]
+                    info['tlsCACerts'] = {'path': tlsCACerts}
+
+                peer = Peer(name=target_name)
+                peer.init_with_bundle(info)
+
+                if target_name not in self._peers:
+                    self._peers[target_name] = peer
 
     def get_user(self, org_name, name):
         """
@@ -288,7 +428,8 @@ class Client(object):
             config = utils.extract_channel_config(envelope)
 
         # convert envelope to config
-        self.tx_context = TXContext(requestor, Ecies(), {})
+        # self.tx_context = TXContext(requestor, Ecies(), {})
+        self.tx_context = TXContext(requestor, requestor.cryptoSuite, {})
         tx_id = self.tx_context.tx_id
         nonce = self.tx_context.nonce
         signatures = []
@@ -340,13 +481,14 @@ class Client(object):
 
         # get the genesis block
         orderer_admin = self.get_user(orderer_name, 'Admin')
-        tx_context = TXContext(orderer_admin, ecies(), tx_prop_req)
+        tx_context = TXContext(orderer_admin, orderer_admin.cryptoSuite,
+                               tx_prop_req)
         genesis_block = orderer.get_genesis_block(
             tx_context,
             channel.name).SerializeToString()
 
         # create the peer
-        tx_context = TXContext(requestor, ecies(), tx_prop_req)
+        tx_context = TXContext(requestor, requestor.cryptoSuite, tx_prop_req)
 
         peers = []
         for peer_name in peer_names:
@@ -393,7 +535,8 @@ class Client(object):
 
         tran_prop_req = create_tx_prop_req(CC_INSTALL, cc_path, CC_TYPE_GOLANG,
                                            cc_name, cc_version)
-        tx_context = create_tx_context(requestor, ecies(), tran_prop_req)
+        tx_context = create_tx_context(requestor, requestor.cryptoSuite,
+                                       tran_prop_req)
 
         responses = self.send_install_proposal(tx_context, peers)
         return responses
@@ -736,7 +879,7 @@ class Client(object):
 
         tx_context_dep = create_tx_context(
             requestor,
-            ecies(),
+            requestor.cryptoSuite,
             tran_prop_req_dep
         )
 
@@ -744,7 +887,7 @@ class Client(object):
             tx_context_dep, peers, channel_name)
 
         tx_context = create_tx_context(requestor,
-                                       ecies(),
+                                       requestor.cryptoSuite,
                                        TXProposalRequest())
         tran_req = utils.build_tx_req(res)
         responses = utils.send_transaction(self.orderers, tran_req, tx_context)
@@ -808,7 +951,7 @@ class Client(object):
 
         tx_context = create_tx_context(
             requestor,
-            ecies(),
+            requestor.cryptoSuite,
             tran_prop_req
         )
 
@@ -826,7 +969,7 @@ class Client(object):
 
         tx_context_tx = create_tx_context(
             requestor,
-            ecies(),
+            requestor.cryptoSuite,
             tran_req
         )
 
@@ -900,7 +1043,7 @@ class Client(object):
 
         tx_context = create_tx_context(
             requestor,
-            ecies(),
+            requestor.cryptoSuite,
             tran_prop_req
         )
 
@@ -936,7 +1079,8 @@ class Client(object):
             args=[]
         )
 
-        tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
+        tx_context = create_tx_context(requestor, requestor.cryptoSuite,
+                                       TXProposalRequest())
         tx_context.tx_prop_req = request
 
         responses = Channel._send_tx_proposal('', tx_context, peers)
@@ -979,7 +1123,8 @@ class Client(object):
             args=[]
         )
 
-        tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
+        tx_context = create_tx_context(requestor, requestor.cryptoSuite,
+                                       TXProposalRequest())
         tx_context.tx_prop_req = request
 
         responses = Channel._send_tx_proposal('', tx_context, peers)
@@ -1017,7 +1162,8 @@ class Client(object):
             peers.append(peer)
 
         channel = self.get_channel(channel_name)
-        tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
+        tx_context = create_tx_context(requestor, requestor.cryptoSuite,
+                                       TXProposalRequest())
 
         responses = channel.query_info(tx_context, peers)
 
@@ -1054,7 +1200,8 @@ class Client(object):
             peers.append(peer)
 
         channel = self.get_channel(channel_name)
-        tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
+        tx_context = create_tx_context(requestor, requestor.cryptoSuite,
+                                       TXProposalRequest())
 
         responses = channel.query_block_by_txid(tx_context, peers, tx_id)
 
@@ -1092,7 +1239,8 @@ class Client(object):
             peers.append(peer)
 
         channel = self.get_channel(channel_name)
-        tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
+        tx_context = create_tx_context(requestor, requestor.cryptoSuite,
+                                       TXProposalRequest())
 
         responses = channel.query_block_by_hash(tx_context, peers, block_hash)
 
@@ -1130,7 +1278,8 @@ class Client(object):
             peers.append(peer)
 
         channel = self.get_channel(channel_name)
-        tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
+        tx_context = create_tx_context(requestor, requestor.cryptoSuite,
+                                       TXProposalRequest())
 
         responses = channel.query_block(tx_context, peers, block_number)
 
@@ -1168,7 +1317,8 @@ class Client(object):
             peers.append(peer)
 
         channel = self.get_channel(channel_name)
-        tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
+        tx_context = create_tx_context(requestor, requestor.cryptoSuite,
+                                       TXProposalRequest())
 
         responses = channel.query_transaction(tx_context, peers, tx_id)
 
@@ -1204,7 +1354,8 @@ class Client(object):
             peers.append(peer)
 
         channel = self.get_channel(channel_name)
-        tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
+        tx_context = create_tx_context(requestor, requestor.cryptoSuite,
+                                       TXProposalRequest())
 
         responses = channel.query_instantiated_chaincodes(tx_context, peers)
 
@@ -1241,7 +1392,8 @@ class Client(object):
             peers.append(peer)
 
         channel = self.get_channel(channel_name)
-        tx_context = create_tx_context(requestor, ecies(), TXProposalRequest())
+        tx_context = create_tx_context(requestor, requestor.cryptoSuite,
+                                       TXProposalRequest())
 
         responses = channel.get_channel_config(tx_context, peers)
 
@@ -1297,8 +1449,8 @@ class Client(object):
 
         return config_update.SerializeToString()
 
-    def query_peers(self, requestor, target_peer,
-                    crypto=ecies(), decode=True):
+    def query_peers(self, requestor, target_peer, channel=None,
+                    local=True, decode=True):
         """Queries peers with discovery api
 
         :param requestor: User role who issue the request
@@ -1308,10 +1460,16 @@ class Client(object):
         :return result: a nested dict of query result
         """
 
-        dummy_channel = self.new_channel('discover-local')
+        if local:
+            dummy_channel = self.new_channel("discover-local")
+        else:
+            if channel is None:
+                raise Exception("Channel name must be provided \
+                 if local is False")
+            dummy_channel = self.new_channel(channel)
 
         response = dummy_channel._discovery(
-            requestor, target_peer, crypto, local=True)
+            requestor, target_peer, local=local)
 
         try:
             results = {}
@@ -1341,50 +1499,10 @@ class Client(object):
         if hasattr(q_members, 'peers_by_org'):
             for mspid in q_members.peers_by_org:
                 peers_by_org[mspid] = {}
-                peers_by_org[mspid]['peers'] = self._process_peers(
+                peers_by_org[mspid]['peers'] = decode_fabric_peers_info(
                     q_members.peers_by_org[mspid].peers)
 
         return peers_by_org
-
-    def _process_peers(self, q_peers):
-        peers = []
-        for q_peer in q_peers:
-            peer = {}
-
-            # IDENTITY
-            q_identity = identities_pb2.SerializedIdentity()
-            q_identity.ParseFromString(q_peer.identity)
-            peer['mspid'] = q_identity.mspid
-
-            # MEMBERSHIP
-            q_membership_msg = message_pb2.GossipMessage()
-            q_membership_msg.ParseFromString(q_peer.membership_info.payload)
-            peer['endpoint'] = q_membership_msg.alive_msg.membership.endpoint
-
-            # STATE
-            if hasattr(q_peer, 'state_info'):
-                message_s = message_pb2.GossipMessage()
-                message_s.ParseFromString(
-                    q_peer.state_info.payload)
-                try:
-                    peer['ledger_height'] = int(
-                        message_s.state_info.properties.ledger_height)
-                except AttributeError as e:
-                    peer['ledger_height'] = 0
-                    _logger.debug(
-                        'missing ledger_height: {}'.format(e))
-
-                peer['chaincodes'] = []
-                for index in message_s.state_info.properties.chaincodes:
-                    q_cc = message_s.info.properties.chaincodes[index]
-                    cc = {}
-                    cc['name'] = q_cc.name
-                    cc['version'] = q_cc.version
-                    peer['chaincodes'].append(cc)
-
-            peers.append(peer)
-
-        return sorted(peers, key=lambda k: k['endpoint'])
 
     def get_events(self, requestor, peer, channel_name, start=0, stop=None,
                    filtered=False):
@@ -1403,8 +1521,8 @@ class Client(object):
         """
         channel = self.get_channel(channel_name)
 
-        tx_prop_req = TXProposalRequest()
-        tx_context = TXContext(requestor, ecies(), tx_prop_req)
+        tx_context = TXContext(requestor, requestor.cryptoSuite,
+                               TXProposalRequest())
 
         events = peer.get_events(tx_context, channel.name,
                                  start=start, stop=stop, filtered=filtered)

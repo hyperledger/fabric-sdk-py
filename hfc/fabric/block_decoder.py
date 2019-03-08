@@ -44,6 +44,10 @@ from hfc.protos.orderer import configuration_pb2 as orderer_configuration_pb2
 from hfc.protos.ledger.rwset import rwset_pb2
 from hfc.protos.ledger.rwset.kvrwset import kv_rwset_pb2
 
+# Import required Gossip Protos
+from hfc.protos.gossip import message_pb2
+
+
 _logger = logging.getLogger(__name__ + ".block_decoder")
 
 
@@ -928,6 +932,9 @@ def decode_fabric_MSP_config(msp_config_bytes):
     msp_config['signing_identity'] = \
         decode_signing_identity_info(
             proto_msp_config.signing_identity.SerializeToString())
+    msp_config['crypto_config'] = \
+        decode_crypto_config(
+        proto_msp_config.crypto_config.SerializeToString())
     msp_config['organizational_unit_identifiers'] = \
         decode_fabric_OU_identifier(
             proto_msp_config.organizational_unit_identifiers)
@@ -935,6 +942,8 @@ def decode_fabric_MSP_config(msp_config_bytes):
         to_PEM_certs(proto_msp_config.tls_root_certs)
     msp_config['tls_intermediate_certs'] = \
         to_PEM_certs(proto_msp_config.tls_intermediate_certs)
+    msp_config['fabric_node_ous'] = \
+        decode_fabric_Nodes_OUs(proto_msp_config.fabric_node_ous)
     return msp_config
 
 
@@ -956,6 +965,28 @@ def decode_fabric_OU_identifier(proto_organizational_unit_identitfiers):
                 proto_unitidentifier.organizational_unit_identifier
             organizational_unit_identifiers.append(ou_identifier)
     return organizational_unit_identifiers
+
+
+def decode_fabric_Nodes_OUs(proto_node_organizational_units):
+    """Decodes Fabric Node OUs
+
+    Args:
+        proto_node_organizational_units (str): OUs
+
+    Returns: deserialized list of OU Identifier objects.
+    """
+    node_organizational_units = {}
+    if proto_node_organizational_units:
+        node_organizational_units['enable'] = \
+            proto_node_organizational_units.enable
+        node_organizational_units['client_ou_identifier'] =\
+            decode_fabric_OU_identifier(
+                [proto_node_organizational_units.client_ou_identifier])
+        node_organizational_units['peer_ou_identifier'] = \
+            decode_fabric_OU_identifier(
+                [proto_node_organizational_units.peer_ou_identifier])
+
+    return node_organizational_units
 
 
 def to_PEM_certs(buffer_array_in):
@@ -1008,6 +1039,25 @@ def decode_key_info(key_info_bytes):
         key_info['key_identifier'] = proto_key_info.key_identifier
         key_info['key_material'] = 'private'
     return key_info
+
+
+def decode_crypto_config(crypto_config_bytes):
+    """Decodes Crypto Config in MSP Configuration
+
+    Args:
+        crypto_config_bytes (str): Byte information of FabricCyptoConfig
+
+    Returns: deserialized key information.
+    """
+    crypto_config = {}
+    if crypto_config_bytes:
+        proto_crypto_config = msp_config_pb2.FabricCryptoConfig()
+        proto_crypto_config.ParseFromString(crypto_config_bytes)
+        crypto_config['signature_hash_family'] = proto_crypto_config.\
+            signature_hash_family
+        crypto_config['identity_identifier_hash_function'] = \
+            proto_crypto_config.identity_identifier_hash_function
+    return crypto_config
 
 
 def decode_chaincode_action_payload(payload_bytes):
@@ -1305,3 +1355,76 @@ def decode_response(proto_response):
         response['message'] = proto_response.message
         response['payload'] = proto_response.payload
     return response
+
+
+def decode_fabric_peers_info(peers_info_bytes):
+    """Decodes Fabric Peers Information
+
+    Args:
+        peer_bytes (str): Serialized information about Peer
+
+    Returns: Deserialized Peers information and certs.
+    """
+    peers_info = []
+
+    for peer_info_bytes in peers_info_bytes:
+        peer = {}
+
+        # identity
+        peer_identity = identities_pb2.SerializedIdentity()
+        peer_identity.ParseFromString(peer_info_bytes.identity)
+        if hasattr(peer_identity, 'mspid'):
+            peer['mspid'] = peer_identity.mspid
+        if hasattr(peer_identity, 'id_bytes'):
+            peer['id_bytes'] = peer_identity.id_bytes
+
+        # state info
+        peer_state_info = message_pb2.GossipMessage()
+        peer_state_info.ParseFromString(peer_info_bytes.state_info.payload)
+
+        if peer_state_info.state_info.properties:
+
+            if hasattr(peer_state_info.state_info.properties, 'ledger_height'):
+                peer['ledger_height'] = int(
+                    peer_state_info.state_info.properties.ledger_height)
+
+            if hasattr(peer_state_info.state_info.properties, 'chaincodes'):
+                peer['chaincodes'] = []
+                if peer_state_info.state_info.properties.chaincodes:
+                    ccs = peer_state_info.state_info.properties.chaincodes
+                    for chaincode in ccs:
+                        cc = {}
+                        cc['name'] = chaincode.name
+                        cc['version'] = chaincode.version
+                        peer['chaincodes'].append(cc)
+
+        # membership info
+        peer_membership_info = message_pb2.GossipMessage()
+        membership_payload = peer_info_bytes.membership_info.payload
+        peer_membership_info.ParseFromString(membership_payload)
+
+        peer['endpoint'] = peer_membership_info.alive_msg.membership.endpoint
+
+        peers_info.append(peer)
+
+    return sorted(peers_info, key=lambda peer: peer['endpoint'])
+
+
+def decode_fabric_endpoints(endpoints):
+    """Decodes Fabric Endpoints
+
+    Args:
+        endpoints (str): Fabric Endpoints
+
+    Returns: Deserialized endpoints.
+    """
+
+    endpoints_info = []
+    for item in endpoints:
+        endpoint = {}
+
+        endpoint['host'] = item.host
+        endpoint['port'] = int(item.port)
+
+        endpoints_info.append(endpoint)
+    return endpoints_info

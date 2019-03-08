@@ -831,14 +831,13 @@ class Channel(object):
         tx_context.tx_prop_req = request
         return self.send_tx_proposal(tx_context, peers)
 
-    def _discovery(self, requestor, target, crypto,
+    def _discovery(self, requestor, target,
                    local=False, config=False, interests=None):
         """Send a request from a target peer to discover information about the network
 
         Args:
             requestor (instance): a user to make the request
             target (instance): target peer to send discovery request
-            crypto (instance): crypto
             local (bool): include local endpoints in the query
             config (bool): include channel configuration in the query
             interests (list): interests about an endorsement for cc
@@ -858,10 +857,18 @@ class Channel(object):
         if local:
             q = protocol_pb2.Query()
             queries.append(q)
-
             local_peers = protocol_pb2.LocalPeerQuery()
             q.local_peers.CopyFrom(local_peers)
             _logger.info("DISCOVERY: adding local peers query")
+        else:
+            # It gives us state info about the channel
+            # in addition of LocalPeerQuery information
+            q = protocol_pb2.Query()
+            queries.append(q)
+            q.channel = self._name
+            peer_query = protocol_pb2.PeerMembershipQuery()
+            q.peer_query.CopyFrom(peer_query)
+            _logger.info("DISCOVERY: adding channel peers query")
 
         if config:
             q = protocol_pb2.Query()
@@ -871,13 +878,6 @@ class Channel(object):
             config_query = protocol_pb2.ConfigQuery()
             q.config_query.CopyFrom(config_query)
             _logger.info("DISCOVERY: adding config query")
-
-            q = protocol_pb2.Query()
-            queries.append(q)
-            q.channel = self._name
-            peer_query = protocol_pb2.PeerMembershipQuery()
-            q.peer_query.CopyFrom(peer_query)
-            _logger.info("DISCOVERY: adding channel peers query")
 
         if interests and len(interests) > 0:
             q = protocol_pb2.Query()
@@ -897,7 +897,8 @@ class Channel(object):
         discovery_req.queries.extend(queries)
 
         request_bytes = discovery_req.SerializeToString()
-        sig = crypto.sign(requestor.enrollment.private_key, request_bytes)
+        sig = requestor.cryptoSuite.sign(requestor.enrollment.private_key,
+                                         request_bytes)
         envelope = create_envelope(sig, request_bytes)
 
         return target.send_discovery(envelope)

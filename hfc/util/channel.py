@@ -32,17 +32,23 @@ def create_grpc_channel(target, cert_file=None, client_key=None,
     """
 
     root_cert = None
+
     if cert_file:
-        with open(cert_file, 'rb') as f:
-            root_cert = f.read()
+        if isinstance(cert_file, bytes):
+            root_cert = cert_file
+        else:
+            with open(cert_file, 'rb') as f:
+                root_cert = f.read()
 
     if client_key:
-        with open(client_key, 'rb') as f:
-            client_key = f.read()
+        if not isinstance(cert_file, bytes):
+            with open(client_key, 'rb') as f:
+                client_key = f.read()
 
     if client_cert:
-        with open(client_cert, 'rb') as f:
-            client_cert = f.read()
+        if not isinstance(cert_file, bytes):
+            with open(client_cert, 'rb') as f:
+                client_cert = f.read()
 
     if root_cert is None:
         return grpc.insecure_channel(target, opts)
@@ -53,4 +59,5 @@ def create_grpc_channel(target, cert_file=None, client_key=None,
                                                  certificate_chain=client_cert)
         else:
             creds = grpc.ssl_channel_credentials(root_cert)
+
         return grpc.secure_channel(target, creds, opts)

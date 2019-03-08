@@ -309,7 +309,7 @@ def validate(user):
     if not user.msp_id:
         raise ValueError("Missing msp id.")
 
-    if not user.crypto_suite:
+    if not user.cryptoSuite:
         raise ValueError("Missing crypto suite.")
 
     return user
@@ -348,6 +348,6 @@ def create_user(name, org, state_store, msp_id, key_path, cert_path,
     user = User(name, org, state_store)
     user.enrollment = enrollment
     user.msp_id = msp_id
-    user.crypto_suite = crypto_suite
+    user.cryptoSuite = crypto_suite
 
     return validate(user)

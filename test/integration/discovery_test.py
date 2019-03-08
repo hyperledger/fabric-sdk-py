@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+from hfc.fabric import Client
 from hfc.fabric.peer import create_peer
-from hfc.util.crypto.crypto import ecies
 from test.integration.utils import BaseTestCase
 from test.integration.config import E2E_CONFIG
 
@@ -97,15 +97,15 @@ class DiscoveryTest(BaseTestCase):
         results = channel._discovery(
             requestor=self.user,
             target=peer,
-            crypto=ecies(),
             config=True,
             interests=[{'chaincodes': [{'name': CC_NAME}]}]
         )
+
         self.assertEqual(
-            results.results[0].config_result.msps['OrdererMSP'].name,
+            results.results[1].config_result.msps['OrdererMSP'].name,
             'OrdererMSP')
         self.assertEqual(
-            list(results.results[1].members.peers_by_org.keys())[0],
+            list(results.results[0].members.peers_by_org.keys())[0],
             'Org1MSP')
         self.assertEqual(
             results.results[2].cc_query_res.content[0].chaincode, CC_NAME)
@@ -114,4 +114,16 @@ class DiscoveryTest(BaseTestCase):
         results = self.client.query_peers(self.user, peer)
         self.assertEqual(results['local_peers']['Org1MSP']['peers']
                          [0]['endpoint'], 'peer0.org1.example.com:7051')
-        logger.info("DISCOVERY TEST: query peer successfully")
+
+        # Test init with discovery
+
+        client_discovery = Client()
+
+        client_discovery.init_with_discovery(self.user, peer,
+                                             self.channel_name)
+
+        self.assertEqual(len(client_discovery._orderers), 1)
+        self.assertEqual(len(client_discovery._peers), 3)
+        self.assertEqual(len(client_discovery._organizations), 3)
+
+        # logger.info("DISCOVERY TEST: query peer successfully")
