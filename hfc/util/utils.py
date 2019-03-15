@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import base64
 import sys
 import logging
 import random
@@ -474,3 +475,9 @@ def package_chaincode(cc_path, cc_type):
 
     else:
         raise ValueError('Currently only support install GOLANG chaincode')
+
+
+def pem_to_der(pem):
+    arr = pem.split(b'\n')
+    der = b''.join(arr[1:-2])
+    return base64.b64decode(der)

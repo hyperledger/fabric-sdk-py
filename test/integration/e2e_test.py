@@ -1,6 +1,7 @@
 # Copyright IBM Corp. 2017 All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
+
 import docker
 import logging
 import unittest
@@ -158,7 +159,7 @@ class E2eTest(BaseTestCase):
                 args=args,
                 cc_name=CC_NAME,
                 cc_version=CC_VERSION,
-                waitForEvent=True
+                wait_for_event=True
             )
             self.assertEqual(response, '')
 
@@ -456,9 +457,28 @@ class E2eTest(BaseTestCase):
         peer = self.client.get_peer('peer0.' + org)
 
         org_admin = self.client.get_user(org, 'Admin')
-        events = self.client.get_events(org_admin, peer, self.channel_name)
+        events = self.client.get_events(org_admin, peer, self.channel_name,
+                                        filtered=True,
+                                        behavior='FAIL_IF_NOT_READY')
 
-        self.assertTrue(len(events))
+        self.assertEqual(len(events), 4)
+
+        self.assertEqual(events[0]['number'], 0)
+        self.assertEqual(events[0]['channel_id'], self.channel_name)
+
+        filtered_transaction = events[0]['filtered_transactions'][0]
+        self.assertEqual(filtered_transaction['tx_validation_code'], 'VALID')
+        self.assertEqual(filtered_transaction['txid'], '')
+        self.assertEqual(filtered_transaction['type'], 'CONFIG')
+
+        self.assertEqual(events[2]['number'], 2)
+        filtered_transaction = events[2]['filtered_transactions'][0]
+        self.assertEqual(filtered_transaction['tx_validation_code'], 'VALID')
+        self.assertEqual(filtered_transaction['type'], 'ENDORSER_TRANSACTION')
+
+        # test missing block is present
+        data = {'channel_id': '', 'filtered_transactions': [], 'number': 0}
+        self.assertEqual(events[len(events) - 1], data)
 
     def test_in_sequence(self):
 

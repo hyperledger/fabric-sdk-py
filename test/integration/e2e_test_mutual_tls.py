@@ -184,7 +184,7 @@ class E2eTest(BaseTestCase):
                 args=args,
                 cc_name=CC_NAME,
                 cc_version=CC_VERSION,
-                waitForEvent=True
+                wait_for_event=True
             )
             self.assertEqual(response, '')
 
@@ -476,6 +476,35 @@ class E2eTest(BaseTestCase):
 
         logger.info("E2E: Query installed chaincode done")
 
+    def get_events(self):
+
+        org = 'org1.example.com'
+        peer = self.client.get_peer('peer0.' + org)
+
+        org_admin = self.client.get_user(org, 'Admin')
+        events = self.client.get_events(org_admin, peer, self.channel_name,
+                                        filtered=True,
+                                        behavior='FAIL_IF_NOT_READY')
+
+        self.assertEqual(len(events), 4)
+
+        self.assertEqual(events[0]['number'], 0)
+        self.assertEqual(events[0]['channel_id'], self.channel_name)
+
+        filtered_transaction = events[0]['filtered_transactions'][0]
+        self.assertEqual(filtered_transaction['tx_validation_code'], 'VALID')
+        self.assertEqual(filtered_transaction['txid'], '')
+        self.assertEqual(filtered_transaction['type'], 'CONFIG')
+
+        self.assertEqual(events[2]['number'], 2)
+        filtered_transaction = events[2]['filtered_transactions'][0]
+        self.assertEqual(filtered_transaction['tx_validation_code'], 'VALID')
+        self.assertEqual(filtered_transaction['type'], 'ENDORSER_TRANSACTION')
+
+        # test missing block is present
+        data = {'channel_id': '', 'filtered_transactions': [], 'number': 0}
+        self.assertEqual(events[len(events) - 1], data)
+
     def test_in_sequence(self):
 
         logger.info("\n\nE2E testing started...")
@@ -511,6 +540,8 @@ class E2eTest(BaseTestCase):
         self.query_transaction()
 
         self.get_channel_config()
+
+        self.get_events()
 
         logger.info("E2E all test cases done\n\n")
 

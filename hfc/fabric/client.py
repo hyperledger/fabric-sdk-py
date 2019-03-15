@@ -920,7 +920,8 @@ class Client(object):
 
     def chaincode_invoke(self, requestor, channel_name, peer_names, args,
                          cc_name, cc_version, cc_type=CC_TYPE_GOLANG,
-                         fcn='invoke', waitForEvent=False, timeout=30):
+                         fcn='invoke', wait_for_event=False,
+                         wait_for_event_timeout=30):
         """
         Invoke chaincode for ledger update
 
@@ -932,7 +933,12 @@ class Client(object):
         :param cc_version: chaincode version
         :param cc_type: chaincode type language
         :param fcn: chaincode function
-        :param timeout: Timeout to wait
+        :param wait_for_event: Whether to wait for the event from each peer's
+         deliver filtered service signifying that the 'invoke' transaction has
+          been committed successfully
+        :param wait_for_event_timeout: Time to wait for the event from each
+         peer's deliver filtered service signifying that the 'invoke'
+          transaction has been committed successfully (default 30s)
         :return: True or False
         """
         peers = []
@@ -979,12 +985,12 @@ class Client(object):
         if not responses[0].status == 200:
             return res.message
 
-        if waitForEvent:
+        if wait_for_event:
             # wait for transaction id proposal available in ledger and block
             # commited
             start_seek = 0
             starttime = int(time.time())
-            while int(time.time()) - starttime < timeout:
+            while int(time.time()) - starttime < wait_for_event_timeout:
 
                 # get peer events
                 count = len(peers)
@@ -1006,8 +1012,8 @@ class Client(object):
                         start_seek = max(start_seek, event['number'])
                 time.sleep(1)
 
-            # TODO handle mutual TLS failed, but can we?
-            raise Exception('timeout')
+            raise TimeoutError('Either the waitForEvent timed out or the'
+                               ' mutual TLS is incorrectly configured.')
         else:
             return res.payload.decode('utf-8')
 
@@ -1505,27 +1511,28 @@ class Client(object):
         return peers_by_org
 
     def get_events(self, requestor, peer, channel_name, start=0, stop=None,
-                   filtered=False):
+                   filtered=False, behavior='BLOCK_UNTIL_READY'):
         """Get Event
 
         Args:
-            requestor (str): Description
-            peer (str): Description
-            channel_name (str): Description
-            start (int, optional): Description
-            stop (int, optional): Description
-            filtered (bool, optional): Description
+            requestor: User role who issue the request
+            peer (Peer): Peer to get events
+            channel_name (str): name of channel
+            start (int, optional): start position to get events
+            stop (int, optional): stop position to get events
+            filtered (bool, optional): Either to get filtered event block or
+             not
+            behavior (ab.Proto.SeekBehavior): SeekInfo behavior
 
         Returns:
             TYPE: Description
         """
-        channel = self.get_channel(channel_name)
 
         tx_context = TXContext(requestor, requestor.cryptoSuite,
                                TXProposalRequest())
-
-        events = peer.get_events(tx_context, channel.name,
-                                 start=start, stop=stop, filtered=filtered)
+        events = peer.get_events(tx_context, channel_name,
+                                 start=start, stop=stop, filtered=filtered,
+                                 behavior=behavior)
 
         if filtered:
             return [FilteredBlockDecoder().decode(

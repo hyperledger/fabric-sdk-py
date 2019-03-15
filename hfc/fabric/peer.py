@@ -1,7 +1,7 @@
 # Copyright 281165273@qq.com. All Rights Reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
-import base64
+
 import logging
 import threading
 from hashlib import sha256
@@ -13,7 +13,7 @@ from hfc.protos.utils import create_seek_info, create_seek_payload, \
     create_envelope
 from hfc.util.channel import create_grpc_channel
 from hfc.util.utils import current_timestamp, \
-    build_header, build_channel_header
+    build_header, build_channel_header, pem_to_der
 
 DEFAULT_PEER_ENDPOINT = 'localhost:7051'
 
@@ -178,21 +178,19 @@ class Peer(object):
         return delivery_result
 
     def get_events(self, tx_context, channel_name,
-                   start=None, stop=None, filtered=False):
+                   start=None, stop=None, filtered=False,
+                   behavior='BLOCK_UNTIL_READY'):
         """ get the events of the channel.
         Return: the events in success or None in fail.
         """
         _logger.info("get events")
 
-        seek_info = create_seek_info(start, stop)
+        seek_info = create_seek_info(start, stop, behavior)
 
         kwargs = {}
         if self._client_cert_path:
             with open(self._client_cert_path, 'rb') as f:
-                client_cert = f.read()
-                arr = client_cert.split(b'\n')
-                der = b''.join(arr[1:-2])
-                b64der = base64.b64decode(der)
+                b64der = pem_to_der(f.read())
                 kwargs['tls_cert_hash'] = sha256(b64der).digest()
 
         seek_info_header = build_channel_header(
