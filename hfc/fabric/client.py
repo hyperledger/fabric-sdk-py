@@ -392,7 +392,7 @@ class Client(object):
         return self._channels.get(name, None)
 
     def channel_create(self, orderer_name, channel_name, requestor,
-                       config_yaml, channel_profile):
+                       config_yaml=None, channel_profile=None, config_tx=None):
         """
         Create a channel, send request to orderer, and check the response
 
@@ -403,6 +403,8 @@ class Client(object):
         CFG_PATH variable
         :param channel_profile: Name of the channel profile defined inside
         config yaml file
+        :param config_tx: Path of the configtx file of createchannel generated
+        with configtxgen
         :return: True (creation succeeds) or False (creation failed)
         """
         if self.get_channel(channel_name):
@@ -416,16 +418,29 @@ class Client(object):
                 orderer_name))
             return False
 
-        tx = self.generate_channel_tx(channel_name, config_yaml,
-                                      channel_profile)
-        if tx is None:
-            _logger.error('Configtx is empty')
-            return False
-        _logger.info("Configtx file successfully created in current directory")
+        if config_tx is not None:
+            config_tx = config_tx if os.path.isabs(config_tx) else \
+                os.getcwd() + "/" + config_tx
+            with open(config_tx, 'rb') as f:
+                envelope = f.read()
+                config = utils.extract_channel_config(envelope)
 
-        with open(tx, 'rb') as f:
-            envelope = f.read()
-            config = utils.extract_channel_config(envelope)
+        elif config_yaml is not None and channel_profile is not None:
+            tx = self.generate_channel_tx(channel_name, config_yaml,
+                                          channel_profile)
+            if tx is None:
+                _logger.error('Configtx is empty')
+                return False
+            _logger.info("Configtx file successfully created in current \
+            directory")
+
+            with open(tx, 'rb') as f:
+                envelope = f.read()
+                config = utils.extract_channel_config(envelope)
+        else:
+            _logger.error('Configtx or (config_yaml + channel) \
+            profile must be provided.')
+            return False
 
         # convert envelope to config
         # self.tx_context = TXContext(requestor, Ecies(), {})

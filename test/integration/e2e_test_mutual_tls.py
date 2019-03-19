@@ -59,11 +59,13 @@ class E2eTest(BaseTestCase):
             self.channel_name))
 
         # By default, self.user is the admin of org1
-        response = self.client.channel_create('orderer.example.com',
-                                              self.channel_name,
-                                              self.user,
-                                              self.config_yaml,
-                                              self.channel_profile)
+        response = self.client.channel_create(
+            'orderer.example.com',
+            self.channel_name,
+            self.user,
+            config_yaml=self.config_yaml,
+            channel_profile=self.channel_profile)
+
         self.assertTrue(response)
 
         logger.info("E2E: Channel creation done: name={}".format(
