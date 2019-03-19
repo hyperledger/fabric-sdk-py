@@ -1,3 +1,4 @@
+aiogrpc >= 1.6
 docker >=3.0.0
 docker-compose >= 1.7.0
 flake8 >= 3.0.0

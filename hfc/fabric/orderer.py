@@ -21,7 +21,7 @@ from hfc.protos.utils import create_seek_info, create_seek_payload, \
 from hfc.util.channel import create_grpc_channel
 
 from hfc.util.utils import current_timestamp, \
-    build_header, build_channel_header
+    build_header, build_channel_header, stream_envelope
 
 DEFAULT_ORDERER_ENDPOINT = 'localhost:7050'
 
@@ -115,15 +115,9 @@ class Orderer(object):
         seek_payload_bytes = create_seek_payload(seek_header, seek_info)
         sig = tx_context.sign(seek_payload_bytes)
         envelope = create_envelope(sig, seek_payload_bytes)
-        response = self.delivery(envelope)
 
-        if response[0].block is None or response[0].block == '':
-            _logger.error("fail to get genesis block")
-            return None
-
-        _logger.info("get genesis block successfully, block=%s",
-                     response[0].block.header)
-        return response[0].block
+        # this is a stream response
+        return self.delivery(envelope)
 
     def broadcast(self, envelope):
         """Send an broadcast envelope to orderer.
@@ -136,7 +130,8 @@ class Orderer(object):
         """
         _logger.debug("Send envelope={}".format(envelope))
 
-        return list(self._orderer_client.Broadcast(iter([envelope])))
+        # this is a stream response
+        return self._orderer_client.Broadcast(stream_envelope(envelope))
 
     def delivery(self, envelope, scheduler=None):
         """ Send an delivery envelop to orderer.
@@ -149,7 +144,8 @@ class Orderer(object):
         """
         _logger.debug("Send envelope={}".format(envelope))
 
-        return list(self._orderer_client.Deliver(iter([envelope])))
+        # this is a stream response
+        return self._orderer_client.Deliver(stream_envelope(envelope))
 
     def get_attrs(self):
         return ",".join("{}={}"

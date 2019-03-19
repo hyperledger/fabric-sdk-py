@@ -211,3 +211,10 @@ local.properties
 
 # vscode
 .vscode
+
+# result test files
+test-export.json
+test/fixtures/ca/fabric-ca-server/keystore/*
+test/fixtures/ca/fabric-ca-server/IssuerPublicKey
+test/fixtures/ca/fabric-ca-server/IssuerRevocationPublicKey
+test/fixtures/ca/fabric-ca-server/msp/

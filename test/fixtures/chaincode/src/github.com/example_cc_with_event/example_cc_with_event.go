@@ -138,6 +138,7 @@ func (t *SimpleChaincode) invoke(stub shim.ChaincodeStubInterface, args []string
 	}
 
 	payloadAsBytes := []byte(strconv.Itoa(Bval))
+	stub.SetEvent("invoked", payloadAsBytes)
 	return shim.Success(payloadAsBytes)
 }
 

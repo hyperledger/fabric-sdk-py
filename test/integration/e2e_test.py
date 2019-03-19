@@ -1,6 +1,7 @@
 # Copyright IBM Corp. 2017 All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
+import asyncio
 
 import docker
 import logging
@@ -11,8 +12,8 @@ from test.integration.utils import BaseTestCase
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-CC_PATH = 'github.com/example_cc'
-CC_NAME = 'example_cc'
+CC_PATH = 'github.com/example_cc_with_event'
+CC_NAME = 'example_cc_with_event'
 CC_VERSION = '1.0'
 
 
@@ -24,7 +25,7 @@ class E2eTest(BaseTestCase):
     def tearDown(self):
         super(E2eTest, self).tearDown()
 
-    def channel_create(self):
+    async def channel_create(self):
         """
         Create an channel for further testing.
 
@@ -34,7 +35,7 @@ class E2eTest(BaseTestCase):
             self.channel_name))
 
         # By default, self.user is the admin of org1
-        response = self.client.channel_create(
+        response = await self.client.channel_create(
             'orderer.example.com',
             self.channel_name,
             self.user,
@@ -45,7 +46,7 @@ class E2eTest(BaseTestCase):
         logger.info("E2E: Channel creation done: name={}".format(
             self.channel_name))
 
-    def channel_join(self):
+    async def channel_join(self):
         """
         Join peers of two orgs into an existing channels
 
@@ -62,7 +63,7 @@ class E2eTest(BaseTestCase):
         orgs = ["org1.example.com", "org2.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, 'Admin')
-            response = self.client.channel_join(
+            response = await self.client.channel_join(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peers=['peer0.' + org, 'peer1.' + org],
@@ -82,41 +83,39 @@ class E2eTest(BaseTestCase):
         logger.info("E2E: Channel join done: name={}".format(
             self.channel_name))
 
-    def chaincode_install(self):
+    async def chaincode_install(self):
         """
         Test installing an example chaincode to peer
 
         :return:
         """
         logger.info("E2E: Chaincode install start")
+        cc = f'/var/hyperledger/production/chaincodes/{CC_NAME}.{CC_VERSION}'
 
         orgs = ["org1.example.com", "org2.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
-            response = self.client.chaincode_install(
+            responses = await self.client.chaincode_install(
                 requestor=org_admin,
                 peers=['peer0.' + org, 'peer1.' + org],
                 cc_path=CC_PATH,
                 cc_name=CC_NAME,
                 cc_version=CC_VERSION
             )
-            self.assertTrue(response)
+            self.assertTrue(responses)
             # Verify the cc pack exists now in the peer node
             dc = docker.from_env()
             for peer in ['peer0', 'peer1']:
                 peer0_container = dc.containers.get(peer + '.' + org)
-                code, output = peer0_container.exec_run(
-                    'test -f '
-                    '/var/hyperledger/production/chaincodes/example_cc.1.0')
+                code, output = peer0_container.exec_run(f'test -f {cc}')
                 self.assertEqual(code, 0, "chaincodes pack not exists")
 
         logger.info("E2E: chaincode install done")
 
     def chaincode_install_fail(self):
-
         pass
 
-    def chaincode_instantiate(self):
+    async def chaincode_instantiate(self):
         """
         Test instantiating an example chaincode to peer
 
@@ -128,20 +127,21 @@ class E2eTest(BaseTestCase):
         args = ['a', '200', 'b', '300']
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
-            response = self.client.chaincode_instantiate(
+            response = await self.client.chaincode_instantiate(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peers=['peer0.' + org],
                 args=args,
                 cc_name=CC_NAME,
-                cc_version=CC_VERSION
+                cc_version=CC_VERSION,
+                wait_for_event=True
             )
             logger.info(
                 "E2E: Chaincode instantiation response {}".format(response))
             self.assertTrue(response)
         logger.info("E2E: chaincode instantiation done")
 
-    def chaincode_invoke(self):
+    async def chaincode_invoke(self):
         """
         Test invoking an example chaincode to peer
 
@@ -153,20 +153,22 @@ class E2eTest(BaseTestCase):
         args = ['a', 'b', '100']
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
-            response = self.client.chaincode_invoke(
+            response = await self.client.chaincode_invoke(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peers=['peer1.' + org],
                 args=args,
                 cc_name=CC_NAME,
                 cc_version=CC_VERSION,
-                wait_for_event=True
+                wait_for_event=True,
+                wait_for_event_timeout=120,
+                cc_pattern="^invoked*"  # for chaincode event
             )
-            self.assertEqual(response, '')
+            self.assertEqual(response, '400')
 
         logger.info("E2E: chaincode invoke done")
 
-    def chaincode_query(self):
+    async def chaincode_query(self):
         """
         Test invoking an example chaincode to peer
 
@@ -178,7 +180,7 @@ class E2eTest(BaseTestCase):
         args = ['b']
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
-            response = self.client.chaincode_query(
+            response = await self.client.chaincode_query(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peers=['peer0.' + org],
@@ -190,7 +192,7 @@ class E2eTest(BaseTestCase):
 
         logger.info("E2E: chaincode query done")
 
-    def query_installed_chaincodes(self):
+    async def query_installed_chaincodes(self):
         """
         Test query installed chaincodes on peer
 
@@ -201,7 +203,7 @@ class E2eTest(BaseTestCase):
         orgs = ["org1.example.com", "org2.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
-            response = self.client.query_installed_chaincodes(
+            response = await self.client.query_installed_chaincodes(
                 requestor=org_admin,
                 peers=['peer0.' + org, 'peer1.' + org],
             )
@@ -214,7 +216,7 @@ class E2eTest(BaseTestCase):
 
         logger.info("E2E: Query installed chaincode done")
 
-    def query_channels(self):
+    async def query_channels(self):
         """
         Test querying channel
 
@@ -225,7 +227,7 @@ class E2eTest(BaseTestCase):
         orgs = ["org1.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
-            response = self.client.query_channels(
+            response = await self.client.query_channels(
                 requestor=org_admin,
                 peers=['peer0.' + org, 'peer1.' + org],
             )
@@ -236,7 +238,7 @@ class E2eTest(BaseTestCase):
 
         logger.info("E2E: Query channel done")
 
-    def query_info(self):
+    async def query_info(self):
         """
         Test querying information on the state of the Channel
 
@@ -247,7 +249,7 @@ class E2eTest(BaseTestCase):
         orgs = ["org1.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
-            response = self.client.query_info(
+            response = await self.client.query_info(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peers=['peer0.' + org, 'peer1.' + org],
@@ -259,7 +261,7 @@ class E2eTest(BaseTestCase):
 
         logger.info("E2E: Query info done")
 
-    def query_block_by_txid(self):
+    async def query_block_by_txid(self):
         """
         Test querying block by tx id
 
@@ -271,13 +273,13 @@ class E2eTest(BaseTestCase):
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
 
-            response = self.client.query_info(
+            response = await self.client.query_info(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peers=['peer0.' + org, 'peer1.' + org],
             )
 
-            response = self.client.query_block_by_hash(
+            response = await self.client.query_block_by_hash(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peers=['peer0.' + org, 'peer1.' + org],
@@ -288,7 +290,7 @@ class E2eTest(BaseTestCase):
                 'payload').get('header').get(
                 'channel_header').get('tx_id')
 
-            response = self.client.query_block_by_txid(
+            response = await self.client.query_block_by_txid(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peers=['peer0.' + org, 'peer1.' + org],
@@ -304,7 +306,7 @@ class E2eTest(BaseTestCase):
 
         logger.info("E2E: Query block by tx id done")
 
-    def query_block_by_hash(self):
+    async def query_block_by_hash(self):
         """
         Test querying block by block hash
 
@@ -316,7 +318,7 @@ class E2eTest(BaseTestCase):
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
 
-            response = self.client.query_info(
+            response = await self.client.query_info(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peers=['peer0.' + org, 'peer1.' + org],
@@ -324,7 +326,7 @@ class E2eTest(BaseTestCase):
 
             previous_block_hash = response.previousBlockHash
             current_block_hash = response.currentBlockHash
-            response = self.client.query_block_by_hash(
+            response = await self.client.query_block_by_hash(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peers=['peer0.' + org, 'peer1.' + org],
@@ -338,7 +340,7 @@ class E2eTest(BaseTestCase):
 
         logger.info("E2E: Query block by block hash done")
 
-    def query_block(self):
+    async def query_block(self):
         """
         Test querying block by block number
 
@@ -349,7 +351,7 @@ class E2eTest(BaseTestCase):
         orgs = ["org1.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
-            response = self.client.query_block(
+            response = await self.client.query_block(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peers=['peer0.' + org, 'peer1.' + org],
@@ -363,7 +365,7 @@ class E2eTest(BaseTestCase):
 
         logger.info("E2E: Query block by block number done")
 
-    def query_transaction(self):
+    async def query_transaction(self):
         """
         Test querying transaction by tx id
 
@@ -374,13 +376,13 @@ class E2eTest(BaseTestCase):
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
 
-            response = self.client.query_info(
+            response = await self.client.query_info(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peers=['peer0.' + org, 'peer1.' + org],
             )
 
-            response = self.client.query_block_by_hash(
+            response = await self.client.query_block_by_hash(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peers=['peer0.' + org, 'peer1.' + org],
@@ -391,7 +393,7 @@ class E2eTest(BaseTestCase):
                 'payload').get('header').get(
                 'channel_header').get('tx_id')
 
-            response = self.client.query_transaction(
+            response = await self.client.query_transaction(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peers=['peer0.' + org, 'peer1.' + org],
@@ -406,7 +408,7 @@ class E2eTest(BaseTestCase):
 
         logger.info("E2E: Query transaction by tx id done")
 
-    def query_instantiated_chaincodes(self):
+    async def query_instantiated_chaincodes(self):
         """
         Test query instantiated chaincodes on peer
 
@@ -417,21 +419,23 @@ class E2eTest(BaseTestCase):
         orgs = ["org1.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
-            response = self.client.query_instantiated_chaincodes(
+
+            responses = await self.client.query_instantiated_chaincodes(
                 requestor=org_admin,
                 channel_name=self.channel_name,
-                peers=['peer0.' + org, 'peer1.' + org]
+                peers=['peer0.' + org, 'peer1.' + org],
             )
+            self.assertTrue(len(responses) >= 1)
             self.assertEqual(
-                response.chaincodes[0].name, CC_NAME, "Query failed")
+                responses[0].chaincodes[0].name, CC_NAME, "Query failed")
             self.assertEqual(
-                response.chaincodes[0].version, CC_VERSION, "Query failed")
+                responses[0].chaincodes[0].version, CC_VERSION, "Query failed")
             self.assertEqual(
-                response.chaincodes[0].path, CC_PATH, "Query failed")
+                responses[0].chaincodes[0].path, CC_PATH, "Query failed")
 
         logger.info("E2E: Query installed chaincode done")
 
-    def get_channel_config(self):
+    async def get_channel_config(self):
         """
         Test get channel config on peer
 
@@ -442,7 +446,7 @@ class E2eTest(BaseTestCase):
         orgs = ["org1.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
-            response = self.client.get_channel_config(
+            response = await self.client.get_channel_config(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peers=['peer0.' + org, 'peer1.' + org]
@@ -452,72 +456,124 @@ class E2eTest(BaseTestCase):
 
         logger.info("E2E: Query installed chaincode done")
 
-    def get_events(self):
+    def onFilteredEvent(self, block):
+        self.filtered_blocks.append(block)
+
+    async def get_filtered_block_events(self):
 
         org = 'org1.example.com'
         peer = self.client.get_peer('peer0.' + org)
 
         org_admin = self.client.get_user(org, 'Admin')
-        events = self.client.get_events(org_admin, peer, self.channel_name,
-                                        filtered=True,
-                                        behavior='FAIL_IF_NOT_READY')
+        channel = self.client.get_channel(self.channel_name)
+        channel_event_hub = channel.newChannelEventHub(peer, org_admin)
+        stream = channel_event_hub.connect(filtered=True, start=0, stop=None)
 
-        self.assertEqual(len(events), 4)
+        self.filtered_blocks = []
+        channel_event_hub.registerBlockEvent(onEvent=self.onFilteredEvent)
+        await stream  # will wait until empty block due do stop = None
 
-        self.assertEqual(events[0]['number'], 0)
-        self.assertEqual(events[0]['channel_id'], self.channel_name)
+        self.assertEqual(len(self.filtered_blocks), 4)
 
-        filtered_transaction = events[0]['filtered_transactions'][0]
+        block = self.filtered_blocks[0]
+        self.assertEqual(block['number'], 0)
+        self.assertEqual(block['channel_id'], self.channel_name)
+
+        filtered_transaction = block['filtered_transactions'][0]
         self.assertEqual(filtered_transaction['tx_validation_code'], 'VALID')
         self.assertEqual(filtered_transaction['txid'], '')
         self.assertEqual(filtered_transaction['type'], 'CONFIG')
 
-        self.assertEqual(events[2]['number'], 2)
-        filtered_transaction = events[2]['filtered_transactions'][0]
-        self.assertEqual(filtered_transaction['tx_validation_code'], 'VALID')
-        self.assertEqual(filtered_transaction['type'], 'ENDORSER_TRANSACTION')
-
         # test missing block is present
         data = {'channel_id': '', 'filtered_transactions': [], 'number': 0}
-        self.assertEqual(events[len(events) - 1], data)
+        filtered_block = self.filtered_blocks[len(self.filtered_blocks) - 1]
+        self.assertEqual(filtered_block, data)
+
+    def onFullEvent(self, block):
+        self.blocks.append(block)
+
+    async def get_full_block_events(self):
+
+        org = 'org1.example.com'
+        peer = self.client.get_peer('peer0.' + org)
+
+        org_admin = self.client.get_user(org, 'Admin')
+        channel = self.client.get_channel(self.channel_name)
+        channel_event_hub = channel.newChannelEventHub(peer, org_admin)
+        stream = channel_event_hub.connect(start=0, stop=None, filtered=False)
+
+        self.blocks = []
+        channel_event_hub.registerBlockEvent(self.onFullEvent)
+        await stream
+
+        self.assertEqual(len(self.blocks), 4)
+
+        block = self.blocks[0]
+        self.assertEqual(block['header']['number'], 0)
+
+        block = self.blocks[2]
+        self.assertEqual(block['header']['number'], 2)
+        action = block['data']['data'][0]['payload']['data']['actions'][0]
+        ppl_r_p = action['payload']['action']['proposal_response_payload']
+        events_obj = ppl_r_p['extension']['events']
+        self.assertEqual(events_obj['event_name'], 'invoked')
+        self.assertEqual(events_obj['chaincode_id'], CC_NAME)
+        self.assertEqual(events_obj['payload'], b'400')
+
+        # test missing block is present
+        data = {
+            'header': {
+                'number': 0,
+                'previous_hash': b'',
+                'data_hash': b''
+            },
+            'data': {'data': []},
+            'metadata': {'metadata': []}
+        }
+        block = self.blocks[len(self.blocks) - 1]
+        self.assertEqual(block, data)
 
     def test_in_sequence(self):
 
+        loop = asyncio.get_event_loop()
+
         logger.info("\n\nE2E testing started...")
 
-        self.channel_create()
+        loop.run_until_complete(self.channel_create())
 
-        self.channel_join()
+        loop.run_until_complete(self.channel_join())
 
-        self.chaincode_install()
+        loop.run_until_complete(self.chaincode_install())
 
         self.chaincode_install_fail()
 
-        self.chaincode_instantiate()
+        loop.run_until_complete(self.chaincode_instantiate())
 
-        self.chaincode_invoke()
+        loop.run_until_complete(self.query_instantiated_chaincodes())
 
-        self.chaincode_query()
+        loop.run_until_complete(self.chaincode_invoke())
 
-        self.query_instantiated_chaincodes()
+        loop.run_until_complete(self.chaincode_query())
 
-        self.query_installed_chaincodes()
+        loop.run_until_complete(self.query_installed_chaincodes())
 
-        self.query_channels()
+        loop.run_until_complete(self.query_channels())
 
-        self.query_info()
+        loop.run_until_complete(self.query_info())
 
-        self.query_block_by_txid()
+        loop.run_until_complete(self.query_block_by_txid())
 
-        self.query_block_by_hash()
+        loop.run_until_complete(self.query_block_by_hash())
 
-        self.query_block()
+        loop.run_until_complete(self.query_block())
 
-        self.query_transaction()
+        loop.run_until_complete(self.query_transaction())
 
-        self.get_channel_config()
+        loop.run_until_complete(self.get_channel_config())
 
-        self.get_events()
+        loop.run_until_complete(self.get_filtered_block_events())
+
+        loop.run_until_complete(self.get_full_block_events())
 
         logger.info("E2E all test cases done\n\n")
 

@@ -13,13 +13,13 @@
 # limitations under the License.
 #
 
+import asyncio
 import logging
 import json
 import sys
 import os
 import subprocess
 import shutil
-import time
 
 from hfc.fabric.channel.channel import Channel
 from hfc.fabric.orderer import Orderer
@@ -34,8 +34,8 @@ from hfc.fabric.transaction.tx_proposal_request import TXProposalRequest, \
 from hfc.protos.common import common_pb2, configtx_pb2, ledger_pb2
 from hfc.protos.peer import query_pb2
 from hfc.protos.peer.chaincode_pb2 import ChaincodeData
-from hfc.fabric.block_decoder import BlockDecoder, FilteredBlockDecoder, \
-    decode_fabric_peers_info, decode_fabric_MSP_config, \
+from hfc.fabric.block_decoder import BlockDecoder,\
+    decode_fabric_peers_info, decode_fabric_MSP_config,\
     decode_fabric_endpoints, decode_proposal_response_payload
 from hfc.util import utils
 from hfc.util.keyvaluestore import FileKeyValueStore
@@ -62,7 +62,7 @@ class Client(object):
         """ Construct client"""
         self._crypto_suite = None
         self._tx_context = None
-        self.kv_store_path = None  # TODO: fix t.his as private later
+        self.kv_store_path = None
         self._state_store = None
         self._is_dev_mode = False
         self.network_info = dict()
@@ -130,7 +130,8 @@ class Client(object):
             peer.init_with_bundle(peers[name])
             self._peers[name] = peer
 
-    def init_with_discovery(self, requestor, peer_target, channel_name=None):
+    async def init_with_discovery(self, requestor, peer_target,
+                                  channel_name=None):
         """
         Load the connection profile from discover.
 
@@ -158,20 +159,21 @@ class Client(object):
 
         # Init from Local Config
         if channel_name is None:
-            members = Channel('discovery', '').\
-                _discovery(requestor,
-                           peer_target,
-                           config=False,
-                           local=True).results[0].members
+            response = await Channel('discovery', '')._discovery(
+                requestor,
+                peer_target,
+                config=False,
+                local=True)
 
+            members = response.results[0].members
             config_result = None
         else:
             self.new_channel(channel_name)
             channel = self.get_channel(channel_name)
-            response = channel._discovery(requestor,
-                                          peer_target,
-                                          config=True,
-                                          local=False)
+            response = await channel._discovery(requestor,
+                                                peer_target,
+                                                config=True,
+                                                local=False)
 
             members = response.results[0].members
             config_result = response.results[1].config_result
@@ -215,7 +217,7 @@ class Client(object):
             if msp_name in results['orderers']:
                 org_orderers = [orderer_info['host']
                                 for orderer_info in results[
-                                'orderers'][msp_name]]
+                                    'orderers'][msp_name]]
 
                 info['orderers'] = org_orderers
 
@@ -225,7 +227,7 @@ class Client(object):
 
         # Init orderer nodes
         _logger.debug("Import orderers = {}".format(results[
-                                                    'orderers'].keys()))
+                                                        'orderers'].keys()))
         for orderer_msp in results['orderers']:
             for orderer_info in results['orderers'][orderer_msp]:
                 orderer_endpoint = '%s:%s' % (orderer_info['host'],
@@ -398,8 +400,9 @@ class Client(object):
         """
         return self._channels.get(name, None)
 
-    def channel_create(self, orderer, channel_name, requestor,
-                       config_yaml=None, channel_profile=None, config_tx=None):
+    async def channel_create(self, orderer, channel_name, requestor,
+                             config_yaml=None, channel_profile=None,
+                             config_tx=None):
         """
         Create a channel, send request to orderer, and check the response
 
@@ -472,15 +475,15 @@ class Client(object):
             'orderer': target_orderer,
             'channel_name': channel_name
         }
-        response = self._create_channel(request)
+        responses = await self._create_channel(request)
 
-        if response[0].status == 200:
+        if all([x.status == 200 for x in responses]):
             self.new_channel(channel_name)
             return True
         else:
             return False
 
-    def channel_join(self, requestor, channel_name, peers, orderer):
+    async def channel_join(self, requestor, channel_name, peers, orderer):
         """
         Join a channel.
         Get genesis block from orderer, then send request to peer
@@ -499,6 +502,7 @@ class Client(object):
                 channel_name))
             return False
 
+        target_orderer = None
         if isinstance(orderer, Orderer):
             target_orderer = orderer
         elif isinstance(orderer, str):
@@ -515,9 +519,26 @@ class Client(object):
         orderer_admin = self.get_user(target_orderer.name, 'Admin')
         tx_context = TXContext(orderer_admin, orderer_admin.cryptoSuite,
                                tx_prop_req)
-        genesis_block = target_orderer.get_genesis_block(
-            tx_context,
-            channel.name).SerializeToString()
+
+        genesis_block = None
+        stream = target_orderer.get_genesis_block(tx_context, channel.name)
+        async for v in stream:
+            if v.block is None or v.block == '':
+                msg = "fail to get genesis block"
+                _logger.error(msg)
+                raise Exception(msg)
+
+            _logger.info("get genesis block successfully, block=%s",
+                         v.block.header)
+            genesis_block = v.block
+            break
+
+        if genesis_block is None:
+            msg = "fail to get genesis block"
+            _logger.error(msg)
+            raise Exception(msg)
+
+        genesis_block = genesis_block.SerializeToString()
 
         # create the peer
         tx_context = TXContext(requestor, requestor.cryptoSuite, tx_prop_req)
@@ -534,9 +555,9 @@ class Client(object):
                               format(peer))
 
         if not target_peers:
-            _logger.error(
-                "Failed to query block: no functionnal peer provided")
-            raise
+            err_msg = "Failed to query block: no functional peer provided"
+            _logger.error(err_msg)
+            raise Exception(err_msg)
 
         request = {
             "targets": target_peers,
@@ -545,10 +566,16 @@ class Client(object):
             "transient_map": {}
         }
 
-        return channel.join_channel(request)
+        responses = channel.join_channel(request)
+        res = await asyncio.gather(*responses)
 
-    def chaincode_install(self, requestor, peers, cc_path, cc_name,
-                          cc_version):
+        if not all([x.response.status == 200 for x in res]):
+            return res[0].response.message
+
+        return res
+
+    async def chaincode_install(self, requestor, peers, cc_path, cc_name,
+                                cc_version):
         """
         Install chaincode to given peers by requestor role
 
@@ -571,19 +598,21 @@ class Client(object):
                               format(peer))
 
         if not target_peers:
-            _logger.error(
-                "Failed to query block: no functionnal peer provided")
-            raise
+            err_msg = "Failed to query block: no functional peer provided"
+            _logger.error(err_msg)
+            raise Exception(err_msg)
 
         tran_prop_req = create_tx_prop_req(CC_INSTALL, cc_path, CC_TYPE_GOLANG,
                                            cc_name, cc_version)
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,
                                        tran_prop_req)
 
-        responses = self.send_install_proposal(tx_context, target_peers)
-        return responses
+        responses, proposal, header = self.send_install_proposal(tx_context,
+                                                                 target_peers)
+        res = await asyncio.gather(*responses)
+        return res
 
-    def _create_channel(self, request):
+    async def _create_channel(self, request):
         """Calls the orderer to start building the new channel.
 
         Args:
@@ -599,9 +628,13 @@ class Client(object):
             _logger.debug('_create_channel - have envelope')
             have_envelope = True
 
-        return self._create_or_update_channel_request(request, have_envelope)
+        res = []
+        async for v in self._create_or_update_channel_request(request,
+                                                              have_envelope):
+            res.append(v)
+        return res
 
-    def update_channel(self, request):
+    async def update_channel(self, request):
         """Calls the orderer to update an existing channel.
 
         Args:
@@ -616,7 +649,11 @@ class Client(object):
             _logger.debug('_create_channel - have envelope')
             have_envelope = True
 
-        return self._create_or_update_channel_request(request, have_envelope)
+        res = []
+        async for v in self._create_or_update_channel_request(request,
+                                                              have_envelope):
+            res.append(v)
+        return res
 
     def _validate_request(self, request):
         """
@@ -890,8 +927,10 @@ class Client(object):
             return None
         return tx_path
 
-    def chaincode_instantiate(self, requestor, channel_name, peers,
-                              args, cc_name, cc_version, timeout=10):
+    async def chaincode_instantiate(self, requestor, channel_name, peers,
+                                    args, cc_name, cc_version,
+                                    wait_for_event=False,
+                                    wait_for_event_timeout=30):
         """
             Instantiate installed chaincode to particular peer in
             particular channel
@@ -902,8 +941,13 @@ class Client(object):
         :param args (list): arguments (keys and values) for initialization
         :param cc_name: chaincode name
         :param cc_version: chaincode version
-        :param timeout: Timeout to wait
-        :return: True or False
+        :param wait_for_event: Whether to wait for the event from each peer's
+         deliver filtered service signifying that the 'invoke' transaction has
+          been committed successfully
+        :param wait_for_event_timeout: Time to wait for the event from each
+         peer's deliver filtered service signifying that the 'invoke'
+          transaction has been committed successfully (default 30s)
+        :return: chaincode data payload
         """
         target_peers = []
         for peer in peers:
@@ -917,9 +961,9 @@ class Client(object):
                               format(peer))
 
         if not target_peers:
-            _logger.error(
-                "Failed to query block: no functionnal peer provided")
-            raise
+            err_msg = "Failed to query block: no functional peer provided"
+            _logger.error(err_msg)
+            raise Exception(err_msg)
 
         tran_prop_req_dep = create_tx_prop_req(
             prop_type=CC_INSTANTIATE,
@@ -936,50 +980,70 @@ class Client(object):
             tran_prop_req_dep
         )
 
-        res = self.send_instantiate_proposal(
+        channel = self.get_channel(channel_name)
+
+        responses, proposal, header = self.send_instantiate_proposal(
             tx_context_dep, target_peers, channel_name)
+        res = await asyncio.gather(*responses)
+        # if proposal was not good, return
+        if not all([x.response.status == 200 for x in res]):
+            return res[0].response.message
+
+        tran_req = utils.build_tx_req((res, proposal, header))
 
         tx_context = create_tx_context(requestor,
                                        requestor.cryptoSuite,
                                        TXProposalRequest())
-        tran_req = utils.build_tx_req(res)
         responses = utils.send_transaction(self.orderers, tran_req, tx_context)
 
-        if not (tran_req.responses[0].response.status == 200
-                and responses[0].status == 200):
-            return False
+        # responses will be a stream
+        async for v in responses:
+            if not v.status == 200:
+                return v.message
 
-        res = decode_proposal_response_payload(res[0][0].payload)
+        res = decode_proposal_response_payload(res[0].payload)
 
-        # Wait until chaincode is really instantiated
-        # Note : we will remove this part when we have channel event hub
-        starttime = int(time.time())
-        while int(time.time()) - starttime < timeout:
+        # wait for transaction id proposal available in ledger and block
+        # commited
+        if wait_for_event:
+            channelEventsHubs = {}
+            event_stream = []
+            for target_peer in target_peers:
+                channel_event_hub = channel.newChannelEventHub(target_peer,
+                                                               requestor)
+                stream = channel_event_hub.connect()
+                txid = channel_event_hub.registerTxEvent(tx_context_dep.tx_id)
+                event_stream.append(stream)
+                channelEventsHubs[txid] = channel_event_hub
             try:
-                response = self.query_transaction(
-                    requestor=requestor,
-                    channel_name=channel_name,
-                    peers=target_peers,
-                    tx_id=tx_context_dep.tx_id,
-                    decode=False
-                )
+                r = await asyncio.wait_for(asyncio.gather(*event_stream),
+                                           timeout=wait_for_event_timeout)
+            except asyncio.TimeoutError:
+                for k, v in channelEventsHubs.items():
+                    v.unregisterTxEvent(k)
+                raise TimeoutError('waitForEvent timed out')
+            except Exception as e:
+                return str(e)
+            else:
+                # check if all events are not None
+                if not all([x is True for x in r]):
+                    msg = 'One or more peers did not validate the events'
+                    raise Exception(msg)
+            finally:
+                # disconnect channel_event_hubs
+                for channel_event_hub in channelEventsHubs.values():
+                    channel_event_hub.disconnect()
 
-                if response.response.status == 200:
-                    ccd = ChaincodeData()
-                    payload = res['extension']['response']['payload']
-                    ccd.ParseFromString(payload)
-                    return ccd
+        ccd = ChaincodeData()
+        payload = res['extension']['response']['payload']
+        ccd.ParseFromString(payload)
+        return ccd
 
-                time.sleep(1)
-            except Exception:
-                time.sleep(1)
-
-        return False
-
-    def chaincode_invoke(self, requestor, channel_name, peers, args,
-                         cc_name, cc_version, cc_type=CC_TYPE_GOLANG,
-                         fcn='invoke', wait_for_event=False,
-                         wait_for_event_timeout=30):
+    async def chaincode_invoke(self, requestor, channel_name, peers, args,
+                               cc_name, cc_version, cc_type=CC_TYPE_GOLANG,
+                               fcn='invoke', cc_pattern=None,
+                               wait_for_event=False,
+                               wait_for_event_timeout=30):
         """
         Invoke chaincode for ledger update
 
@@ -991,6 +1055,7 @@ class Client(object):
         :param cc_version: chaincode version
         :param cc_type: chaincode type language
         :param fcn: chaincode function
+        :param cc_pattern: chaincode event name regex
         :param wait_for_event: Whether to wait for the event from each peer's
          deliver filtered service signifying that the 'invoke' transaction has
           been committed successfully
@@ -1011,9 +1076,9 @@ class Client(object):
                               format(peer))
 
         if not target_peers:
-            _logger.error(
-                "Failed to query block: no functionnal peer provided")
-            raise
+            err_msg = "Failed to query block: no functional peer provided"
+            _logger.error(err_msg)
+            raise Exception(err_msg)
 
         tran_prop_req = create_tx_prop_req(
             prop_type=CC_INVOKE,
@@ -1033,63 +1098,79 @@ class Client(object):
         channel = self.get_channel(channel_name)
 
         # send proposal
-        res = channel.send_tx_proposal(tx_context, target_peers)
+        responses, proposal, header = channel.send_tx_proposal(tx_context,
+                                                               target_peers)
+        res = await asyncio.gather(*responses)
+        # if proposal was not good, return
+        if not all([x.response.status == 200 for x in res]):
+            return res[0].response.message
 
-        tran_req = utils.build_tx_req(res)
-        res = tran_req.responses[0].response
-
-        # if proposal wat not good, return
-        if not res.status == 200:
-            return res.message
-
+        tran_req = utils.build_tx_req((res, proposal, header))
         tx_context_tx = create_tx_context(
             requestor,
             requestor.cryptoSuite,
             tran_req
         )
-
         responses = utils.send_transaction(self.orderers, tran_req,
                                            tx_context_tx)
+        # responses will be a stream
+        async for v in responses:
+            if not v.status == 200:
+                return v.message
 
-        if not responses[0].status == 200:
-            return res.message
+        res = decode_proposal_response_payload(res[0].payload)
 
+        # wait for transaction id proposal available in ledger and block
+        # commited
         if wait_for_event:
-            # wait for transaction id proposal available in ledger and block
-            # commited
-            start_seek = 0
-            starttime = int(time.time())
-            while int(time.time()) - starttime < wait_for_event_timeout:
+            # wait for chaincode event
+            channelEventsHubs = {}
+            event_stream = []
+            for target_peer in target_peers:
+                channel_event_hub = channel.newChannelEventHub(target_peer,
+                                                               requestor)
 
-                # get peer events
-                count = len(target_peers)
-                for target_peer in target_peers:
-                    events = self.get_events(requestor, target_peer,
-                                             channel_name, start=start_seek,
-                                             filtered=True)
+                # use chaincode event
+                if cc_pattern is not None:
+                    stream = channel_event_hub.connect()
+                    reg_id = channel_event_hub.registerChaincodeEvent(
+                        cc_name, cc_pattern)
+                    event_stream.append(stream)
+                    channelEventsHubs[reg_id] = channel_event_hub
+                # use transaction event
+                else:
+                    stream = channel_event_hub.connect()
+                    txid = channel_event_hub.registerTxEvent(tx_context.tx_id)
+                    event_stream.append(stream)
+                    channelEventsHubs[txid] = channel_event_hub
 
-                    for event in events:
-                        for ft in event['filtered_transactions']:
-                            if tx_context.tx_id == ft['txid']:
-                                if ft['tx_validation_code'] == 'VALID':
-                                    count -= 1
-                                    # all peers must have the valid event
-                                    if count == 0:
-                                        return res.payload.decode('utf-8')
-                                else:
-                                    return res.message
+            try:
+                r = await asyncio.wait_for(asyncio.gather(*event_stream),
+                                           timeout=wait_for_event_timeout)
+            except asyncio.TimeoutError:
+                for k, v in channelEventsHubs.items():
+                    if cc_pattern is not None:
+                        v.unregisterChaincodeEvent(k)
+                    else:
+                        v.unregisterTxEvent(k)
+                raise TimeoutError('waitForEvent timed out.')
+            except Exception as e:
+                return str(e)
+            else:
+                # check if all events are not None
+                if not all([x is True for x in r]):
+                    msg = 'One or more peers did not validate the events'
+                    raise Exception(msg)
+            finally:
+                # disconnect channel_event_hubs
+                for channel_event_hub in channelEventsHubs.values():
+                    channel_event_hub.disconnect()
 
-                        start_seek = max(start_seek, event['number'])
-                time.sleep(1)
+        return res['extension']['response']['payload'].decode('utf-8')
 
-            raise TimeoutError('Either the waitForEvent timed out or the'
-                               ' mutual TLS is incorrectly configured.')
-        else:
-            return res.payload.decode('utf-8')
-
-    def chaincode_query(self, requestor, channel_name, peers, args,
-                        cc_name, cc_version, cc_type=CC_TYPE_GOLANG,
-                        fcn='query'):
+    async def chaincode_query(self, requestor, channel_name, peers, args,
+                              cc_name, cc_version, cc_type=CC_TYPE_GOLANG,
+                              fcn='query'):
         """
         Query chaincode
 
@@ -1115,9 +1196,9 @@ class Client(object):
                               format(peer))
 
         if not target_peers:
-            _logger.error(
-                "Failed to query block: no functionnal peer provided")
-            raise
+            err_msg = "Failed to query block: no functional peer provided"
+            _logger.error(err_msg)
+            raise Exception(err_msg)
 
         tran_prop_req = create_tx_prop_req(
             prop_type=CC_QUERY,
@@ -1134,17 +1215,17 @@ class Client(object):
             tran_prop_req
         )
 
-        res = self.get_channel(
+        responses, proposal, header = self.get_channel(
             channel_name).send_tx_proposal(tx_context, target_peers)
+        res = await asyncio.gather(*responses)
+        tran_req = utils.build_tx_req((res, proposal, header))
 
-        tran_req = utils.build_tx_req(res)
-        res = tran_req.responses[0].response
-        if res.status == 200:
-            return res.payload.decode('utf-8')
+        if all([x.response.status == 200 for x in tran_req.responses]):
+            return res[0].response.payload.decode('utf-8')
 
-        return res.message
+        return res.response.message
 
-    def query_installed_chaincodes(self, requestor, peers, decode=True):
+    async def query_installed_chaincodes(self, requestor, peers, decode=True):
         """
         Queries installed chaincode, returns all chaincodes installed on a peer
 
@@ -1165,9 +1246,9 @@ class Client(object):
                               format(peer))
 
         if not target_peers:
-            _logger.error(
-                "Failed to query block: no functionnal peer provided")
-            raise
+            err_msg = "Failed to query block: no functional peer provided"
+            _logger.error(err_msg)
+            raise Exception(err_msg)
 
         request = create_tx_prop_req(
             prop_type=CC_QUERY,
@@ -1181,24 +1262,33 @@ class Client(object):
                                        TXProposalRequest())
         tx_context.tx_prop_req = request
 
-        responses = Channel._send_tx_proposal('', tx_context, target_peers)
+        responses, proposal, header = Channel._send_tx_proposal('', tx_context,
+                                                                target_peers)
 
-        try:
-            if responses[0][0].response and decode:
-                query_trans = query_pb2.ChaincodeQueryResponse()
-                query_trans.ParseFromString(responses[0][0].response.payload)
-                for cc in query_trans.chaincodes:
-                    _logger.debug('cc name {}, version {}, path {}'.format(
-                        cc.name, cc.version, cc.path))
-                return query_trans
-            return responses[0][0]
+        res = await asyncio.gather(*responses)
 
-        except Exception:
-            _logger.error(
-                "Failed to query installed chaincodes: {}", sys.exc_info()[0])
-            raise
+        r = []
+        for v in res:
+            try:
+                if v.response and decode:
+                    query_trans = query_pb2.ChaincodeQueryResponse()
+                    query_trans.ParseFromString(v.response.payload)
+                    for cc in query_trans.chaincodes:
+                        _logger.debug('cc name {}, version {}, path {}'.format(
+                            cc.name, cc.version, cc.path))
+                    return query_trans
+                else:
+                    r.append(v)
 
-    def query_channels(self, requestor, peers, decode=True):
+            except Exception:
+                _logger.error(
+                    "Failed to query installed chaincodes: {}",
+                    sys.exc_info()[0])
+                raise
+            else:
+                raise Exception(r)
+
+    async def query_channels(self, requestor, peers, decode=True):
         """
         Queries channel name joined by a peer
 
@@ -1220,9 +1310,9 @@ class Client(object):
                               format(peer))
 
         if not target_peers:
-            _logger.error(
-                "Failed to query block: no functionnal peer provided")
-            raise
+            err_msg = "Failed to query block: no functional peer provided"
+            _logger.error(err_msg)
+            raise Exception(err_msg)
 
         request = create_tx_prop_req(
             prop_type=CC_QUERY,
@@ -1236,24 +1326,30 @@ class Client(object):
                                        TXProposalRequest())
         tx_context.tx_prop_req = request
 
-        responses = Channel._send_tx_proposal('', tx_context, target_peers)
+        responses, proposal, header = Channel._send_tx_proposal('', tx_context,
+                                                                target_peers)
 
-        try:
-            if responses[0][0].response and decode:
-                query_trans = query_pb2.ChannelQueryResponse()
-                query_trans.ParseFromString(responses[0][0].response.payload)
-                for ch in query_trans.channels:
-                    _logger.debug('channel id {}'.format(
-                        ch.channel_id))
-                return query_trans
-            return responses[0][0]
+        res = await asyncio.gather(*responses)
+        r = []
+        for v in res:
+            try:
+                if v.response and decode:
+                    query_trans = query_pb2.ChannelQueryResponse()
+                    query_trans.ParseFromString(v.response.payload)
+                    for ch in query_trans.channels:
+                        _logger.debug('channel id {}'.format(
+                            ch.channel_id))
+                    return query_trans
+                r.append(v)
 
-        except Exception:
-            _logger.error(
-                "Failed to query channel: {}", sys.exc_info()[0])
-            raise
+            except Exception:
+                _logger.error(
+                    "Failed to query channel: {}", sys.exc_info()[0])
+                raise
+            else:
+                raise Exception(r)
 
-    def query_info(self, requestor, channel_name, peers, decode=True):
+    async def query_info(self, requestor, channel_name, peers, decode=True):
         """
         Queries information of a channel
 
@@ -1276,32 +1372,38 @@ class Client(object):
                               format(peer))
 
         if not target_peers:
-            _logger.error(
-                "Failed to query block: no functionnal peer provided")
-            raise
+            err_msg = "Failed to query block: no functional peer provided"
+            _logger.error(err_msg)
+            raise Exception(err_msg)
 
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,
                                        TXProposalRequest())
 
-        responses = channel.query_info(tx_context, target_peers)
+        responses, proposal, header = channel.query_info(tx_context,
+                                                         target_peers)
 
-        try:
-            if responses[0][0].response and decode:
-                chain_info = ledger_pb2.BlockchainInfo()
-                chain_info.ParseFromString(responses[0][0].response.payload)
-                _logger.debug('response status {}'.format(
-                    responses[0][0].response.status))
-                return chain_info
-            return responses[0][0]
+        res = await asyncio.gather(*responses)
+        r = []
+        for v in res:
+            try:
+                if v.response and decode:
+                    chain_info = ledger_pb2.BlockchainInfo()
+                    chain_info.ParseFromString(v.response.payload)
+                    _logger.debug('response status {}'.format(
+                        v.response.status))
+                    return chain_info
+                r.append(v)
 
-        except Exception:
-            _logger.error(
-                "Failed to query info: {}", sys.exc_info()[0])
-            raise
+            except Exception:
+                _logger.error(
+                    "Failed to query info: {}", sys.exc_info()[0])
+                raise
+            else:
+                raise Exception(r)
 
-    def query_block_by_txid(self, requestor, channel_name,
-                            peers, tx_id, decode=True):
+    async def query_block_by_txid(self, requestor, channel_name,
+                                  peers, tx_id, decode=True):
         """
         Queries block by tx id
 
@@ -1325,34 +1427,40 @@ class Client(object):
                               format(peer))
 
         if not target_peers:
-            _logger.error(
-                "Failed to query block: no functionnal peer provided")
-            raise
+            err_msg = "Failed to query block: no functional peer provided"
+            _logger.error(err_msg)
+            raise Exception(err_msg)
 
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,
                                        TXProposalRequest())
 
-        responses = channel.query_block_by_txid(tx_context, target_peers,
-                                                tx_id)
+        responses, proposal, header = channel.query_block_by_txid(tx_context,
+                                                                  target_peers,
+                                                                  tx_id)
 
-        try:
-            if responses[0][0].response and decode:
-                _logger.debug('response status {}'.format(
-                    responses[0][0].response.status))
-                block = BlockDecoder().decode(responses[0][0].response.payload)
-                _logger.debug('looking at block {}'.format(
-                    block['header']['number']))
-                return block
-            return responses[0][0]
+        res = await asyncio.gather(*responses)
+        r = []
+        for v in res:
+            try:
+                if v.response and decode:
+                    _logger.debug(
+                        'response status {}'.format(v.response.status))
+                    block = BlockDecoder().decode(v.response.payload)
+                    _logger.debug('looking at block {}'.format(
+                        block['header']['number']))
+                    return block
+                r.append(v)
 
-        except Exception:
-            _logger.error(
-                "Failed to query block: {}", sys.exc_info()[0])
-            raise
+            except Exception:
+                _logger.error(
+                    "Failed to query block: {}", sys.exc_info()[0])
+                raise
+            else:
+                raise Exception(r)
 
-    def query_block_by_hash(self, requestor, channel_name,
-                            peers, block_hash, decode=True):
+    async def query_block_by_hash(self, requestor, channel_name,
+                                  peers, block_hash, decode=True):
         """
         Queries block by hash
 
@@ -1376,34 +1484,40 @@ class Client(object):
                               format(peer))
 
         if not target_peers:
-            _logger.error(
-                "Failed to query block: no functionnal peer provided")
-            raise
+            err_msg = "Failed to query block: no functional peer provided"
+            _logger.error(err_msg)
+            raise Exception(err_msg)
 
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,
                                        TXProposalRequest())
 
-        responses = channel.query_block_by_hash(tx_context, target_peers,
-                                                block_hash)
+        responses, proposal, header = channel.query_block_by_hash(tx_context,
+                                                                  target_peers,
+                                                                  block_hash)
 
-        try:
-            if responses[0][0].response and decode:
-                _logger.debug('response status {}'.format(
-                    responses[0][0].response.status))
-                block = BlockDecoder().decode(responses[0][0].response.payload)
-                _logger.debug('looking at block {}'.format(
-                    block['header']['number']))
-                return block
-            return responses[0][0]
+        res = await asyncio.gather(*responses)
+        r = []
+        for v in res:
+            try:
+                if v.response and decode:
+                    _logger.debug('response status {}'.format(
+                        v.response.status))
+                    block = BlockDecoder().decode(v.response.payload)
+                    _logger.debug('looking at block {}'.format(
+                        block['header']['number']))
+                    return block
+                r.append(v)
 
-        except Exception:
-            _logger.error(
-                "Failed to query block: {}", sys.exc_info()[0])
-            raise
+            except Exception:
+                _logger.error(
+                    "Failed to query block: {}", sys.exc_info()[0])
+                raise
+            else:
+                raise Exception(r)
 
-    def query_block(self, requestor, channel_name,
-                    peers, block_number, decode=True):
+    async def query_block(self, requestor, channel_name,
+                          peers, block_number, decode=True):
         """
         Queries block by number
 
@@ -1427,33 +1541,40 @@ class Client(object):
                               format(peer))
 
         if not target_peers:
-            _logger.error(
-                "Failed to query block: no functionnal peer provided")
-            raise
+            err_msg = "Failed to query block: no functional peer provided"
+            _logger.error(err_msg)
+            raise Exception(err_msg)
 
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,
                                        TXProposalRequest())
 
-        responses = channel.query_block(tx_context, target_peers, block_number)
+        responses, proposal, header = channel.query_block(tx_context,
+                                                          target_peers,
+                                                          block_number)
 
-        try:
-            if responses[0][0].response and decode:
-                _logger.debug('response status {}'.format(
-                    responses[0][0].response.status))
-                block = BlockDecoder().decode(responses[0][0].response.payload)
-                _logger.debug('looking at block {}'.format(
-                    block['header']['number']))
-                return block
-            return responses[0][0]
+        res = await asyncio.gather(*responses)
+        r = []
+        for v in res:
+            try:
+                if v.response and decode:
+                    _logger.debug('response status {}'.format(
+                        v.response.status))
+                    block = BlockDecoder().decode(v.response.payload)
+                    _logger.debug('looking at block {}'.format(
+                        block['header']['number']))
+                    return block
+                r.append(v)
 
-        except Exception:
-            _logger.error(
-                "Failed to query block: {}", sys.exc_info()[0])
-            raise
+            except Exception:
+                _logger.error(
+                    "Failed to query block: {}", sys.exc_info()[0])
+                raise
+            else:
+                raise Exception(r)
 
-    def query_transaction(self, requestor, channel_name,
-                          peers, tx_id, decode=True):
+    async def query_transaction(self, requestor, channel_name,
+                                peers, tx_id, decode=True):
         """
         Queries block by number
 
@@ -1477,33 +1598,40 @@ class Client(object):
                               format(peer))
 
         if not target_peers:
-            _logger.error(
-                "Failed to query block: no functionnal peer provided")
-            raise
+            err_msg = "Failed to query block: no functional peer provided"
+            _logger.error(err_msg)
+            raise Exception(err_msg)
 
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,
                                        TXProposalRequest())
 
-        responses = channel.query_transaction(tx_context, target_peers, tx_id)
+        responses, proposal, header = channel.query_transaction(tx_context,
+                                                                target_peers,
+                                                                tx_id)
 
-        try:
-            if responses[0][0].response and decode:
-                _logger.debug('response status {}'.format(
-                    responses[0][0].response.status))
-                process_trans = BlockDecoder().decode_transaction(
-                    responses[0][0].response.payload)
-                return process_trans
+        res = await asyncio.gather(*responses)
+        r = []
+        for v in res:
+            try:
+                if v.response and decode:
+                    _logger.debug('response status {}'.format(
+                        v.response.status))
+                    process_trans = BlockDecoder().decode_transaction(
+                        v.response.payload)
+                    return process_trans
 
-            return responses[0][0]
+                r.append(v)
 
-        except Exception:
-            _logger.error(
-                "Failed to query block: {}", sys.exc_info()[0])
-            raise
+            except Exception:
+                _logger.error(
+                    "Failed to query block: {}", sys.exc_info()[0])
+                raise
+            else:
+                raise Exception(r)
 
-    def query_instantiated_chaincodes(self, requestor, channel_name,
-                                      peers, decode=True):
+    async def query_instantiated_chaincodes(self, requestor, channel_name,
+                                            peers, decode=True):
         """
         Queries instantiated chaincode
 
@@ -1514,46 +1642,59 @@ class Client(object):
         :return: A `ChaincodeQueryResponse` or `ProposalResponse`
         """
         target_peers = []
-        for peer in peers:
-            if isinstance(peer, Peer):
-                target_peers.append(peer)
-            elif isinstance(peer, str):
-                peer = self.get_peer(peer)
-                target_peers.append(peer)
+        for _peer in peers:
+            if isinstance(_peer, Peer):
+                target_peers.append(_peer)
+            elif isinstance(_peer, str):
+                peer = self.get_peer(_peer)
+                if peer is not None:
+                    target_peers.append(peer)
+                else:
+                    err_msg = f'Cannot find peer with name {_peer}'
+                    _logger.error(err_msg)
+                    raise Exception(err_msg)
             else:
-                _logger.error('{} should be a peer name or a Peer instance'.
-                              format(peer))
+                err_msg = f'{_peer} should be a peer name or a Peer instance'
+                _logger.error(err_msg)
+                raise Exception(err_msg)
 
         if not target_peers:
-            _logger.error(
-                "Failed to query block: no functionnal peer provided")
-            raise
+            err_msg = "Failed to query block: no functional peer provided"
+            _logger.error(err_msg)
+            raise Exception(err_msg)
 
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,
                                        TXProposalRequest())
 
-        responses = channel.query_instantiated_chaincodes(tx_context,
-                                                          target_peers)
+        responses, proposal, header = channel.query_instantiated_chaincodes(
+            tx_context, target_peers)
 
-        try:
-            if responses[0][0].response and decode:
-                query_trans = query_pb2.ChaincodeQueryResponse()
-                query_trans.ParseFromString(responses[0][0].response.payload)
-                for cc in query_trans.chaincodes:
-                    _logger.debug('cc name {}, version {}, path {}'.format(
-                        cc.name, cc.version, cc.path))
-                return query_trans
-            return responses[0][0]
+        responses = await asyncio.gather(*responses)
 
-        except Exception:
-            _logger.error(
-                "Failed to query instantiated chaincodes: {}",
-                sys.exc_info()[0])
-            raise
+        results = []
+        for pplResponse in responses:
+            try:
+                if pplResponse.response and decode:
+                    query_trans = query_pb2.ChaincodeQueryResponse()
+                    query_trans.ParseFromString(pplResponse.response.payload)
+                    for cc in query_trans.chaincodes:
+                        _logger.debug('cc name {}, version {}, path {}'.format(
+                            cc.name, cc.version, cc.path))
+                    results.append(query_trans)
+                else:
+                    results.append(pplResponse)
 
-    def get_channel_config(self, requestor, channel_name,
-                           peers, decode=True):
+            except Exception:
+                _logger.error(
+                    "Failed to query instantiated chaincodes: {}",
+                    sys.exc_info()[0])
+                raise
+
+        return results
+
+    async def get_channel_config(self, requestor, channel_name,
+                                 peers, decode=True):
         """
         Get configuration block for the channel
 
@@ -1575,36 +1716,44 @@ class Client(object):
                               format(peer))
 
         if not target_peers:
-            _logger.error(
-                "Failed to query block: no functionnal peer provided")
-            raise
+            err_msg = "Failed to query block: no functional peer provided"
+            _logger.error(err_msg)
+            raise Exception(err_msg)
 
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,
                                        TXProposalRequest())
 
-        responses = channel.get_channel_config(tx_context, target_peers)
+        responses, proposal, header = channel.get_channel_config(tx_context,
+                                                                 target_peers)
 
-        try:
-            if responses[0][0].response and decode:
-                _logger.debug('response status {}'.format(
-                    responses[0][0].response.status))
-                block = common_pb2.Block()
-                block.ParseFromString(responses[0][0].response.payload)
-                envelope = common_pb2.Envelope()
-                envelope.ParseFromString(block.data.data[0])
-                payload = common_pb2.Payload()
-                payload.ParseFromString(envelope.payload)
-                config_envelope = configtx_pb2.ConfigEnvelope()
-                config_envelope.ParseFromString(payload.data)
-                return config_envelope
+        res = await asyncio.gather(*responses)
 
-            return responses[0][0]
+        r = []
+        for v in res:
+            try:
+                if v.response and decode:
+                    _logger.debug(
+                        'response status {}'.format(v.response.status))
+                    block = common_pb2.Block()
+                    block.ParseFromString(v.response.payload)
+                    envelope = common_pb2.Envelope()
+                    envelope.ParseFromString(block.data.data[0])
+                    payload = common_pb2.Payload()
+                    payload.ParseFromString(envelope.payload)
+                    config_envelope = configtx_pb2.ConfigEnvelope()
+                    config_envelope.ParseFromString(payload.data)
+                    return config_envelope
 
-        except Exception:
-            _logger.error(
-                "Failed to get channel config block: {}", sys.exc_info()[0])
-            raise
+                r.append(v)
+
+            except Exception:
+                _logger.error(
+                    "Failed to get channel config block: {}",
+                    sys.exc_info()[0])
+                raise
+            else:
+                raise Exception(r)
 
     def extract_channel_config(config_envelope):
         """Extracts the protobuf 'ConfigUpdate' out of
@@ -1637,8 +1786,8 @@ class Client(object):
 
         return config_update.SerializeToString()
 
-    def query_peers(self, requestor, peer, channel=None,
-                    local=True, decode=True):
+    async def query_peers(self, requestor, peer, channel=None,
+                          local=True, decode=True):
         """Queries peers with discovery api
 
         :param requestor: User role who issue the request
@@ -1660,9 +1809,12 @@ class Client(object):
             target_peer = peer
         elif isinstance(peer, str):
             target_peer = self.get_peer(peer)
+        else:
+            err_msg = 'Failed to query block: no functional peer provided'
+            raise Exception(err_msg)
 
-        response = dummy_channel._discovery(
-            requestor, target_peer, local=local)
+        response = await dummy_channel._discovery(requestor, target_peer,
+                                                  local=local)
 
         try:
             results = {}
@@ -1696,35 +1848,3 @@ class Client(object):
                     q_members.peers_by_org[mspid].peers)
 
         return peers_by_org
-
-    def get_events(self, requestor, peer, channel_name, start=0, stop=None,
-                   filtered=False, behavior='BLOCK_UNTIL_READY'):
-        """Get Event
-
-        Args:
-            requestor: User role who issue the request
-            peer (Peer): Peer to get events
-            channel_name (str): name of channel
-            start (int, optional): start position to get events
-            stop (int, optional): stop position to get events
-            filtered (bool, optional): Either to get filtered event block or
-             not
-            behavior (ab.Proto.SeekBehavior): SeekInfo behavior
-
-        Returns:
-            TYPE: Description
-        """
-
-        tx_context = TXContext(requestor, requestor.cryptoSuite,
-                               TXProposalRequest())
-        events = peer.get_events(tx_context, channel_name,
-                                 start=start, stop=stop, filtered=filtered,
-                                 behavior=behavior)
-
-        if filtered:
-            return [FilteredBlockDecoder().decode(
-                event.filtered_block.SerializeToString())
-                for event in events]
-        else:
-            return [BlockDecoder().decode(event.block.SerializeToString())
-                    for event in events]

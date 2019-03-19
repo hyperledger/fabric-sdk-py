@@ -1,7 +1,7 @@
 # Copyright IBM All Rights Reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
-
+import asyncio
 import logging
 from hfc.fabric.peer import create_peer
 from hfc.fabric.transaction.tx_context import create_tx_context
@@ -13,7 +13,7 @@ from test.integration.utils import get_peer_org_user, \
     BaseTestCase
 from test.integration.config import E2E_CONFIG
 from test.integration.e2e_utils import build_channel_request, \
-    build_join_channel_req
+    build_join_channel_req, get_stream_result
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -26,6 +26,7 @@ CC_VERSION = '1.0'
 class ChaincodeInstantiateTest(BaseTestCase):
 
     def test_instantiate_chaincode(self):
+        loop = asyncio.get_event_loop()
 
         channel = self.client.new_channel(self.channel_name)
         org1 = 'org1.example.com'
@@ -77,21 +78,30 @@ class ChaincodeInstantiateTest(BaseTestCase):
                                         self.channel_tx,
                                         self.channel_name)
 
-        self.client._create_channel(request)
+        loop.run_until_complete(self.client._create_channel(request))
 
         # join channel
-        join_req = build_join_channel_req(org1, channel, self.client)
-        channel.join_channel(join_req)
+        join_req = loop.run_until_complete(
+            build_join_channel_req(org1, channel, self.client))
+        responses = channel.join_channel(join_req)
+        res = loop.run_until_complete(asyncio.gather(*responses))
+        self.assertTrue(all([x.response.status == 200 for x in res]))
 
-        self.client.send_install_proposal(tx_context_in, [peer])
+        responses, proposal, header = self.client.send_install_proposal(
+            tx_context_in, [peer])
+        loop.run_until_complete(asyncio.gather(*responses))
 
         # send the transaction to the channel
-        res = channel.send_instantiate_proposal(tx_context_dep, [peer])
-        tran_req = build_tx_req(res)
+        responses, proposal, header = channel.send_instantiate_proposal(
+            tx_context_dep, [peer])
+        res = loop.run_until_complete(asyncio.gather(*responses))
+        tran_req = build_tx_req((res, proposal, header))
 
         tx_context = create_tx_context(org1_admin,
                                        crypto,
                                        TXProposalRequest())
-        response = send_transaction(channel.orderers, tran_req, tx_context)
 
-        self.assertEqual(response[0].status, 200)
+        responses = loop.run_until_complete(get_stream_result(
+            send_transaction(channel.orderers, tran_req, tx_context)))
+
+        self.assertTrue(all([x.status == 200 for x in responses]))

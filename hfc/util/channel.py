@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import grpc
+import aiogrpc
 
 
 def create_grpc_channel(target, cert_file=None, client_key=None,
@@ -51,13 +51,14 @@ def create_grpc_channel(target, cert_file=None, client_key=None,
                 client_cert = f.read()
 
     if root_cert is None:
-        return grpc.insecure_channel(target, opts)
+        return aiogrpc.insecure_channel(target, opts)
     else:
         if client_cert and client_key:
-            creds = grpc.ssl_channel_credentials(root_cert,
-                                                 private_key=client_key,
-                                                 certificate_chain=client_cert)
+            creds = aiogrpc. \
+                ssl_channel_credentials(root_cert,
+                                        private_key=client_key,
+                                        certificate_chain=client_cert)
         else:
-            creds = grpc.ssl_channel_credentials(root_cert)
+            creds = aiogrpc.ssl_channel_credentials(root_cert)
 
-        return grpc.secure_channel(target, creds, opts)
+        return aiogrpc.secure_channel(target, creds, opts)

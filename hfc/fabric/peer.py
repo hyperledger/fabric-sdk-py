@@ -13,15 +13,15 @@ from hfc.protos.utils import create_seek_info, create_seek_payload, \
     create_envelope
 from hfc.util.channel import create_grpc_channel
 from hfc.util.utils import current_timestamp, \
-    build_header, build_channel_header, pem_to_der
+    build_header, build_channel_header, pem_to_der, stream_envelope
 
 DEFAULT_PEER_ENDPOINT = 'localhost:7051'
-
 
 _logger = logging.getLogger(__name__ + ".peer")
 
 
 # TODO should extend Remote base class as in fabric-node-sdk
+
 
 class Peer(object):
     """ A peer node in the network.
@@ -160,7 +160,7 @@ class Peer(object):
         with self._lock:
             return self._channels
 
-    def delivery(self, envelope, scheduler=None, filtered=False):
+    def delivery(self, envelope, scheduler=None, filtered=True):
         """ Send an delivery envelop to event service.
 
         Args:
@@ -172,15 +172,15 @@ class Peer(object):
         _logger.debug("Send envelope={}".format(envelope))
 
         if filtered:
-            delivery_result = list(self._event_client.DeliverFiltered(
-                iter([envelope])))
+            delivery_result = self._event_client.DeliverFiltered(
+                stream_envelope(envelope))
         else:
-            delivery_result = list(self._event_client.Deliver(
-                iter([envelope])))
+            delivery_result = self._event_client.Deliver(
+                stream_envelope(envelope))
         return delivery_result
 
     def get_events(self, tx_context, channel_name,
-                   start=None, stop=None, filtered=False,
+                   start=None, stop=None, filtered=True,
                    behavior='BLOCK_UNTIL_READY'):
         """ get the events of the channel.
         Return: the events in success or None in fail.
@@ -213,16 +213,8 @@ class Peer(object):
         sig = tx_context.sign(seek_payload_bytes)
         envelope = create_envelope(sig, seek_payload_bytes)
 
-        response = self.delivery(envelope, filtered=filtered)
-
-        if (len(response) > 0 and
-                (response[0].block is None or response[0].block == '')):
-            _logger.error("fail to get event blocks")
-            return None
-
-        _logger.info("get %s event blocks successfully" % len(response))
-
-        return response
+        # this is a stream response
+        return self.delivery(envelope, filtered=filtered)
 
 
 def create_peer(endpoint=DEFAULT_PEER_ENDPOINT, tls_cacerts=None,

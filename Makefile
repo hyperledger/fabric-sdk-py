@@ -11,12 +11,13 @@ check: clean
 
 # Tox related variables
 TOX = tox
-TOX_VENV_NAMES = pylint flake8 py30 py36
+TOX_VENV_NAMES = pylint flake8 py36
 # [tox.pylint, tox.flake8, tox.py30, tox.py36]
 TOX_VENVS = $(patsubst %, $(TOX).%, $(TOX_VENV_NAMES))
 
 # Run all unit test cases
-test: $(TOX_VENVS)
+test: venv
+	source venv/bin/activate ; make $(TOX_VENVS)
 
 $(TOX).%:
 	$(eval TOX_VENV_NAME = ${subst $(TOX).,,${@}})
@@ -53,7 +54,7 @@ image:
 # Generate the protobuf python files
 proto:
 	shopt -s globstar
-	python3 -m grpc.tools.protoc \
+	python3.6 -m grpc.tools.protoc \
 		-I./\
 		--python_out=./ \
 		--grpc_python_out=./ \
@@ -68,11 +69,15 @@ clean:
 # Enter a virtual env
 venv:
 	@echo "virtualenv can be installed by: pip3 install virtualenv"
-	if [ ! -d venv ]; then \
-		virtualenv -p python3 venv; \
-		pip install -r requirements.txt; \
-		pip install -r requirements-test.txt; \
-	fi
+	rm -rf venv
+	virtualenv -p python3.6 venv
+	source venv/bin/activate;\
+		pip install tox;\
+		python --version;\
+		pip --version;\
+		tox --version;\
+		pip install -r requirements.txt;\
+		pip install -r requirements-test.txt
 	@echo "Active the virtual env: source venv/bin/activate"
 	@echo "Deactive when done: deactivate"
 

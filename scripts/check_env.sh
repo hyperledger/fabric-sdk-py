@@ -25,7 +25,8 @@ docker-compose -v
 which tox
 
 if [ $? -eq 0 ] ; then
-   echo "====> tox is already installed"
+   TOX_VERSION=`tox --version`
+   echo "====> tox is already installed ${TOX_VERSION}"
    echo
 else
    echo "====> install tox here"

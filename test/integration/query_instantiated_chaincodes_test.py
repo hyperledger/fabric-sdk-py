@@ -1,6 +1,8 @@
 # Copyright IBM ALL Rights Reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
+
+
 import asyncio
 import logging
 from hfc.fabric.peer import create_peer
@@ -23,7 +25,7 @@ CC_NAME = 'example_cc_with_event'
 CC_VERSION = '1.0'
 
 
-class QueryTransactionTest(BaseTestCase):
+class ChaincodeInvokeTest(BaseTestCase):
 
     async def invoke_chaincode(self):
 
@@ -168,23 +170,19 @@ class QueryTransactionTest(BaseTestCase):
         finally:
             channel_event_hub.disconnect()
 
-        return tx_context.tx_id
+        return self.blocks
 
-    def test_query_transaction_id_success(self, timeout=30):
+    def test_query_instantiated_chaincodes_success(self):
         loop = asyncio.get_event_loop()
 
-        tx_id = loop.run_until_complete(self.invoke_chaincode())
-
+        loop.run_until_complete(self.invoke_chaincode())
         tx_context = create_tx_context(self.org1_admin,
                                        ecies(),
                                        TXProposalRequest())
 
-        responses, proposal, header = self.channel.query_transaction(
-            tx_context,
-            [self.peer],
-            tx_id)
+        responses, p, h = self.channel.query_instantiated_chaincodes(
+            tx_context, [self.peer])
 
         res = loop.run_until_complete(asyncio.gather(*responses))
-        logger.debug('Responses of query transaction:\n {}'.format(res))
 
         self.assertEqual(res[0].response.status, 200)

@@ -1,16 +1,17 @@
 # Copyright IBM ALL Rights Reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
+
 import asyncio
 import logging
+
+from hfc.fabric.block_decoder import BlockDecoder
 from hfc.fabric.peer import create_peer
 from hfc.fabric.transaction.tx_context import create_tx_context
 from hfc.fabric.transaction.tx_proposal_request import create_tx_prop_req, \
     CC_INVOKE, CC_TYPE_GOLANG, CC_INSTANTIATE, CC_INSTALL, TXProposalRequest
-from hfc.util.crypto.crypto import ecies
 from hfc.util.utils import build_tx_req, send_transaction
-from test.integration.utils import get_peer_org_user, \
-    BaseTestCase
+from test.integration.utils import BaseTestCase, get_peer_org_user
 from test.integration.config import E2E_CONFIG
 from test.integration.e2e_utils import build_channel_request, \
     build_join_channel_req, get_stream_result
@@ -23,7 +24,7 @@ CC_NAME = 'example_cc_with_event'
 CC_VERSION = '1.0'
 
 
-class QueryTransactionTest(BaseTestCase):
+class QueryBlockTest(BaseTestCase):
 
     async def invoke_chaincode(self):
 
@@ -168,23 +169,25 @@ class QueryTransactionTest(BaseTestCase):
         finally:
             channel_event_hub.disconnect()
 
-        return tx_context.tx_id
+        return self.blocks
 
-    def test_query_transaction_id_success(self, timeout=30):
+    def test_query_block_success(self):
         loop = asyncio.get_event_loop()
 
-        tx_id = loop.run_until_complete(self.invoke_chaincode())
+        loop.run_until_complete(self.invoke_chaincode())
 
-        tx_context = create_tx_context(self.org1_admin,
-                                       ecies(),
-                                       TXProposalRequest())
+        orgs = ["org1.example.com"]
+        for org in orgs:
+            org_admin = self.client.get_user(org, "Admin")
 
-        responses, proposal, header = self.channel.query_transaction(
-            tx_context,
-            [self.peer],
-            tx_id)
+            channel = self.client.get_channel(self.channel_name)
+            tx_context = create_tx_context(org_admin,
+                                           org_admin.cryptoSuite,
+                                           TXProposalRequest())
+            responses, p, h = channel.query_block(tx_context, [self.peer], '1')
+            res = loop.run_until_complete(asyncio.gather(*responses))
 
-        res = loop.run_until_complete(asyncio.gather(*responses))
-        logger.debug('Responses of query transaction:\n {}'.format(res))
+            self.assertTrue(all([x.response.status == 200 for x in res]))
 
-        self.assertEqual(res[0].response.status, 200)
+            blocks = [BlockDecoder().decode(v.response.payload) for v in res]
+            self.assertEqual(blocks[0]['header']['number'], 1)

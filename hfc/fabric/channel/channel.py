@@ -1,7 +1,6 @@
 # Copyright 281165273@qq.com. All Rights Reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 import io
 import logging
 import os
@@ -9,7 +8,6 @@ import random
 import sys
 import tarfile
 import re
-from time import sleep
 
 from hfc.fabric.transaction.tx_proposal_request import \
     create_tx_prop_req, CC_INSTALL, CC_TYPE_GOLANG, \
@@ -24,6 +22,7 @@ from hfc.util import utils
 from hfc.util.utils import proto_str, current_timestamp, proto_b, \
     build_header, build_channel_header, build_cc_proposal, \
     send_transaction_proposal
+from .channel_eventhub import ChannelEventHub
 
 SYSTEM_CHANNEL_NAME = "testchainid"
 
@@ -62,6 +61,7 @@ class Channel(object):
         # self._msp_manager = MSPManger() # TODO: use something instead
         self._initialized = False
         self._is_dev_mode = False
+        self._channel_event_hubs = {}
 
     def add_orderer(self, orderer):
         """Add orderer endpoint to a channel object.
@@ -420,7 +420,8 @@ class Channel(object):
         Args:
             request: the request to join a channel
         Return:
-            True in sucess or False in failure
+            A coroutine to handle thanks to asyncio with
+             await asyncio.gather(*responses)
         """
         _logger.debug('channel_join - start')
 
@@ -457,20 +458,9 @@ class Channel(object):
                                      header,
                                      request['transient_map'])
 
-        try:
-            sleep(1)
-            responses = send_transaction_proposal(proposal,
-                                                  tx_context,
-                                                  request['targets'])
-        except Exception as e:
-            raise IOError("fail to send transaction proposal", e)
-
-        result = responses and responses[0].response.status == 200
-
-        if result:
-            _logger.info("successfully join the peers")
-
-        return result
+        return send_transaction_proposal(proposal,
+                                         tx_context,
+                                         request['targets'])
 
     def send_instantiate_proposal(self, tx_context, peers):
         """Send instatiate chaincode proposal.
@@ -646,9 +636,9 @@ class Channel(object):
         proposal = build_cc_proposal(cc_invoke_spec, header,
                                      request.transient_map)
         signed_proposal = utils.sign_proposal(tx_context, proposal)
-        response = [peer.send_proposal(signed_proposal)
-                    for peer in peers]
-        return response, proposal, header
+        responses = [peer.send_proposal(signed_proposal)
+                     for peer in peers]
+        return responses, proposal, header
 
     def query_instantiated_chaincodes(self, tx_context, peers):
         """
@@ -833,7 +823,8 @@ class Channel(object):
 
     def _discovery(self, requestor, target,
                    local=False, config=False, interests=None):
-        """Send a request from a target peer to discover information about the network
+        """Send a request from a target peer to discover information about the
+         network
 
         Args:
             requestor (instance): a user to make the request
@@ -939,6 +930,22 @@ class Channel(object):
         interest_proto.chaincodes.extend(cc_calls)
 
         return interest_proto
+
+    def newChannelEventHub(self, peer, requestor):
+        channel_event_hub = ChannelEventHub(peer, self._name, requestor)
+        if requestor.org not in self._channel_event_hubs:
+            self._channel_event_hubs[requestor.org] = [channel_event_hub]
+        else:
+            self._channel_event_hubs[requestor.org].append(channel_event_hub)
+        return channel_event_hub
+
+    def getChannelEventHubsForOrg(self, requestor, mspid=None):
+        if mspid:
+            che = self._channel_event_hubs.get(mspid, [])
+        else:
+            che = self._channel_event_hubs.get(requestor.msp_id, [])
+
+        return [x for x in che if x.connected]
 
 
 def create_system_channel(client, name=SYSTEM_CHANNEL_NAME):

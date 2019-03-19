@@ -429,9 +429,8 @@ def send_install_proposal(tx_context, peers):
         tx_context.tx_prop_req.transient_map)
     signed_proposal = sign_proposal(tx_context, proposal)
 
-    response = [peer.send_proposal(signed_proposal)
-                for peer in peers]
-    return response, proposal, header
+    responses = [peer.send_proposal(signed_proposal) for peer in peers]
+    return responses, proposal, header
 
 
 def package_chaincode(cc_path, cc_type):
@@ -481,3 +480,8 @@ def pem_to_der(pem):
     arr = pem.split(b'\n')
     der = b''.join(arr[1:-2])
     return base64.b64decode(der)
+
+
+# create artificial envelope stream
+async def stream_envelope(envelope):
+    yield envelope

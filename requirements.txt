@@ -1,3 +1,4 @@
+aiogrpc >= 1.6
 cryptography >= 1.9
 grpcio >= 1.0.1
 hkdf >= 0.0.3

@@ -161,44 +161,48 @@ res = identityService.delete('foo', admin) # delete user foo
 Use sdk to create a new channel and let peers join it.
 
 ```python
+import asyncio
 from hfc.fabric import Client
+
+loop = asyncio.get_event_loop()
 
 cli = Client(net_profile="test/fixtures/network.json")
 org1_admin = cli.get_user(org_name='org1.example.com', name='Admin')
 
 # Create a New Channel, the response should be true if succeed
-response = cli.channel_create(
+response = loop.run_until_complete(cli.channel_create(
             orderer='orderer.example.com',
             channel_name='businesschannel',
             requestor=org1_admin,
             config_yaml='test/fixtures/e2e_cli/',
             channel_profile='TwoOrgsChannel'
-            )
-print(response==True)
+            ))
+print(response == True)
 
 # Join Peers into Channel, the response should be true if succeed
-response = cli.channel_join(
+responses = loop.run_until_complete(cli.channel_join(
                requestor=org1_admin,
                channel_name='businesschannel',
                peers=['peer0.org1.example.com',
-                           'peer1.org1.example.com'],
+                      'peer1.org1.example.com'],
+
                orderer='orderer.example.com'
-               )
-print(response==True)
+               ))
+print(len(responses) == 2)
 
 
 # Join Peers from a different MSP into Channel
 org2_admin = cli.get_user(org_name='org2.example.com', name='Admin')
 
 # For operations on peers from org2.example.com, org2_admin is required as requestor
-response = cli.channel_join(
+responses = loop.run_until_complete(cli.channel_join(
                requestor=org2_admin,
                channel_name='businesschannel',
                peers=['peer0.org2.example.com',
-                           'peer1.org2.example.com'],
+                      'peer1.org2.example.com'],
                orderer='orderer.example.com'
-               )
-print(response==True)
+               ))
+print(len(responses) == 2)
 ```
 
 ### 2.2 Update the Channel Configuration
@@ -210,7 +214,10 @@ TBD. [Help on this](https://jira.hyperledger.org/browse/FABP-199).
 Use sdk to install, instantiate and invoke chaincode.
 
 ```python
+import asyncio
 from hfc.fabric import Client
+
+loop = asyncio.get_event_loop()
 
 cli = Client(net_profile="test/fixtures/network.json")
 org1_admin = cli.get_user('org1.example.com', 'Admin')
@@ -226,49 +233,52 @@ gopath = os.path.normpath(os.path.join(
 os.environ['GOPATH'] = os.path.abspath(gopath)
 
 # The response should be true if succeed
-response = cli.chaincode_install(
+responses = loop.run_until_complete(cli.chaincode_install(
                requestor=org1_admin,
                peers=['peer0.org1.example.com',
-                           'peer1.org1.example.com'],
+                      'peer1.org1.example.com'],
                cc_path='github.com/example_cc',
                cc_name='example_cc',
                cc_version='v1.0'
-               )
+               ))
 
 # Instantiate Chaincode in Channel, the response should be true if succeed
 args = ['a', '200', 'b', '300']
-response = cli.chaincode_instantiate(
+response = loop.run_until_complete(cli.chaincode_instantiate(
                requestor=org1_admin,
                channel_name='businesschannel',
                peers=['peer0.org1.example.com'],
                args=args,
                cc_name='example_cc',
-               cc_version='v1.0'
-               )
+               cc_version='v1.0',
+               wait_for_event=True # for being sure chaincode is instantiated
+               ))
 
 # Invoke a chaincode
 args = ['a', 'b', '100']
 # The response should be true if succeed
-response = cli.chaincode_invoke(
+response = loop.run_until_complete(cli.chaincode_invoke(
                requestor=org1_admin,
                channel_name='businesschannel',
                peers=['peer0.org1.example.com'],
                args=args,
                cc_name='example_cc',
-               cc_version='v1.0'
-               )
+               cc_version='v1.0',
+               wait_for_event=True, # for being sure chaincode invocation has been commited in the ledger, default is on tx event
+               #cc_pattern='^invoked*' # if you want to wait for chaincode event and you have a `stub.SetEvent("invoked", value)` in your chaincode
+               ))
 
 # Query a chaincode
 args = ['b']
 # The response should be true if succeed
-response = cli.chaincode_query(
+response = loop.run_until_complete(cli.chaincode_query(
                requestor=org1_admin,
                channel_name='businesschannel',
                peers=['peer0.org1.example.com'],
                args=args,
                cc_name='example_cc',
                cc_version='v1.0'
-               )
+               ))
 ```
 
 ## 4. Query Informations
@@ -280,17 +290,19 @@ If you need to get the raw response from the ledger you can add `decode=False` p
 ### 4.1 Basic Usage
 
 ```python
+import asyncio
 from hfc.fabric import Client
 
+loop = asyncio.get_event_loop()
 cli = Client(net_profile="test/fixtures/network.json")
 org1_admin = cli.get_user('org1.example.com', 'Admin')
 
 # Query Peer installed chaincodes, make sure the chaincode is installed
-response = cli.query_installed_chaincodes(
+response = loop.run_until_complete(cli.query_installed_chaincodes(
                requestor=org1_admin,
                peers=['peer0.org1.example.com'],
                decode=True
-               )
+               ))
 
 """
 # An example response:
@@ -303,11 +315,11 @@ chaincodes {
 """
 
 # Query Peer Joined channel
-response = cli.query_channels(
+response = loop.run_until_complete(cli.query_channels(
                requestor=org1_admin,
                peers=['peer0.org1.example.com'],
                decode=True
-               )
+               ))
 
 """
 # An example response:
@@ -318,102 +330,108 @@ channels {
 """
 
 # Query Channel Info
-response = cli.query_info(
+response = loop.run_until_complete(cli.query_info(
                requestor=org1_admin,
                channel_name='businesschannel',
                peers=['peer0.org1.example.com'],
                decode=True
-               )
+               ))
 
 # Query Block by tx id
 # example txid of instantiated chaincode transaction
-response = cli.query_block_by_txid(
+response = loop.run_until_complete(cli.query_block_by_txid(
                requestor=org1_admin,
                channel_name='businesschannel',
                peers=['peer0.org1.example.com'],
                tx_id=cli.txid_for_test,
                decode=True
-               )
+               ))
 ```
 
 ### 4.2 Query Block by block hash
 
 ```python
+import asyncio
 from hfc.fabric import Client
 
+loop = asyncio.get_event_loop()
 cli = Client(net_profile="test/fixtures/network.json")
 org1_admin = cli.get_user('org1.example.com', 'Admin')
 
 # first get the hash by calling 'query_info'
-response = cli.query_info(
+response = loop.run_until_complete(cli.query_info(
                requestor=org1_admin,
                channel_name='businesschannel',
                peers=['peer0.org1.example.com'],
                decode=True
-               )
+               ))
 
 test_hash = response.currentBlockHash
 
-response = cli.query_block_by_hash(
+response = loop.run_until_complete(cli.query_block_by_hash(
                requestor=org1_admin,
                channel_name='businesschannel',
                peers=['peer0.org1.example.com'],
                block_hash=test_hash,
                decode=True
-               )
+               ))
 ```
 
 ### 4.3 Query Block, Transaction and Instantiated Chaincodes
 
 ```python
+import asyncio
 from hfc.fabric import Client
 
+loop = asyncio.get_event_loop()
 cli = Client(net_profile="test/fixtures/network.json")
 org1_admin = cli.get_user('org1.example.com', 'Admin')
 
 # Query Block by block number
-response = cli.query_block(
+response = loop.run_until_complete(cli.query_block(
                requestor=org1_admin,
                channel_name='businesschannel',
                peers=['peer0.org1.example.com'],
                block_number='1',
                decode=True
-               )
+               ))
 
 # Query Transaction by tx id
 # example txid of instantiated chaincode transaction
-response = cli.query_transaction(
+response = loop.run_until_complete(cli.query_transaction(
                requestor=org1_admin,
                channel_name='businesschannel',
                peers=['peer0.org1.example.com'],
                tx_id=cli.txid_for_test,
                decode=True
-               )
+               ))
 
 # Query Instantiated Chaincodes
-response = cli.query_instantiated_chaincodes(
+response = loop.run_until_complete(cli.query_instantiated_chaincodes(
                requestor=org1_admin,
                channel_name='businesschannel',
                peers=['peer0.org1.example.com'],
                decode=True
-               )
+               ))
 ```
 
 ### 4.4 Get channel configuration
 
 ```python
+import asyncio
 from hfc.fabric import Client
 
+loop = asyncio.get_event_loop()
 cli = Client(net_profile="test/fixtures/network.json")
 org1_admin = cli.get_user('org1.example.com', 'Admin')
 
 # Get channel config
-response = cli.get_channel_config(
+response = loop.run_until_complete(cli.get_channel_config(
                requestor=org1_admin,
                channel_name='businesschannel',
                peers=['peer0.org1.example.com'],
                decode=True
-               )
+               ))
 ```
 
 ## License <a name="license"></a>

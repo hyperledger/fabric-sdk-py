@@ -47,7 +47,6 @@ from hfc.protos.ledger.rwset.kvrwset import kv_rwset_pb2
 # Import required Gossip Protos
 from hfc.protos.gossip import message_pb2
 
-
 _logger = logging.getLogger(__name__ + ".block_decoder")
 
 
@@ -142,11 +141,10 @@ class FilteredBlockDecoder(object):
                 }
 
                 if hasattr(ft, 'transaction_actions'):
-                    ft_decoded['transaction_actions'] = [
-                        decode_chaincode_action(
+                    for ca in ft.transaction_actions.chaincode_actions:
+                        ft_decoded[
+                            'transaction_actions'] = decode_chaincode_events(
                             ca.chaincode_event.SerializeToString())
-                        for ca in ft.transaction_actions.chaincode_actions
-                    ]
                 filtered_block['filtered_transactions'].append(ft_decoded)
 
         except Exception as e:
@@ -934,7 +932,7 @@ def decode_fabric_MSP_config(msp_config_bytes):
             proto_msp_config.signing_identity.SerializeToString())
     msp_config['crypto_config'] = \
         decode_crypto_config(
-        proto_msp_config.crypto_config.SerializeToString())
+            proto_msp_config.crypto_config.SerializeToString())
     msp_config['organizational_unit_identifiers'] = \
         decode_fabric_OU_identifier(
             proto_msp_config.organizational_unit_identifiers)
@@ -979,7 +977,7 @@ def decode_fabric_Nodes_OUs(proto_node_organizational_units):
     if proto_node_organizational_units:
         node_organizational_units['enable'] = \
             proto_node_organizational_units.enable
-        node_organizational_units['client_ou_identifier'] =\
+        node_organizational_units['client_ou_identifier'] = \
             decode_fabric_OU_identifier(
                 [proto_node_organizational_units.client_ou_identifier])
         node_organizational_units['peer_ou_identifier'] = \
@@ -1053,7 +1051,7 @@ def decode_crypto_config(crypto_config_bytes):
     if crypto_config_bytes:
         proto_crypto_config = msp_config_pb2.FabricCryptoConfig()
         proto_crypto_config.ParseFromString(crypto_config_bytes)
-        crypto_config['signature_hash_family'] = proto_crypto_config.\
+        crypto_config['signature_hash_family'] = proto_crypto_config. \
             signature_hash_family
         crypto_config['identity_identifier_hash_function'] = \
             proto_crypto_config.identity_identifier_hash_function

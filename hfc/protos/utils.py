@@ -14,10 +14,10 @@ def create_seek_info(start=None, stop=None, behavior="BLOCK_UNTIL_READY"):
         seek_specified_start.number = start
         seek_start = ab_pb2.SeekPosition()
         seek_start.specified.CopyFrom(seek_specified_start)
-
     else:
         seek_start = ab_pb2.SeekPosition()
         seek_start.newest.CopyFrom(ab_pb2.SeekNewest())
+
     # build stop
     if stop is not None:
         seek_specified_stop = ab_pb2.SeekSpecified()

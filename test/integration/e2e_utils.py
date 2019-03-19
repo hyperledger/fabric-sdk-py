@@ -4,6 +4,7 @@
 #
 """
 
+import logging
 from hfc.fabric.orderer import Orderer
 from hfc.fabric.transaction.tx_context import TXContext
 from hfc.fabric.transaction.tx_proposal_request import TXProposalRequest
@@ -12,6 +13,9 @@ from hfc.util import utils
 from test.integration.utils import get_orderer_org_user, get_peer_org_user
 from test.integration.config import E2E_CONFIG
 test_network = E2E_CONFIG['test-network']
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 def build_channel_request(client, channel_tx, channel_name):
@@ -83,7 +87,7 @@ def disconnect(all_ehs):
 
 # This should be deprecated, the code should be included into the client's
 # channel_join method
-def build_join_channel_req(org, channel, client):
+async def build_join_channel_req(org, channel, client):
     """
     For test, there is only one peer.
 
@@ -99,31 +103,28 @@ def build_join_channel_req(org, channel, client):
 
     # add the orderer
     orderer = client.get_orderer('orderer.example.com')
-    channel.add_orderer(orderer)  # TODO: where should we add orderer?
+    channel.add_orderer(orderer)
 
     # get the genesis block
     orderer_admin = client.get_user('orderer.example.com', 'Admin')
-    tx_context = TXContext(orderer_admin, ecies(), tx_prop_req)
-    genesis_block = orderer.get_genesis_block(
-        tx_context,
-        channel.name).SerializeToString()
+    tx_context = TXContext(orderer_admin, orderer_admin.cryptoSuite,
+                           tx_prop_req)
+
+    genesis_block = None
+    stream = orderer.get_genesis_block(tx_context, channel.name)
+    async for v in stream:
+        if v.block is None or v.block == '':
+            msg = "fail to get genesis block"
+            raise Exception(msg)
+        genesis_block = v.block
+        break
+
+    genesis_block = genesis_block.SerializeToString()
 
     org_admin = client.get_user(org, 'Admin')
-    tx_context = TXContext(org_admin, ecies(), tx_prop_req)
+    tx_context = TXContext(org_admin, org_admin.cryptoSuite, tx_prop_req)
 
-    peer = client.get_peer('peer0.'+org)
-
-    """
-    # connect the peer
-    eh = EventHub()
-    event = peer_config['grpc_event_endpoint']
-
-    tx_id = client.tx_context.tx_id
-    eh.set_peer_addr(event)
-    eh.connect()
-    eh.register_block_event(block_event_callback)
-    all_ehs.append(eh)
-    """
+    peer = client.get_peer('peer0.' + org)
 
     request = {
         "targets": [peer],
@@ -133,3 +134,11 @@ def build_join_channel_req(org, channel, client):
     }
 
     return request
+
+
+async def get_stream_result(stream):
+    res = []
+    async for v in stream:
+        logger.debug('Responses of send_transaction:\n {}'.format(v))
+        res.append(v)
+    return res
