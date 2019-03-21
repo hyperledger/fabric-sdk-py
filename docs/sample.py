@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     # Create a New Channel, the response should be true if succeed
     response = cli.channel_create(
-        orderer_name='orderer.example.com',
+        orderer='orderer.example.com',
         channel_name='businesschannel',
         requestor=org1_admin,
         config_yaml=CONFIG_YAML_PATH,
@@ -39,8 +39,8 @@ if __name__ == "__main__":
     response = cli.channel_join(
         requestor=org1_admin,
         channel_name='businesschannel',
-        peer_names=['peer0.org1.example.com', 'peer1.org1.example.com'],
-        orderer_name='orderer.example.com')
+        peers=['peer0.org1.example.com', 'peer1.org1.example.com'],
+        orderer='orderer.example.com')
     if response:
         print("Join channel successful")
     else:
@@ -54,8 +54,8 @@ if __name__ == "__main__":
     response = cli.channel_join(
         requestor=org2_admin,
         channel_name='businesschannel',
-        peer_names=['peer0.org2.example.com', 'peer1.org2.example.com'],
-        orderer_name='orderer.example.com')
+        peers=['peer0.org2.example.com', 'peer1.org2.example.com'],
+        orderer='orderer.example.com')
     if response:
         print("Join channel successful")
     else:
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     # The response should be true if succeed
     response = cli.chaincode_install(
         requestor=org1_admin,
-        peer_names=['peer0.org1.example.com', 'peer1.org1.example.com'],
+        peers=['peer0.org1.example.com', 'peer1.org1.example.com'],
         cc_path='github.com/example_cc',
         cc_name='example_cc',
         cc_version='v1.0')
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     response = cli.chaincode_instantiate(
         requestor=org1_admin,
         channel_name='businesschannel',
-        peer_names=['peer0.org1.example.com'],
+        peers=['peer0.org1.example.com'],
         args=args,
         cc_name='example_cc',
         cc_version='v1.0')
@@ -100,7 +100,7 @@ if __name__ == "__main__":
     response = cli.chaincode_invoke(
         requestor=org1_admin,
         channel_name='businesschannel',
-        peer_names=['peer0.org1.example.com'],
+        peers=['peer0.org1.example.com'],
         args=args,
         cc_name='example_cc',
         cc_version='v1.0'
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     response = cli.chaincode_query(
         requestor=org1_admin,
         channel_name='businesschannel',
-        peer_names=['peer0.org1.example.com'],
+        peers=['peer0.org1.example.com'],
         args=args,
         cc_name='example_cc',
         cc_version='v1.0'
@@ -125,7 +125,7 @@ if __name__ == "__main__":
     # Query Peer installed chaincodes
     response = cli.query_installed_chaincodes(
         requestor=org1_admin,
-        peer_names=['peer0.org1.example.com']
+        peers=['peer0.org1.example.com']
     )
     print("Query installed chaincode.")
     print(response)
@@ -134,7 +134,7 @@ if __name__ == "__main__":
     response = cli.get_channel_config(
         requestor=org1_admin,
         channel_name='businesschannel',
-        peer_names=['peer0.org1.example.com']
+        peers=['peer0.org1.example.com']
     )
     print("Get channel config done.")
     print(response)

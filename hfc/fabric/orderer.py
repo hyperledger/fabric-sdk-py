@@ -168,6 +168,15 @@ class Orderer(object):
         """
         return self._endpoint
 
+    @property
+    def name(self):
+        """Return the name of the orderer.
+
+        Returns: name
+
+        """
+        return self._name
+
     def _handle_response_stream(self, responses):
         """Handle response stream.
 

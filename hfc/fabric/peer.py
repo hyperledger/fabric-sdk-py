@@ -106,10 +106,12 @@ class Peer(object):
                 opts=[(opt, value) for opt, value in
                       self._grpc_options.items()])
             self._endorser_client = peer_pb2_grpc.EndorserStub(self._channel)
+            self._discovery_client = protocol_pb2_grpc.DiscoveryStub(
+                self._channel)
             self._event_client = events_pb2_grpc.DeliverStub(self._channel)
 
         except KeyError as e:
-            print(e)
+            _logger.error(e)
             return False
         return True
 

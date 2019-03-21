@@ -168,7 +168,7 @@ org1_admin = cli.get_user(org_name='org1.example.com', name='Admin')
 
 # Create a New Channel, the response should be true if succeed
 response = cli.channel_create(
-            orderer_name='orderer.example.com',
+            orderer='orderer.example.com',
             channel_name='businesschannel',
             requestor=org1_admin,
             config_yaml='test/fixtures/e2e_cli/',
@@ -180,9 +180,9 @@ print(response==True)
 response = cli.channel_join(
                requestor=org1_admin,
                channel_name='businesschannel',
-               peer_names=['peer0.org1.example.com',
+               peers=['peer0.org1.example.com',
                            'peer1.org1.example.com']
-               orderer_name='orderer.example.com'
+               orderer='orderer.example.com'
                )
 print(response==True)
 
@@ -194,9 +194,9 @@ org2_admin = cli.get_user(org_name='org2.example.com', name='Admin')
 response = cli.channel_join(
                requestor=org2_admin,
                channel_name='businesschannel',
-               peer_names=['peer0.org2.example.com',
+               peers=['peer0.org2.example.com',
                            'peer1.org2.example.com']
-               orderer_name='orderer.example.com'
+               orderer='orderer.example.com'
                )
 print(response==True)
 ```
@@ -228,7 +228,7 @@ os.environ['GOPATH'] = os.path.abspath(gopath)
 # The response should be true if succeed
 response = cli.chaincode_install(
                requestor=org1_admin,
-               peer_names=['peer0.org1.example.com',
+               peers=['peer0.org1.example.com',
                            'peer1.org1.example.com']
                cc_path='github.com/example_cc',
                cc_name='example_cc',
@@ -240,7 +240,7 @@ args = ['a', '200', 'b', '300']
 response = cli.chaincode_instantiate(
                requestor=org1_admin,
                channel_name='businesschannel',
-               peer_names=['peer0.org1.example.com'],
+               peers=['peer0.org1.example.com'],
                args=args,
                cc_name='example_cc',
                cc_version='v1.0'
@@ -252,7 +252,7 @@ args = ['a', 'b', '100']
 response = cli.chaincode_invoke(
                requestor=org1_admin,
                channel_name='businesschannel',
-               peer_names=['peer0.org1.example.com'],
+               peers=['peer0.org1.example.com'],
                args=args,
                cc_name='example_cc',
                cc_version='v1.0'
@@ -264,7 +264,7 @@ args = ['b']
 response = cli.chaincode_query(
                requestor=org1_admin,
                channel_name='businesschannel',
-               peer_names=['peer0.org1.example.com'],
+               peers=['peer0.org1.example.com'],
                args=args,
                cc_name='example_cc',
                cc_version='v1.0'
@@ -288,7 +288,7 @@ org1_admin = cli.get_user('org1.example.com', 'Admin')
 # Query Peer installed chaincodes, make sure the chaincode is installed
 response = cli.query_installed_chaincodes(
                requestor=org1_admin,
-               peer_names=['peer0.org1.example.com'],
+               peers=['peer0.org1.example.com'],
                decode=True
                )
 
@@ -305,7 +305,7 @@ chaincodes {
 # Query Peer Joined channel
 response = cli.query_channels(
                requestor=org1_admin,
-               peer_names=['peer0.org1.example.com'],
+               peers=['peer0.org1.example.com'],
                decode=True
                )
 
@@ -321,7 +321,7 @@ channels {
 response = cli.query_info(
                requestor=org1_admin,
                channel_name='businesschannel',
-               peer_names=['peer0.org1.example.com'],
+               peers=['peer0.org1.example.com'],
                decode=True
                )
 
@@ -330,7 +330,7 @@ response = cli.query_info(
 response = cli.query_block_by_txid(
                requestor=org1_admin,
                channel_name='businesschannel',
-               peer_names=['peer0.org1.example.com'],
+               peers=['peer0.org1.example.com'],
                tx_id=cli.txid_for_test,
                decode=True
                )
@@ -348,7 +348,7 @@ org1_admin = cli.get_user('org1.example.com', 'Admin')
 response = cli.query_info(
                requestor=org1_admin,
                channel_name='businesschannel',
-               peer_names=['peer0.org1.example.com'],
+               peers=['peer0.org1.example.com'],
                decode=True
                )
 
@@ -357,7 +357,7 @@ test_hash = response.currentBlockHash
 response = cli.query_block_by_hash(
                requestor=org1_admin,
                channel_name='businesschannel',
-               peer_names=['peer0.org1.example.com'],
+               peers=['peer0.org1.example.com'],
                block_hash=test_hash,
                decode=True
                )
@@ -375,7 +375,7 @@ org1_admin = cli.get_user('org1.example.com', 'Admin')
 response = cli.query_block(
                requestor=org1_admin,
                channel_name='businesschannel',
-               peer_names=['peer0.org1.example.com'],
+               peers=['peer0.org1.example.com'],
                block_number='1',
                decode=True
                )
@@ -385,7 +385,7 @@ response = cli.query_block(
 response = cli.query_transaction(
                requestor=org1_admin,
                channel_name='businesschannel',
-               peer_names=['peer0.org1.example.com'],
+               peers=['peer0.org1.example.com'],
                tx_id=cli.txid_for_test,
                decode=True
                )
@@ -394,7 +394,7 @@ response = cli.query_transaction(
 response = cli.query_instantiated_chaincodes(
                requestor=org1_admin,
                channel_name='businesschannel',
-               peer_names=['peer0.org1.example.com'],
+               peers=['peer0.org1.example.com'],
                decode=True
                )
 ```
@@ -411,7 +411,7 @@ org1_admin = cli.get_user('org1.example.com', 'Admin')
 response = cli.get_channel_config(
                requestor=org1_admin,
                channel_name='businesschannel',
-               peer_names=['peer0.org1.example.com'],
+               peers=['peer0.org1.example.com'],
                decode=True
                )
 ```

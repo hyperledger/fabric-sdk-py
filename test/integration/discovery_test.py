@@ -50,15 +50,15 @@ class DiscoveryTest(BaseTestCase):
         response = self.client.channel_join(
             requestor=self.user,
             channel_name=self.channel_name,
-            peer_names=['peer0.' + org1, 'peer1.' + org1],
-            orderer_name='orderer.example.com'
+            peers=['peer0.' + org1, 'peer1.' + org1],
+            orderer='orderer.example.com'
         )
         self.assertTrue(response)
 
         # CC install
         response = self.client.chaincode_install(
             requestor=self.user,
-            peer_names=['peer0.' + org1, 'peer1.' + org1],
+            peers=['peer0.' + org1, 'peer1.' + org1],
             cc_path=CC_PATH,
             cc_name=CC_NAME,
             cc_version=CC_VERSION
@@ -70,7 +70,7 @@ class DiscoveryTest(BaseTestCase):
         response = self.client.chaincode_instantiate(
             requestor=self.user,
             channel_name=self.channel_name,
-            peer_names=['peer0.' + org1],
+            peers=['peer0.' + org1],
             args=args,
             cc_name=CC_NAME,
             cc_version=CC_VERSION
@@ -81,7 +81,7 @@ class DiscoveryTest(BaseTestCase):
         response = self.client.query_instantiated_chaincodes(
             requestor=self.user,
             channel_name=self.channel_name,
-            peer_names=['peer0.' + org1, 'peer1.' + org1]
+            peers=['peer0.' + org1, 'peer1.' + org1]
         )
         '''
         chaincodes {

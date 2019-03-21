@@ -391,12 +391,13 @@ class Client(object):
         """
         return self._channels.get(name, None)
 
-    def channel_create(self, orderer_name, channel_name, requestor,
+    def channel_create(self, orderer, channel_name, requestor,
                        config_yaml=None, channel_profile=None, config_tx=None):
         """
         Create a channel, send request to orderer, and check the response
 
-        :param orderer_name: Name of orderer to send request to
+        :param orderer: Name or Orderer instance of orderer to get
+        genesis block from
         :param channel_name: Name of channel to create
         :param requestor: Name of creator
         :param config_yaml: Directory path of config yaml to be set for FABRIC_
@@ -408,14 +409,18 @@ class Client(object):
         :return: True (creation succeeds) or False (creation failed)
         """
         if self.get_channel(channel_name):
-            _logger.warning("channel {} already existed when creating".format(
-                channel_name))
+            _logger.warning("channel {} already existed when creating".
+                            format(channel_name))
             return False
 
-        orderer = self.get_orderer(orderer_name)
-        if not orderer:
-            _logger.error("No orderer_name instance found with name {}".format(
-                orderer_name))
+        if isinstance(orderer, Orderer):
+            target_orderer = orderer
+        elif isinstance(orderer, str):
+            target_orderer = self.get_orderer(orderer)
+
+        if not target_orderer:
+            _logger.error("No orderer instance found with name {}".
+                          format(orderer))
             return False
 
         if config_tx is not None:
@@ -457,7 +462,7 @@ class Client(object):
             'nonce': nonce,
             'signatures': signatures,
             'config': config,
-            'orderer': orderer,
+            'orderer': target_orderer,
             'channel_name': channel_name
         }
         response = self._create_channel(request)
@@ -468,15 +473,16 @@ class Client(object):
         else:
             return False
 
-    def channel_join(self, requestor, channel_name, peer_names, orderer_name):
+    def channel_join(self, requestor, channel_name, peers, orderer):
         """
         Join a channel.
         Get genesis block from orderer, then send request to peer
 
         :param requestor: User to send the request
         :param channel_name: Name of channel to create
-        :param peer_names: List of peers to join to the channel
-        :param orderer_name: Name of orderer to get genesis block from
+        :param peers: List of peers to join to the channel
+        :param orderer: Name or Orderer instance of orderer to get
+        genesis block from
 
         :return: True (creation succeeds) or False (creation failed)
         """
@@ -486,44 +492,47 @@ class Client(object):
                 channel_name))
             return False
 
-        orderer = self.get_orderer(orderer_name)
-        if not orderer:
+        if isinstance(orderer, Orderer):
+            target_orderer = orderer
+        elif isinstance(orderer, str):
+            target_orderer = self.get_orderer(orderer)
+
+        if not target_orderer:
             _logger.warning("orderer {} not existed when channel join".format(
-                orderer_name))
+                orderer))
             return False
 
         tx_prop_req = TXProposalRequest()
 
         # get the genesis block
-        orderer_admin = self.get_user(orderer_name, 'Admin')
+        orderer_admin = self.get_user(target_orderer.name, 'Admin')
         tx_context = TXContext(orderer_admin, orderer_admin.cryptoSuite,
                                tx_prop_req)
-        genesis_block = orderer.get_genesis_block(
+        genesis_block = target_orderer.get_genesis_block(
             tx_context,
             channel.name).SerializeToString()
 
         # create the peer
         tx_context = TXContext(requestor, requestor.cryptoSuite, tx_prop_req)
 
-        peers = []
-        for peer_name in peer_names:
-            peer = self.get_peer(peer_name)
-            peers.append(peer)
+        target_peers = []
+        for peer in peers:
+            if isinstance(peer, Peer):
+                target_peers.append(peer)
+            elif isinstance(peer, str):
+                peer = self.get_peer(peer)
+                target_peers.append(peer)
+            else:
+                _logger.error('{} should be a peer name or a Peer instance'.
+                              format(peer))
 
-        """
-        # connect the peer
-        eh = EventHub()
-        event = peer_config['grpc_event_endpoint']
-
-        tx_id = client.tx_context.tx_id
-        eh.set_peer_addr(event)
-        eh.connect()
-        eh.register_block_event(block_event_callback)
-        all_ehs.append(eh)
-        """
+        if not target_peers:
+            _logger.error(
+                "Failed to query block: no functionnal peer provided")
+            raise
 
         request = {
-            "targets": peers,
+            "targets": target_peers,
             "block": genesis_block,
             "tx_context": tx_context,
             "transient_map": {}
@@ -531,29 +540,40 @@ class Client(object):
 
         return channel.join_channel(request)
 
-    def chaincode_install(self, requestor, peer_names, cc_path, cc_name,
+    def chaincode_install(self, requestor, peers, cc_path, cc_name,
                           cc_version):
         """
         Install chaincode to given peers by requestor role
 
         :param requestor: User role who issue the request
-        :param peer_names: Names of the peers to install
+        :param peers: List of  peer name and/or Peer to install
         :param cc_path: chaincode path
         :param cc_name: chaincode name
         :param cc_version: chaincode version
         :return: True or False
         """
-        peers = []
-        for peer_name in peer_names:
-            peer = self.get_peer(peer_name)
-            peers.append(peer)
+        target_peers = []
+        for peer in peers:
+            if isinstance(peer, Peer):
+                target_peers.append(peer)
+            elif isinstance(peer, str):
+                peer = self.get_peer(peer)
+                target_peers.append(peer)
+            else:
+                _logger.error('{} should be a peer name or a Peer instance'.
+                              format(peer))
+
+        if not target_peers:
+            _logger.error(
+                "Failed to query block: no functionnal peer provided")
+            raise
 
         tran_prop_req = create_tx_prop_req(CC_INSTALL, cc_path, CC_TYPE_GOLANG,
                                            cc_name, cc_version)
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,
                                        tran_prop_req)
 
-        responses = self.send_install_proposal(tx_context, peers)
+        responses = self.send_install_proposal(tx_context, target_peers)
         return responses
 
     def _create_channel(self, request):
@@ -863,7 +883,7 @@ class Client(object):
             return None
         return tx_path
 
-    def chaincode_instantiate(self, requestor, channel_name, peer_names,
+    def chaincode_instantiate(self, requestor, channel_name, peers,
                               args, cc_name, cc_version, timeout=10):
         """
             Instantiate installed chaincode to particular peer in
@@ -871,17 +891,28 @@ class Client(object):
 
         :param requestor: User role who issue the request
         :param channel_name: the name of the channel to send tx proposal
-        :param peer_names: Names of the peers to install
+        :param peers: List of  peer name and/or Peer to install
         :param args (list): arguments (keys and values) for initialization
         :param cc_name: chaincode name
         :param cc_version: chaincode version
         :param timeout: Timeout to wait
         :return: True or False
         """
-        peers = []
-        for peer_name in peer_names:
-            peer = self.get_peer(peer_name)
-            peers.append(peer)
+        target_peers = []
+        for peer in peers:
+            if isinstance(peer, Peer):
+                target_peers.append(peer)
+            elif isinstance(peer, str):
+                peer = self.get_peer(peer)
+                target_peers.append(peer)
+            else:
+                _logger.error('{} should be a peer name or a Peer instance'.
+                              format(peer))
+
+        if not target_peers:
+            _logger.error(
+                "Failed to query block: no functionnal peer provided")
+            raise
 
         tran_prop_req_dep = create_tx_prop_req(
             prop_type=CC_INSTANTIATE,
@@ -899,7 +930,7 @@ class Client(object):
         )
 
         res = self.send_instantiate_proposal(
-            tx_context_dep, peers, channel_name)
+            tx_context_dep, target_peers, channel_name)
 
         tx_context = create_tx_context(requestor,
                                        requestor.cryptoSuite,
@@ -919,7 +950,7 @@ class Client(object):
                 response = self.query_transaction(
                     requestor=requestor,
                     channel_name=channel_name,
-                    peer_names=peer_names,
+                    peers=target_peers,
                     tx_id=tx_context_dep.tx_id,
                     decode=False
                 )
@@ -933,7 +964,7 @@ class Client(object):
 
         return False
 
-    def chaincode_invoke(self, requestor, channel_name, peer_names, args,
+    def chaincode_invoke(self, requestor, channel_name, peers, args,
                          cc_name, cc_version, cc_type=CC_TYPE_GOLANG,
                          fcn='invoke', wait_for_event=False,
                          wait_for_event_timeout=30):
@@ -942,7 +973,7 @@ class Client(object):
 
         :param requestor: User role who issue the request
         :param channel_name: the name of the channel to send tx proposal
-        :param peer_names: Names of the peers to install
+        :param peers: List of  peer name and/or Peer to install
         :param args (list): arguments (keys and values) for initialization
         :param cc_name: chaincode name
         :param cc_version: chaincode version
@@ -956,10 +987,21 @@ class Client(object):
           transaction has been committed successfully (default 30s)
         :return: True or False
         """
-        peers = []
-        for peer_name in peer_names:
-            peer = self.get_peer(peer_name)
-            peers.append(peer)
+        target_peers = []
+        for peer in peers:
+            if isinstance(peer, Peer):
+                target_peers.append(peer)
+            elif isinstance(peer, str):
+                peer = self.get_peer(peer)
+                target_peers.append(peer)
+            else:
+                _logger.error('{} should be a peer name or a Peer instance'.
+                              format(peer))
+
+        if not target_peers:
+            _logger.error(
+                "Failed to query block: no functionnal peer provided")
+            raise
 
         tran_prop_req = create_tx_prop_req(
             prop_type=CC_INVOKE,
@@ -979,7 +1021,7 @@ class Client(object):
         channel = self.get_channel(channel_name)
 
         # send proposal
-        res = channel.send_tx_proposal(tx_context, peers)
+        res = channel.send_tx_proposal(tx_context, target_peers)
 
         tran_req = utils.build_tx_req(res)
         res = tran_req.responses[0].response
@@ -1008,10 +1050,11 @@ class Client(object):
             while int(time.time()) - starttime < wait_for_event_timeout:
 
                 # get peer events
-                count = len(peers)
-                for peer in peers:
-                    events = self.get_events(requestor, peer, channel_name,
-                                             start=start_seek, filtered=True)
+                count = len(target_peers)
+                for target_peer in target_peers:
+                    events = self.get_events(requestor, target_peer,
+                                             channel_name, start=start_seek,
+                                             filtered=True)
 
                     for event in events:
                         for ft in event['filtered_transactions']:
@@ -1032,7 +1075,7 @@ class Client(object):
         else:
             return res.payload.decode('utf-8')
 
-    def chaincode_query(self, requestor, channel_name, peer_names, args,
+    def chaincode_query(self, requestor, channel_name, peers, args,
                         cc_name, cc_version, cc_type=CC_TYPE_GOLANG,
                         fcn='query'):
         """
@@ -1040,7 +1083,7 @@ class Client(object):
 
         :param requestor: User role who issue the request
         :param channel_name: the name of the channel to send tx proposal
-        :param peer_names: Names of the peers to install
+        :param peers: List of  peer name and/or Peer to install
         :param args (list): arguments (keys and values) for initialization
         :param cc_name: chaincode name
         :param cc_version: chaincode version
@@ -1048,10 +1091,21 @@ class Client(object):
         :param fcn: chaincode function
         :return: True or False
         """
-        peers = []
-        for peer_name in peer_names:
-            peer = self.get_peer(peer_name)
-            peers.append(peer)
+        target_peers = []
+        for peer in peers:
+            if isinstance(peer, Peer):
+                target_peers.append(peer)
+            elif isinstance(peer, str):
+                peer = self.get_peer(peer)
+                target_peers.append(peer)
+            else:
+                _logger.error('{} should be a peer name or a Peer instance'.
+                              format(peer))
+
+        if not target_peers:
+            _logger.error(
+                "Failed to query block: no functionnal peer provided")
+            raise
 
         tran_prop_req = create_tx_prop_req(
             prop_type=CC_QUERY,
@@ -1069,7 +1123,7 @@ class Client(object):
         )
 
         res = self.get_channel(
-            channel_name).send_tx_proposal(tx_context, peers)
+            channel_name).send_tx_proposal(tx_context, target_peers)
 
         tran_req = utils.build_tx_req(res)
         res = tran_req.responses[0].response
@@ -1078,19 +1132,30 @@ class Client(object):
 
         return res.message
 
-    def query_installed_chaincodes(self, requestor, peer_names, decode=True):
+    def query_installed_chaincodes(self, requestor, peers, decode=True):
         """
         Queries installed chaincode, returns all chaincodes installed on a peer
 
         :param requestor: User role who issue the request
-        :param peer_names: Names of the peers to query
+        :param peers: Names or Instance of the peers to query
         :param deocode: Decode the response payload
         :return: A `ChaincodeQueryResponse` or `ProposalResponse`
         """
-        peers = []
-        for peer_name in peer_names:
-            peer = self.get_peer(peer_name)
-            peers.append(peer)
+        target_peers = []
+        for peer in peers:
+            if isinstance(peer, Peer):
+                target_peers.append(peer)
+            elif isinstance(peer, str):
+                peer = self.get_peer(peer)
+                target_peers.append(peer)
+            else:
+                _logger.error('{} should be a peer name or a Peer instance'.
+                              format(peer))
+
+        if not target_peers:
+            _logger.error(
+                "Failed to query block: no functionnal peer provided")
+            raise
 
         request = create_tx_prop_req(
             prop_type=CC_QUERY,
@@ -1104,7 +1169,7 @@ class Client(object):
                                        TXProposalRequest())
         tx_context.tx_prop_req = request
 
-        responses = Channel._send_tx_proposal('', tx_context, peers)
+        responses = Channel._send_tx_proposal('', tx_context, target_peers)
 
         try:
             if responses[0][0].response and decode:
@@ -1121,20 +1186,31 @@ class Client(object):
                 "Failed to query installed chaincodes: {}", sys.exc_info()[0])
             raise
 
-    def query_channels(self, requestor, peer_names, decode=True):
+    def query_channels(self, requestor, peers, decode=True):
         """
         Queries channel name joined by a peer
 
         :param requestor: User role who issue the request
-        :param peer_names: Names of the peers to install
+        :param peers: List of  peer name and/or Peer to install
         :param deocode: Decode the response payload
         :return: A `ChannelQueryResponse` or `ProposalResponse`
         """
 
-        peers = []
-        for peer_name in peer_names:
-            peer = self.get_peer(peer_name)
-            peers.append(peer)
+        target_peers = []
+        for peer in peers:
+            if isinstance(peer, Peer):
+                target_peers.append(peer)
+            elif isinstance(peer, str):
+                peer = self.get_peer(peer)
+                target_peers.append(peer)
+            else:
+                _logger.error('{} should be a peer name or a Peer instance'.
+                              format(peer))
+
+        if not target_peers:
+            _logger.error(
+                "Failed to query block: no functionnal peer provided")
+            raise
 
         request = create_tx_prop_req(
             prop_type=CC_QUERY,
@@ -1148,7 +1224,7 @@ class Client(object):
                                        TXProposalRequest())
         tx_context.tx_prop_req = request
 
-        responses = Channel._send_tx_proposal('', tx_context, peers)
+        responses = Channel._send_tx_proposal('', tx_context, target_peers)
 
         try:
             if responses[0][0].response and decode:
@@ -1165,28 +1241,38 @@ class Client(object):
                 "Failed to query channel: {}", sys.exc_info()[0])
             raise
 
-    def query_info(self, requestor, channel_name,
-                   peer_names, decode=True):
+    def query_info(self, requestor, channel_name, peers, decode=True):
         """
         Queries information of a channel
 
         :param requestor: User role who issue the request
         :param channel_name: Name of channel to query
-        :param peer_names: Names of the peers to install
+        :param peers: List of  peer name and/or Peer to install
         :param deocode: Decode the response payload
         :return: A `BlockchainInfo` or `ProposalResponse`
         """
 
-        peers = []
-        for peer_name in peer_names:
-            peer = self.get_peer(peer_name)
-            peers.append(peer)
+        target_peers = []
+        for peer in peers:
+            if isinstance(peer, Peer):
+                target_peers.append(peer)
+            elif isinstance(peer, str):
+                peer = self.get_peer(peer)
+                target_peers.append(peer)
+            else:
+                _logger.error('{} should be a peer name or a Peer instance'.
+                              format(peer))
+
+        if not target_peers:
+            _logger.error(
+                "Failed to query block: no functionnal peer provided")
+            raise
 
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,
                                        TXProposalRequest())
 
-        responses = channel.query_info(tx_context, peers)
+        responses = channel.query_info(tx_context, target_peers)
 
         try:
             if responses[0][0].response and decode:
@@ -1203,28 +1289,40 @@ class Client(object):
             raise
 
     def query_block_by_txid(self, requestor, channel_name,
-                            peer_names, tx_id, decode=True):
+                            peers, tx_id, decode=True):
         """
         Queries block by tx id
 
         :param requestor: User role who issue the request
         :param channel_name: Name of channel to query
-        :param peer_names: Names of the peers to install
+        :param peers: List of  peer name and/or Peer to install
         :param tx_id: Transaction ID
         :param deocode: Decode the response payload
         :return: A `BlockDecoder` or `ProposalResponse`
         """
 
-        peers = []
-        for peer_name in peer_names:
-            peer = self.get_peer(peer_name)
-            peers.append(peer)
+        target_peers = []
+        for peer in peers:
+            if isinstance(peer, Peer):
+                target_peers.append(peer)
+            elif isinstance(peer, str):
+                peer = self.get_peer(peer)
+                target_peers.append(peer)
+            else:
+                _logger.error('{} should be a peer name or a Peer instance'.
+                              format(peer))
+
+        if not target_peers:
+            _logger.error(
+                "Failed to query block: no functionnal peer provided")
+            raise
 
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,
                                        TXProposalRequest())
 
-        responses = channel.query_block_by_txid(tx_context, peers, tx_id)
+        responses = channel.query_block_by_txid(tx_context, target_peers,
+                                                tx_id)
 
         try:
             if responses[0][0].response and decode:
@@ -1242,28 +1340,40 @@ class Client(object):
             raise
 
     def query_block_by_hash(self, requestor, channel_name,
-                            peer_names, block_hash, decode=True):
+                            peers, block_hash, decode=True):
         """
         Queries block by hash
 
         :param requestor: User role who issue the request
         :param channel_name: Name of channel to query
-        :param peer_names: Names of the peers to install
+        :param peers: List of  peer name and/or Peer to install
         :param block_hash: Hash of a block
         :param deocode: Decode the response payload
         :return: A `BlockDecoder` or `ProposalResponse`
         """
 
-        peers = []
-        for peer_name in peer_names:
-            peer = self.get_peer(peer_name)
-            peers.append(peer)
+        target_peers = []
+        for peer in peers:
+            if isinstance(peer, Peer):
+                target_peers.append(peer)
+            elif isinstance(peer, str):
+                peer = self.get_peer(peer)
+                target_peers.append(peer)
+            else:
+                _logger.error('{} should be a peer name or a Peer instance'.
+                              format(peer))
+
+        if not target_peers:
+            _logger.error(
+                "Failed to query block: no functionnal peer provided")
+            raise
 
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,
                                        TXProposalRequest())
 
-        responses = channel.query_block_by_hash(tx_context, peers, block_hash)
+        responses = channel.query_block_by_hash(tx_context, target_peers,
+                                                block_hash)
 
         try:
             if responses[0][0].response and decode:
@@ -1281,28 +1391,39 @@ class Client(object):
             raise
 
     def query_block(self, requestor, channel_name,
-                    peer_names, block_number, decode=True):
+                    peers, block_number, decode=True):
         """
         Queries block by number
 
         :param requestor: User role who issue the request
         :param channel_name: name of channel to query
-        :param peer_names: Names of the peers to install
+        :param peers: List of  peer name and/or Peer to install
         :param block_number: Number of a block
         :param deocode: Decode the response payload
         :return: A `BlockDecoder` or `ProposalResponse`
         """
 
-        peers = []
-        for peer_name in peer_names:
-            peer = self.get_peer(peer_name)
-            peers.append(peer)
+        target_peers = []
+        for peer in peers:
+            if isinstance(peer, Peer):
+                target_peers.append(peer)
+            elif isinstance(peer, str):
+                peer = self.get_peer(peer)
+                target_peers.append(peer)
+            else:
+                _logger.error('{} should be a peer name or a Peer instance'.
+                              format(peer))
+
+        if not target_peers:
+            _logger.error(
+                "Failed to query block: no functionnal peer provided")
+            raise
 
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,
                                        TXProposalRequest())
 
-        responses = channel.query_block(tx_context, peers, block_number)
+        responses = channel.query_block(tx_context, target_peers, block_number)
 
         try:
             if responses[0][0].response and decode:
@@ -1320,28 +1441,39 @@ class Client(object):
             raise
 
     def query_transaction(self, requestor, channel_name,
-                          peer_names, tx_id, decode=True):
+                          peers, tx_id, decode=True):
         """
         Queries block by number
 
         :param requestor: User role who issue the request
         :param channel_name: name of channel to query
-        :param peer_names: Names of the peers to install
+        :param peers: List of  peer name and/or Peer to install
         :param tx_id: The id of the transaction
         :param deocode: Decode the response payload
         :return:  A `BlockDecoder` or `ProposalResponse`
         """
 
-        peers = []
-        for peer_name in peer_names:
-            peer = self.get_peer(peer_name)
-            peers.append(peer)
+        target_peers = []
+        for peer in peers:
+            if isinstance(peer, Peer):
+                target_peers.append(peer)
+            elif isinstance(peer, str):
+                peer = self.get_peer(peer)
+                target_peers.append(peer)
+            else:
+                _logger.error('{} should be a peer name or a Peer instance'.
+                              format(peer))
+
+        if not target_peers:
+            _logger.error(
+                "Failed to query block: no functionnal peer provided")
+            raise
 
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,
                                        TXProposalRequest())
 
-        responses = channel.query_transaction(tx_context, peers, tx_id)
+        responses = channel.query_transaction(tx_context, target_peers, tx_id)
 
         try:
             if responses[0][0].response and decode:
@@ -1359,26 +1491,38 @@ class Client(object):
             raise
 
     def query_instantiated_chaincodes(self, requestor, channel_name,
-                                      peer_names, decode=True):
+                                      peers, decode=True):
         """
         Queries instantiated chaincode
 
         :param requestor: User role who issue the request
         :param channel_name: name of channel to query
-        :param peer_names: Names of the peers to query
+        :param peers: Names or Instance of the peers to query
         :param deocode: Decode the response payload
         :return: A `ChaincodeQueryResponse` or `ProposalResponse`
         """
-        peers = []
-        for peer_name in peer_names:
-            peer = self.get_peer(peer_name)
-            peers.append(peer)
+        target_peers = []
+        for peer in peers:
+            if isinstance(peer, Peer):
+                target_peers.append(peer)
+            elif isinstance(peer, str):
+                peer = self.get_peer(peer)
+                target_peers.append(peer)
+            else:
+                _logger.error('{} should be a peer name or a Peer instance'.
+                              format(peer))
+
+        if not target_peers:
+            _logger.error(
+                "Failed to query block: no functionnal peer provided")
+            raise
 
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,
                                        TXProposalRequest())
 
-        responses = channel.query_instantiated_chaincodes(tx_context, peers)
+        responses = channel.query_instantiated_chaincodes(tx_context,
+                                                          target_peers)
 
         try:
             if responses[0][0].response and decode:
@@ -1397,26 +1541,37 @@ class Client(object):
             raise
 
     def get_channel_config(self, requestor, channel_name,
-                           peer_names, decode=True):
+                           peers, decode=True):
         """
         Get configuration block for the channel
 
         :param requestor: User role who issue the request
         :param channel_name: name of channel to query
-        :param peer_names: Names of the peers to query
+        :param peers: Names or Instance of the peers to query
         :param deocode: Decode the response payload
         :return: A `ChaincodeQueryResponse` or `ProposalResponse`
         """
-        peers = []
-        for peer_name in peer_names:
-            peer = self.get_peer(peer_name)
-            peers.append(peer)
+        target_peers = []
+        for peer in peers:
+            if isinstance(peer, Peer):
+                target_peers.append(peer)
+            elif isinstance(peer, str):
+                peer = self.get_peer(peer)
+                target_peers.append(peer)
+            else:
+                _logger.error('{} should be a peer name or a Peer instance'.
+                              format(peer))
+
+        if not target_peers:
+            _logger.error(
+                "Failed to query block: no functionnal peer provided")
+            raise
 
         channel = self.get_channel(channel_name)
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,
                                        TXProposalRequest())
 
-        responses = channel.get_channel_config(tx_context, peers)
+        responses = channel.get_channel_config(tx_context, target_peers)
 
         try:
             if responses[0][0].response and decode:
@@ -1470,12 +1625,12 @@ class Client(object):
 
         return config_update.SerializeToString()
 
-    def query_peers(self, requestor, target_peer, channel=None,
+    def query_peers(self, requestor, peer, channel=None,
                     local=True, decode=True):
         """Queries peers with discovery api
 
         :param requestor: User role who issue the request
-        :param target_peer: Name of the peers to send request
+        :param peer: Name or Instance  of the peer to send request
         :param crypto: crypto method to sign the request
         :param deocode: Decode the response payload
         :return result: a nested dict of query result
@@ -1488,6 +1643,11 @@ class Client(object):
                 raise Exception("Channel name must be provided \
                  if local is False")
             dummy_channel = self.new_channel(channel)
+
+        if isinstance(peer, Peer):
+            target_peer = peer
+        elif isinstance(peer, str):
+            target_peer = self.get_peer(peer)
 
         response = dummy_channel._discovery(
             requestor, target_peer, local=local)
