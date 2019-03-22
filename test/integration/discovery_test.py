@@ -34,11 +34,13 @@ class DiscoveryTest(BaseTestCase):
         #                                self.client.state_store)
 
         # Channel create
-        response = self.client.channel_create('orderer.example.com',
-                                              self.channel_name,
-                                              self.user,
-                                              self.config_yaml,
-                                              self.channel_profile)
+        response = self.client.channel_create(
+            'orderer.example.com',
+            self.channel_name,
+            self.user,
+            config_yaml=self.config_yaml,
+            channel_profile=self.channel_profile)
+
         self.assertTrue(response)
 
         # Channel join
