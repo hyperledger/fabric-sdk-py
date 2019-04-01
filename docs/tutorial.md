@@ -78,7 +78,7 @@ A network connection profile helps SDK connect to the fabric network by providin
 * Client credentials file location;
 * Service endpoints for peer, orderer and ca;
 
-The [network.json](test/fixtures/network.json) is an example, please modify the content accordingly.
+The [network.json](../test/fixtures/network.json) is an example, please modify the content accordingly.
 
 Now you can use the Python SDK to work with the fabric network!
 
