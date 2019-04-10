@@ -14,6 +14,7 @@ _sym_db = _symbol_database.Default()
 
 from hfc.protos.peer import chaincode_pb2 as hfc_dot_protos_dot_peer_dot_chaincode__pb2
 from hfc.protos.peer import proposal_response_pb2 as hfc_dot_protos_dot_peer_dot_proposal__response__pb2
+from hfc.protos.token import expectations_pb2 as hfc_dot_protos_dot_token_dot_expectations__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -21,9 +22,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='protos',
   syntax='proto3',
   serialized_options=_b('\n\"org.hyperledger.fabric.protos.peerB\017ProposalPackageZ)github.com/hyperledger/fabric/protos/peer'),
-  serialized_pb=_b('\n\x1ehfc/protos/peer/proposal.proto\x12\x06protos\x1a\x1fhfc/protos/peer/chaincode.proto\x1a\'hfc/protos/peer/proposal_response.proto\";\n\x0eSignedProposal\x12\x16\n\x0eproposal_bytes\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\">\n\x08Proposal\x12\x0e\n\x06header\x18\x01 \x01(\x0c\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\x12\x11\n\textension\x18\x03 \x01(\x0c\"a\n\x18\x43haincodeHeaderExtension\x12\x1a\n\x12payload_visibility\x18\x01 \x01(\x0c\x12)\n\x0c\x63haincode_id\x18\x02 \x01(\x0b\x32\x13.protos.ChaincodeID\"\xa8\x01\n\x18\x43haincodeProposalPayload\x12\r\n\x05input\x18\x01 \x01(\x0c\x12H\n\x0cTransientMap\x18\x02 \x03(\x0b\x32\x32.protos.ChaincodeProposalPayload.TransientMapEntry\x1a\x33\n\x11TransientMapEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x0c:\x02\x38\x01\"\x81\x01\n\x0f\x43haincodeAction\x12\x0f\n\x07results\x18\x01 \x01(\x0c\x12\x0e\n\x06\x65vents\x18\x02 \x01(\x0c\x12\"\n\x08response\x18\x03 \x01(\x0b\x32\x10.protos.Response\x12)\n\x0c\x63haincode_id\x18\x04 \x01(\x0b\x32\x13.protos.ChaincodeIDB`\n\"org.hyperledger.fabric.protos.peerB\x0fProposalPackageZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_pb=_b('\n\x1ehfc/protos/peer/proposal.proto\x12\x06protos\x1a\x1fhfc/protos/peer/chaincode.proto\x1a\'hfc/protos/peer/proposal_response.proto\x1a#hfc/protos/token/expectations.proto\";\n\x0eSignedProposal\x12\x16\n\x0eproposal_bytes\x18\x01 \x01(\x0c\x12\x11\n\tsignature\x18\x02 \x01(\x0c\">\n\x08Proposal\x12\x0e\n\x06header\x18\x01 \x01(\x0c\x12\x0f\n\x07payload\x18\x02 \x01(\x0c\x12\x11\n\textension\x18\x03 \x01(\x0c\"a\n\x18\x43haincodeHeaderExtension\x12\x1a\n\x12payload_visibility\x18\x01 \x01(\x0c\x12)\n\x0c\x63haincode_id\x18\x02 \x01(\x0b\x32\x13.protos.ChaincodeID\"\xa8\x01\n\x18\x43haincodeProposalPayload\x12\r\n\x05input\x18\x01 \x01(\x0c\x12H\n\x0cTransientMap\x18\x02 \x03(\x0b\x32\x32.protos.ChaincodeProposalPayload.TransientMapEntry\x1a\x33\n\x11TransientMapEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x0c:\x02\x38\x01\"\xb5\x01\n\x0f\x43haincodeAction\x12\x0f\n\x07results\x18\x01 \x01(\x0c\x12\x0e\n\x06\x65vents\x18\x02 \x01(\x0c\x12\"\n\x08response\x18\x03 \x01(\x0b\x32\x10.protos.Response\x12)\n\x0c\x63haincode_id\x18\x04 \x01(\x0b\x32\x13.protos.ChaincodeID\x12\x32\n\x11token_expectation\x18\x05 \x01(\x0b\x32\x17.token.TokenExpectationB`\n\"org.hyperledger.fabric.protos.peerB\x0fProposalPackageZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
   ,
-  dependencies=[hfc_dot_protos_dot_peer_dot_chaincode__pb2.DESCRIPTOR,hfc_dot_protos_dot_peer_dot_proposal__response__pb2.DESCRIPTOR,])
+  dependencies=[hfc_dot_protos_dot_peer_dot_chaincode__pb2.DESCRIPTOR,hfc_dot_protos_dot_peer_dot_proposal__response__pb2.DESCRIPTOR,hfc_dot_protos_dot_token_dot_expectations__pb2.DESCRIPTOR,])
 
 
 
@@ -61,8 +62,8 @@ _SIGNEDPROPOSAL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=116,
-  serialized_end=175,
+  serialized_start=153,
+  serialized_end=212,
 )
 
 
@@ -106,8 +107,8 @@ _PROPOSAL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=177,
-  serialized_end=239,
+  serialized_start=214,
+  serialized_end=276,
 )
 
 
@@ -144,8 +145,8 @@ _CHAINCODEHEADEREXTENSION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=241,
-  serialized_end=338,
+  serialized_start=278,
+  serialized_end=375,
 )
 
 
@@ -182,8 +183,8 @@ _CHAINCODEPROPOSALPAYLOAD_TRANSIENTMAPENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=458,
-  serialized_end=509,
+  serialized_start=495,
+  serialized_end=546,
 )
 
 _CHAINCODEPROPOSALPAYLOAD = _descriptor.Descriptor(
@@ -219,8 +220,8 @@ _CHAINCODEPROPOSALPAYLOAD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=341,
-  serialized_end=509,
+  serialized_start=378,
+  serialized_end=546,
 )
 
 
@@ -259,6 +260,13 @@ _CHAINCODEACTION = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='token_expectation', full_name='protos.ChaincodeAction.token_expectation', index=4,
+      number=5, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -271,8 +279,8 @@ _CHAINCODEACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=512,
-  serialized_end=641,
+  serialized_start=549,
+  serialized_end=730,
 )
 
 _CHAINCODEHEADEREXTENSION.fields_by_name['chaincode_id'].message_type = hfc_dot_protos_dot_peer_dot_chaincode__pb2._CHAINCODEID
@@ -280,6 +288,7 @@ _CHAINCODEPROPOSALPAYLOAD_TRANSIENTMAPENTRY.containing_type = _CHAINCODEPROPOSAL
 _CHAINCODEPROPOSALPAYLOAD.fields_by_name['TransientMap'].message_type = _CHAINCODEPROPOSALPAYLOAD_TRANSIENTMAPENTRY
 _CHAINCODEACTION.fields_by_name['response'].message_type = hfc_dot_protos_dot_peer_dot_proposal__response__pb2._RESPONSE
 _CHAINCODEACTION.fields_by_name['chaincode_id'].message_type = hfc_dot_protos_dot_peer_dot_chaincode__pb2._CHAINCODEID
+_CHAINCODEACTION.fields_by_name['token_expectation'].message_type = hfc_dot_protos_dot_token_dot_expectations__pb2._TOKENEXPECTATION
 DESCRIPTOR.message_types_by_name['SignedProposal'] = _SIGNEDPROPOSAL
 DESCRIPTOR.message_types_by_name['Proposal'] = _PROPOSAL
 DESCRIPTOR.message_types_by_name['ChaincodeHeaderExtension'] = _CHAINCODEHEADEREXTENSION
