@@ -32,8 +32,10 @@ from hfc.fabric.transaction.tx_proposal_request import TXProposalRequest, \
     CC_INVOKE, CC_QUERY
 from hfc.protos.common import common_pb2, configtx_pb2, ledger_pb2
 from hfc.protos.peer import query_pb2
+from hfc.protos.peer.chaincode_pb2 import ChaincodeData
 from hfc.fabric.block_decoder import BlockDecoder, FilteredBlockDecoder, \
-    decode_fabric_peers_info, decode_fabric_MSP_config, decode_fabric_endpoints
+    decode_fabric_peers_info, decode_fabric_MSP_config, \
+    decode_fabric_endpoints, decode_proposal_response_payload
 from hfc.util import utils
 from hfc.util.keyvaluestore import FileKeyValueStore
 
@@ -942,6 +944,8 @@ class Client(object):
                 and responses[0].status == 200):
             return False
 
+        res = decode_proposal_response_payload(res[0][0].payload)
+
         # Wait until chaincode is really instantiated
         # Note : we will remove this part when we have channel event hub
         starttime = int(time.time())
@@ -956,7 +960,10 @@ class Client(object):
                 )
 
                 if response.response.status == 200:
-                    return True
+                    ccd = ChaincodeData()
+                    payload = res['extension']['response']['payload']
+                    ccd.ParseFromString(payload)
+                    return ccd
 
                 time.sleep(1)
             except Exception:
