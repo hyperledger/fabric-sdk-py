@@ -1,3 +1,42 @@
+## v0.8.0
+Fri Apr 12 13:05:54 UTC 2019
+
+* [8d927d9](https://github.com/hyperledger/fabric-sdk-py/commit/8d927d9) [FABP-214] Peer and Orderer names or instances
+* [6cd78bc](https://github.com/hyperledger/fabric-sdk-py/commit/6cd78bc) [FABP-215] Retired inactive maintainer
+* [6cea8a5](https://github.com/hyperledger/fabric-sdk-py/commit/6cea8a5) [FABP-212] Configtx file for channel creation
+* [865252e](https://github.com/hyperledger/fabric-sdk-py/commit/865252e) [FABP-211] Clean and Add Tests for ChannelEventHub
+* [f4ae3d2](https://github.com/hyperledger/fabric-sdk-py/commit/f4ae3d2) [FABP-182] Improve discovery API
+* [520dd36](https://github.com/hyperledger/fabric-sdk-py/commit/520dd36) [FABP-193] ChannelEventHub
+* [edccc57](https://github.com/hyperledger/fabric-sdk-py/commit/edccc57) [FABP-209] Improve tutorial docs
+* [af18dea](https://github.com/hyperledger/fabric-sdk-py/commit/af18dea) [FABP-208] fix missing configtxgen at travis ci build
+* [e2f4f74](https://github.com/hyperledger/fabric-sdk-py/commit/e2f4f74) [FABP-204] add channel_config query test
+* [eeae998](https://github.com/hyperledger/fabric-sdk-py/commit/eeae998) [FABP-205] add get_channel_config method
+* [e67069a](https://github.com/hyperledger/fabric-sdk-py/commit/e67069a) [FABP-182] implement discovery API
+* [6a8e1d9](https://github.com/hyperledger/fabric-sdk-py/commit/6a8e1d9) [FABP-203] fix hard coded requestor in channel_join
+* [ff1b02b](https://github.com/hyperledger/fabric-sdk-py/commit/ff1b02b) [FABP-202] Fix link error in tutorial
+* [ed9b5ee](https://github.com/hyperledger/fabric-sdk-py/commit/ed9b5ee) [FABP-198] Refine the tutorial
+* [eb536d7](https://github.com/hyperledger/fabric-sdk-py/commit/eb536d7) [FABP-200] Add sample code for tutorial
+* [edf9dda](https://github.com/hyperledger/fabric-sdk-py/commit/edf9dda) [FABP-197] clientAuthRequired with secure grpc channel
+* [41001c4](https://github.com/hyperledger/fabric-sdk-py/commit/41001c4) [FABP-196] Fabric-ca generateCRL Hotfix caname param
+* [d18d81a](https://github.com/hyperledger/fabric-sdk-py/commit/d18d81a) [FABP-188] Fabric-ca GenerateCRL method
+* [4da35fe](https://github.com/hyperledger/fabric-sdk-py/commit/4da35fe) [FABP-195] Better invoke return messages
+* [aa51e9c](https://github.com/hyperledger/fabric-sdk-py/commit/aa51e9c) [FABP-194] Fabric-ca CertificateService implementation
+* [ed376e8](https://github.com/hyperledger/fabric-sdk-py/commit/ed376e8) [FABP-175] Fix issues for chaincode methods
+* [cc18852](https://github.com/hyperledger/fabric-sdk-py/commit/cc18852) [FABP-191] Fabric-ca affiliation management
+* [baa7d5a](https://github.com/hyperledger/fabric-sdk-py/commit/baa7d5a) [FABP-192] fix some query methods
+* [de99892](https://github.com/hyperledger/fabric-sdk-py/commit/de99892) [FABP-190] Fabric-ca reenroll method implementation
+* [91845f1](https://github.com/hyperledger/fabric-sdk-py/commit/91845f1) [FABP-181] Add query by chaincode
+* [63d06dc](https://github.com/hyperledger/fabric-sdk-py/commit/63d06dc) [FABP-189] Identity management method implementation
+* [d53b64f](https://github.com/hyperledger/fabric-sdk-py/commit/d53b64f) [FABP-187] CA Revoke method
+* [2e39a9d](https://github.com/hyperledger/fabric-sdk-py/commit/2e39a9d) [FABP-186] update protos
+* [8bea6ed](https://github.com/hyperledger/fabric-sdk-py/commit/8bea6ed) [FABP-184] Implement Fabric-ca register method
+* [f4131d6](https://github.com/hyperledger/fabric-sdk-py/commit/f4131d6) [FABP-185] RxPy -> synchronous methods
+* [f38d025](https://github.com/hyperledger/fabric-sdk-py/commit/f38d025) Configure Stale ProBot
+* [d90faf6](https://github.com/hyperledger/fabric-sdk-py/commit/d90faf6) [FABP-174] Update tutorial for fabric v1.3.0 update
+* [9bb0889](https://github.com/hyperledger/fabric-sdk-py/commit/9bb0889) [FABP-170] support fabric v1.3.0
+* [8f6c35d](https://github.com/hyperledger/fabric-sdk-py/commit/8f6c35d) [FABP-171] Add scipts for config generation
+* [19c8a3a](https://github.com/hyperledger/fabric-sdk-py/commit/19c8a3a) [FABP-167] Update maintainer list
+
 ## v0.7.0
 Thu Sep  6 12:48:47 UTC 2018
 

@@ -1,33 +1,29 @@
 # Release Notes
 
-## [v0.7.0](https://github.com/hyperledger/fabric-sdk-py/releases/tag/v0.7.0) September 6, 2018
+## [v0.8.0](https://github.com/hyperledger/fabric-sdk-py/releases/tag/v0.8.0) Apr 12, 2019
 
 ### Add new features
 
-* Support fabric 1.0.x network;
-* Finish Channel, Chaincode APIs;
-    * Channel APIs
-        * Load network configuration
-        * Create a New Channel
-        * Join Peers into a Channel
-        * Get block from a channel
-        * Query channel
-    * Chaincode APIs
-        * Install Chaincode to peers
-        * Query install Chaincode
-        * Query instantiated Chaincode
-        * Instantiate Chaincode
-        * Invoke Chaincode
-
+* Support fabric 1.x network;
+* Add more new features:
+  1. Implement event service
+  2. Implement discovery service
+  3. Replace Rx module with python native async/await
+  4. CA supporting.
+  5. Implement mutual encryption.
+  
 ### Improvements
+    * Improve the documentation
+    * Add example code
+    * Refine invoke api
+    * Improve query
 
 * Tutorials Updated;
 * Test Updated;
 
 ### Known Vulnerabilities
 
-* Fabric-CA support needed;
-* Fabric 1.x network support needed;
+* Private collcetion support
 
 ### Resolved Vulnerabilities
 
@@ -35,4 +31,4 @@ none
 
 ### Change Log
 
-https://github.com/hyperledger/fabric-sdk-py/blob/master/CHANGELOG.md#v0.7.0
+https://github.com/hyperledger/fabric-sdk-py/blob/master/CHANGELOG.md#v0.8.0
