@@ -26,6 +26,7 @@ from hfc.fabric.orderer import Orderer
 from hfc.fabric.peer import Peer
 from hfc.fabric.user import User
 from hfc.fabric.organization import create_org
+from hfc.fabric.certificateAuthority import create_ca
 from hfc.fabric.transaction.tx_context import TXContext, create_tx_context
 from hfc.fabric.transaction.tx_proposal_request import TXProposalRequest, \
     create_tx_prop_req, CC_INSTALL, CC_TYPE_GOLANG, CC_INSTANTIATE, \
@@ -105,7 +106,11 @@ class Client(object):
             self._organizations[name] = org
 
         # Init CAs
-        # TODO
+        cas = self.get_net_info('certificateAuthorities')
+        for name in cas:
+            _logger.debug("create ca with name={}".format(name))
+            ca = create_ca(name, cas[name])
+            self._CAs[name] = ca
 
         # Init orderer nodes
         orderers = self.get_net_info('orderers')
