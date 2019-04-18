@@ -5,6 +5,7 @@
 | Baohua Yang | baohua | yeasy | baohua | yangbaohua@gmail.com |
 | Dong Wang |  MichaelWang | WandyLau | wangdong | xdragon007@gmail.com |
 | Dixing Xu |  dexhunter | dexhunter | dexhunter | dixingxu@gmail.com |
+| Guillaume Cisco | GuillaumeCisco | GuillaumeCisco | GuillaumeCisco | guillaumecisco@gmail.com |
 
 ## Retired Maintainers
 
