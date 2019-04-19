@@ -20,6 +20,7 @@ package protos;
 option java_package = "org.hyperledger.fabric.protos.peer";
 option go_package = "github.com/hyperledger/fabric/protos/peer";
 
+import "hfc/protos/common/policies.proto";
 
 // Confidentiality Levels
 enum ConfidentialityLevel {
@@ -103,4 +104,23 @@ message ChaincodeInvocationSpec {
 // LifecycleEvent is used as the payload of the chaincode event emitted by LSCC
 message LifecycleEvent {
     string chaincode_name = 1;
+}
+
+// https://github.com/hyperledger/fabric/blob/master/core/common/ccprovider/cdspackage.go
+message CDSData {
+    bytes hash = 1; // hash of ChaincodeDeploymentSpec.code_package
+    bytes metadatahash = 2; // hash of ChaincodeID.name + ChaincodeID.version
+}
+
+message ChaincodeData {
+    string name = 1;
+    string version = 2;
+    string escc = 3;
+    string vscc = 4;
+    common.SignaturePolicyEnvelope policy = 5;
+
+    CDSData data = 6;
+
+    bytes id = 7;
+    common.SignaturePolicyEnvelope instantiationPolicy = 8;
 }
