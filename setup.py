@@ -18,7 +18,7 @@ with open('./requirements-test.txt') as test_reqs_txt:
     test_requirements = [line for line in test_reqs_txt]
 
 setup(
-    name='hfc',
+    name='fabric-sdk-py',
     version=VERSION,
     keywords=('Hyperledger Fabric', 'SDK'),
     license='Apache License v2.0',
