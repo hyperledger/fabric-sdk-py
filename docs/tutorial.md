@@ -181,7 +181,7 @@ response = cli.channel_join(
                requestor=org1_admin,
                channel_name='businesschannel',
                peers=['peer0.org1.example.com',
-                           'peer1.org1.example.com']
+                           'peer1.org1.example.com'],
                orderer='orderer.example.com'
                )
 print(response==True)
@@ -195,7 +195,7 @@ response = cli.channel_join(
                requestor=org2_admin,
                channel_name='businesschannel',
                peers=['peer0.org2.example.com',
-                           'peer1.org2.example.com']
+                           'peer1.org2.example.com'],
                orderer='orderer.example.com'
                )
 print(response==True)
@@ -229,7 +229,7 @@ os.environ['GOPATH'] = os.path.abspath(gopath)
 response = cli.chaincode_install(
                requestor=org1_admin,
                peers=['peer0.org1.example.com',
-                           'peer1.org1.example.com']
+                           'peer1.org1.example.com'],
                cc_path='github.com/example_cc',
                cc_name='example_cc',
                cc_version='v1.0'
