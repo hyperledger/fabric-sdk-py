@@ -1,0 +1,36 @@
+[all]
+enforce_newline_at_EOF = True
+use_spaces = True
+
+[all.GitCommit]
+bears = GitCommitBear
+ignore_length_regex = Signed-off-by,
+    Also-by,
+    Co-authored-by,
+    http://,
+    https://
+
+[all.YAML]
+bears = YAMLLintBear
+files = test/**.yaml
+document_start = True
+yamllint_config = yamllint.conf
+indent_size = 4
+
+[all.ShellCheck]
+bears = ShellCheckBear, SpaceConsistencyBear, LineLengthBear
+files = scripts/*.sh, test/fixtures/scripts/*.sh
+shell = bash
+indent_size = 4
+max_line_length = 120
+
+[all.JSON]
+bears = JSONFormatBear
+files = test/fixtures/**.json
+indent_size = 2
+
+[all.Python]
+# bears = PEP8Bear, PyUnusedCodeBear, PyImportSortBear
+bears = PEP8Bear, PyUnusedCodeBear
+files = test/**.py
+

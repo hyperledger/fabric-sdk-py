@@ -8,11 +8,11 @@ dockerFabricPull() {
   for IMAGES in peer tools orderer ccenv ca; do
       HLF_IMG=hyperledger/fabric-$IMAGES:${IMG_TAG}
       echo "==> Check IMAGE: ${HLF_IMG}"
-			if [ -z "$(docker images -q ${HLF_IMG} 2> /dev/null)" ]; then  # not exist
-				docker pull ${HLF_IMG}
-			else
-				echo "${HLF_IMG} already exist locally"
-			fi
+      if [ -z "$(docker images -q ${HLF_IMG} 2> /dev/null)" ]; then  # not exist
+          docker pull ${HLF_IMG}
+      else
+          echo "${HLF_IMG} already exist locally"
+      fi
   done
 }
 
@@ -36,7 +36,7 @@ fi
 
 # pull fabric images
 BASEIMAGE_RELEASE=0.4.14
-BASE_VERSION=1.4.0
+export BASE_VERSION=1.4.0
 PROJECT_VERSION=1.4.0
 IMG_TAG=1.4.0
 
@@ -58,7 +58,8 @@ then
         echo "configtxgen doesn't exits."
         mkdir -p fabric-bin
         PLATFORM=$(echo "$(uname -s|tr '[:upper:]' '[:lower:]'|
-        sed 's/mingw64_nt.*/windows/')-$(uname -m | sed 's/x86_64/amd64/g')" | awk '{print tolower($0)}')
+        sed 's/mingw64_nt.*/windows/')-$(uname -m | sed 's/x86_64/amd64/g')" \
+                       | awk '{print tolower($0)}')
         echo "===> Downloading platform specific fabric binaries"
         binUrl="https://nexus.hyperledger.org/content/repositories/releases/org" \
         binUrl="$binUrl/hyperledger/fabric/hyperledger-fabric/${PLATFORM}-${PROJECT_VERSION}" \

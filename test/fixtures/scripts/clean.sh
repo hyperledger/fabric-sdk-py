@@ -6,8 +6,8 @@ if [ -f ./variables.sh ]; then
 elif [ -f ./scripts/variables.sh ]; then
  source ./scripts/variables.sh
 else
-	echo "Cannot find the variables.sh files, pls check"
-	exit 1
+    echo "Cannot find the variables.sh files, pls check"
+    exit 1
 fi
 
 if [ -d e2e_cli/${CHANNEL_ARTIFACTS} ];
