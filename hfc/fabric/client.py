@@ -1223,7 +1223,7 @@ class Client(object):
         if all([x.response.status == 200 for x in tran_req.responses]):
             return res[0].response.payload.decode('utf-8')
 
-        return res.response.message
+        return res[0].response.message
 
     async def query_installed_chaincodes(self, requestor, peers, decode=True):
         """
