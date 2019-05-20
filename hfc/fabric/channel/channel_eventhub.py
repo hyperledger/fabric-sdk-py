@@ -33,8 +33,10 @@ _logger = logging.getLogger(__name__ + ".channel_eventhub")
 
 
 class EventRegistration(object):
-    def __init__(self, onEvent=None):
+    def __init__(self, onEvent=None, unregister=True, disconnect=False):
         self.onEvent = onEvent
+        self.unregister = unregister
+        self.disconnect = disconnect
 
 
 class ChaincodeRegistration(object):
@@ -118,11 +120,22 @@ class ChannelEventHub(object):
 
     def _processBlockEvents(self, block):
         for reg_num in self._reg_nums:
+
+            if reg_num.unregister:
+                self.unregisterBlockEvent(reg_num)
+
             if reg_num.onEvent is not None:
                 reg_num.onEvent(block)
 
-    def registerBlockEvent(self, onEvent=None):
-        reg_num = EventRegistration(onEvent)
+            if reg_num.disconnect:
+                self.disconnect()
+
+    # TODO support startBlock, endBlock
+    def registerBlockEvent(self, unregister=True,
+                           disconnect=False, onEvent=None):
+        reg_num = EventRegistration(onEvent,
+                                    unregister=unregister,
+                                    disconnect=disconnect)
         self._reg_nums.append(reg_num)
         return reg_num
 
@@ -135,10 +148,12 @@ class ChannelEventHub(object):
                 if ft['tx_validation_code'] != 'VALID':
                     raise Exception(ft['tx_validation_code'])
 
-                # TODO handle option for not unregistering
-                self.unregisterTxEvent(tx_id)
+                if er.unregister:
+                    self.unregisterTxEvent(tx_id)
                 if er.onEvent is not None:
                     er.onEvent(block)
+                if er.disconnect:
+                    self.disconnect()
 
     def handle_full_tx(self, block, tx_id, er):
         txStatusCodes = block['metadata']['metadata'][
@@ -150,10 +165,12 @@ class ChannelEventHub(object):
                     raise Exception(
                         TxValidationCode.Name(txStatusCodes[index]))
 
-                # TODO handle option for not unregistering
-                self.unregisterTxEvent(tx_id)
+                if er.unregister:
+                    self.unregisterTxEvent(tx_id)
                 if er.onEvent is not None:
                     er.onEvent(block)
+                if er.disconnect:
+                    self.disconnect()
 
     def _processTxEvents(self, block):
         for tx_id, er in copy(self._tx_ids).items():
@@ -164,8 +181,12 @@ class ChannelEventHub(object):
                 self.handle_full_tx(block, tx_id, er)
 
     # TODO support txid ALL
-    def registerTxEvent(self, tx_id, onEvent=None):
-        self._tx_ids[tx_id] = EventRegistration(onEvent)
+    # TODO support startBlock, endBlock
+    def registerTxEvent(self, tx_id, unregister=True,
+                        disconnect=False, onEvent=None):
+        self._tx_ids[tx_id] = EventRegistration(onEvent,
+                                                unregister=unregister,
+                                                disconnect=disconnect)
         return tx_id
 
     def unregisterTxEvent(self, tx_id):
@@ -175,11 +196,14 @@ class ChannelEventHub(object):
         if block_events['chaincode_id'] == cr.ccid and \
                 re.match(cr.pattern, block_events['event_name']):
 
-            # TODO handle option for not unregistering
-            self.unregisterChaincodeEvent(cr)
+            if cr.er.unregister:
+                self.unregisterChaincodeEvent(cr)
 
             if cr.er.onEvent is not None:
                 cr.er.onEvent(block)
+
+            if cr.er.disconnect:
+                self.disconnect()
 
     def handle_filtered_chaincode(self, block, cr):
         for ft in block['filtered_transactions']:
@@ -213,8 +237,11 @@ class ChannelEventHub(object):
                 else:
                     self.handle_full_chaincode(block, cr)
 
-    def registerChaincodeEvent(self, ccid, pattern, onEvent=None):
-        er = EventRegistration(onEvent)
+    # TODO support startBlock, endBlock
+    def registerChaincodeEvent(self, ccid, pattern, unregister=False,
+                               disconnect=False, onEvent=None):
+        er = EventRegistration(onEvent, unregister=unregister,
+                               disconnect=disconnect)
         cr = ChaincodeRegistration(ccid, pattern, er)
 
         if ccid in self._reg_ids:

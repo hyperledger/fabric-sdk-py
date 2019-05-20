@@ -494,8 +494,9 @@ class E2eTest(BaseTestCase):
         stream = channel_event_hub.connect(filtered=True, start=0, stop=None)
 
         self.filtered_blocks = []
-        channel_event_hub.registerBlockEvent(onEvent=self.onFilteredEvent)
-        await stream  # will wait until empty block due do stop = None
+        channel_event_hub.registerBlockEvent(unregister=False,
+                                             onEvent=self.onFilteredEvent)
+        await stream  # will wait until empty block
 
         self.assertEqual(len(self.filtered_blocks), 4)
 
@@ -527,7 +528,8 @@ class E2eTest(BaseTestCase):
         stream = channel_event_hub.connect(start=0, stop=None, filtered=False)
 
         self.blocks = []
-        channel_event_hub.registerBlockEvent(self.onFullEvent)
+        channel_event_hub.registerBlockEvent(unregister=False,
+                                             onEvent=self.onFullEvent)
         await stream
 
         self.assertEqual(len(self.blocks), 4)

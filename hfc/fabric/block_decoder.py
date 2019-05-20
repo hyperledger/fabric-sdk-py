@@ -782,6 +782,8 @@ def decode_config_policy(proto_config_policy):
               policies_pb2.Policy.IMPLICIT_META):
             config_policy['policy']['value'] = \
                 decode_implicit_meta_policy(proto_config_policy.policy.value)
+        elif (proto_config_policy.policy.type == policies_pb2.Policy.UNKNOWN):
+            config_policy['policy']['value'] = 'Unknown'
         else:
             raise ValueError("Unknown policy type")
     return config_policy
