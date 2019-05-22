@@ -1310,9 +1310,9 @@ def decode_range_query_info(proto_range_query_info):
         range_query_info['raw_reads'] = {}
         range_query_info['raw_reads']['kv_reads'] = []
         kv_read = None
-        for kvread in proto_raw_reads.kv_reads:
+        for kv_read in proto_raw_reads.kv_reads:
             kv_read = decode_kv_read(kv_read)
-            range_query_info['raw_heads']['kv_reads'].append(kv_read)
+            range_query_info['raw_reads']['kv_reads'].append(kv_read)
 
     proto_reads_merkle_hashes = proto_range_query_info.reads_merkle_hashes
     if proto_reads_merkle_hashes:
