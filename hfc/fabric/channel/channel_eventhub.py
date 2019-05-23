@@ -245,7 +245,7 @@ class ChannelEventHub(object):
         cr = ChaincodeRegistration(ccid, pattern, er)
 
         if ccid in self._reg_ids:
-            self._reg_ids[ccid].push(cr)
+            self._reg_ids[ccid].append(cr)
         else:
             self._reg_ids[ccid] = [cr]
         return cr
