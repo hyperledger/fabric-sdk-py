@@ -269,7 +269,8 @@ def validate(tx_prop_req):
             raise ValueError("Missing 'cc_path' parameter "
                              "in the proposal request")
 
-    if not tx_prop_req.cc_version and tx_prop_req.prop_type != CC_QUERY:
+    if not tx_prop_req.cc_version and tx_prop_req.prop_type not in (CC_QUERY,
+                                                                    CC_INVOKE):
         raise ValueError("Missing 'cc_version' parameter "
                          "in the proposal request")
 

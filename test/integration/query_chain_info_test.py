@@ -123,7 +123,6 @@ class QueryChainInfoTest(BaseTestCase):
         tran_prop_req = create_tx_prop_req(prop_type=CC_INVOKE,
                                            cc_type=CC_TYPE_GOLANG,
                                            cc_name=CC_NAME,
-                                           cc_version=CC_VERSION,
                                            fcn='invoke',
                                            args=args)
 

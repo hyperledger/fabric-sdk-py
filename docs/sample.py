@@ -102,8 +102,7 @@ if __name__ == "__main__":
         channel_name='businesschannel',
         peers=['peer0.org1.example.com'],
         args=args,
-        cc_name='example_cc',
-        cc_version='v1.0'
+        cc_name='example_cc'
     )
     print("Invoke chaincode done.")
     print(response)
@@ -116,8 +115,7 @@ if __name__ == "__main__":
         channel_name='businesschannel',
         peers=['peer0.org1.example.com'],
         args=args,
-        cc_name='example_cc',
-        cc_version='v1.0'
+        cc_name='example_cc'
     )
     print("Query chaincode done.")
     print(response)

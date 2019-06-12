@@ -185,7 +185,6 @@ class E2eTest(BaseTestCase):
                 peers=['peer1.' + org],
                 args=args,
                 cc_name=CC_NAME,
-                cc_version=CC_VERSION,
                 wait_for_event=True,
                 cc_pattern="^invoked*"  # for chaincode event
             )
@@ -210,8 +209,7 @@ class E2eTest(BaseTestCase):
                 channel_name=self.channel_name,
                 peers=['peer0.' + org],
                 args=args,
-                cc_name=CC_NAME,
-                cc_version=CC_VERSION
+                cc_name=CC_NAME
             )
             self.assertEqual(response, '400')  # 300 + 100
 

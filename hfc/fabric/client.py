@@ -1040,7 +1040,7 @@ class Client(object):
         return ccd
 
     async def chaincode_invoke(self, requestor, channel_name, peers, args,
-                               cc_name, cc_version, cc_type=CC_TYPE_GOLANG,
+                               cc_name, cc_type=CC_TYPE_GOLANG,
                                fcn='invoke', cc_pattern=None,
                                wait_for_event=False,
                                wait_for_event_timeout=30):
@@ -1083,7 +1083,6 @@ class Client(object):
         tran_prop_req = create_tx_prop_req(
             prop_type=CC_INVOKE,
             cc_name=cc_name,
-            cc_version=cc_version,
             cc_type=cc_type,
             fcn=fcn,
             args=args
@@ -1167,7 +1166,7 @@ class Client(object):
         return res['extension']['response']['payload'].decode('utf-8')
 
     async def chaincode_query(self, requestor, channel_name, peers, args,
-                              cc_name, cc_version, cc_type=CC_TYPE_GOLANG,
+                              cc_name, cc_type=CC_TYPE_GOLANG,
                               fcn='query'):
         """
         Query chaincode
@@ -1177,7 +1176,6 @@ class Client(object):
         :param peers: List of  peer name and/or Peer to install
         :param args (list): arguments (keys and values) for initialization
         :param cc_name: chaincode name
-        :param cc_version: chaincode version
         :param cc_type: chaincode type language
         :param fcn: chaincode function
         :return: True or False
@@ -1201,7 +1199,6 @@ class Client(object):
         tran_prop_req = create_tx_prop_req(
             prop_type=CC_QUERY,
             cc_name=cc_name,
-            cc_version=cc_version,
             cc_type=cc_type,
             fcn=fcn,
             args=args

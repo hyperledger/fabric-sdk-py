@@ -607,7 +607,7 @@ class Channel(object):
 
         cc_id = chaincode_pb2.ChaincodeID()
         cc_id.name = request.cc_name
-        if request.prop_type != CC_QUERY:
+        if request.prop_type not in (CC_QUERY, CC_INVOKE):
             cc_id.version = request.cc_version
 
         cc_input = chaincode_pb2.ChaincodeInput()

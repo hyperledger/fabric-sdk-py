@@ -263,7 +263,6 @@ response = loop.run_until_complete(cli.chaincode_invoke(
                peers=['peer0.org1.example.com'],
                args=args,
                cc_name='example_cc',
-               cc_version='v1.0',
                wait_for_event=True, # for being sure chaincode invocation has been commited in the ledger, default is on tx event
                #cc_pattern='^invoked*' # if you want to wait for chaincode event and you have a `stub.SetEvent("invoked", value)` in your chaincode
                ))
@@ -276,8 +275,7 @@ response = loop.run_until_complete(cli.chaincode_query(
                channel_name='businesschannel',
                peers=['peer0.org1.example.com'],
                args=args,
-               cc_name='example_cc',
-               cc_version='v1.0'
+               cc_name='example_cc'
                ))
 ```
 
