@@ -78,6 +78,12 @@
       },
       "tlsCACerts": {
         "path": "test/fixtures/e2e_cli/crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem"
+      },
+      "clientKey": {
+        "path": "test/fixtures/e2e_cli/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.key"
+      },
+      "clientCert": {
+        "path": "test/fixtures/e2e_cli/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt"
       }
     }
   },

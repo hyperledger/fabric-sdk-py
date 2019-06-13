@@ -13,6 +13,7 @@
 # limitations under the License.
 #
 import logging
+from _sha256 import sha256
 
 from hfc.protos.common import common_pb2
 from hfc.protos.orderer import ab_pb2_grpc
@@ -21,7 +22,7 @@ from hfc.protos.utils import create_seek_info, create_seek_payload, \
 from hfc.util.channel import create_grpc_channel
 
 from hfc.util.utils import current_timestamp, \
-    build_header, build_channel_header, stream_envelope
+    build_header, build_channel_header, stream_envelope, pem_to_der
 
 DEFAULT_ORDERER_ENDPOINT = 'localhost:7050'
 
@@ -100,12 +101,21 @@ class Orderer(object):
         _logger.info("get genesis block - start")
 
         seek_info = create_seek_info(0, 0)
+
+        kwargs = {}
+        if self._client_cert_path:
+            with open(self._client_cert_path, 'rb') as f:
+                b64der = pem_to_der(f.read())
+                kwargs['tls_cert_hash'] = sha256(b64der).digest()
+
         seek_info_header = build_channel_header(
             common_pb2.HeaderType.Value('DELIVER_SEEK_INFO'),
             tx_context.tx_id,
             channel_name,
             current_timestamp(),
-            tx_context.epoch)
+            tx_context.epoch,
+            **kwargs
+        )
 
         seek_header = build_header(
             tx_context.identity,
