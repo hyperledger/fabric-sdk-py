@@ -8,11 +8,15 @@ import random
 import sys
 import tarfile
 import re
+from _sha256 import sha256
 
+from hfc.protos.msp import msp_principal_pb2
+
+from hfc.fabric.block_decoder import BlockDecoder
 from hfc.fabric.transaction.tx_proposal_request import \
     create_tx_prop_req, CC_INSTALL, CC_TYPE_GOLANG, \
     CC_INSTANTIATE, CC_UPGRADE, CC_INVOKE, CC_QUERY
-from hfc.protos.common import common_pb2
+from hfc.protos.common import common_pb2, policies_pb2
 from hfc.protos.orderer import ab_pb2
 from hfc.protos.peer import chaincode_pb2, proposal_pb2
 from hfc.protos.discovery import protocol_pb2
@@ -21,7 +25,7 @@ from hfc.protos.utils import create_cc_spec, create_seek_info, \
 from hfc.util import utils
 from hfc.util.utils import proto_str, current_timestamp, proto_b, \
     build_header, build_channel_header, build_cc_proposal, \
-    send_transaction_proposal
+    send_transaction_proposal, pem_to_der
 from .channel_eventhub import ChannelEventHub
 
 SYSTEM_CHANNEL_NAME = "testchainid"
@@ -33,7 +37,7 @@ _logger.setLevel(logging.DEBUG)
 class Channel(object):
     """The class represents of the channel.
     This is a client-side-only call. To create a new channel in the fabric
-    call client._create_channel().
+    call client._create_or_update_channel().
     """
 
     def __init__(self, name, client):
@@ -497,6 +501,149 @@ class Channel(object):
 
         return self._send_cc_proposal(tx_context, CC_UPGRADE, peers)
 
+    def _build_principal(self, identity):
+        if 'role' not in identity:
+            raise Exception('NOT IMPLEMENTED')
+
+        newPrincipal = msp_principal_pb2.MSPPrincipal()
+
+        newPrincipal.principal_classification = \
+            msp_principal_pb2.MSPPrincipal.ROLE
+
+        newRole = msp_principal_pb2.MSPRole()
+
+        roleName = identity['role']['name']
+        if roleName == 'peer':
+            newRole.role = msp_principal_pb2.MSPRole.PEER
+        elif roleName == 'member':
+            newRole.role = msp_principal_pb2.MSPRole.MEMBER
+        elif roleName == 'admin':
+            newRole.role = msp_principal_pb2.MSPRole.ADMIN
+        else:
+            raise Exception(f'Invalid role name found: must'
+                            f' be one of "peer", "member" or'
+                            f' "admin", but found "{roleName}"')
+
+        mspid = identity['role']['mspId']
+        if not mspid or not isinstance(mspid, str):
+            raise Exception(f'Invalid mspid found: "{mspid}"')
+        newRole.msp_identifier = mspid.encode()
+
+        newPrincipal.principal = newRole.SerializeToString()
+
+        return newPrincipal
+
+    def _get_policy(self, policy):
+        type = list(policy.keys())[0]
+        # signed-by case
+        if type == 'signed-by':
+            signedBy = policies_pb2.SignaturePolicy()
+            signedBy.signed_by = policy['signed-by']
+            return signedBy
+        # n-of case
+        else:
+            n = int(type.split('-of')[0])
+
+            nOutOf = policies_pb2.SignaturePolicy.NOutOf()
+            nOutOf.n = n
+            subs = []
+            for sub in policy[type]:
+                subPolicy = self._get_policy(sub)
+                subs.append(subPolicy)
+
+            nOutOf.rules.extend(subs)
+
+            nOf = policies_pb2.SignaturePolicy()
+            nOf.n_out_of.CopyFrom(nOutOf)
+
+            return nOf
+
+    def _check_policy(self, policy):
+        if not policy:
+            raise Exception('Missing Required Param "policy"')
+
+        if 'identities' not in policy\
+                or policy['identities'] == ''\
+                or not len(policy['identities']):
+            raise Exception('Invalid policy, missing'
+                            ' the "identities" property')
+        elif not isinstance(policy['identities'], list):
+            raise Exception('Invalid policy, the "identities"'
+                            ' property must be an array')
+
+        if 'policy' not in policy \
+                or policy['policy'] == ''\
+                or not len(policy['policy']):
+            raise Exception('Invalid policy, missing the'
+                            ' "policy" property')
+
+    def _build_policy(self, policy, msps=None, returnProto=False):
+        proto_signature_policy_envelope =\
+            policies_pb2.SignaturePolicyEnvelope()
+
+        if policy:
+            self._check_policy(policy)
+            proto_signature_policy_envelope.version = 0
+            proto_signature_policy_envelope.rule.CopyFrom(
+                self._get_policy(policy['policy']))
+            proto_signature_policy_envelope.identities.extend(
+                [self._build_principal(x) for x in policy['identities']])
+        else:
+            # TODO need to support MSPManager
+            # no policy was passed in, construct a 'Signed By any member
+            # of an organization by mspid' policy
+            # construct a list of msp principals to select from using the
+            # 'n out of' operator
+
+            # for not making it fail with current code
+            return proto_b('')
+
+            principals = []
+            signedBys = []
+            index = 0
+
+            if msps is None:
+                msps = []
+
+            for msp in msps:
+                onePrn = msp_principal_pb2.MSPPrincipal()
+                onePrn.principal_classification =\
+                    msp_principal_pb2.MSPPrincipal.ROLE
+
+                memberRole = msp_principal_pb2.MSPRole()
+                memberRole.role = msp_principal_pb2.MSPRole.MEMBER
+                memberRole.msp_identifier = msp
+
+                onePrn.principal = memberRole.SerializeToString()
+
+                principals.append(onePrn)
+
+                signedBy = policies_pb2.SignaturePolicy()
+                index += 1
+                signedBy.signed_by = index
+                signedBys.append(signedBy)
+
+            if len(principals) == 0:
+                raise Exception('Verifying MSPs not found in the'
+                                ' channel object, make sure'
+                                ' "initialize()" is called first.')
+
+            oneOfAny = policies_pb2.SignaturePolicy.NOutOf()
+            oneOfAny.n = 1
+            oneOfAny.rules.extend(signedBys)
+
+            noutof = policies_pb2.SignaturePolicy()
+            noutof.n_out_of.CopyFrom(oneOfAny)
+
+            proto_signature_policy_envelope.version = 0
+            proto_signature_policy_envelope.rule.CopyFrom(noutof)
+            proto_signature_policy_envelope.identities.extend(principals)
+
+        if returnProto:
+            return proto_signature_policy_envelope
+
+        return proto_signature_policy_envelope.SerializeToString()
+
     def _send_cc_proposal(self, tx_context, command, peers):
 
         args = []
@@ -518,19 +665,16 @@ class Channel(object):
         cc_dep_spec = chaincode_pb2.ChaincodeDeploymentSpec()
         cc_dep_spec.chaincode_spec.CopyFrom(cc_spec)
 
-        # construct the invoke spec
-        # TODO: if the policy not provided, new one should be built.
-        if request.cc_endorsement_policy:
-            policy = request.cc_endorsement_policy
-        else:
-            policy = ''
+        # Pass msps, TODO create an MSPManager as done in fabric-sdk-node
+        policy = self._build_policy(request.cc_endorsement_policy)
 
+        # construct the invoke spec
         invoke_input = chaincode_pb2.ChaincodeInput()
         invoke_input.args.extend(
             [proto_b(command),
              proto_b(self.name),
              cc_dep_spec.SerializeToString(),
-             proto_b(policy),
+             policy,
              proto_b('escc'),
              proto_b('vscc')])
 
@@ -622,6 +766,7 @@ class Channel(object):
         extension.chaincode_id.name = request.cc_name
         cc_invoke_spec = chaincode_pb2.ChaincodeInvocationSpec()
         cc_invoke_spec.chaincode_spec.CopyFrom(cc_spec)
+
         channel_header = build_channel_header(
             common_pb2.ENDORSER_TRANSACTION,
             tx_context.tx_id,
@@ -811,6 +956,7 @@ class Channel(object):
             :class:`ChaincodeQueryResponse` channelinfo with height,
             currently the only useful information.
         """
+
         request = create_tx_prop_req(
             prop_type=CC_QUERY,
             fcn='GetConfigBlock',
@@ -820,6 +966,91 @@ class Channel(object):
 
         tx_context.tx_prop_req = request
         return self.send_tx_proposal(tx_context, peers)
+
+    async def get_channel_config_with_orderer(self, tx_context, orderer):
+        """Query the current config block for this channel
+
+        Args:
+            tx_context: tx_context instance
+            peers: peers in the channel
+
+        Returns:
+            :class:`ChaincodeQueryResponse` channelinfo with height,
+            currently the only useful information.
+        """
+
+        seek_info = create_seek_info()
+
+        kwargs = {}
+        if orderer._client_cert_path:
+            with open(orderer._client_cert_path, 'rb') as f:
+                b64der = pem_to_der(f.read())
+                kwargs['tls_cert_hash'] = sha256(b64der).digest()
+
+        seek_info_header = build_channel_header(
+            common_pb2.HeaderType.Value('DELIVER_SEEK_INFO'),
+            tx_context.tx_id,
+            self.name,
+            current_timestamp(),
+            tx_context.epoch,
+            **kwargs
+        )
+
+        seek_header = build_header(
+            tx_context.identity,
+            seek_info_header,
+            tx_context.nonce)
+
+        seek_payload_bytes = create_seek_payload(seek_header, seek_info)
+        sig = tx_context.sign(seek_payload_bytes)
+        envelope = create_envelope(sig, seek_payload_bytes)
+
+        # this is a stream response
+        block = None
+        stream = orderer.delivery(envelope)
+        async for v in stream:
+            if v.block is None or v.block == '':
+                msg = "fail to get block"
+                _logger.error(msg)
+                raise Exception(msg)
+            block = v.block
+            break
+
+        block = BlockDecoder().decode(block.SerializeToString())
+
+        last_config = block['metadata']['metadata'][common_pb2.LAST_CONFIG]
+
+        # if nor first block
+        if 'index' in last_config['value']:
+            seek_info = create_seek_info(last_config['value']['index'],
+                                         last_config['value']['index'])
+            seek_payload_bytes = create_seek_payload(seek_header, seek_info)
+            sig = tx_context.sign(seek_payload_bytes)
+            envelope = create_envelope(sig, seek_payload_bytes)
+
+            block = None
+            stream = orderer.delivery(envelope)
+            async for v in stream:
+                if v.block is None or v.block == '':
+                    msg = "fail to get block"
+                    _logger.error(msg)
+                    raise Exception(msg)
+                block = v.block
+                break
+
+            block = BlockDecoder().decode(block.SerializeToString())
+
+        envelope = block['data']['data'][0]
+        payload = envelope['payload']
+        channel_header = payload['header']['channel_header']
+
+        if channel_header['type'] != common_pb2.CONFIG:
+            raise Exception(f'Block must be of type "CONFIG"'
+                            f' ({common_pb2.CONFIG}), but got'
+                            f' "{channel_header["type"]}" instead')
+
+        config_envelope = payload['data']
+        return config_envelope
 
     def _discovery(self, requestor, target,
                    local=False, config=False, interests=None):

@@ -78,7 +78,7 @@ class ChaincodeInstantiateTest(BaseTestCase):
                                         self.channel_tx,
                                         self.channel_name)
 
-        loop.run_until_complete(self.client._create_channel(request))
+        loop.run_until_complete(self.client._create_or_update_channel(request))
 
         # join channel
         join_req = loop.run_until_complete(

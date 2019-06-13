@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='protos',
   syntax='proto3',
   serialized_options=_b('\n\"org.hyperledger.fabric.protos.peerZ)github.com/hyperledger/fabric/protos/peer'),
-  serialized_pb=_b('\n\x1fhfc/protos/peer/chaincode.proto\x12\x06protos\x1a hfc/protos/common/policies.proto\":\n\x0b\x43haincodeID\x12\x0c\n\x04path\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0f\n\x07version\x18\x03 \x01(\t\"\x90\x01\n\x0e\x43haincodeInput\x12\x0c\n\x04\x61rgs\x18\x01 \x03(\x0c\x12<\n\x0b\x64\x65\x63orations\x18\x02 \x03(\x0b\x32\'.protos.ChaincodeInput.DecorationsEntry\x1a\x32\n\x10\x44\x65\x63orationsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x0c:\x02\x38\x01\"\xdc\x01\n\rChaincodeSpec\x12(\n\x04type\x18\x01 \x01(\x0e\x32\x1a.protos.ChaincodeSpec.Type\x12)\n\x0c\x63haincode_id\x18\x02 \x01(\x0b\x32\x13.protos.ChaincodeID\x12%\n\x05input\x18\x03 \x01(\x0b\x32\x16.protos.ChaincodeInput\x12\x0f\n\x07timeout\x18\x04 \x01(\x05\">\n\x04Type\x12\r\n\tUNDEFINED\x10\x00\x12\n\n\x06GOLANG\x10\x01\x12\x08\n\x04NODE\x10\x02\x12\x07\n\x03\x43\x41R\x10\x03\x12\x08\n\x04JAVA\x10\x04\"\xec\x01\n\x17\x43haincodeDeploymentSpec\x12-\n\x0e\x63haincode_spec\x18\x01 \x01(\x0b\x32\x15.protos.ChaincodeSpec\x12\x14\n\x0c\x63ode_package\x18\x03 \x01(\x0c\x12\x46\n\x08\x65xec_env\x18\x04 \x01(\x0e\x32\x34.protos.ChaincodeDeploymentSpec.ExecutionEnvironment\".\n\x14\x45xecutionEnvironment\x12\n\n\x06\x44OCKER\x10\x00\x12\n\n\x06SYSTEM\x10\x01J\x04\x08\x02\x10\x03R\x0e\x65\x66\x66\x65\x63tive_date\"a\n\x17\x43haincodeInvocationSpec\x12-\n\x0e\x63haincode_spec\x18\x01 \x01(\x0b\x32\x15.protos.ChaincodeSpecJ\x04\x08\x02\x10\x03R\x11id_generation_alg\"(\n\x0eLifecycleEvent\x12\x16\n\x0e\x63haincode_name\x18\x01 \x01(\t\"-\n\x07\x43\x44SData\x12\x0c\n\x04hash\x18\x01 \x01(\x0c\x12\x14\n\x0cmetadatahash\x18\x02 \x01(\x0c\"\xe4\x01\n\rChaincodeData\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x0c\n\x04\x65scc\x18\x03 \x01(\t\x12\x0c\n\x04vscc\x18\x04 \x01(\t\x12/\n\x06policy\x18\x05 \x01(\x0b\x32\x1f.common.SignaturePolicyEnvelope\x12\x1d\n\x04\x64\x61ta\x18\x06 \x01(\x0b\x32\x0f.protos.CDSData\x12\n\n\x02id\x18\x07 \x01(\x0c\x12<\n\x13instantiationPolicy\x18\x08 \x01(\x0b\x32\x1f.common.SignaturePolicyEnvelope*4\n\x14\x43onfidentialityLevel\x12\n\n\x06PUBLIC\x10\x00\x12\x10\n\x0c\x43ONFIDENTIAL\x10\x01\x42O\n\"org.hyperledger.fabric.protos.peerZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
+  serialized_pb=_b('\n\x1fhfc/protos/peer/chaincode.proto\x12\x06protos\x1a hfc/protos/common/policies.proto\":\n\x0b\x43haincodeID\x12\x0c\n\x04path\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0f\n\x07version\x18\x03 \x01(\t\"\x90\x01\n\x0e\x43haincodeInput\x12\x0c\n\x04\x61rgs\x18\x01 \x03(\x0c\x12<\n\x0b\x64\x65\x63orations\x18\x02 \x03(\x0b\x32\'.protos.ChaincodeInput.DecorationsEntry\x1a\x32\n\x10\x44\x65\x63orationsEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x0c:\x02\x38\x01\"\xdc\x01\n\rChaincodeSpec\x12(\n\x04type\x18\x01 \x01(\x0e\x32\x1a.protos.ChaincodeSpec.Type\x12)\n\x0c\x63haincode_id\x18\x02 \x01(\x0b\x32\x13.protos.ChaincodeID\x12%\n\x05input\x18\x03 \x01(\x0b\x32\x16.protos.ChaincodeInput\x12\x0f\n\x07timeout\x18\x04 \x01(\x05\">\n\x04Type\x12\r\n\tUNDEFINED\x10\x00\x12\n\n\x06GOLANG\x10\x01\x12\x08\n\x04NODE\x10\x02\x12\x07\n\x03\x43\x41R\x10\x03\x12\x08\n\x04JAVA\x10\x04\"\xec\x01\n\x17\x43haincodeDeploymentSpec\x12-\n\x0e\x63haincode_spec\x18\x01 \x01(\x0b\x32\x15.protos.ChaincodeSpec\x12\x14\n\x0c\x63ode_package\x18\x03 \x01(\x0c\x12\x46\n\x08\x65xec_env\x18\x04 \x01(\x0e\x32\x34.protos.ChaincodeDeploymentSpec.ExecutionEnvironment\".\n\x14\x45xecutionEnvironment\x12\n\n\x06\x44OCKER\x10\x00\x12\n\n\x06SYSTEM\x10\x01J\x04\x08\x02\x10\x03R\x0e\x65\x66\x66\x65\x63tive_date\"a\n\x17\x43haincodeInvocationSpec\x12-\n\x0e\x63haincode_spec\x18\x01 \x01(\x0b\x32\x15.protos.ChaincodeSpecJ\x04\x08\x02\x10\x03R\x11id_generation_alg\"(\n\x0eLifecycleEvent\x12\x16\n\x0e\x63haincode_name\x18\x01 \x01(\t\"-\n\x07\x43\x44SData\x12\x0c\n\x04hash\x18\x01 \x01(\x0c\x12\x14\n\x0cmetadatahash\x18\x02 \x01(\x0c\"\xe5\x01\n\rChaincodeData\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x0c\n\x04\x65scc\x18\x03 \x01(\t\x12\x0c\n\x04vscc\x18\x04 \x01(\t\x12/\n\x06policy\x18\x05 \x01(\x0b\x32\x1f.common.SignaturePolicyEnvelope\x12\x1d\n\x04\x64\x61ta\x18\x06 \x01(\x0b\x32\x0f.protos.CDSData\x12\n\n\x02id\x18\x07 \x01(\x0c\x12=\n\x14instantiation_policy\x18\x08 \x01(\x0b\x32\x1f.common.SignaturePolicyEnvelope*4\n\x14\x43onfidentialityLevel\x12\n\n\x06PUBLIC\x10\x00\x12\x10\n\x0c\x43ONFIDENTIAL\x10\x01\x42O\n\"org.hyperledger.fabric.protos.peerZ)github.com/hyperledger/fabric/protos/peerb\x06proto3')
   ,
   dependencies=[hfc_dot_protos_dot_common_dot_policies__pb2.DESCRIPTOR,])
 
@@ -42,8 +42,8 @@ _CONFIDENTIALITYLEVEL = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=1165,
-  serialized_end=1217,
+  serialized_start=1166,
+  serialized_end=1218,
 )
 _sym_db.RegisterEnumDescriptor(_CONFIDENTIALITYLEVEL)
 
@@ -485,7 +485,7 @@ _CHAINCODEDATA = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='instantiationPolicy', full_name='protos.ChaincodeData.instantiationPolicy', index=7,
+      name='instantiation_policy', full_name='protos.ChaincodeData.instantiation_policy', index=7,
       number=8, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -504,7 +504,7 @@ _CHAINCODEDATA = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=935,
-  serialized_end=1163,
+  serialized_end=1164,
 )
 
 _CHAINCODEINPUT_DECORATIONSENTRY.containing_type = _CHAINCODEINPUT
@@ -519,7 +519,7 @@ _CHAINCODEDEPLOYMENTSPEC_EXECUTIONENVIRONMENT.containing_type = _CHAINCODEDEPLOY
 _CHAINCODEINVOCATIONSPEC.fields_by_name['chaincode_spec'].message_type = _CHAINCODESPEC
 _CHAINCODEDATA.fields_by_name['policy'].message_type = hfc_dot_protos_dot_common_dot_policies__pb2._SIGNATUREPOLICYENVELOPE
 _CHAINCODEDATA.fields_by_name['data'].message_type = _CDSDATA
-_CHAINCODEDATA.fields_by_name['instantiationPolicy'].message_type = hfc_dot_protos_dot_common_dot_policies__pb2._SIGNATUREPOLICYENVELOPE
+_CHAINCODEDATA.fields_by_name['instantiation_policy'].message_type = hfc_dot_protos_dot_common_dot_policies__pb2._SIGNATUREPOLICYENVELOPE
 DESCRIPTOR.message_types_by_name['ChaincodeID'] = _CHAINCODEID
 DESCRIPTOR.message_types_by_name['ChaincodeInput'] = _CHAINCODEINPUT
 DESCRIPTOR.message_types_by_name['ChaincodeSpec'] = _CHAINCODESPEC

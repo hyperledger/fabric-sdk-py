@@ -112,15 +112,32 @@ message CDSData {
     bytes metadatahash = 2; // hash of ChaincodeID.name + ChaincodeID.version
 }
 
+// https://github.com/hyperledger/fabric/blob/eca1b14b7e3453a5d32296af79cc7bad10c7673b/core/common/ccprovider/ccprovider.go#L425
 message ChaincodeData {
+
+    // Name of the chaincode
     string name = 1;
+
+    // Version of the chaincode
     string version = 2;
+
+    // Escc for the chaincode instance
     string escc = 3;
+
+    // Vscc for the chaincode instance
     string vscc = 4;
+
+    // Policy endorsement policy for the chaincode instance
     common.SignaturePolicyEnvelope policy = 5;
 
+    // Data data specific to the package
     CDSData data = 6;
 
+    // Id of the chaincode that's the unique fingerprint for the CC This is not
+    // currently used anywhere but serves as a good eyecatcher
     bytes id = 7;
-    common.SignaturePolicyEnvelope instantiationPolicy = 8;
+
+    // InstantiationPolicy for the chaincode
+    common.SignaturePolicyEnvelope instantiation_policy = 8;
 }
+

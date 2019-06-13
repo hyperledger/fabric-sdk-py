@@ -4,16 +4,11 @@
 
 import logging
 import threading
-from hashlib import sha256
 
 from hfc.protos.discovery import protocol_pb2_grpc
-from hfc.protos.common import common_pb2
 from hfc.protos.peer import peer_pb2_grpc, events_pb2_grpc
-from hfc.protos.utils import create_seek_info, create_seek_payload, \
-    create_envelope
 from hfc.util.channel import create_grpc_channel
-from hfc.util.utils import current_timestamp, \
-    build_header, build_channel_header, pem_to_der, stream_envelope
+from hfc.util.utils import stream_envelope
 
 DEFAULT_PEER_ENDPOINT = 'localhost:7051'
 
@@ -178,43 +173,6 @@ class Peer(object):
             delivery_result = self._event_client.Deliver(
                 stream_envelope(envelope))
         return delivery_result
-
-    def get_events(self, tx_context, channel_name,
-                   start=None, stop=None, filtered=True,
-                   behavior='BLOCK_UNTIL_READY'):
-        """ get the events of the channel.
-        Return: the events in success or None in fail.
-        """
-        _logger.info("get events")
-
-        seek_info = create_seek_info(start, stop, behavior)
-
-        kwargs = {}
-        if self._client_cert_path:
-            with open(self._client_cert_path, 'rb') as f:
-                b64der = pem_to_der(f.read())
-                kwargs['tls_cert_hash'] = sha256(b64der).digest()
-
-        seek_info_header = build_channel_header(
-            common_pb2.HeaderType.Value('DELIVER_SEEK_INFO'),
-            tx_context.tx_id,
-            channel_name,
-            current_timestamp(),
-            tx_context.epoch,
-            **kwargs
-        )
-
-        seek_header = build_header(
-            tx_context.identity,
-            seek_info_header,
-            tx_context.nonce)
-
-        seek_payload_bytes = create_seek_payload(seek_header, seek_info)
-        sig = tx_context.sign(seek_payload_bytes)
-        envelope = create_envelope(sig, seek_payload_bytes)
-
-        # this is a stream response
-        return self.delivery(envelope, filtered=filtered)
 
 
 def create_peer(endpoint=DEFAULT_PEER_ENDPOINT, tls_cacerts=None,

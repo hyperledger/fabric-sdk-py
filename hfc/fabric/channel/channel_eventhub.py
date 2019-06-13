@@ -40,10 +40,11 @@ class EventRegistration(object):
 
 
 class ChaincodeRegistration(object):
-    def __init__(self, ccid, pattern, er):
+    def __init__(self, ccid, pattern, er, tx_id):
         self.ccid = ccid
         self.pattern = pattern
         self.er = er
+        self.tx_id = tx_id
 
 
 class ChannelEventHub(object):
@@ -84,7 +85,7 @@ class ChannelEventHub(object):
         """ get the events of the channel.
         Return: the events in success or None in fail.
         """
-        _logger.info("get events")
+        _logger.info("create peer delivery stream")
 
         seek_info = create_seek_info(start, stop, behavior)
 
@@ -205,29 +206,56 @@ class ChannelEventHub(object):
             if cr.er.disconnect:
                 self.disconnect()
 
+    def _handle_filtered_chaincode(self, ft, block, cr):
+        if 'transaction_actions' in ft:
+            block_events = ft['transaction_actions']
+            self._callChaincodeListener(cr, block_events, block)
+
     def handle_filtered_chaincode(self, block, cr):
         for ft in block['filtered_transactions']:
-            if 'transaction_actions' in ft:
-                block_events = ft['transaction_actions']
+
+            if cr.tx_id is not None:
+                if cr.tx_id == ft['txid']:
+                    if ft['tx_validation_code'] != 'VALID':
+                        raise Exception(ft['tx_validation_code'])
+                    self._handle_filtered_chaincode(ft, block, cr)
+            else:
+                self._handle_filtered_chaincode(ft, block, cr)
+
+    def _handle_full_chaincode(self, tx, block, cr):
+        if 'actions' in tx:
+            for t in tx['actions']:
+                ppl_r_p = t['payload']['action'][
+                    'proposal_response_payload']
+                block_events = ppl_r_p['extension']['events']
                 self._callChaincodeListener(cr, block_events, block)
+
+    def _handle_endorser_transaction(self, index, tx, cr,
+                                     channel_header, block):
+        txStatusCodes = block['metadata']['metadata'][
+            BlockMetadataIndex.Value('TRANSACTIONS_FILTER')]
+
+        if cr.tx_id is not None:
+            if cr.tx_id == channel_header['tx_id']:
+                if txStatusCodes and txStatusCodes[index] != \
+                        TxValidationCode.Value('VALID'):
+                    exc = TxValidationCode.Name(txStatusCodes[index])
+                    raise Exception(exc)
+                self._handle_full_chaincode(tx, block, cr)
+        else:
+            self._handle_full_chaincode(tx, block, cr)
 
     def handle_full_chaincode(self, block, cr):
         if 'data' in block:
-            for env in block['data']['data']:
-                payload = env['payload']
+            for index, data in enumerate(block['data']['data']):
+                payload = data['payload']
                 channel_header = payload['header']['channel_header']
 
                 # only  ENDORSER_TRANSACTION have chaincode  events
                 if channel_header['type'] == 3:
                     tx = payload['data']
-
-                    if 'actions' in tx:
-                        for t in tx['actions']:
-                            ppl_r_p = t['payload']['action'][
-                                'proposal_response_payload']
-                            block_events = ppl_r_p['extension']['events']
-                            self._callChaincodeListener(cr, block_events,
-                                                        block)
+                    self._handle_endorser_transaction(index, tx, cr,
+                                                      channel_header, block)
 
     def _processChaincodeEvents(self, block):
         for ccid in copy(self._reg_ids).keys():
@@ -239,10 +267,11 @@ class ChannelEventHub(object):
 
     # TODO support startBlock, endBlock
     def registerChaincodeEvent(self, ccid, pattern, unregister=False,
+                               tx_id=None,
                                disconnect=False, onEvent=None):
         er = EventRegistration(onEvent, unregister=unregister,
                                disconnect=disconnect)
-        cr = ChaincodeRegistration(ccid, pattern, er)
+        cr = ChaincodeRegistration(ccid, pattern, er, tx_id)
 
         if ccid in self._reg_ids:
             self._reg_ids[ccid].append(cr)

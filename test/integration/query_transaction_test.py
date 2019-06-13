@@ -46,7 +46,7 @@ class QueryTransactionTest(BaseTestCase):
         request = build_channel_request(self.client,
                                         self.channel_tx,
                                         self.channel_name)
-        responses = await self.client._create_channel(request)
+        responses = await self.client._create_or_update_channel(request)
         self.assertTrue(all([x.status == 200 for x in responses]))
 
         self.channel = self.client.new_channel(self.channel_name)

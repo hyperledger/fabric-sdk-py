@@ -41,12 +41,12 @@ def create_grpc_channel(target, cert_file=None, client_key=None,
                 root_cert = f.read()
 
     if client_key:
-        if not isinstance(cert_file, bytes):
+        if not isinstance(client_key, bytes):
             with open(client_key, 'rb') as f:
                 client_key = f.read()
 
     if client_cert:
-        if not isinstance(cert_file, bytes):
+        if not isinstance(client_cert, bytes):
             with open(client_cert, 'rb') as f:
                 client_cert = f.read()
 
