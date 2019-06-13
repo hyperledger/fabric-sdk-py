@@ -334,7 +334,7 @@ def sign_tran_payload(tx_context, tran_payload_bytes):
     return envelope
 
 
-def build_tx_req(responses):
+def build_tx_req(ProposalResponses):
     """ Check the endorsements from peers
 
     Args:
@@ -362,8 +362,8 @@ def build_tx_req(responses):
         def header(self):
             return self._header
 
-    response, proposal, header = responses
-    return TXRequest(response, proposal, header)
+    responses, proposal, header = ProposalResponses
+    return TXRequest(responses, proposal, header)
 
 
 def send_install_proposal(tx_context, peers):
@@ -454,11 +454,12 @@ def package_chaincode(cc_path, cc_type):
         proj_path = go_path + '/src/' + cc_path
         _logger.debug('Project path={}'.format(proj_path))
 
+        if not os.listdir(proj_path):
+            raise ValueError("No chaincode file found!")
+
         with io.BytesIO() as temp:
             with tarfile.open(fileobj=temp, mode='w|gz') as code_writer:
                 for dir_path, _, file_names in os.walk(proj_path):
-                    if not file_names:
-                        raise ValueError("No chaincode file found!")
                     for filename in file_names:
                         file_path = os.path.join(dir_path, filename)
                         _logger.debug("The file path {}".format(file_path))
