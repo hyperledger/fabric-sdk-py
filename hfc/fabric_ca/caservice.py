@@ -143,7 +143,8 @@ class Enrollment(object):
 
     # https://hyperledger-fabric-ca.readthedocs.io/en/latest/users-guide.html
     # #revoking-a-certificate-or-identity
-    def revoke(self, enrollmentID=None, aki=None, serial=None, reason=None):
+    def revoke(self, enrollmentID=None, aki=None, serial=None,
+               reason=None, gencrl=False):
         if not enrollmentID:
             if not aki or not serial:
                 msg = 'Enrollment ID is empty, thus both "aki" and "serial"' \
@@ -155,7 +156,8 @@ class Enrollment(object):
                   ' in fabric-ca specifications.'
             raise ValueError(msg)
 
-        return self._service.revoke(enrollmentID, aki, serial, reason, self)
+        return self._service.revoke(enrollmentID, aki, serial,
+                                    reason, gencrl, self)
 
     def generateCRL(self, revokedBefore=None, revokedAfter=None,
                     expireBefore=None, expireAfter=None):
@@ -600,7 +602,7 @@ class CAService(object):
 
         return self._ca_client.register(req, registrar)
 
-    def revoke(self, enrollmentID, aki, serial, reason, registrar):
+    def revoke(self, enrollmentID, aki, serial, reason, gencrl, registrar):
         """Revoke an existing certificate (enrollment certificate or
          transaction certificate), or revoke all certificates issued to an
           enrollment id. If revoking a particular certificate, then both the
@@ -617,6 +619,7 @@ class CAService(object):
              certificate to revoke
             reason (str): The reason for revocation.
              See https://godoc.org/golang.org/x/crypto/ocsp for valid values
+            gencrl (bool): GenCRL specifies whether to generate a CRL
 
         Returns: results (str): The revocation results
 
@@ -630,7 +633,13 @@ class CAService(object):
             "aki": aki,
             "serial": serial,
             "reason": reason,
+            "gencrl": gencrl
         }
+
+        if self._ca_client._ca_name != '':
+            req.update({
+                'caname': self._ca_client._ca_name
+            })
 
         return self._ca_client.revoke(req, registrar)
 
