@@ -561,7 +561,10 @@ class Client(object):
         }
         responses = await self._create_or_update_channel(request)
 
-        return all([x.status == 200 for x in responses])
+        if not all([x.status == 200 for x in responses]):
+            raise Exception(responses)
+
+        return True
 
     async def channel_join(self, requestor, channel_name, peers,
                            orderer, orderer_admin):
@@ -1586,10 +1589,10 @@ class Client(object):
         res = await asyncio.gather(*responses)
         tran_req = utils.build_tx_req((res, proposal, header))
 
-        if all([x.response.status == 200 for x in tran_req.responses]):
-            return res[0].response.payload.decode('utf-8')
+        if not all([x.response.status == 200 for x in tran_req.responses]):
+            raise Exception(res)
 
-        return res[0].response.message
+        return res[0].response.payload.decode('utf-8')
 
     async def query_channels(self, requestor, peers, decode=True):
         """

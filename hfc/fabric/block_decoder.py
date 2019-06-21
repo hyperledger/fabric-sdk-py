@@ -973,6 +973,7 @@ def decode_fabric_Nodes_OUs(proto_node_organizational_units):
     Returns: deserialized list of OU Identifier objects.
     """
     node_organizational_units = {}
+
     if proto_node_organizational_units:
         node_organizational_units['enable'] = \
             proto_node_organizational_units.enable
@@ -1005,7 +1006,11 @@ def decode_signing_identity_info(signing_identity_info_bytes):
 
     Returns: deserialized signing identity information.
     """
+    if signing_identity_info_bytes == b'':
+        return None
+
     signing_identity_info = {}
+
     if signing_identity_info_bytes is not None:
         proto_signing_identity_info = msp_config_pb2.SigningIdentityInfo()
         proto_signing_identity_info.ParseFromString(
