@@ -396,11 +396,12 @@ class Channel(object):
             proj_path = go_path + '/src/' + cc_path
             _logger.debug('Project path={}'.format(proj_path))
 
+            if not os.listdir(proj_path):
+                raise ValueError("No chaincode file found!")
+
             with io.BytesIO() as temp:
                 with tarfile.open(fileobj=temp, mode='w|gz') as code_writer:
                     for dir_path, _, file_names in os.walk(proj_path):
-                        if not file_names:
-                            raise ValueError("No chaincode file found!")
                         for filename in file_names:
                             file_path = os.path.join(dir_path, filename)
                             _logger.debug("The file path {}".format(file_path))
