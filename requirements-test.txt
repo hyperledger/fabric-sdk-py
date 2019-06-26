@@ -1,6 +1,6 @@
 aiogrpc >= 1.6
-docker >=3.0.0
-docker-compose >= 1.7.0
+docker==3.7.3
+docker-compose==1.23.2
 flake8 >= 3.0.0
 mock
 pytest >= 3.0.0
