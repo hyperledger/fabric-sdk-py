@@ -1,12 +1,9 @@
 # Copyright 281165273@qq.com. All Rights Reserved.
 #
 # SPDX-License-Identifier: Apache-2.0
-import io
 import logging
-import os
 import random
 import sys
-import tarfile
 import re
 from _sha256 import sha256
 
@@ -25,7 +22,7 @@ from hfc.protos.utils import create_cc_spec, create_seek_info, \
 from hfc.util import utils
 from hfc.util.utils import proto_str, current_timestamp, proto_b, \
     build_header, build_channel_header, build_cc_proposal, \
-    send_transaction_proposal, pem_to_der
+    send_transaction_proposal, pem_to_der, package_chaincode
 from .channel_eventhub import ChannelEventHub
 
 SYSTEM_CHANNEL_NAME = "testchainid"
@@ -293,7 +290,7 @@ class Channel(object):
         if not self._is_dev_mode:
             if not tx_context.tx_prop_req.packaged_cc:
                 cc_deployment_spec.code_package = \
-                    self._package_chaincode(
+                    package_chaincode(
                         tx_context.tx_prop_req.cc_path,
                         tx_context.tx_prop_req.cc_type)
             else:
@@ -371,52 +368,6 @@ class Channel(object):
 
         """
         pass
-
-    def _package_chaincode(self, cc_path, cc_type):
-        """ Package all chaincode env into a tar.gz file
-
-        Args:
-            cc_path: path to the chaincode
-
-        Returns: The chaincode pkg path or None
-
-        """
-        _logger.debug('Packaging chaincode path={}, chaincode type={}'.format(
-            cc_path, cc_type))
-
-        if cc_type == CC_TYPE_GOLANG:
-            go_path = os.environ['GOPATH']
-            if not cc_path:
-                raise ValueError("Missing chaincode path parameter "
-                                 "in install proposal request")
-
-            if not go_path:
-                raise ValueError("No GOPATH env variable is found")
-
-            proj_path = go_path + '/src/' + cc_path
-            _logger.debug('Project path={}'.format(proj_path))
-
-            if not os.listdir(proj_path):
-                raise ValueError("No chaincode file found!")
-
-            with io.BytesIO() as temp:
-                with tarfile.open(fileobj=temp, mode='w|gz') as code_writer:
-                    for dir_path, _, file_names in os.walk(proj_path):
-                        for filename in file_names:
-                            file_path = os.path.join(dir_path, filename)
-                            _logger.debug("The file path {}".format(file_path))
-                            code_writer.add(
-                                file_path,
-                                arcname=os.path.relpath(file_path, go_path))
-                temp.seek(0)
-                code_content = temp.read()
-            if code_content:
-                return code_content
-            else:
-                raise ValueError('No chaincode found')
-
-        else:
-            raise ValueError('Currently only support install GOLANG chaincode')
 
     def join_channel(self, request):
         """
