@@ -47,14 +47,11 @@ class DiscoveryTest(BaseTestCase):
         channel = self.client.get_channel(self.channel_name)
         self.assertIsNotNone(channel)
 
-        orderer_admin = self.client.get_user('orderer.example.com', 'Admin')
-
         response = loop.run_until_complete(self.client.channel_join(
             requestor=self.user,
             channel_name=self.channel_name,
             peers=['peer0.' + org1, 'peer1.' + org1],
-            orderer='orderer.example.com',
-            orderer_admin=orderer_admin
+            orderer='orderer.example.com'
         ))
         self.assertTrue(response)
 

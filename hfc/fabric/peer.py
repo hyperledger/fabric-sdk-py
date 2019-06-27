@@ -41,7 +41,10 @@ class Peer(object):
         self._lock = threading.RLock()
         self._channels = []
         self._endpoint = endpoint
-        self._grpc_options = dict()
+        if opts:
+            self._grpc_options = {key: value for (key, value) in opts}
+        else:
+            self._grpc_options = dict()
         self._ssl_target_name = None
         self._tls_ca_certs_path = tls_ca_cert_file
         self._client_key_path = client_key_file
@@ -173,6 +176,27 @@ class Peer(object):
             delivery_result = self._event_client.Deliver(
                 stream_envelope(envelope))
         return delivery_result
+
+    def set_tls_client_cert_and_key(self, client_key_file=None,
+                                    client_cert_file=None):
+
+        try:
+            self._client_key_path = client_key_file
+            self._client_cert_path = client_cert_file
+            self._channel = create_grpc_channel(
+                self._endpoint,
+                self._tls_ca_certs_path,
+                self._client_key_path,
+                self._client_cert_path,
+                opts=[(opt, value) for opt, value in
+                      self._grpc_options.items()])
+            self._endorser_client = peer_pb2_grpc.EndorserStub(self._channel)
+            self._discovery_client = protocol_pb2_grpc.DiscoveryStub(
+                self._channel)
+            self._event_client = events_pb2_grpc.DeliverStub(self._channel)
+        except Exception:
+            return False
+        return True
 
 
 def create_peer(endpoint=DEFAULT_PEER_ENDPOINT, tls_cacerts=None,

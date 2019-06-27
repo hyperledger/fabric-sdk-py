@@ -54,7 +54,10 @@ class Orderer(object):
         """
         self._name = name
         self._endpoint = endpoint
-        self._grpc_options = dict()
+        if opts:
+            self._grpc_options = {key: value for (key, value) in opts}
+        else:
+            self._grpc_options = dict()
         self._ssl_target_name = None
         self._tls_ca_certs_path = tls_ca_cert_file
         self._client_key_path = client_key_file
@@ -194,3 +197,22 @@ class Orderer(object):
         """
         for response in responses:
             return response, self
+
+    def set_tls_client_cert_and_key(self, client_key_file=None,
+                                    client_cert_file=None):
+
+        try:
+            self._client_key_path = client_key_file
+            self._client_cert_path = client_cert_file
+            self._channel = create_grpc_channel(
+                self._endpoint,
+                self._tls_ca_certs_path,
+                self._client_key_path,
+                self._client_cert_path,
+                opts=[(opt, value) for opt, value in
+                      self._grpc_options.items()])
+            self._orderer_client = ab_pb2_grpc.AtomicBroadcastStub(
+                self._channel)
+        except Exception:
+            return False
+        return True

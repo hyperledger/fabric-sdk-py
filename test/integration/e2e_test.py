@@ -61,15 +61,13 @@ class E2eMutualTest(BaseTestCase):
         self.assertIsNotNone(channel)
 
         orgs = ["org1.example.com", "org2.example.com"]
-        orderer_admin = self.client.get_user('orderer.example.com', 'Admin')
         for org in orgs:
             org_admin = self.client.get_user(org, 'Admin')
             response = await self.client.channel_join(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peers=['peer0.' + org, 'peer1.' + org],
-                orderer='orderer.example.com',
-                orderer_admin=orderer_admin
+                orderer='orderer.example.com'
             )
             self.assertTrue(response)
             # Verify the ledger exists now in the peer node
