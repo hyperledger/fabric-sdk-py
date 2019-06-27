@@ -9,6 +9,7 @@ import logging
 import unittest
 
 from hfc.fabric.channel.channel import SYSTEM_CHANNEL_NAME
+from hfc.util.policies import s2d
 
 from test.integration.utils import BaseTestCase
 
@@ -128,25 +129,15 @@ class E2eMutualTest(BaseTestCase):
     async def chaincode_instantiate(self):
         """
         Test instantiating an example chaincode to peer
-
-        :return:
         """
         logger.info("E2E: Chaincode instantiation start")
 
         org = "org1.example.com"
         args = ['a', '200', 'b', '300']
-        policy = {
-            'identities': [
-                {'role': {'name': 'member', 'mspId': 'Org1MSP'}},
-                # {'role': {'name': 'admin', 'mspId': 'Org1MSP'}},
-            ],
-            'policy': {
-                '1-of': [
-                    {'signed-by': 0},
-                    # {'signed-by': 1},
-                ]
-            }
-        }
+
+        # policy = s2d().parse("OR('Org1MSP.member', 'Org1MSP.admin')")
+        policy = s2d().parse("OR('Org1MSP.member')")
+
         org_admin = self.client.get_user(org, "Admin")
         response = await self.client.chaincode_instantiate(
             requestor=org_admin,
