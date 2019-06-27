@@ -10,7 +10,7 @@ import logging
 import unittest
 
 from hfc.fabric.channel.channel import SYSTEM_CHANNEL_NAME
-from hfc.util.utils import CC_TYPE_GOLANG
+from hfc.util.utils import CC_TYPE_GOLANG, package_chaincode
 
 from hfc.fabric.client import Client
 from test.integration.config import E2E_CONFIG
@@ -121,9 +121,8 @@ class E2eTest(BaseTestCase):
         logger.info("E2E: Chaincode install start")
         cc = f'/var/hyperledger/production/chaincodes/{CC_NAME}.{CC_VERSION}'
 
-        channel = self.client.get_channel(self.channel_name)
         # create packaged chaincode before for having same id
-        code_package = channel._package_chaincode(CC_PATH, CC_TYPE_GOLANG)
+        code_package = package_chaincode(CC_PATH, CC_TYPE_GOLANG)
 
         orgs = ["org1.example.com", "org2.example.com"]
         for org in orgs:
