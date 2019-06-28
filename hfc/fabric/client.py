@@ -280,6 +280,18 @@ class Client(object):
     def set_tls_client_cert_and_key(self, client_key_file=None,
                                     client_cert_file=None):
 
+        """Set tls client for mutual tls for all peers and orderers
+
+        Args:
+            client_key (str): file path for Private key used for TLS when
+                making client connections
+            client_cert (str): file path for X.509 certificate used for TLS
+                when making client connections
+
+        Returns:
+            bool: set success value
+        """
+
         self._client_key_path = client_key_file
         self._client_cert_path = client_cert_file
 
