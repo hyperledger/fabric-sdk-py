@@ -4,6 +4,7 @@
 import asyncio
 import os
 import time
+import json
 
 import docker
 import logging
@@ -41,6 +42,10 @@ class E2eTest(BaseTestCase):
         self.channel_profile = \
             E2E_CONFIG['test-network']['channel-artifacts']['channel_profile']
         self.client = Client('test/fixtures/network-mutual-tls.json')
+
+        with open('test/fixtures/network-mutual-tls.json') as f:
+            self.network_info = json.load(f)
+
         self.channel_name = "businesschannel"  # default application channel
         self.user = self.client.get_user('org1.example.com', 'Admin')
         self.assertIsNotNone(self.user, 'org1 admin should not be None')
@@ -63,6 +68,13 @@ class E2eTest(BaseTestCase):
             self.channel_name))
 
         # By default, self.user is the admin of org1
+        node_info = self.network_info['peers']['peer0.org1.example.com']
+        set_tls = set_tls = self.client.set_tls_client_cert_and_key(
+            node_info['clientKey']['path'],
+            node_info['clientCert']['path']
+        )
+        self.assertTrue(set_tls)
+
         response = await self.client.channel_create(
             'orderer.example.com',
             self.channel_name,
@@ -88,15 +100,21 @@ class E2eTest(BaseTestCase):
         self.assertIsNotNone(channel)
 
         orgs = ["org1.example.com", "org2.example.com"]
-        orderer_admin = self.client.get_user('orderer.example.com', 'Admin')
         for org in orgs:
             org_admin = self.client.get_user(org, 'Admin')
+
+            node_info = self.network_info['peers']['peer0.' + org]
+            set_tls = self.client.set_tls_client_cert_and_key(
+                node_info['clientKey']['path'],
+                node_info['clientCert']['path']
+            )
+            self.assertTrue(set_tls)
+
             response = await self.client.channel_join(
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peers=['peer0.' + org, 'peer1.' + org],
                 orderer='orderer.example.com',
-                orderer_admin=orderer_admin
             )
             self.assertTrue(response)
             # Verify the ledger exists now in the peer node
@@ -127,6 +145,14 @@ class E2eTest(BaseTestCase):
         orgs = ["org1.example.com", "org2.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
+
+            node_info = self.network_info['peers']['peer0.' + org]
+            set_tls = self.client.set_tls_client_cert_and_key(
+                node_info['clientKey']['path'],
+                node_info['clientCert']['path']
+            )
+            self.assertTrue(set_tls)
+
             responses = await self.client.chaincode_install(
                 requestor=org_admin,
                 peers=['peer0.' + org, 'peer1.' + org],
@@ -171,6 +197,14 @@ class E2eTest(BaseTestCase):
             }
         }
         org_admin = self.client.get_user(org, "Admin")
+
+        node_info = self.network_info['peers']['peer0.' + org]
+        set_tls = self.client.set_tls_client_cert_and_key(
+            node_info['clientKey']['path'],
+            node_info['clientCert']['path']
+        )
+        self.assertTrue(set_tls)
+
         response = await self.client.chaincode_instantiate(
             requestor=org_admin,
             channel_name=self.channel_name,
@@ -226,6 +260,14 @@ class E2eTest(BaseTestCase):
         args = ['a', 'b', '100']
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
+
+            node_info = self.network_info['peers']['peer0.' + org]
+            set_tls = self.client.set_tls_client_cert_and_key(
+                node_info['clientKey']['path'],
+                node_info['clientCert']['path']
+            )
+            self.assertTrue(set_tls)
+
             response = await self.client.chaincode_invoke(
                 requestor=org_admin,
                 channel_name=self.channel_name,
@@ -251,6 +293,14 @@ class E2eTest(BaseTestCase):
         args = ['a', 'b', '100']
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
+
+            node_info = self.network_info['peers']['peer0.' + org]
+            set_tls = self.client.set_tls_client_cert_and_key(
+                node_info['clientKey']['path'],
+                node_info['clientCert']['path']
+            )
+            self.assertTrue(set_tls)
+
             response = await self.client.chaincode_invoke(
                 requestor=org_admin,
                 channel_name=self.channel_name,
@@ -279,6 +329,14 @@ class E2eTest(BaseTestCase):
         args = ['b']
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
+
+            node_info = self.network_info['peers']['peer0.' + org]
+            set_tls = self.client.set_tls_client_cert_and_key(
+                node_info['clientKey']['path'],
+                node_info['clientCert']['path']
+            )
+            self.assertTrue(set_tls)
+
             response = await self.client.chaincode_query(
                 requestor=org_admin,
                 channel_name=self.channel_name,
@@ -301,6 +359,14 @@ class E2eTest(BaseTestCase):
         orgs = ["org1.example.com", "org2.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
+
+            node_info = self.network_info['peers']['peer0.' + org]
+            set_tls = self.client.set_tls_client_cert_and_key(
+                node_info['clientKey']['path'],
+                node_info['clientCert']['path']
+            )
+            self.assertTrue(set_tls)
+
             responses = await self.client.query_installed_chaincodes(
                 requestor=org_admin,
                 peers=['peer0.' + org, 'peer1.' + org],
@@ -325,6 +391,14 @@ class E2eTest(BaseTestCase):
         orgs = ["org1.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
+
+            node_info = self.network_info['peers']['peer0.' + org]
+            set_tls = self.client.set_tls_client_cert_and_key(
+                node_info['clientKey']['path'],
+                node_info['clientCert']['path']
+            )
+            self.assertTrue(set_tls)
+
             response = await self.client.query_channels(
                 requestor=org_admin,
                 peers=['peer0.' + org, 'peer1.' + org],
@@ -347,6 +421,14 @@ class E2eTest(BaseTestCase):
         orgs = ["org1.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
+
+            node_info = self.network_info['peers']['peer0.' + org]
+            set_tls = self.client.set_tls_client_cert_and_key(
+                node_info['clientKey']['path'],
+                node_info['clientCert']['path']
+            )
+            self.assertTrue(set_tls)
+
             response = await self.client.query_info(
                 requestor=org_admin,
                 channel_name=self.channel_name,
@@ -370,6 +452,13 @@ class E2eTest(BaseTestCase):
         orgs = ["org1.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
+
+            node_info = self.network_info['peers']['peer0.' + org]
+            set_tls = self.client.set_tls_client_cert_and_key(
+                node_info['clientKey']['path'],
+                node_info['clientCert']['path']
+            )
+            self.assertTrue(set_tls)
 
             response = await self.client.query_info(
                 requestor=org_admin,
@@ -416,6 +505,13 @@ class E2eTest(BaseTestCase):
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
 
+            node_info = self.network_info['peers']['peer0.' + org]
+            set_tls = self.client.set_tls_client_cert_and_key(
+                node_info['clientKey']['path'],
+                node_info['clientCert']['path']
+            )
+            self.assertTrue(set_tls)
+
             response = await self.client.query_info(
                 requestor=org_admin,
                 channel_name=self.channel_name,
@@ -449,6 +545,14 @@ class E2eTest(BaseTestCase):
         orgs = ["org1.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
+
+            node_info = self.network_info['peers']['peer0.' + org]
+            set_tls = self.client.set_tls_client_cert_and_key(
+                node_info['clientKey']['path'],
+                node_info['clientCert']['path']
+            )
+            self.assertTrue(set_tls)
+
             response = await self.client.query_block(
                 requestor=org_admin,
                 channel_name=self.channel_name,
@@ -473,6 +577,13 @@ class E2eTest(BaseTestCase):
         orgs = ["org1.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
+
+            node_info = self.network_info['peers']['peer0.' + org]
+            set_tls = self.client.set_tls_client_cert_and_key(
+                node_info['clientKey']['path'],
+                node_info['clientCert']['path']
+            )
+            self.assertTrue(set_tls)
 
             response = await self.client.query_info(
                 requestor=org_admin,
@@ -517,6 +628,14 @@ class E2eTest(BaseTestCase):
         orgs = ["org1.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
+
+            node_info = self.network_info['peers']['peer0.' + org]
+            set_tls = self.client.set_tls_client_cert_and_key(
+                node_info['clientKey']['path'],
+                node_info['clientCert']['path']
+            )
+            self.assertTrue(set_tls)
+
             responses = await self.client.query_instantiated_chaincodes(
                 requestor=org_admin,
                 channel_name=self.channel_name,
@@ -543,6 +662,14 @@ class E2eTest(BaseTestCase):
         orgs = ["org1.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
+
+            node_info = self.network_info['peers']['peer0.' + org]
+            set_tls = self.client.set_tls_client_cert_and_key(
+                node_info['clientKey']['path'],
+                node_info['clientCert']['path']
+            )
+            self.assertTrue(set_tls)
+
             responses = await self.client.get_channel_config(
                 requestor=org_admin,
                 channel_name=self.channel_name,
@@ -562,8 +689,17 @@ class E2eTest(BaseTestCase):
         logger.info(f"E2E: Get channel {chname} config start")
 
         orgs = ["orderer.example.com"]
+
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
+
+            node_info = self.network_info['orderers'][org]
+            set_tls = self.client.set_tls_client_cert_and_key(
+                node_info['clientKey']['path'],
+                node_info['clientCert']['path']
+            )
+            self.assertTrue(set_tls)
+
             response = await self.client.get_channel_config_with_orderer(
                 orderer='orderer.example.com',
                 requestor=org_admin,
@@ -581,6 +717,13 @@ class E2eTest(BaseTestCase):
 
         org = 'org1.example.com'
         peer = self.client.get_peer('peer0.' + org)
+
+        node_info = self.network_info['peers']['peer0.' + org]
+        set_tls = self.client.set_tls_client_cert_and_key(
+            node_info['clientKey']['path'],
+            node_info['clientCert']['path']
+        )
+        self.assertTrue(set_tls)
 
         org_admin = self.client.get_user(org, 'Admin')
         channel = self.client.get_channel(self.channel_name)
@@ -615,6 +758,13 @@ class E2eTest(BaseTestCase):
 
         org = 'org1.example.com'
         peer = self.client.get_peer('peer0.' + org)
+
+        node_info = self.network_info['peers']['peer0.' + org]
+        set_tls = self.client.set_tls_client_cert_and_key(
+            node_info['clientKey']['path'],
+            node_info['clientCert']['path']
+        )
+        self.assertTrue(set_tls)
 
         org_admin = self.client.get_user(org, 'Admin')
         channel = self.client.get_channel(self.channel_name)

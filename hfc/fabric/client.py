@@ -68,6 +68,8 @@ class Client(object):
         self.kv_store_path = None
         self._state_store = None
         self._is_dev_mode = False
+        self._client_key_path = None
+        self._client_cert_path = None
         self.network_info = dict()
 
         self._organizations = dict()
@@ -274,6 +276,31 @@ class Client(object):
 
                 if target_name not in self._peers:
                     self._peers[target_name] = peer
+
+    def set_tls_client_cert_and_key(self, client_key_file=None,
+                                    client_cert_file=None):
+
+        self._client_key_path = client_key_file
+        self._client_cert_path = client_cert_file
+
+        res = []
+
+        for orderer_name in self._orderers:
+            set_tls = self._orderers[orderer_name].set_tls_client_cert_and_key(
+                self._client_key_path,
+                self._client_cert_path
+            )
+            res.append(set_tls)
+
+        for peer_name in self._peers:
+            set_tls = self._peers[peer_name].set_tls_client_cert_and_key(
+                self._client_key_path,
+                self._client_cert_path
+            )
+            res.append(set_tls)
+
+        print(res)
+        return not res or all(res)
 
     def get_user(self, org_name, name):
         """
@@ -567,7 +594,7 @@ class Client(object):
         return True
 
     async def channel_join(self, requestor, channel_name, peers,
-                           orderer, orderer_admin):
+                           orderer):
         """
         Join a channel.
         Get genesis block from orderer, then send request to peer
@@ -600,11 +627,12 @@ class Client(object):
         tx_prop_req = TXProposalRequest()
 
         # get the genesis block
-        tx_context = TXContext(orderer_admin, orderer_admin.cryptoSuite,
+        tx_context = TXContext(requestor, requestor.cryptoSuite,
                                tx_prop_req)
 
         genesis_block = None
         stream = target_orderer.get_genesis_block(tx_context, channel.name)
+
         async for v in stream:
             block = v.block.SerializeToString()
             if block is None or block == b'':
