@@ -179,7 +179,7 @@ class Peer(object):
 
     def set_tls_client_cert_and_key(self, client_key_file=None,
                                     client_cert_file=None):
-        """Set tls client for mutual tls
+        """Set tls client's cert and key for mutual tls
 
         Args:
             client_key (str): file path for Private key used for TLS when

@@ -69,7 +69,7 @@ class E2eTest(BaseTestCase):
 
         # By default, self.user is the admin of org1
         node_info = self.network_info['peers']['peer0.org1.example.com']
-        set_tls = set_tls = self.client.set_tls_client_cert_and_key(
+        set_tls = self.client.set_tls_client_cert_and_key(
             node_info['clientKey']['path'],
             node_info['clientCert']['path']
         )

@@ -280,7 +280,9 @@ class Client(object):
     def set_tls_client_cert_and_key(self, client_key_file=None,
                                     client_cert_file=None):
 
-        """Set tls client for mutual tls for all peers and orderers
+        """
+        Set tls client certificate and key for mutual tls for all peers
+        and orderers
 
         Args:
             client_key (str): file path for Private key used for TLS when
@@ -311,7 +313,6 @@ class Client(object):
             )
             res.append(set_tls)
 
-        print(res)
         return not res or all(res)
 
     def get_user(self, org_name, name):
