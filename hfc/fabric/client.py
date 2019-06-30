@@ -231,7 +231,7 @@ class Client(object):
 
         # Init orderer nodes
         _logger.debug("Import orderers = {}".format(results[
-                                                        'orderers'].keys()))
+                                                    'orderers'].keys()))
         for orderer_msp in results['orderers']:
             for orderer_info in results['orderers'][orderer_msp]:
                 orderer_endpoint = '%s:%s' % (orderer_info['host'],
@@ -1147,7 +1147,8 @@ class Client(object):
         return tx_path
 
     async def chaincode_install(self, requestor, peers, cc_path, cc_name,
-                                cc_version, packaged_cc=None):
+                                cc_version, packaged_cc=None,
+                                transient_map=None):
         """
         Install chaincode to given peers by requestor role
 
@@ -1156,6 +1157,8 @@ class Client(object):
         :param cc_path: chaincode path
         :param cc_name: chaincode name
         :param cc_version: chaincode version
+        :param packaged_cc: packaged chaincode
+        :param transient_map: transient map
         :return: True or False
         """
         target_peers = []
@@ -1177,7 +1180,8 @@ class Client(object):
 
         tran_prop_req = create_tx_prop_req(CC_INSTALL, cc_path, CC_TYPE_GOLANG,
                                            cc_name, cc_version,
-                                           packaged_cc=packaged_cc)
+                                           packaged_cc=packaged_cc,
+                                           transient_map=transient_map)
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,
                                        tran_prop_req)
 
@@ -1189,6 +1193,8 @@ class Client(object):
     async def chaincode_instantiate(self, requestor, channel_name, peers,
                                     args, cc_name, cc_version,
                                     cc_endorsement_policy=None,
+                                    transient_map=None,
+                                    collections_config=None,
                                     wait_for_event=False,
                                     wait_for_event_timeout=30):
         """
@@ -1201,6 +1207,9 @@ class Client(object):
         :param args (list): arguments (keys and values) for initialization
         :param cc_name: chaincode name
         :param cc_version: chaincode version
+        :param cc_endorsement_policy: chaincode endorsement policy
+        :param transient_map: transient map
+        :param collection_config: collection configuration
         :param wait_for_event: Whether to wait for the event from each peer's
          deliver filtered service signifying that the 'invoke' transaction has
           been committed successfully
@@ -1232,7 +1241,9 @@ class Client(object):
             cc_version=cc_version,
             cc_endorsement_policy=cc_endorsement_policy,
             fcn='init',
-            args=args
+            args=args,
+            transient_map=transient_map,
+            collections_config=collections_config
         )
 
         tx_context_dep = create_tx_context(
@@ -1322,6 +1333,8 @@ class Client(object):
                                 cc_name, cc_version,
                                 cc_endorsement_policy=None,
                                 fcn='init', args=None,
+                                transient_map=None,
+                                collections_config=None,
                                 wait_for_event=False,
                                 wait_for_event_timeout=30):
         """
@@ -1334,6 +1347,11 @@ class Client(object):
         :param args (list): arguments (keys and values) for initialization
         :param cc_name: chaincode name
         :param cc_version: chaincode version
+        :param cc_endorsement_policy: chaincode endorsement policy
+        :param fcn: chaincode function to send
+        :param args: chaincode function arguments
+        :param transient_map: transient map
+        :param collection_config: collection configuration
         :param wait_for_event: Whether to wait for the event from each peer's
          deliver filtered service signifying that the 'invoke' transaction has
           been committed successfully
@@ -1365,7 +1383,9 @@ class Client(object):
             cc_version=cc_version,
             cc_endorsement_policy=cc_endorsement_policy,
             fcn=fcn,
-            args=args
+            args=args,
+            transient_map=transient_map,
+            collections_config=collections_config,
         )
 
         tx_context_dep = create_tx_context(
@@ -1454,6 +1474,7 @@ class Client(object):
     async def chaincode_invoke(self, requestor, channel_name, peers, args,
                                cc_name, cc_type=CC_TYPE_GOLANG,
                                fcn='invoke', cc_pattern=None,
+                               transient_map=None,
                                wait_for_event=False,
                                wait_for_event_timeout=30):
         """
@@ -1467,6 +1488,7 @@ class Client(object):
         :param cc_type: chaincode type language
         :param fcn: chaincode function
         :param cc_pattern: chaincode event name regex
+        :param transient_map: transient map
         :param wait_for_event: Whether to wait for the event from each peer's
          deliver filtered service signifying that the 'invoke' transaction has
           been committed successfully
@@ -1496,7 +1518,8 @@ class Client(object):
             cc_name=cc_name,
             cc_type=cc_type,
             fcn=fcn,
-            args=args
+            args=args,
+            transient_map=transient_map
         )
 
         tx_context = create_tx_context(
@@ -1510,6 +1533,9 @@ class Client(object):
         # send proposal
         responses, proposal, header = channel.send_tx_proposal(tx_context,
                                                                target_peers)
+
+        # The proposal return does not contain the transient map
+        # because we do not sent it in the real transaction later
         res = await asyncio.gather(*responses)
 
         # if proposal was not good, return
@@ -1582,7 +1608,7 @@ class Client(object):
 
     async def chaincode_query(self, requestor, channel_name, peers, args,
                               cc_name, cc_type=CC_TYPE_GOLANG,
-                              fcn='query'):
+                              fcn='query', transient_map=None):
         """
         Query chaincode
 
@@ -1593,6 +1619,7 @@ class Client(object):
         :param cc_name: chaincode name
         :param cc_type: chaincode type language
         :param fcn: chaincode function
+        :param transient_map: transient map
         :return: True or False
         """
         target_peers = []
@@ -1616,7 +1643,8 @@ class Client(object):
             cc_name=cc_name,
             cc_type=cc_type,
             fcn=fcn,
-            args=args
+            args=args,
+            transient_map=transient_map
         )
 
         tx_context = create_tx_context(
@@ -1635,13 +1663,15 @@ class Client(object):
 
         return res[0].response.payload.decode('utf-8')
 
-    async def query_channels(self, requestor, peers, decode=True):
+    async def query_channels(self, requestor, peers, transient_map=None,
+                             decode=True):
         """
         Queries channel name joined by a peer
 
         :param requestor: User role who issue the request
         :param peers: List of  peer name and/or Peer to install
-        :param deocode: Decode the response payload
+        :param transient_map: transient map
+        :param decode: Decode the response payload
         :return: A `ChannelQueryResponse` or `ProposalResponse`
         """
 
@@ -1666,7 +1696,8 @@ class Client(object):
             fcn='GetChannels',
             cc_name='cscc',
             cc_type=CC_TYPE_GOLANG,
-            args=[]
+            args=[],
+            transient_map=transient_map
         )
 
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,
@@ -1929,7 +1960,7 @@ class Client(object):
         :param channel_name: name of channel to query
         :param peers: List of  peer name and/or Peer to install
         :param tx_id: The id of the transaction
-        :param deocode: Decode the response payload
+        :param decode: Decode the response payload
         :return:  A `BlockDecoder` or `ProposalResponse`
         """
 
@@ -1978,14 +2009,16 @@ class Client(object):
                 raise Exception(r)
 
     async def query_instantiated_chaincodes(self, requestor, channel_name,
-                                            peers, decode=True):
+                                            peers, transient_map=None,
+                                            decode=True):
         """
         Queries instantiated chaincode
 
         :param requestor: User role who issue the request
         :param channel_name: name of channel to query
         :param peers: Names or Instance of the peers to query
-        :param deocode: Decode the response payload
+        :param transient_map: transient map
+        :param decode: Decode the response payload
         :return: A `ChaincodeQueryResponse` or `ProposalResponse`
         """
         target_peers = []
@@ -2015,7 +2048,7 @@ class Client(object):
                                        TXProposalRequest())
 
         responses, proposal, header = channel.query_instantiated_chaincodes(
-            tx_context, target_peers)
+            tx_context, target_peers, transient_map=transient_map)
 
         responses = await asyncio.gather(*responses)
 
@@ -2039,13 +2072,15 @@ class Client(object):
 
         return results
 
-    async def query_installed_chaincodes(self, requestor, peers, decode=True):
+    async def query_installed_chaincodes(self, requestor, peers,
+                                         transient_map=None, decode=True):
         """
         Queries installed chaincode, returns all chaincodes installed on a peer
 
         :param requestor: User role who issue the request
         :param peers: Names or Instance of the peers to query
-        :param deocode: Decode the response payload
+        :param transient_map: transient map
+        :param decode: Decode the response payload
         :return: A `ChaincodeQueryResponse` or `ProposalResponse`
         """
         target_peers = []
@@ -2069,7 +2104,8 @@ class Client(object):
             fcn='getinstalledchaincodes',
             cc_name='lscc',
             cc_type=CC_TYPE_GOLANG,
-            args=[]
+            args=[],
+            transient_map=transient_map
         )
 
         tx_context = create_tx_context(requestor, requestor.cryptoSuite,

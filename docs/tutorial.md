@@ -287,6 +287,8 @@ response = loop.run_until_complete(cli.chaincode_instantiate(
                cc_name='example_cc',
                cc_version='v1.0',
                cc_endorsement_policy=policy, # optional, but recommended
+               collections_config=None, # optional, for private data policy
+               transient_map=None, # optional, for private data
                wait_for_event=True # optional, for being sure chaincode is instantiated
                ))
 
@@ -299,6 +301,7 @@ response = loop.run_until_complete(cli.chaincode_invoke(
                peers=['peer0.org1.example.com'],
                args=args,
                cc_name='example_cc',
+               transient_map=None, # optional, for private data
                wait_for_event=True, # for being sure chaincode invocation has been commited in the ledger, default is on tx event
                #cc_pattern='^invoked*' # if you want to wait for chaincode event and you have a `stub.SetEvent("invoked", value)` in your chaincode
                ))
@@ -335,6 +338,8 @@ response = loop.run_until_complete(cli.chaincode_upgrade(
                cc_name='example_cc',
                cc_version='v1.0',
                cc_endorsement_policy=policy, # optional, but recommended
+               collections_config=None, # optional, for private data policy
+               transient_map=None, # optional, for private data
                wait_for_event=True # optional, for being sure chaincode is instantiated
                ))               
 

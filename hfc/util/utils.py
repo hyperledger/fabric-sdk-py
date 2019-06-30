@@ -210,7 +210,8 @@ def build_cc_proposal(cci_spec, header, transient_map):
     cc_payload = proposal_pb2.ChaincodeProposalPayload()
     cc_payload.input = cci_spec.SerializeToString()
     if transient_map:
-        cc_payload.TransientMap = transient_map
+        for name, bytes_value in transient_map.items():
+            cc_payload.TransientMap[name] = bytes_value
 
     proposal = proposal_pb2.Proposal()
     proposal.header = header.SerializeToString()

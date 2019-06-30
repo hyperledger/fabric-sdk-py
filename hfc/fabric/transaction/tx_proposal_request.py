@@ -21,7 +21,8 @@ class TXProposalRequest(object):
                  cc_type=CC_TYPE_GOLANG, cc_name=None,
                  cc_version=None, fcn=None, args=None,
                  cc_endorsement_policy=None,
-                 transient_map=None, packaged_cc=None):
+                 transient_map=None, packaged_cc=None,
+                 collections_config=None):
         """ Construct transaction proposal request
 
         Args:
@@ -35,6 +36,7 @@ class TXProposalRequest(object):
             cc_version (str): chaincode version
             cc_name (str): chaincode name
             cc_path (str): chaincode path
+            collections_config: collection config
 
         """
         self._cc_type = cc_type
@@ -49,6 +51,7 @@ class TXProposalRequest(object):
             self._args = args
         self._packaged_cc = packaged_cc
         self._cc_endorsement_policy = cc_endorsement_policy
+        self._collections_config = collections_config
         if transient_map is None:
             self._transient_map = []
         else:
@@ -244,6 +247,25 @@ class TXProposalRequest(object):
         """
         self._transient_map = transient_map
 
+    @property
+    def collections_config(self):
+        """Get collections config
+
+        Returns: return collections config
+
+        """
+        return self._collections_config
+
+    @collections_config.setter
+    def collections_config(self, collections_config):
+        """Set collections config
+
+        Args:
+            collections_config: collections config
+
+        """
+        self._collections_config = collections_config
+
 
 def validate(tx_prop_req):
     """Check transaction proposal request.
@@ -280,16 +302,17 @@ def validate(tx_prop_req):
                              "in the proposal request")
 
     if tx_prop_req.prop_type == CC_INVOKE:
-        if not tx_prop_req.args:
-            raise ValueError("Missing 'args' parameter "
-                             "in the proposal request")
+        if not tx_prop_req.args and not tx_prop_req.transient_map:
+            raise ValueError("Missing 'args' or 'transient_map'"
+                             "parameter in the proposal request")
     return tx_prop_req
 
 
 def create_tx_prop_req(prop_type=None, cc_path=None, cc_type=CC_TYPE_GOLANG,
                        cc_name=None, cc_version=None, fcn=None, args=None,
                        cc_endorsement_policy=None,
-                       transient_map=None, packaged_cc=None):
+                       transient_map=None, packaged_cc=None,
+                       collections_config=None):
     """Create a transaction proposal request
 
     Args:
@@ -309,5 +332,5 @@ def create_tx_prop_req(prop_type=None, cc_path=None, cc_type=CC_TYPE_GOLANG,
     tx_prop_req = TXProposalRequest(
         prop_type, cc_path, cc_type, cc_name, cc_version, fcn,
         args, cc_endorsement_policy, transient_map,
-        packaged_cc)
+        packaged_cc, collections_config)
     return validate(tx_prop_req)
