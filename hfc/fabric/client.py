@@ -463,9 +463,9 @@ class Client(object):
         :return: True (creation succeeds) or False (creation failed)
         """
         if self.get_channel(channel_name):
-            _logger.warning(f"channel {channel_name} already"
-                            f" existed when creating")
-            return False
+            msg = f"channel {channel_name} already existed when creating"
+            _logger.warning(msg)
+            raise Exception(msg)
 
         target_orderer = None
         if isinstance(orderer, Orderer):
@@ -519,11 +519,11 @@ class Client(object):
         }
         responses = await self._create_or_update_channel(request)
 
-        if all([x.status == 200 for x in responses]):
-            self.new_channel(channel_name)
-            return True
-        else:
-            return False
+        if not all([x.status == 200 for x in responses]):
+            raise Exception(responses)
+
+        self.new_channel(channel_name)
+        return True
 
     # TODO pass envelope directly if possible
     # TODO support passing config as a python object directly
