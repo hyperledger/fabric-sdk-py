@@ -514,8 +514,8 @@ class Channel(object):
         if not policy:
             raise Exception('Missing Required Param "policy"')
 
-        if 'identities' not in policy\
-                or policy['identities'] == ''\
+        if 'identities' not in policy \
+                or policy['identities'] == '' \
                 or not len(policy['identities']):
             raise Exception('Invalid policy, missing'
                             ' the "identities" property')
@@ -524,13 +524,13 @@ class Channel(object):
                             ' property must be an array')
 
         if 'policy' not in policy \
-                or policy['policy'] == ''\
+                or policy['policy'] == '' \
                 or not len(policy['policy']):
             raise Exception('Invalid policy, missing the'
                             ' "policy" property')
 
     def _build_policy(self, policy, msps=None, returnProto=False):
-        proto_signature_policy_envelope =\
+        proto_signature_policy_envelope = \
             policies_pb2.SignaturePolicyEnvelope()
 
         if policy:
@@ -559,7 +559,7 @@ class Channel(object):
 
             for msp in msps:
                 onePrn = msp_principal_pb2.MSPPrincipal()
-                onePrn.principal_classification =\
+                onePrn.principal_classification = \
                     msp_principal_pb2.MSPPrincipal.ROLE
 
                 memberRole = msp_principal_pb2.MSPRole()
@@ -617,18 +617,30 @@ class Channel(object):
         cc_dep_spec = chaincode_pb2.ChaincodeDeploymentSpec()
         cc_dep_spec.chaincode_spec.CopyFrom(cc_spec)
 
+        # Pass msps, TODO create an MSPManager as done in fabric-sdk-node
+        policy = self._build_policy(request.cc_endorsement_policy)
+
+        args = [
+            proto_b(command),
+            proto_b(self.name),
+            cc_dep_spec.SerializeToString(),
+            policy,
+            proto_b('escc'),
+            proto_b('vscc'),
+        ]
+
+        # collections_configs need V1_2 or later capability enabled,
+        # otherwise private channel collections and data are not available
         collections_configs = []
         if request.collections_config:
             for config in request.collections_config:
                 static_config = collection_pb2.StaticCollectionConfig()
                 static_config.name = config['name']
-                static_config.member_orgs_policy.signature_policy.\
-                    CopyFrom(
-                        self._build_policy(config['policy'],
-                                           returnProto=True)
-                    )
+                static_config.member_orgs_policy.signature_policy. \
+                    CopyFrom(self._build_policy(config['policy'],
+                             returnProto=True))
                 static_config.maximum_peer_count = config['maxPeerCount']
-                static_config.\
+                static_config. \
                     required_peer_count = config.get('requiredPeerCount', 0)
                 static_config.block_to_live = config.get('blockToLive', 0)
                 static_config.member_only_read = config.get('memberOnlyRead',
@@ -641,22 +653,13 @@ class Channel(object):
 
                 collections_configs.append(collections_config)
 
-        cc_coll_cfg = collection_pb2.CollectionConfigPackage()
-        cc_coll_cfg.config.extend(collections_configs)
-
-        # Pass msps, TODO create an MSPManager as done in fabric-sdk-node
-        policy = self._build_policy(request.cc_endorsement_policy)
+            cc_coll_cfg = collection_pb2.CollectionConfigPackage()
+            cc_coll_cfg.config.extend(collections_configs)
+            args.append(cc_coll_cfg.SerializeToString())
 
         # construct the invoke spec
         invoke_input = chaincode_pb2.ChaincodeInput()
-        invoke_input.args.extend(
-            [proto_b(command),
-             proto_b(self.name),
-             cc_dep_spec.SerializeToString(),
-             policy,
-             proto_b('escc'),
-             proto_b('vscc'),
-             cc_coll_cfg.SerializeToString()])
+        invoke_input.args.extend(args)
 
         invoke_cc_id = chaincode_pb2.ChaincodeID()
         invoke_cc_id.name = proto_str('lscc')
