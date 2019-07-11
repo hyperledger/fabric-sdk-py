@@ -274,19 +274,16 @@ def decode_block_metadata(proto_block_metadata):
     metadata = {}
     metadata['metadata'] = []
     if proto_block_metadata and proto_block_metadata.metadata:
-        # TODO should use common_pb2.SIGNATURES
-        signatures = \
-            decode_metadata_signatures(proto_block_metadata.metadata[0])
+        signatures = decode_metadata_signatures(
+            proto_block_metadata.metadata[common_pb2.SIGNATURES])
         metadata['metadata'].append(signatures)
 
-        # TODO should use common_pb2.LAST_CONFIG
         last_config = decode_last_config_sequence_number(
-            proto_block_metadata.metadata[1])
+            proto_block_metadata.metadata[common_pb2.LAST_CONFIG])
         metadata['metadata'].append(last_config)
 
-        # TODO should use common_pb2.TRANSACTIONS_FILTER
-        transaction_filter = \
-            decode_transaction_filter(proto_block_metadata.metadata[2])
+        transaction_filter = decode_transaction_filter(
+            proto_block_metadata.metadata[common_pb2.TRANSACTIONS_FILTER])
         metadata['metadata'].append(transaction_filter)
 
     return metadata
@@ -463,8 +460,12 @@ def decode_last_config_sequence_number(metadata_bytes):
 
     Returns: deserialized dictionary of config sequence number
     """
-    last_config = {}
-    last_config['value'] = {}
+    last_config = {
+        'value': {
+            'index': 0,
+            'signatures': []
+        }
+    }
     if metadata_bytes:
         proto_metadata = common_pb2.Metadata()
         proto_metadata.ParseFromString(metadata_bytes)
