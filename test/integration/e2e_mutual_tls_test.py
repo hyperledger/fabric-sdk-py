@@ -25,7 +25,7 @@ CC_NAME = 'example_cc_with_event'
 CC_VERSION = '1.0'
 
 
-class E2eTest(BaseTestCase):
+class E2eMutualTest(BaseTestCase):
 
     def setUp(self):
         self.gopath_bak = os.environ.get('GOPATH', '')
@@ -56,7 +56,7 @@ class E2eTest(BaseTestCase):
         time.sleep(1)
 
     def tearDown(self):
-        super(E2eTest, self).tearDown()
+        super(E2eMutualTest, self).tearDown()
 
     async def channel_create(self):
         """

@@ -6,6 +6,6 @@ lark-parser == 0.7.1
 pycryptodomex >= 3.4.2
 pysha3 == 1.0b1
 requests >= 2.12.4
-rx >= 1.5.3
+rx >= 3.0.1
 six >= 1.4.0
 protobuf >= 3.6.0

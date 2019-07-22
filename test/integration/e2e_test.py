@@ -21,13 +21,13 @@ CC_NAME = 'example_cc_with_event'
 CC_VERSION = '1.0'
 
 
-class E2eMutualTest(BaseTestCase):
+class E2eTest(BaseTestCase):
 
     def setUp(self):
-        super(E2eMutualTest, self).setUp()
+        super(E2eTest, self).setUp()
 
     def tearDown(self):
-        super(E2eMutualTest, self).tearDown()
+        super(E2eTest, self).tearDown()
 
     async def channel_create(self):
         """

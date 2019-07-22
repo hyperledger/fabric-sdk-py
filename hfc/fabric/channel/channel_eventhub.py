@@ -56,11 +56,15 @@ class ChannelEventHub(object):
         self._channel_name = channel_name
 
         self.stream = None
+        self._start = None
+        self._stop = sys.maxsize
         self._filtered = True
         self._reg_nums = []
         self._tx_ids = {}
         self._reg_ids = {}
         self._connected = False
+        self._start_stop_action = False
+        self._start_stop_connect = False
         self._last_seen = None
 
     @property
@@ -119,6 +123,73 @@ class ChannelEventHub(object):
         # this is a stream response
         return self._peer.delivery(envelope, filtered=filtered)
 
+    def check_start_stop_connect(self, start=None, stop=sys.maxsize):
+        if start is not None or stop is not sys.maxsize:
+            if self._start_stop_action:
+                raise Exception('Not able to connect with start/stop'
+                                ' block when a registered listener has'
+                                ' those options.')
+
+            if start == 'last_seen':
+                start = self._last_seen
+            elif start == 'oldest':
+                start = 0
+            elif start == 'latest':
+                start = None
+            elif not (isinstance(start, int) or start is None):
+                raise Exception(f'start value must be: last_seen, oldest,'
+                                f' latest or an integer')
+
+            if stop == 'last_seen':
+                stop = self._last_seen
+            elif stop == 'newest':
+                stop = None
+            elif not (isinstance(stop, int)
+                      or stop is None
+                      or stop == sys.maxsize):
+                raise Exception(f'stop value must be: last_seen, newest,'
+                                f' sys.maxsize or an integer')
+
+            if isinstance(start, int) \
+                    and isinstance(stop, int)\
+                    and start > stop:
+                raise Exception('start cannot be greater than stop')
+
+            self._start = start
+            self._stop = stop
+            self._start_stop_connect = True
+
+    def check_start_stop_listener(self, start=None, stop=None):
+        if start is not None or stop is not None:
+            if self.have_registrations():
+                raise Exception('Only one event registration is allowed when'
+                                ' start/stop block are used.')
+
+            if self._start_stop_connect:
+                raise Exception('The registration with a start/stop block'
+                                ' must be done before calling connect()')
+
+            if stop == 'newest':
+                stop = None
+            elif not (isinstance(stop, int)
+                      or stop is None
+                      or stop == sys.maxsize):
+                raise Exception('stop must be an integer, newest or'
+                                ' sys.maxsize')
+
+            if not (isinstance(start, int) or start is None):
+                raise Exception('start must be an integer')
+
+            if isinstance(start, int) \
+                    and isinstance(stop, int) \
+                    and start > stop:
+                raise Exception('start cannot be greater than stop')
+
+            self._start = start
+            self._stop = stop
+
+            self._start_stop_action = True
+
     def _processBlockEvents(self, block):
         for reg_num in self._reg_nums:
 
@@ -131,9 +202,12 @@ class ChannelEventHub(object):
             if reg_num.disconnect:
                 self.disconnect()
 
-    # TODO support startBlock, endBlock
     def registerBlockEvent(self, unregister=True,
+                           start=None, stop=None,
                            disconnect=False, onEvent=None):
+
+        self.check_start_stop_listener(start, stop)
+
         reg_num = EventRegistration(onEvent,
                                     unregister=unregister,
                                     disconnect=disconnect)
@@ -182,9 +256,12 @@ class ChannelEventHub(object):
                 self.handle_full_tx(block, tx_id, er)
 
     # TODO support txid ALL
-    # TODO support startBlock, endBlock
     def registerTxEvent(self, tx_id, unregister=True,
+                        start=None, stop=None,
                         disconnect=False, onEvent=None):
+
+        self.check_start_stop_listener(start, stop)
+
         self._tx_ids[tx_id] = EventRegistration(onEvent,
                                                 unregister=unregister,
                                                 disconnect=disconnect)
@@ -265,10 +342,13 @@ class ChannelEventHub(object):
                 else:
                     self.handle_full_chaincode(block, cr)
 
-    # TODO support startBlock, endBlock
     def registerChaincodeEvent(self, ccid, pattern, unregister=False,
                                tx_id=None,
+                               start=None, stop=None,
                                disconnect=False, onEvent=None):
+
+        self.check_start_stop_listener(start, stop)
+
         er = EventRegistration(onEvent, unregister=unregister,
                                disconnect=disconnect)
         cr = ChaincodeRegistration(ccid, pattern, er, tx_id)
@@ -278,6 +358,11 @@ class ChannelEventHub(object):
         else:
             self._reg_ids[ccid] = [cr]
         return cr
+
+    def have_registrations(self):
+        return self._reg_nums != [] \
+               or self._tx_ids != {} \
+               or self._reg_ids != {}
 
     def unregisterChaincodeEvent(self, reg_id):
         self._reg_ids[reg_id.ccid].remove(reg_id)
@@ -301,16 +386,17 @@ class ChannelEventHub(object):
             self._processChaincodeEvents(block)
 
             # if nothing to handle return true
-            # TODO handle last_seen and empty block (last one)
-            if self._reg_nums == []\
-                    and self._tx_ids == {}\
-                    and self._reg_ids == {}:
+            # TODO handle empty block (last one)
+            if not self.have_registrations():
                 return True
 
     def connect(self, filtered=True, start=None, stop=sys.maxsize,
                 behavior='BLOCK_UNTIL_READY'):
         self._filtered = filtered
-        self.stream = self._get_stream(start=start, stop=stop,
+
+        self.check_start_stop_connect(start, stop)
+
+        self.stream = self._get_stream(start=self._start, stop=self._stop,
                                        filtered=self._filtered,
                                        behavior=behavior)
 
@@ -318,8 +404,12 @@ class ChannelEventHub(object):
 
     def disconnect(self):
         self.stream.cancel()
+        self._start = None
+        self._stop = sys.maxsize
         self._filtered = True
         self._peer = None
         self._requestor = None
         self._channel_name = None
+        self._start_stop_action = False
+        self._start_stop_connect = False
         self.connected = False
