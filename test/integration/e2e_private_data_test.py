@@ -273,7 +273,7 @@ class E2ePrivateDataTest(BaseTestCase):
                 args=None,
                 cc_name=CC_NAME,
                 wait_for_event=True,
-                wait_for_event_timeout=120,
+                wait_for_event_timeout=30,
                 transient_map={"marble": marble}
             )
             self.assertFalse(response)

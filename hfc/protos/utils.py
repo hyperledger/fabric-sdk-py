@@ -33,8 +33,7 @@ def create_seek_info(start=None, stop=None, behavior="BLOCK_UNTIL_READY"):
     seek_info.start.CopyFrom(seek_start)
     seek_info.stop.CopyFrom(seek_stop)
 
-    seek_info.behavior = \
-        ab_pb2.SeekInfo.SeekBehavior.Value(behavior)
+    seek_info.behavior = ab_pb2.SeekInfo.SeekBehavior.Value(behavior)
 
     return seek_info
 

@@ -20,6 +20,7 @@ import sys
 import os
 import subprocess
 import shutil
+import uuid
 from _sha256 import sha256
 
 from hfc.fabric.channel.channel import Channel
@@ -1190,6 +1191,76 @@ class Client(object):
         res = await asyncio.gather(*responses)
         return res
 
+    def txEvent(self, tx_id, tx_status, block_number):
+        if tx_id in self.evts:
+            if 'txEvents' not in self.evts[tx_id]:
+                self.evts[tx_id]['txEvents'] = []
+            self.evts[tx_id]['txEvents'] += [{
+                'tx_status': tx_status,
+                'block_number': block_number,
+            }]
+
+    # This method is not used but it show how to use as_array variable
+    def create_onCcEventArray(self, _uuid):
+        class CCEventArray(object):
+            def __init__(self, _uuid, evts, evt_tx_id):
+                self.uuid = _uuid
+                self.evts = evts  # keep reference, no copy
+                self.evt_tx_id = evt_tx_id
+
+            def cc_event(self, events):
+                for e in events:
+                    if e['tx_id'] in self.evts:
+
+                        if 'txEvents' not in self.evts[e['tx_id']]:
+                            self.evts[e['tx_id']]['txEvents'] = []
+                        self.evts[e['tx_id']]['txEvents'] += [{
+                            'cc_event': e['chaincode_event'],
+                            'status': e['tx_status'],
+                            'block_number': e['block_num'],
+                        }]
+
+                    # unregister chaincode event if same tx_id
+                    # and disconnect as chaincode evt are unregister False
+                    if e['tx_id'] == self.evt_tx_id:
+                        for x in self.evts[e['tx_id']]['peer']:
+                            if x['uuid'] == self.uuid:
+                                x['channel_event_hub'].\
+                                    unregisterChaincodeEvent(x['cr'])
+                                x['channel_event_hub'].disconnect()
+
+        o = CCEventArray(_uuid, self.evts, self.evt_tx_id)
+        return o.cc_event
+
+    def create_onCcEvent(self, _uuid):
+        class CCEvent(object):
+            def __init__(self, _uuid, evts, evt_tx_id):
+                self.uuid = _uuid
+                self.evts = evts  # keep reference, no copy
+                self.evt_tx_id = evt_tx_id
+
+            def cc_event(self, cc_event, block_number, tx_id, tx_status):
+                if tx_id in self.evts:
+                    if 'txEvents' not in self.evts[tx_id]:
+                        self.evts[tx_id]['txEvents'] = []
+                    self.evts[tx_id]['txEvents'] += [{
+                        'cc_event': cc_event,
+                        'tx_status': tx_status,
+                        'block_number': block_number,
+                    }]
+
+                # unregister chaincode event if same tx_id
+                # and disconnect as chaincode evt are unregister False
+                if tx_id == self.evt_tx_id:
+                    for x in self.evts[tx_id]['peer']:
+                        if x['uuid'] == self.uuid:
+                            x['channel_event_hub'].\
+                                unregisterChaincodeEvent(x['cr'])
+                            x['channel_event_hub'].disconnect()
+
+        o = CCEvent(_uuid, self.evts, self.evt_tx_id)
+        return o.cc_event
+
     async def chaincode_instantiate(self, requestor, channel_name, peers,
                                     args, cc_name, cc_version,
                                     cc_endorsement_policy=None,
@@ -1278,33 +1349,48 @@ class Client(object):
         # wait for transaction id proposal available in ledger and block
         # commited
         if wait_for_event:
-            channelEventsHubs = {}
+            self.evt_tx_id = tx_context_dep.tx_id
+            self.evts = {}
             event_stream = []
+
             for target_peer in target_peers:
                 channel_event_hub = channel.newChannelEventHub(target_peer,
                                                                requestor)
                 stream = channel_event_hub.connect()
-                txid = channel_event_hub.registerTxEvent(tx_context_dep.tx_id)
                 event_stream.append(stream)
-                channelEventsHubs[txid] = channel_event_hub
+
+                txid = channel_event_hub.registerTxEvent(
+                    self.evt_tx_id,
+                    unregister=True,
+                    disconnect=True,
+                    onEvent=self.txEvent)
+
+                if txid not in self.evts:
+                    self.evts[txid] = {'channel_event_hubs': []}
+
+                self.evts[txid]['channel_event_hubs'] += [channel_event_hub]
+
             try:
-                r = await asyncio.wait_for(asyncio.gather(*event_stream),
-                                           timeout=wait_for_event_timeout)
+                await asyncio.wait_for(asyncio.gather(*event_stream,
+                                                      return_exceptions=True),
+                                       timeout=wait_for_event_timeout)
             except asyncio.TimeoutError:
-                for k, v in channelEventsHubs.items():
-                    v.unregisterTxEvent(k)
+                for k, v in self.evts.items():
+                    for channel_event_hub in v['channel_event_hubs']:
+                        channel_event_hub.unregisterTxEvent(k)
                 raise TimeoutError('waitForEvent timed out')
             except Exception as e:
-                return str(e)
+                raise e
             else:
-                # check if all events are not None
-                if not all([x is True for x in r]):
-                    msg = 'One or more peers did not validate the events'
-                    raise Exception(msg)
+                # check if all tx are valids
+                txEvents = self.evts[self.evt_tx_id]['txEvents']
+                statuses = [x['tx_status'] for x in txEvents]
+                if not all([x == 'VALID' for x in statuses]):
+                    raise Exception(statuses)
             finally:
                 # disconnect channel_event_hubs
-                for channel_event_hub in channelEventsHubs.values():
-                    channel_event_hub.disconnect()
+                for x in self.evts[self.evt_tx_id]['channel_event_hubs']:
+                    x.disconnect()
 
         ccd = ChaincodeData()
         payload = res['extension']['response']['payload']
@@ -1420,33 +1506,46 @@ class Client(object):
         # wait for transaction id proposal available in ledger and block
         # commited
         if wait_for_event:
-            channelEventsHubs = {}
+            self.evt_tx_id = tx_context_dep.tx_id
+            self.evts = {}
             event_stream = []
+
             for target_peer in target_peers:
                 channel_event_hub = channel.newChannelEventHub(target_peer,
                                                                requestor)
                 stream = channel_event_hub.connect()
-                txid = channel_event_hub.registerTxEvent(tx_context_dep.tx_id)
                 event_stream.append(stream)
-                channelEventsHubs[txid] = channel_event_hub
+
+                txid = channel_event_hub.registerTxEvent(
+                    self.evt_tx_id,
+                    onEvent=self.txEvent)
+
+                if txid not in self.evts:
+                    self.evts[txid] = {'channel_event_hubs': []}
+
+                self.evts[txid]['channel_event_hubs'] += [channel_event_hub]
+
             try:
-                r = await asyncio.wait_for(asyncio.gather(*event_stream),
-                                           timeout=wait_for_event_timeout)
+                await asyncio.wait_for(asyncio.gather(*event_stream,
+                                                      return_exceptions=True),
+                                       timeout=wait_for_event_timeout)
             except asyncio.TimeoutError:
-                for k, v in channelEventsHubs.items():
-                    v.unregisterTxEvent(k)
+                for k, v in self.evts.items():
+                    for channel_event_hub in v['channel_event_hubs']:
+                        channel_event_hub.unregisterTxEvent(k)
                 raise TimeoutError('waitForEvent timed out')
             except Exception as e:
-                return str(e)
+                raise e
             else:
-                # check if all events are not None
-                if not all([x is True for x in r]):
-                    msg = 'One or more peers did not validate the events'
-                    raise Exception(msg)
+                # check if all tx are valids
+                txEvents = self.evts[self.evt_tx_id]['txEvents']
+                statuses = [x['tx_status'] for x in txEvents]
+                if not all([x == 'VALID' for x in statuses]):
+                    raise Exception(statuses)
             finally:
                 # disconnect channel_event_hubs
-                for channel_event_hub in channelEventsHubs.values():
-                    channel_event_hub.disconnect()
+                for x in self.evts[self.evt_tx_id]['channel_event_hubs']:
+                    x.disconnect()
 
         ccd = ChaincodeData()
         payload = res['extension']['response']['payload']
@@ -1495,7 +1594,7 @@ class Client(object):
         :param wait_for_event_timeout: Time to wait for the event from each
          peer's deliver filtered service signifying that the 'invoke'
           transaction has been committed successfully (default 30s)
-        :return: True or False
+        :return: invoke result
         """
         target_peers = []
         for peer in peers:
@@ -1505,11 +1604,11 @@ class Client(object):
                 peer = self.get_peer(peer)
                 target_peers.append(peer)
             else:
-                _logger.error('{} should be a peer name or a Peer instance'.
-                              format(peer))
+                _logger.error(f'{peer} should be a peer name or '
+                              f'a Peer instance')
 
         if not target_peers:
-            err_msg = "Failed to query block: no functional peer provided"
+            err_msg = 'Failed to query block: no functional peer provided'
             _logger.error(err_msg)
             raise Exception(err_msg)
 
@@ -1559,9 +1658,11 @@ class Client(object):
         # wait for transaction id proposal available in ledger and block
         # commited
         if wait_for_event:
-            # wait for chaincode event
-            channelEventsHubs = {}
+            # wait for event
+            self.evt_tx_id = tx_context.tx_id
+            self.evts = {}
             event_stream = []
+
             for target_peer in target_peers:
                 channel_event_hub = channel.newChannelEventHub(target_peer,
                                                                requestor)
@@ -1569,39 +1670,70 @@ class Client(object):
                 event_stream.append(stream)
                 # use chaincode event
                 if cc_pattern is not None:
-                    # unregister when first block got this cc_pattern
-                    # with right tx_id
-                    # it prevents previous block if batch Timeout is too long
-                    reg_id = channel_event_hub.registerChaincodeEvent(
-                        cc_name, cc_pattern, tx_id=tx_context.tx_id,
-                        unregister=True)
-                    channelEventsHubs[reg_id] = channel_event_hub
+
+                    # needed in callback for ref in callback
+                    _uuid = uuid.uuid4().hex
+
+                    cr = channel_event_hub.registerChaincodeEvent(
+                        cc_name,
+                        cc_pattern,
+                        onEvent=self.create_onCcEvent(_uuid))
+
+                    if self.evt_tx_id not in self.evts:
+                        self.evts[self.evt_tx_id] = {'peer': []}
+
+                    self.evts[self.evt_tx_id]['peer'] += [
+                        {
+                            'uuid': _uuid,
+                            'channel_event_hub': channel_event_hub,
+                            'cr': cr
+                        }
+                    ]
                 # use transaction event
                 else:
-                    txid = channel_event_hub.registerTxEvent(tx_context.tx_id)
-                    channelEventsHubs[txid] = channel_event_hub
+                    txid = channel_event_hub.registerTxEvent(
+                        self.evt_tx_id,
+                        unregister=True,
+                        disconnect=True,
+                        onEvent=self.txEvent)
+
+                    if txid not in self.evts:
+                        self.evts[txid] = {'channel_event_hubs': []}
+
+                    self.evts[txid]['channel_event_hubs'] +=\
+                        [channel_event_hub]
 
             try:
-                r = await asyncio.wait_for(asyncio.gather(*event_stream),
-                                           timeout=wait_for_event_timeout)
+                await asyncio.wait_for(asyncio.gather(*event_stream,
+                                                      return_exceptions=True),
+                                       timeout=wait_for_event_timeout)
             except asyncio.TimeoutError:
-                for k, v in channelEventsHubs.items():
+                for k, v in self.evts.items():
                     if cc_pattern is not None:
-                        v.unregisterChaincodeEvent(k)
+                        for x in v['peer']:
+                            x['channel_event_hub'].\
+                                unregisterChaincodeEvent(x['cr'])
                     else:
-                        v.unregisterTxEvent(k)
+                        for x in v['channel_event_hubs']:
+                            x.unregisterTxEvent(k)
                 raise TimeoutError('waitForEvent timed out.')
             except Exception as e:
-                return str(e)
+                raise e
             else:
-                # check if all events are not None
-                if not all([x is True for x in r]):
-                    msg = 'One or more peers did not validate the events'
-                    raise Exception(msg)
+                # check if all tx are valids
+                txEvents = self.evts[self.evt_tx_id]['txEvents']
+                statuses = [x['tx_status'] for x in txEvents]
+                if not all([x == 'VALID' for x in statuses]):
+                    raise Exception(statuses)
             finally:
                 # disconnect channel_event_hubs
-                for channel_event_hub in channelEventsHubs.values():
-                    channel_event_hub.disconnect()
+                if cc_pattern is not None:
+                    for x in self.evts[self.evt_tx_id]['peer']:
+                        x['channel_event_hub'].disconnect()
+                else:
+                    cehs = self.evts[self.evt_tx_id]['channel_event_hubs']
+                    for x in cehs:
+                        x.disconnect()
 
         res = decode_proposal_response_payload(res[0].payload)
         return res['extension']['response']['payload'].decode('utf-8')
@@ -1630,8 +1762,8 @@ class Client(object):
                 peer = self.get_peer(peer)
                 target_peers.append(peer)
             else:
-                _logger.error('{} should be a peer name or a Peer instance'.
-                              format(peer))
+                _logger.error(f'{peer} should be a peer name or a Peer'
+                              f' instance')
 
         if not target_peers:
             err_msg = "Failed to query block: no functional peer provided"

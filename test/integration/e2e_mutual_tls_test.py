@@ -5,6 +5,7 @@ import asyncio
 import os
 import time
 import json
+from asyncio import shield
 
 import docker
 import logging
@@ -301,17 +302,19 @@ class E2eMutualTest(BaseTestCase):
             )
             self.assertTrue(set_tls)
 
-            response = await self.client.chaincode_invoke(
-                requestor=org_admin,
-                channel_name=self.channel_name,
-                peers=['peer1.' + org],
-                args=args,
-                cc_name=CC_NAME,
-                wait_for_event=True,
-                wait_for_event_timeout=120,
-                cc_pattern="^invoked*"  # for chaincode event
-            )
-            self.assertEqual(response, 'ENDORSEMENT_POLICY_FAILURE')
+            with self.assertRaises(Exception) as e:
+                await self.client.chaincode_invoke(
+                    requestor=org_admin,
+                    channel_name=self.channel_name,
+                    peers=['peer1.' + org],
+                    args=args,
+                    cc_name=CC_NAME,
+                    wait_for_event=True,
+                    wait_for_event_timeout=120,
+                    cc_pattern="^invoked*"  # for chaincode event
+                )
+            self.assertEqual(e.exception.args[0],
+                             ['ENDORSEMENT_POLICY_FAILURE'])
 
         logger.info("E2E: chaincode invoke fail done")
 
@@ -734,11 +737,15 @@ class E2eMutualTest(BaseTestCase):
         self.filtered_blocks = []
         channel_event_hub.registerBlockEvent(unregister=False,
                                              onEvent=self.onFilteredEvent)
-        await stream  # will wait until empty block
+
+        try:
+            await shield(stream)
+        except Exception:
+            pass
 
         channel_event_hub.disconnect()
 
-        self.assertEqual(len(self.filtered_blocks), 5)
+        self.assertEqual(len(self.filtered_blocks), 4)
 
         block = self.filtered_blocks[0]
         self.assertEqual(block['number'], 0)
@@ -748,11 +755,6 @@ class E2eMutualTest(BaseTestCase):
         self.assertEqual(filtered_transaction['tx_validation_code'], 'VALID')
         self.assertEqual(filtered_transaction['txid'], '')
         self.assertEqual(filtered_transaction['type'], 'CONFIG')
-
-        # test missing block is present
-        data = {'channel_id': '', 'filtered_transactions': [], 'number': 0}
-        filtered_block = self.filtered_blocks[len(self.filtered_blocks) - 1]
-        self.assertEqual(filtered_block, data)
 
     def onFullEvent(self, block):
         self.blocks.append(block)
@@ -778,11 +780,15 @@ class E2eMutualTest(BaseTestCase):
         self.blocks = []
         channel_event_hub.registerBlockEvent(unregister=False,
                                              onEvent=self.onFullEvent)
-        await stream
+
+        try:
+            await shield(stream)
+        except Exception:
+            pass
 
         channel_event_hub.disconnect()
 
-        self.assertEqual(len(self.blocks), 5)
+        self.assertEqual(len(self.blocks), 4)
 
         block = self.blocks[0]
         self.assertEqual(block['header']['number'], 0)
@@ -796,18 +802,42 @@ class E2eMutualTest(BaseTestCase):
         self.assertEqual(events_obj['chaincode_id'], CC_NAME)
         self.assertEqual(events_obj['payload'], b'400')
 
-        # test missing block is present
-        data = {
-            'header': {
-                'number': 0,
-                'previous_hash': b'',
-                'data_hash': b''
-            },
-            'data': {'data': []},
-            'metadata': {'metadata': []}
+    def onTxEvent(self, tx_id, status, block_number):
+
+        o = {
+            'status': status,
+            'block_number': block_number
         }
-        block = self.blocks[len(self.blocks) - 1]
-        self.assertEqual(block, data)
+
+        if tx_id == 'all':
+            if tx_id not in self.txs:
+                self.txs[tx_id] = []
+            self.txs[tx_id] += [o]
+        else:
+            self.txs[tx_id] = o
+
+    async def get_tx_events(self):
+
+        org = 'org1.example.com'
+        peer = self.client.get_peer('peer0.' + org)
+
+        org_admin = self.client.get_user(org, 'Admin')
+        channel = self.client.get_channel(self.channel_name)
+        channel_event_hub = channel.newChannelEventHub(peer, org_admin)
+        stream = channel_event_hub.connect(start='oldest',
+                                           stop='newest', filtered=False)
+
+        self.txs = {}
+        channel_event_hub.registerTxEvent('all', onEvent=self.onTxEvent)
+
+        try:
+            await shield(stream)
+        except Exception:
+            pass
+
+        channel_event_hub.disconnect()
+
+        self.assertEqual(len(self.txs['all']), 4)
 
     def test_in_sequence(self):
 
@@ -856,6 +886,8 @@ class E2eMutualTest(BaseTestCase):
         loop.run_until_complete(self.get_filtered_block_events())
 
         loop.run_until_complete(self.get_full_block_events())
+
+        loop.run_until_complete(self.get_tx_events())
 
         logger.info("E2E all test cases done\n\n")
 
