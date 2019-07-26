@@ -285,8 +285,14 @@ class ChannelEventHub(object):
 
     def _handle_filtered_chaincode(self, ft, block, cr):
         if 'transaction_actions' in ft:
-            block_events = ft['transaction_actions']
-            self._callChaincodeListener(cr, block_events, block)
+            tx_actions = ft['transaction_actions']
+            for chaincode_action in tx_actions['chaincode_actions']:
+                chaincode_event = chaincode_action['chaincode_event']
+                # need to remove the payload since with filtered blocks it
+                # has an empty byte array value which is not the real value
+                # we do not want the listener to think that is the value
+                del chaincode_event['payload']
+                self._callChaincodeListener(cr, chaincode_event, block)
 
     def handle_filtered_chaincode(self, block, cr):
         for ft in block['filtered_transactions']:
@@ -302,10 +308,9 @@ class ChannelEventHub(object):
     def _handle_full_chaincode(self, tx, block, cr):
         if 'actions' in tx:
             for t in tx['actions']:
-                ppl_r_p = t['payload']['action'][
-                    'proposal_response_payload']
-                block_events = ppl_r_p['extension']['events']
-                self._callChaincodeListener(cr, block_events, block)
+                ppl_r_p = t['payload']['action']['proposal_response_payload']
+                chaincode_event = ppl_r_p['extension']['events']
+                self._callChaincodeListener(cr, chaincode_event, block)
 
     def _handle_endorser_transaction(self, index, tx, cr,
                                      channel_header, block):
