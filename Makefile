@@ -40,7 +40,7 @@ flake8: linter
 linter:
 	tox -e flake8
 
-PREV_VERSION?=0.8.0
+PREV_VERSION?=0.8.1
 
 # changelog update
 changelog:
