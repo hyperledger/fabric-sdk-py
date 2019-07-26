@@ -48,10 +48,12 @@ class ChannelEventHubTest(BaseTestCase):
 
         with self.assertRaises(Exception) as e:
             channel_event_hub.registerBlockEvent(start=0)
+
+        channel_event_hub.disconnect()
         self.assertEqual('The registration with a start/stop block must be'
                          ' done before calling connect()', str(e.exception))
 
-    def test_registred_before(self):
+    def test_registered_before(self):
         channel_event_hub = self.channel.newChannelEventHub(self.peer,
                                                             self.org_admin)
 
@@ -59,8 +61,8 @@ class ChannelEventHubTest(BaseTestCase):
 
         with self.assertRaises(Exception) as e:
             channel_event_hub.registerBlockEvent(start=0)
-        self.assertEqual('Only one event registration is allowed when'
-                         ' start/stop block are used.',
+        self.assertEqual('This ChannelEventHub is not open to event'
+                         ' listener registrations',
                          str(e.exception))
 
     def test_start_bad_connect(self):
@@ -69,7 +71,7 @@ class ChannelEventHubTest(BaseTestCase):
 
         with self.assertRaises(Exception) as e:
             channel_event_hub.connect(start='foo')
-        self.assertEqual('start value must be: last_seen, oldest, latest or'
+        self.assertEqual('start value must be: last_seen, oldest, newest or'
                          ' an integer',
                          str(e.exception))
 

@@ -20,8 +20,9 @@ from hashlib import sha256
 
 from hfc.protos.common import common_pb2
 from hfc.protos.common.common_pb2 import BlockMetadataIndex
+from hfc.protos.orderer import ab_pb2
 from hfc.protos.peer.transaction_pb2 import TxValidationCode
-from hfc.protos.utils import create_seek_info, create_seek_payload, \
+from hfc.protos.utils import create_seek_payload, \
     create_envelope
 from hfc.util.utils import current_timestamp, \
     build_header, build_channel_header, pem_to_der
@@ -57,7 +58,7 @@ class ChannelEventHub(object):
 
         self.stream = None
         self._start = None
-        self._stop = sys.maxsize
+        self._stop = None
         self._filtered = True
         self._reg_nums = []
         self._tx_ids = {}
@@ -66,6 +67,8 @@ class ChannelEventHub(object):
         self._start_stop_action = False
         self._start_stop_connect = False
         self._last_seen = None
+
+        self._ending_block_newest = False
 
     @property
     def connected(self):
@@ -84,14 +87,58 @@ class ChannelEventHub(object):
         """
         self._connected = connected
 
-    def _get_stream(self, start=None, stop=None, filtered=True,
-                    behavior='BLOCK_UNTIL_READY'):
+    def _create_seek_info(self, start=None, stop=None):
+
+        behavior = 'BLOCK_UNTIL_READY'
+
+        # build start
+        seek_start = ab_pb2.SeekPosition()
+        if start is None or start == 'newest':
+            seek_start.newest.CopyFrom(ab_pb2.SeekNewest())
+        elif start == 'oldest':
+            seek_start.oldest.CopyFrom(ab_pb2.SeekOldest())
+        else:
+            seek_specified_start = ab_pb2.SeekSpecified()
+            seek_specified_start.number = start
+            seek_start.specified.CopyFrom(seek_specified_start)
+
+        # build stop
+        seek_stop = ab_pb2.SeekPosition()
+        if stop == 'newest':
+            self._ending_block_newest = True
+            seek_stop.newest.CopyFrom(ab_pb2.SeekNewest())
+            behavior = 'FAIL_IF_NOT_READY'
+        elif start == 'oldest':
+            seek_stop.oldest.CopyFrom(ab_pb2.SeekOldest())
+            behavior = 'FAIL_IF_NOT_READY'
+        else:
+            seek_specified_stop = ab_pb2.SeekSpecified()
+            if stop is not None:
+                seek_specified_stop.number = stop
+                behavior = 'FAIL_IF_NOT_READY'
+            else:
+                seek_specified_stop.number = sys.maxsize
+            seek_stop.specified.CopyFrom(seek_specified_stop)
+
+        # seek info with all parts
+        seek_info = ab_pb2.SeekInfo()
+        seek_info.start.CopyFrom(seek_start)
+        seek_info.stop.CopyFrom(seek_stop)
+
+        # BLOCK_UNTIL_READY will mean hold the stream open and keep sending
+        # as the blocks come in
+        # FAIL_IF_NOT_READY will mean if the block is not there throw an error
+        seek_info.behavior = ab_pb2.SeekInfo.SeekBehavior.Value(behavior)
+
+        return seek_info
+
+    def _get_stream(self):
         """ get the events of the channel.
         Return: the events in success or None in fail.
         """
         _logger.info("create peer delivery stream")
 
-        seek_info = create_seek_info(start, stop, behavior)
+        seek_info = self._create_seek_info(self._start, self._stop)
 
         kwargs = {}
         if self._peer._client_cert_path:
@@ -121,32 +168,24 @@ class ChannelEventHub(object):
         envelope = create_envelope(sig, seek_payload_bytes)
 
         # this is a stream response
-        return self._peer.delivery(envelope, filtered=filtered)
+        return self._peer.delivery(envelope, filtered=self._filtered)
 
-    def check_start_stop_connect(self, start=None, stop=sys.maxsize):
-        if start is not None or stop is not sys.maxsize:
+    def check_start_stop_connect(self, start=None, stop=None):
+        if start is not None or stop is not None:
             if self._start_stop_action:
                 raise Exception('Not able to connect with start/stop'
                                 ' block when a registered listener has'
                                 ' those options.')
 
-            if start == 'last_seen':
-                start = self._last_seen
-            elif start == 'oldest':
-                start = 0
-            elif start == 'latest':
-                start = None
-            elif not (isinstance(start, int) or start is None):
+            if not ((isinstance(start, int)
+                     or start in ('oldest', 'newest'))
+                    or start is None):
                 raise Exception(f'start value must be: last_seen, oldest,'
-                                f' latest or an integer')
+                                f' newest or an integer')
 
-            if stop == 'last_seen':
-                stop = self._last_seen
-            elif stop == 'newest':
-                stop = None
-            elif not (isinstance(stop, int)
-                      or stop is None
-                      or stop == sys.maxsize):
+            if not ((isinstance(stop, int)
+                     or stop == 'newest')
+                    or stop is None):
                 raise Exception(f'stop value must be: last_seen, newest,'
                                 f' sys.maxsize or an integer')
 
@@ -160,6 +199,11 @@ class ChannelEventHub(object):
             self._start_stop_connect = True
 
     def check_start_stop_listener(self, start=None, stop=None):
+
+        if self._start_stop_action:
+            raise Exception('This ChannelEventHub is not open to event'
+                            ' listener registrations')
+
         if start is not None or stop is not None:
             if self.have_registrations():
                 raise Exception('Only one event registration is allowed when'
@@ -169,16 +213,15 @@ class ChannelEventHub(object):
                 raise Exception('The registration with a start/stop block'
                                 ' must be done before calling connect()')
 
-            if stop == 'newest':
-                stop = None
-            elif not (isinstance(stop, int)
-                      or stop is None
-                      or stop == sys.maxsize):
-                raise Exception('stop must be an integer, newest or'
-                                ' sys.maxsize')
+            if stop is not None:
+                if not (isinstance(stop, int)
+                        or stop == 'newest'):
+                    raise Exception('stop must be an integer, newest or'
+                                    ' sys.maxsize')
 
-            if not (isinstance(start, int) or start is None):
-                raise Exception('start must be an integer')
+            if start is not None:
+                if not isinstance(start, int):
+                    raise Exception('start must be an integer')
 
             if isinstance(start, int) \
                     and isinstance(stop, int) \
@@ -188,7 +231,7 @@ class ChannelEventHub(object):
             self._start = start
             self._stop = stop
 
-            self._start_stop_action = True
+        self._start_stop_action = True
 
     def _processBlockEvents(self, block):
         for reg_num in self._reg_nums:
@@ -390,26 +433,26 @@ class ChannelEventHub(object):
             if not self.have_registrations():
                 return True
 
-    def connect(self, filtered=True, start=None, stop=sys.maxsize,
-                behavior='BLOCK_UNTIL_READY'):
+    def connect(self, filtered=True, start=None, stop=None):
         self._filtered = filtered
 
         self.check_start_stop_connect(start, stop)
 
-        self.stream = self._get_stream(start=self._start, stop=self._stop,
-                                       filtered=self._filtered,
-                                       behavior=behavior)
+        self.stream = self._get_stream()
 
         return self.handle_stream(self.stream)
 
     def disconnect(self):
         self.stream.cancel()
         self._start = None
-        self._stop = sys.maxsize
+        self._stop = None
         self._filtered = True
         self._peer = None
         self._requestor = None
         self._channel_name = None
         self._start_stop_action = False
         self._start_stop_connect = False
+
+        self._ending_block_newest = False
+
         self.connected = False

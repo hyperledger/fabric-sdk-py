@@ -728,12 +728,15 @@ class E2eMutualTest(BaseTestCase):
         org_admin = self.client.get_user(org, 'Admin')
         channel = self.client.get_channel(self.channel_name)
         channel_event_hub = channel.newChannelEventHub(peer, org_admin)
-        stream = channel_event_hub.connect(filtered=True, start=0, stop=None)
+        stream = channel_event_hub.connect(filtered=True,
+                                           start='oldest', stop='newest')
 
         self.filtered_blocks = []
         channel_event_hub.registerBlockEvent(unregister=False,
                                              onEvent=self.onFilteredEvent)
         await stream  # will wait until empty block
+
+        channel_event_hub.disconnect()
 
         self.assertEqual(len(self.filtered_blocks), 5)
 
@@ -769,12 +772,15 @@ class E2eMutualTest(BaseTestCase):
         org_admin = self.client.get_user(org, 'Admin')
         channel = self.client.get_channel(self.channel_name)
         channel_event_hub = channel.newChannelEventHub(peer, org_admin)
-        stream = channel_event_hub.connect(start=0, stop=None, filtered=False)
+        stream = channel_event_hub.connect(filtered=False,
+                                           start='oldest', stop='newest')
 
         self.blocks = []
         channel_event_hub.registerBlockEvent(unregister=False,
                                              onEvent=self.onFullEvent)
         await stream
+
+        channel_event_hub.disconnect()
 
         self.assertEqual(len(self.blocks), 5)
 
