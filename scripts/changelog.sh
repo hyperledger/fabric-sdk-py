@@ -8,11 +8,11 @@
 set -o pipefail -o noglob
 
 if [[ $# != 2 ]]; then
-    echo "ERROR: Expecting 2 args"
-    echo "usage: $(basename $0) prev next"
+    echo "ERROR: Expecting 3 args"
+    echo "usage: $(basename $0) start finish release"
     exit 1
 fi
-echo "## $2" > CHANGELOG.new
+echo "## $3" > CHANGELOG.new
 echo "$(date -u)" >> CHANGELOG.new
 echo "" >> CHANGELOG.new
 git log $1..$2 --oneline | grep -v Merge | sed \
