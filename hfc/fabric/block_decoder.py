@@ -142,10 +142,14 @@ class FilteredBlockDecoder(object):
                 }
 
                 if hasattr(ft, 'transaction_actions'):
+                    tx_a = {'chaincode_actions': []}
                     for ca in ft.transaction_actions.chaincode_actions:
-                        ft_decoded[
-                            'transaction_actions'] = decode_chaincode_events(
+                        cce = decode_chaincode_events(
                             ca.chaincode_event.SerializeToString())
+                        tx_a['chaincode_actions'].append({
+                            'chaincode_event': cce
+                        })
+                    ft_decoded['transaction_actions'] = tx_a
                 filtered_block['filtered_transactions'].append(ft_decoded)
 
         except Exception as e:
