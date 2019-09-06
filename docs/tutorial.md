@@ -338,7 +338,7 @@ response = loop.run_until_complete(cli.chaincode_upgrade(
                cc_endorsement_policy=policy, # optional, but recommended
                collections_config=None, # optional, for private data policy
                transient_map=None, # optional, for private data
-               wait_for_event=True # optional, for being sure chaincode is instantiated
+               wait_for_event=True # optional, for being sure chaincode is upgraded
                ))               
 
 ```

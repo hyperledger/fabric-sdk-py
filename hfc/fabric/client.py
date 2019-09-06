@@ -1518,6 +1518,8 @@ class Client(object):
 
                 txid = channel_event_hub.registerTxEvent(
                     self.evt_tx_id,
+                    unregister=True,
+                    disconnect=True,
                     onEvent=self.txEvent)
 
                 if txid not in self.evts:
