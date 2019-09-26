@@ -302,7 +302,7 @@ def validate(tx_prop_req):
                              "in the proposal request")
 
     if tx_prop_req.prop_type == CC_INVOKE:
-        if not tx_prop_req.args and not tx_prop_req.transient_map:
+        if tx_prop_req.args is None and not tx_prop_req.transient_map:
             raise ValueError("Missing 'args' or 'transient_map'"
                              "parameter in the proposal request")
     return tx_prop_req
