@@ -3,7 +3,7 @@
 | Name | Gerrit | GitHub | Chat | Email |
 |---|---|---|---|---|
 | Baohua Yang | baohua | yeasy | baohua | yangbaohua@gmail.com |
-| Dong Wang |  MichaelWang | WandyLau | wangdong | xdragon007@gmail.com |
+| Dong Wang |  MichaelWang | dongwangdw | wangdong | xdragon007@gmail.com |
 | Dixing Xu |  dexhunter | dexhunter | dexhunter | dixingxu@gmail.com |
 | Guillaume Cisco | GuillaumeCisco | GuillaumeCisco | GuillaumeCisco | guillaumecisco@gmail.com |
 
