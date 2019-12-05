@@ -384,9 +384,9 @@ class ChannelEventHub(object):
                         }]
                     else:
                         for x in all_events[ccid]:
-                            _uuid = x.keys()[0]
+                            _uuid = next(iter(x.keys()))
                             if _uuid == cr.uuid:
-                                x['evts'] += [evt]
+                                x[_uuid]['evts'] += [evt]
                                 break
                         else:
                             all_events[ccid].append({
