@@ -318,7 +318,7 @@ class ChannelEventHub(object):
                     txFilter = BlockMetadataIndex.Value('TRANSACTIONS_FILTER')
                     txStatusCodes = block['metadata']['metadata'][txFilter]
                     status = TxValidationCode.Name(txStatusCodes[index])
-                    er.onEvent(tx_id, status, block['header']['number'])
+                    er.onEvent(channel_header['tx_id'], status, block['header']['number'])
                 if er.unregister:
                     self.unregisterTxEvent(tx_id)
                 if er.disconnect:
