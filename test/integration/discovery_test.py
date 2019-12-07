@@ -107,7 +107,7 @@ class DiscoveryTest(BaseTestCase):
         ]'''
 
         # sleep 3 seconds for having all peers for discovery
-        loop.run_until_complete(sleep(3))
+        loop.run_until_complete(sleep(5))
 
         # TEST: config
         # this one contain 3 queries

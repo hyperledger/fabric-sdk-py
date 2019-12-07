@@ -16,6 +16,7 @@
 import logging
 import binascii
 import datetime
+from base64 import b64encode
 from datetime import timezone
 
 # Import required Peer Protos
@@ -141,10 +142,14 @@ class FilteredBlockDecoder(object):
                 }
 
                 if hasattr(ft, 'transaction_actions'):
+                    tx_a = {'chaincode_actions': []}
                     for ca in ft.transaction_actions.chaincode_actions:
-                        ft_decoded[
-                            'transaction_actions'] = decode_chaincode_events(
+                        cce = decode_chaincode_events(
                             ca.chaincode_event.SerializeToString())
+                        tx_a['chaincode_actions'].append({
+                            'chaincode_event': cce
+                        })
+                    ft_decoded['transaction_actions'] = tx_a
                 filtered_block['filtered_transactions'].append(ft_decoded)
 
         except Exception as e:
@@ -216,13 +221,9 @@ class HeaderType(object):
         elif type_value == 3:
             result = decode_endorser_transaction(proto_data)
         else:
-            _logger.debug(
-                'HeaderType :: decode_payload found a header type of {} :: {}'
-                .format(
-                    type_value,
-                    HeaderType.convert_to_string(type_value)
-                )
-            )
+            msg = f'HeaderType :: decode_payload found a header type of' \
+                f' {type_value} :: {HeaderType.convert_to_string(type_value)}'
+            _logger.debug(msg)
             result = {}
         return result
 
@@ -277,19 +278,16 @@ def decode_block_metadata(proto_block_metadata):
     metadata = {}
     metadata['metadata'] = []
     if proto_block_metadata and proto_block_metadata.metadata:
-        signatures = {}
-        signatures = \
-            decode_metadata_signatures(proto_block_metadata.metadata[0])
+        signatures = decode_metadata_signatures(
+            proto_block_metadata.metadata[common_pb2.SIGNATURES])
         metadata['metadata'].append(signatures)
 
-        last_config = {}
         last_config = decode_last_config_sequence_number(
-            proto_block_metadata.metadata[1])
+            proto_block_metadata.metadata[common_pb2.LAST_CONFIG])
         metadata['metadata'].append(last_config)
 
-        transaction_filter = {}
-        transaction_filter = \
-            decode_transaction_filter(proto_block_metadata.metadata[2])
+        transaction_filter = decode_transaction_filter(
+            proto_block_metadata.metadata[common_pb2.TRANSACTIONS_FILTER])
         metadata['metadata'].append(transaction_filter)
 
     return metadata
@@ -416,7 +414,7 @@ def decode_identity(id_bytes):
         proto_identity = identities_pb2.SerializedIdentity()
         proto_identity.ParseFromString(id_bytes)
         identity['mspid'] = proto_identity.mspid
-        identity['id_bytes'] = proto_identity.id_bytes
+        identity['id_bytes'] = proto_identity.id_bytes.decode()
     except Exception as e:
         raise ValueError("BlockDecoder :: decode_identiy failed", e)
     return identity
@@ -466,8 +464,12 @@ def decode_last_config_sequence_number(metadata_bytes):
 
     Returns: deserialized dictionary of config sequence number
     """
-    last_config = {}
-    last_config['value'] = {}
+    last_config = {
+        'value': {
+            'index': 0,
+            'signatures': []
+        }
+    }
     if metadata_bytes:
         proto_metadata = common_pb2.Metadata()
         proto_metadata.ParseFromString(metadata_bytes)
@@ -769,8 +771,7 @@ def decode_config_policy(proto_config_policy):
     config_policy['mod_policy'] = proto_config_policy.mod_policy
     config_policy['policy'] = {}
     if proto_config_policy.policy:
-        config_policy['policy']['type'] = \
-            policy_policy_type[proto_config_policy.policy.type]
+        config_policy['policy']['type'] = proto_config_policy.policy.type
         if (proto_config_policy.policy.type == policies_pb2.Policy.SIGNATURE):
             config_policy['policy']['value'] = \
                 decode_signature_policy_envelope(
@@ -868,27 +869,31 @@ def decode_MSP_principal(proto_msp_principal):
     msp_principal = {}
     msp_principal['principal_classification'] = \
         proto_msp_principal.principal_classification
-    proto_principal = None
     if (msp_principal['principal_classification'] ==
             msp_principal_pb2.MSPPrincipal.ROLE):
+        msp_principal['principal_classification'] = 'ROLE'
         proto_principal = msp_principal_pb2.MSPRole()
         proto_principal.ParseFromString(proto_msp_principal.principal)
-        msp_principal['msp_identifier'] = proto_principal.msp_identifier
+        msp_principal['principal'] = {}
+        msp_principal['principal']['msp_identifier'] = \
+            proto_principal.msp_identifier
         if proto_principal.role == 0:
-            msp_principal['role'] = 'MEMBER'
+            msp_principal['principal']['role'] = 'MEMBER'
         elif proto_principal.role == 1:
-            msp_principal['role'] = 'ADMIN'
+            msp_principal['principal']['role'] = 'ADMIN'
         else:
             pass
     elif (msp_principal['principal_classification'] ==
           msp_principal_pb2.MSPPrincipal.ORGANIZATION_UNIT):
+        msp_principal['principal_classification'] = 'ORGANIZATION_UNIT'
         proto_principal = msp_principal_pb2.OrganizationUnit()
         proto_principal.ParseFromString(proto_msp_principal.principal)
-        msp_principal['msp_identifier'] = \
+        msp_principal['principal'] = {}
+        msp_principal['principal']['msp_identifier'] = \
             proto_principal.msp_identifier
-        msp_principal['organizational_unit_identifier'] = \
+        msp_principal['principal']['organizational_unit_identifier'] = \
             proto_principal.organizational_unit_identifier
-        msp_principal['certifiers_identifier'] = \
+        msp_principal['principal']['certifiers_identifier'] = \
             proto_principal.certifiers_identifier
     else:
         # Case of IDENTITY
@@ -935,9 +940,10 @@ def decode_fabric_MSP_config(msp_config_bytes):
     msp_config['crypto_config'] = \
         decode_crypto_config(
             proto_msp_config.crypto_config.SerializeToString())
-    msp_config['organizational_unit_identifiers'] = \
-        decode_fabric_OU_identifier(
-            proto_msp_config.organizational_unit_identifiers)
+    ou_identifiers = [
+        decode_fabric_OU_identifier(x) for x in
+        proto_msp_config.organizational_unit_identifiers]
+    msp_config['organizational_unit_identifiers'] = ou_identifiers
     msp_config['tls_root_certs'] = \
         to_PEM_certs(proto_msp_config.tls_root_certs)
     msp_config['tls_intermediate_certs'] = \
@@ -947,24 +953,20 @@ def decode_fabric_MSP_config(msp_config_bytes):
     return msp_config
 
 
-def decode_fabric_OU_identifier(proto_organizational_unit_identitfiers):
-    """Decodes Fabric OU Identifiers
+def decode_fabric_OU_identifier(FabricOUIdentifier):
+    """Decodes Fabric OU Identifier
 
     Args:
-        proto_organizational_unit_identitfiers (str): OU Identifiers list
+        FabricOUIdentifier (str): OU Identifier
 
-    Returns: deserialized list of OU Identifier objects.
+    Returns: OU Identifier object.
     """
-    organizational_unit_identifiers = []
-    if proto_organizational_unit_identitfiers:
-        for unitidentifier in proto_organizational_unit_identitfiers:
-            proto_unitidentifier = unitidentifier
-            ou_identifier = {}
-            ou_identifier['certificate'] = proto_unitidentifier.certificate
-            ou_identifier['organizational_unit_identifier'] = \
-                proto_unitidentifier.organizational_unit_identifier
-            organizational_unit_identifiers.append(ou_identifier)
-    return organizational_unit_identifiers
+
+    return {
+        'certificate': FabricOUIdentifier.certificate.decode(),
+        'organizational_unit_identifier':
+            FabricOUIdentifier.organizational_unit_identifier
+    }
 
 
 def decode_fabric_Nodes_OUs(proto_node_organizational_units):
@@ -976,15 +978,16 @@ def decode_fabric_Nodes_OUs(proto_node_organizational_units):
     Returns: deserialized list of OU Identifier objects.
     """
     node_organizational_units = {}
+
     if proto_node_organizational_units:
         node_organizational_units['enable'] = \
             proto_node_organizational_units.enable
         node_organizational_units['client_ou_identifier'] = \
             decode_fabric_OU_identifier(
-                [proto_node_organizational_units.client_ou_identifier])
+                proto_node_organizational_units.client_ou_identifier)
         node_organizational_units['peer_ou_identifier'] = \
             decode_fabric_OU_identifier(
-                [proto_node_organizational_units.peer_ou_identifier])
+                proto_node_organizational_units.peer_ou_identifier)
 
     return node_organizational_units
 
@@ -997,10 +1000,7 @@ def to_PEM_certs(buffer_array_in):
 
     Returns: Concats buffer contents and returns certs
     """
-    buffer_array_out = []
-    for i in buffer_array_in:
-        buffer_array_out.append(i)
-    return buffer_array_out
+    return [b64encode(x).decode() for x in buffer_array_in]
 
 
 def decode_signing_identity_info(signing_identity_info_bytes):
@@ -1011,13 +1011,17 @@ def decode_signing_identity_info(signing_identity_info_bytes):
 
     Returns: deserialized signing identity information.
     """
+    if signing_identity_info_bytes == b'':
+        return None
+
     signing_identity_info = {}
+
     if signing_identity_info_bytes is not None:
         proto_signing_identity_info = msp_config_pb2.SigningIdentityInfo()
         proto_signing_identity_info.ParseFromString(
             signing_identity_info_bytes)
         signing_identity_info['public_signer'] = \
-            proto_signing_identity_info.public_signer
+            proto_signing_identity_info.public_signer.decode()
         signing_identity_info['private_signer'] = \
             decode_key_info(
                 proto_signing_identity_info.private_signer.SerializeToString())
@@ -1376,7 +1380,7 @@ def decode_fabric_peers_info(peers_info_bytes):
         if hasattr(peer_identity, 'mspid'):
             peer['mspid'] = peer_identity.mspid
         if hasattr(peer_identity, 'id_bytes'):
-            peer['id_bytes'] = peer_identity.id_bytes
+            peer['id_bytes'] = peer_identity.id_bytes.decode()
 
         # state info
         peer_state_info = message_pb2.GossipMessage()

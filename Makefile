@@ -5,7 +5,7 @@
 PATH := fabric-bin/bin:$(PATH)
 SHELL := env PATH=$(PATH) /bin/bash
 check: clean
-	bash ./scripts/check_env.sh
+	scripts/check-env.sh
 	echo "=== Testing started... ==="
 	make test
 
@@ -40,12 +40,11 @@ flake8: linter
 linter:
 	tox -e flake8
 
-PREV_VERSION?=0.8.0
+PREV_VERSION?=0.8.1
 
 # changelog update
 changelog:
-	# bash scripts/changelog.sh 838e035 v$(PREV_VERSION)
-	bash scripts/changelog.sh v$(PREV_VERSION) HEAD
+	scripts/changelog.sh v$(PREV_VERSION) HEAD
 
 # Generate the hyperledger/fabric-sdk-py image
 image:

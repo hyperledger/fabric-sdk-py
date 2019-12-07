@@ -57,7 +57,8 @@ class ClientTest(unittest.TestCase):
         request['tx_id'] = 'tx_id'
         request['nonce'] = 'nonce'
         with self.assertRaises(ValueError):
-            loop.run_until_complete(self.client._create_channel(request))
+            loop.run_until_complete(self.client._create_or_update_channel(
+                request))
 
     def test_create_channel_not_list_of_signatures(self):
         request = {}
@@ -68,7 +69,8 @@ class ClientTest(unittest.TestCase):
         request['tx_id'] = 'tx_id'
         request['nonce'] = 'nonce'
         with self.assertRaises(ValueError):
-            loop.run_until_complete(self.client._create_channel(request))
+            loop.run_until_complete(self.client._create_or_update_channel(
+                request))
 
     def test_create_channel_missing_tx_id(self):
         request = {}
@@ -78,7 +80,8 @@ class ClientTest(unittest.TestCase):
         request['nonce'] = 'nonce'
 
         with self.assertRaises(ValueError):
-            loop.run_until_complete(self.client._create_channel(request))
+            loop.run_until_complete(self.client._create_or_update_channel(
+                request))
 
     def test_create_channel_missing_orderer(self):
         request = {}
@@ -88,7 +91,8 @@ class ClientTest(unittest.TestCase):
         request['nonce'] = 'nonce'
 
         with self.assertRaises(ValueError):
-            loop.run_until_complete(self.client._create_channel(request))
+            loop.run_until_complete(self.client._create_or_update_channel(
+                request))
 
     def test_create_channel_missing_channel_name(self):
         request = {
@@ -99,7 +103,8 @@ class ClientTest(unittest.TestCase):
         }
 
         with self.assertRaises(ValueError):
-            loop.run_until_complete(self.client._create_channel(request))
+            loop.run_until_complete(self.client._create_or_update_channel(
+                request))
 
     def test_export_network_profile(self):
         network_info = {

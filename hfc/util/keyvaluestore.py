@@ -112,7 +112,7 @@ class FileKeyValueStore(KeyValueStore):
 
         :return:a future object
         """
-        return rx.Observable.start(lambda: self.get_value(key), scheduler)
+        return rx.start(lambda: self.get_value(key), scheduler)
 
     def async_set_value(self, key, value, scheduler=None):
         """Set a value with a specific key.
@@ -123,8 +123,7 @@ class FileKeyValueStore(KeyValueStore):
 
         :return:a future object
         """
-        return rx.Observable.start(lambda: self.set_value(key, value),
-                                   scheduler)
+        return rx.start(lambda: self.set_value(key, value), scheduler)
 
     def get_attrs(self):
         return ",".join("{}={}"

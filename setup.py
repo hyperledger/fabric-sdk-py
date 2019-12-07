@@ -39,7 +39,6 @@ setup(
             'Intended Audience :: Developers',
             'Operating System :: OS Independent',
             'Programming Language :: Python',
-            'Programming Language :: Python :: 3.0',
             'Programming Language :: Python :: 3.6',
             'Topic :: Utilities',
             'License :: OSI Approved :: Apache Software License',

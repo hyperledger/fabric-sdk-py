@@ -78,7 +78,7 @@ class ChaincodeInvokeTest(BaseTestCase):
         request = build_channel_request(self.client,
                                         self.channel_tx,
                                         self.channel_name)
-        loop.run_until_complete(self.client._create_channel(request))
+        loop.run_until_complete(self.client._create_or_update_channel(request))
 
         join_req = loop.run_until_complete(
             build_join_channel_req(org1, channel, self.client))

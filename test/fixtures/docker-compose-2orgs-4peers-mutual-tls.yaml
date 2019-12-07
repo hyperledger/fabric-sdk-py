@@ -20,6 +20,8 @@ services:
       service: orderer-base
     container_name: orderer.example.com
     hostname: orderer.example.com
+    environment:
+      - ORDERER_GENERAL_TLS_CLIENTAUTHREQUIRED=true
     ports:
       - "7050:7050"
     volumes:

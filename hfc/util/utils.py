@@ -19,6 +19,7 @@ import random
 import os
 import tarfile
 import io
+import time
 
 from google.protobuf.message import DecodeError
 from google.protobuf.timestamp_pb2 import Timestamp
@@ -209,7 +210,8 @@ def build_cc_proposal(cci_spec, header, transient_map):
     cc_payload = proposal_pb2.ChaincodeProposalPayload()
     cc_payload.input = cci_spec.SerializeToString()
     if transient_map:
-        cc_payload.TransientMap = transient_map
+        for name, bytes_value in transient_map.items():
+            cc_payload.TransientMap[name] = bytes_value
 
     proposal = proposal_pb2.Proposal()
     proposal.header = header.SerializeToString()
@@ -334,7 +336,7 @@ def sign_tran_payload(tx_context, tran_payload_bytes):
     return envelope
 
 
-def build_tx_req(responses):
+def build_tx_req(ProposalResponses):
     """ Check the endorsements from peers
 
     Args:
@@ -362,8 +364,8 @@ def build_tx_req(responses):
         def header(self):
             return self._header
 
-    response, proposal, header = responses
-    return TXRequest(response, proposal, header)
+    responses, proposal, header = ProposalResponses
+    return TXRequest(responses, proposal, header)
 
 
 def send_install_proposal(tx_context, peers):
@@ -433,7 +435,33 @@ def send_install_proposal(tx_context, peers):
     return responses, proposal, header
 
 
-def package_chaincode(cc_path, cc_type):
+# https://jira.hyperledger.org/browse/FAB-7065
+# ?page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment
+# -tabpanel&showAll=true
+def zeroTarInfo(tarinfo):
+
+    tarinfo.uid = tarinfo.gid = 500
+    tarinfo.mode = 100644
+    tarinfo.mtime = 0
+    tarinfo.pax_headers = {
+        'atime': 0,
+        'ctime': 0,
+    }
+    return tarinfo
+
+
+# http://www.onicos.com/staff/iz/formats/gzip.html
+# https://github.com/python/cpython/blob/master/Lib/tarfile.py#L420
+class zeroTimeContextManager(object):
+    def __enter__(self):
+        self.real_time = time.time
+        time.time = lambda: 0
+
+    def __exit__(self, type, value, traceback):
+        time.time = self.real_time
+
+
+def package_chaincode(cc_path, cc_type=CC_TYPE_GOLANG):
     """ Package all chaincode env into a tar.gz file
     Args:
         cc_path: path to the chaincode
@@ -454,19 +482,27 @@ def package_chaincode(cc_path, cc_type):
         proj_path = go_path + '/src/' + cc_path
         _logger.debug('Project path={}'.format(proj_path))
 
-        with io.BytesIO() as temp:
-            with tarfile.open(fileobj=temp, mode='w|gz') as code_writer:
-                for dir_path, _, file_names in os.walk(proj_path):
-                    if not file_names:
-                        raise ValueError("No chaincode file found!")
-                    for filename in file_names:
-                        file_path = os.path.join(dir_path, filename)
-                        _logger.debug("The file path {}".format(file_path))
-                        code_writer.add(
-                            file_path,
-                            arcname=os.path.relpath(file_path, go_path))
-            temp.seek(0)
-            code_content = temp.read()
+        if not os.listdir(proj_path):
+            raise ValueError("No chaincode file found!")
+
+        tar_stream = io.BytesIO()
+        with zeroTimeContextManager():
+            dist = tarfile.open(fileobj=tar_stream,
+                                mode='w|gz')
+            for dir_path, _, file_names in os.walk(proj_path):
+                for filename in file_names:
+                    file_path = os.path.join(dir_path, filename)
+
+                    with open(file_path, mode='rb') as f:
+                        arcname = os.path.relpath(file_path, go_path)
+                        tarinfo = dist.gettarinfo(file_path, arcname)
+                        tarinfo = zeroTarInfo(tarinfo)
+                        dist.addfile(tarinfo, f)
+
+            dist.close()
+            tar_stream.seek(0)
+            code_content = tar_stream.read()
+
         if code_content:
             return code_content
         else:

@@ -1,3 +1,36 @@
+## 0.8.1
+Sun Jul 21 10:44:11 UTC 2019
+
+* [13406d7](https://github.com/hyperledger/fabric-sdk-py/commit/13406d7) [FABP-246](https://jira.hyperledger.org/brwose/FABP-246) Fix collections_configs request
+* [e74b7e1](https://github.com/hyperledger/fabric-sdk-py/commit/e74b7e1) [FABP-245](https://jira.hyperledger.org/brwose/FABP-245) Fix decode_last_config_sequence_number
+* [a69ded2](https://github.com/hyperledger/fabric-sdk-py/commit/a69ded2) [FABP-207](https://jira.hyperledger.org/brwose/FABP-207) Add transient_map support at client level
+* [a455361](https://github.com/hyperledger/fabric-sdk-py/commit/a455361) [FABP-244](https://jira.hyperledger.org/brwose/FABP-244) Improve doc string
+* [0bc1f56](https://github.com/hyperledger/fabric-sdk-py/commit/0bc1f56) [FABP-244](https://jira.hyperledger.org/brwose/FABP-244) Add docstring for set tls.
+* [b2c8260](https://github.com/hyperledger/fabric-sdk-py/commit/b2c8260) Fix Error Handling in Scripts
+* [5e22bef](https://github.com/hyperledger/fabric-sdk-py/commit/5e22bef) [FABP-244](https://jira.hyperledger.org/brwose/FABP-244) Add set tls credentials functions
+* [08d8fb8](https://github.com/hyperledger/fabric-sdk-py/commit/08d8fb8) [FABP-243](https://jira.hyperledger.org/brwose/FABP-243) Endorsment Polocies transformation
+* [6356faf](https://github.com/hyperledger/fabric-sdk-py/commit/6356faf) [FABP-242](https://jira.hyperledger.org/brwose/FABP-242) Chaincode Archive Package
+* [34bfd41](https://github.com/hyperledger/fabric-sdk-py/commit/34bfd41) [FABP-233](https://jira.hyperledger.org/brwose/FABP-233) Fix dependencies in requirements-tests.txt
+* [cb96c6c](https://github.com/hyperledger/fabric-sdk-py/commit/cb96c6c) [FABP-241](https://jira.hyperledger.org/brwose/FABP-241) Package Chaincode with multiple folders
+* [4d41aef](https://github.com/hyperledger/fabric-sdk-py/commit/4d41aef) [FABP-239](https://jira.hyperledger.org/brwose/FABP-239) Fix empty signing_identity
+* [8ac14a2](https://github.com/hyperledger/fabric-sdk-py/commit/8ac14a2) [FABP-238](https://jira.hyperledger.org/brwose/FABP-238) gencrl option
+* [4f3215a](https://github.com/hyperledger/fabric-sdk-py/commit/4f3215a) [FABP-237](https://jira.hyperledger.org/brwose/FABP-237) Create update/upgrade methods
+* [7c6bdc8](https://github.com/hyperledger/fabric-sdk-py/commit/7c6bdc8) [FABP-236](https://jira.hyperledger.org/brwose/FABP-236) Chaincode with multiple folder
+* [e70b84e](https://github.com/hyperledger/fabric-sdk-py/commit/e70b84e) [FABP-235](https://jira.hyperledger.org/brwose/FABP-235) Mutual TLS with Orderer
+* [db135d6](https://github.com/hyperledger/fabric-sdk-py/commit/db135d6) [FABP-234](https://jira.hyperledger.org/brwose/FABP-234) Useless cc_version
+* [a7bd827](https://github.com/hyperledger/fabric-sdk-py/commit/a7bd827) [FABP-232](https://jira.hyperledger.org/brwose/FABP-232) Add discovery example in tutorial
+* [c3f9dab](https://github.com/hyperledger/fabric-sdk-py/commit/c3f9dab) Add coala to tox
+* [282b4f0](https://github.com/hyperledger/fabric-sdk-py/commit/282b4f0) [FABP-231](https://jira.hyperledger.org/brwose/FABP-231) Fix list method in channel event hub.
+* [7dc2ab0](https://github.com/hyperledger/fabric-sdk-py/commit/7dc2ab0) [FABP-230](https://jira.hyperledger.org/brwose/FABP-230) Fix issue in decode_range_query_info.
+* [da79711](https://github.com/hyperledger/fabric-sdk-py/commit/da79711) [FAPB-226] Channel Event Hub unregister/disconnect opts
+* [943b1a5](https://github.com/hyperledger/fabric-sdk-py/commit/943b1a5) [FABP-225](https://jira.hyperledger.org/brwose/FABP-225) Handle status != 200 in chaincode_query
+* [9db0f1d](https://github.com/hyperledger/fabric-sdk-py/commit/9db0f1d) [FABP-213](https://jira.hyperledger.org/brwose/FABP-213) Support Async - Rework Event Hub
+* [819e616](https://github.com/hyperledger/fabric-sdk-py/commit/819e616) [FAB-223](https://jira.hyperledger.org/brwose/FAB-223) Minor issues in tutorial
+* [80bd3af](https://github.com/hyperledger/fabric-sdk-py/commit/80bd3af) [FABP-222](https://jira.hyperledger.org/brwose/FABP-222) Prepare for PyPi
+* [1160826](https://github.com/hyperledger/fabric-sdk-py/commit/1160826) [FABP-221](https://jira.hyperledger.org/brwose/FABP-221) Nominate Guillaume as new maintainer
+* [dc80e7b](https://github.com/hyperledger/fabric-sdk-py/commit/dc80e7b) [FABP-220](https://jira.hyperledger.org/brwose/FABP-220) Handle CA in client
+* [6787a37](https://github.com/hyperledger/fabric-sdk-py/commit/6787a37) [FABP-219](https://jira.hyperledger.org/brwose/FABP-219) Use new ChaincodeData proto
+
 ## v0.8.0
 Fri Apr 12 13:05:54 UTC 2019
 

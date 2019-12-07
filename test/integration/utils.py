@@ -4,6 +4,7 @@ import os
 import subprocess
 import time
 import unittest
+import uuid
 
 from hfc.fabric.client import Client
 from hfc.fabric.user import create_user
@@ -53,6 +54,67 @@ class BaseTestCase(unittest.TestCase):
 
     def shutdown_test_env(self):
         cli_call(["docker-compose", "-f", self.compose_file_path, "down"])
+
+
+class ChannelEventHubTestCase(BaseTestCase):
+
+    evts = {}
+
+    def onTxEvent(self, tx_id, tx_status, block_number):
+        if tx_id in self.evts:
+            if 'txEvents' not in self.evts[tx_id]:
+                self.evts[tx_id]['txEvents'] = []
+            self.evts[tx_id]['txEvents'] += [{
+                'tx_status': tx_status,
+                'block_number': block_number,
+            }]
+
+    def create_onCcEvent(self, _uuid):
+        class CCEvent(object):
+            def __init__(self, _uuid, evts, evt_tx_id):
+                self.uuid = _uuid
+                self.evts = evts  # keep reference, no copy
+                self.evt_tx_id = evt_tx_id
+
+            def cc_event(self, cc_event, block_number, tx_id, tx_status):
+                if tx_id in self.evts:
+                    if 'txEvents' not in self.evts[tx_id]:
+                        self.evts[tx_id]['txEvents'] = []
+                    self.evts[tx_id]['txEvents'] += [{
+                        'cc_event': cc_event,
+                        'tx_status': tx_status,
+                        'block_number': block_number,
+                    }]
+
+                # unregister chaincode event if same tx_id
+                # and disconnect as chaincode evt are unregister False
+                if tx_id == self.evt_tx_id:
+                    for x in self.evts[tx_id]['peer']:
+                        if x['uuid'] == self.uuid:
+                            x['channel_event_hub'].\
+                                unregisterChaincodeEvent(x['cr'])
+                            x['channel_event_hub'].disconnect()
+
+        o = CCEvent(_uuid, self.evts, self.evt_tx_id)
+        return o.cc_event
+
+    def registerChaincodeEvent(self, tx_id, cc_name, cc_pattern,
+                               channel_event_hub):
+        _uuid = uuid.uuid4().hex
+        self.evt_tx_id = tx_id
+        cr = channel_event_hub.registerChaincodeEvent(
+            cc_name, cc_pattern, onEvent=self.create_onCcEvent(_uuid))
+
+        if self.evt_tx_id not in self.evts:
+            self.evts[self.evt_tx_id] = {'peer': []}
+
+        self.evts[self.evt_tx_id]['peer'] += [
+            {
+                'uuid': _uuid,
+                'channel_event_hub': channel_event_hub,
+                'cr': cr
+            }
+        ]
 
 
 # This should be deprecated, and use client.get_user() API instead

@@ -4,16 +4,11 @@
 
 import logging
 import threading
-from hashlib import sha256
 
 from hfc.protos.discovery import protocol_pb2_grpc
-from hfc.protos.common import common_pb2
 from hfc.protos.peer import peer_pb2_grpc, events_pb2_grpc
-from hfc.protos.utils import create_seek_info, create_seek_payload, \
-    create_envelope
 from hfc.util.channel import create_grpc_channel
-from hfc.util.utils import current_timestamp, \
-    build_header, build_channel_header, pem_to_der, stream_envelope
+from hfc.util.utils import stream_envelope
 
 DEFAULT_PEER_ENDPOINT = 'localhost:7051'
 
@@ -46,7 +41,10 @@ class Peer(object):
         self._lock = threading.RLock()
         self._channels = []
         self._endpoint = endpoint
-        self._grpc_options = dict()
+        if opts:
+            self._grpc_options = {key: value for (key, value) in opts}
+        else:
+            self._grpc_options = dict()
         self._ssl_target_name = None
         self._tls_ca_certs_path = tls_ca_cert_file
         self._client_key_path = client_key_file
@@ -179,42 +177,37 @@ class Peer(object):
                 stream_envelope(envelope))
         return delivery_result
 
-    def get_events(self, tx_context, channel_name,
-                   start=None, stop=None, filtered=True,
-                   behavior='BLOCK_UNTIL_READY'):
-        """ get the events of the channel.
-        Return: the events in success or None in fail.
+    def set_tls_client_cert_and_key(self, client_key_file=None,
+                                    client_cert_file=None):
+        """Set tls client's cert and key for mutual tls
+
+        Args:
+            client_key (str): file path for Private key used for TLS when
+                making client connections
+            client_cert (str): file path for X.509 certificate used for TLS
+                when making client connections
+
+        Returns:
+            bool: set success value
         """
-        _logger.info("get events")
 
-        seek_info = create_seek_info(start, stop, behavior)
-
-        kwargs = {}
-        if self._client_cert_path:
-            with open(self._client_cert_path, 'rb') as f:
-                b64der = pem_to_der(f.read())
-                kwargs['tls_cert_hash'] = sha256(b64der).digest()
-
-        seek_info_header = build_channel_header(
-            common_pb2.HeaderType.Value('DELIVER_SEEK_INFO'),
-            tx_context.tx_id,
-            channel_name,
-            current_timestamp(),
-            tx_context.epoch,
-            **kwargs
-        )
-
-        seek_header = build_header(
-            tx_context.identity,
-            seek_info_header,
-            tx_context.nonce)
-
-        seek_payload_bytes = create_seek_payload(seek_header, seek_info)
-        sig = tx_context.sign(seek_payload_bytes)
-        envelope = create_envelope(sig, seek_payload_bytes)
-
-        # this is a stream response
-        return self.delivery(envelope, filtered=filtered)
+        try:
+            self._client_key_path = client_key_file
+            self._client_cert_path = client_cert_file
+            self._channel = create_grpc_channel(
+                self._endpoint,
+                self._tls_ca_certs_path,
+                self._client_key_path,
+                self._client_cert_path,
+                opts=[(opt, value) for opt, value in
+                      self._grpc_options.items()])
+            self._endorser_client = peer_pb2_grpc.EndorserStub(self._channel)
+            self._discovery_client = protocol_pb2_grpc.DiscoveryStub(
+                self._channel)
+            self._event_client = events_pb2_grpc.DeliverStub(self._channel)
+        except Exception:
+            return False
+        return True
 
 
 def create_peer(endpoint=DEFAULT_PEER_ENDPOINT, tls_cacerts=None,

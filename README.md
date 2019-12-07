@@ -1,23 +1,14 @@
 # Fabric-SDK-Py
 
-**Note:** This is a **read-only mirror** of the [Gerrit](https://gerrit.hyperledger.org/r/#/admin/projects/fabric-sdk-py) repository, where active development is ongoing.
+**Note:** This is a **read-only mirror** of the [Gerrit](https://gerrit.hyperledger.org/r/#/admin/projects/fabric-sdk-py) repository.
 
-Fabric-SDK-Py is an implementation of the Hyperledger fabric SDK in Python 3.x!
-
-## Incubation Notice
-
-This project is in [_Incubation_](https://goo.gl/4edNRc) now, and was [proposed](https://docs.google.com/document/d/1N-KbwlFb7Oo_pTG2NjjLTqwlhqp_kjyv5fco7VH8WrE/) and [approved](http://lists.hyperledger.org/pipermail/hyperledger-tsc/2016-September/000292.html) by Hyperledger TSC at Sep 08, 2016.
-
-## Bug, Question and Code Contributions
-Welcome for any kind of contributions, e.g., [bugs](https://jira.hyperledger.org/browse/FABP-164?jql=project%20%3D%20FABP%20AND%20status%20in%20(%22In%20Progress%22%2C%20%22To%20Do%22)%20), [questions](https://chat.hyperledger.org/channel/fabric-sdk-py) and [documentation](https://github.com/hyperledger/fabric-sdk-py/tree/master/docs)!
-
-Recommend to read [How to Contribution](CONTRIBUTING.md) before taking action.
+Fabric-SDK-Py is an implementation of the Hyperledger fabric SDK with Python 3.x!
 
 ## Pre-requisite
 
-The SDK requires the `python-dev` and `libssl-dev` pkgs.
+The SDK requires the `Python3` and `Libssl` pkgs.
 
-Run the following cmd to install the pre-requisites:
+Run the following cmd to install the pre-requisites if you do not have:
 
 | OS | command |
 | -- | ---------- |
@@ -41,7 +32,7 @@ See [Tutorial](docs/tutorial.md) to get familiar with the major SDK APIs.
 [virtualenv](https://virtualenv.pypa.io) helps provide a clean environment, suggest to use it to test.
 
 ```sh
-$ pip install virtualenv # install the virtualenv tool if not installed
+$ pip3 install virtualenv # install the virtualenv tool if not installed
 $ make venv  # create a virtual env
 $ source venv/bin/activate
 $ # Do the testing here
@@ -79,6 +70,15 @@ See [Change Log](CHANGELOG.md) for the commit logs. Run `make changelog` to upda
 * [Fabric SDK Python Wiki](wiki.hyperledger.org/projects/fabric-sdk-py)
 * [Hyperledger Project](https://www.hyperledger.org)
 * [Hyperledger mailing lists](http://lists.hyperledger.org/)
+
+## Bug, Question and Code Contributions
+Welcome for any kind of contributions, e.g., [bugs](https://jira.hyperledger.org/projects/FABP), [questions](https://chat.hyperledger.org/channel/fabric-sdk-py) and [documentation](https://github.com/hyperledger/fabric-sdk-py/tree/master/docs)!
+
+Recommend to read [How to Contribution](CONTRIBUTING.md) before taking action.
+
+## Incubation Notice
+
+This project is in [_Incubation_](https://goo.gl/4edNRc) now, and was [proposed](https://docs.google.com/document/d/1N-KbwlFb7Oo_pTG2NjjLTqwlhqp_kjyv5fco7VH8WrE/) and [approved](http://lists.hyperledger.org/pipermail/hyperledger-tsc/2016-September/000292.html) by Hyperledger TSC at Sep 08, 2016.
 
 ## License <a name="license"></a>
 The Hyperledger Fabric-SDK-Py software uses the [Apache License Version 2.0](LICENSE) software license.
