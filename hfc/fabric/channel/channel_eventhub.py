@@ -302,7 +302,7 @@ class ChannelEventHub(object):
             if tx_id == ft['txid'] or tx_id == 'all':
 
                 if er.onEvent is not None:
-                    er.onEvent(tx_id, ft['tx_validation_code'],
+                    er.onEvent(ft['txid'], ft['tx_validation_code'],
                                block['number'])
                 if er.unregister:
                     self.unregisterTxEvent(tx_id)
