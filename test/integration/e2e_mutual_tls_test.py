@@ -318,6 +318,39 @@ class E2eMutualTest(BaseTestCase):
 
         logger.info("E2E: chaincode invoke fail done")
 
+    async def chaincode_channel_event_hub(self):
+        """
+        Test invoking an example chaincode to peer
+
+        :return:
+        """
+        logger.info("E2E: Chaincode Channel Event Hub test start")
+
+        def onEvent(cc_event, block_number, tx_id, tx_status):
+            self.ceh.unregisterChaincodeEvent(self.cr1)
+            self.ceh.unregisterChaincodeEvent(self.cr2)
+            self.ceh.unregisterChaincodeEvent(self.cr3)
+            self.ceh.disconnect()
+
+        orgs = ["org1.example.com"]
+        for org in orgs:
+            org_admin = self.client.get_user(org, "Admin")
+            # register extra chaincode event
+            channel = self.client.get_channel(self.channel_name)
+            target_peer = self.client.get_peer('peer1.' + org)
+            self.ceh = channel.newChannelEventHub(target_peer, org_admin)
+            stream = self.ceh.connect()
+            self.cr1 = self.ceh.registerChaincodeEvent(CC_NAME, 'invoked')
+            self.cr2 = self.ceh.registerChaincodeEvent(CC_NAME, 'invoked')
+            self.cr3 = self.ceh.registerChaincodeEvent(CC_NAME, 'invoked',
+                                                       onEvent=onEvent)
+
+            await asyncio.wait_for(asyncio.gather(stream,
+                                                  return_exceptions=True),
+                                   timeout=120)
+
+        logger.info("E2E: Chaincode Channel Event Hub test done")
+
     async def chaincode_query(self, orgs=None):
         """
         Test invoking an example chaincode to peer
@@ -868,6 +901,8 @@ class E2eMutualTest(BaseTestCase):
         loop.run_until_complete(self.chaincode_invoke())
 
         loop.run_until_complete(self.chaincode_invoke_fail())
+
+        loop.run_until_complete(self.chaincode_channel_event_hub())
 
         loop.run_until_complete(self.chaincode_query())
 
