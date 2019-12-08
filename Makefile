@@ -53,7 +53,7 @@ image:
 # Generate the protobuf python files
 proto:
 	shopt -s globstar
-	python3.6 -m grpc.tools.protoc \
+	python3 -m grpc.tools.protoc \
 		-I./\
 		--python_out=./ \
 		--grpc_python_out=./ \
@@ -69,7 +69,7 @@ clean:
 venv:
 	@echo "virtualenv can be installed by: pip3 install virtualenv"
 	rm -rf venv
-	virtualenv -p python3.6 venv
+	virtualenv -p python3 venv
 	source venv/bin/activate;\
 		pip install tox;\
 		python --version;\

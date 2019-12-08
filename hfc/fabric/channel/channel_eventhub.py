@@ -572,7 +572,7 @@ class ChannelEventHub(object):
                 else:
                     self.disconnect()
             else:
-                _logger.error(f'ChannelEventHub has received and unknown'
+                _logger.error(f'ChannelEventHub has received a unknown'
                               f' message type {event.WhichOneof("Type")}')
 
     def connect(self, filtered=True, start=None, stop=None,
