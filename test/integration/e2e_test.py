@@ -627,12 +627,7 @@ class E2eTest(BaseTestCase):
             'block_number': block_number
         }
 
-        if tx_id == 'all':
-            if tx_id not in self.txs:
-                self.txs[tx_id] = []
-            self.txs[tx_id] += [o]
-        else:
-            self.txs[tx_id] = o
+        self.txs[tx_id] = o
 
     async def get_tx_events(self):
 
@@ -655,7 +650,7 @@ class E2eTest(BaseTestCase):
 
         channel_event_hub.disconnect()
 
-        self.assertEqual(len(self.txs['all']), 4)
+        self.assertEqual(len(self.txs.keys()), 4)
 
     def test_in_sequence(self):
 
