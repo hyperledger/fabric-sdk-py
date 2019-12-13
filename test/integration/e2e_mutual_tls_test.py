@@ -327,22 +327,27 @@ class E2eMutualTest(BaseTestCase):
         logger.info("E2E: Chaincode Channel Event Hub test start")
 
         def onEvent(cc_event, block_number, tx_id, tx_status):
-            self.channel_event_hub.unregisterChaincodeEvent(self.cr1)
-            self.channel_event_hub.unregisterChaincodeEvent(self.cr2)
-            self.channel_event_hub.unregisterChaincodeEvent(self.cr3)
-            self.channel_event_hub.disconnect()
+            self.ceh.unregisterChaincodeEvent(self.cr1)
+            self.ceh.unregisterChaincodeEvent(self.cr2)
+            self.ceh.unregisterChaincodeEvent(self.cr3)
+            self.ceh.disconnect()
 
         orgs = ["org1.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
             # register extra chaincode event
-            self.channel_event_hub = self.client.get_channel(self.channel_name).newChannelEventHub(self.client.get_peer('peer1.' + org), org_admin)
-            stream = self.channel_event_hub.connect()
-            self.cr1 = self.channel_event_hub.registerChaincodeEvent(CC_NAME, 'invoked')
-            self.cr2 = self.channel_event_hub.registerChaincodeEvent(CC_NAME, 'invoked')
-            self.cr3 = self.channel_event_hub.registerChaincodeEvent(CC_NAME, 'invoked', onEvent=onEvent)
+            channel = self.client.get_channel(self.channel_name)
+            target_peer = self.client.get_peer('peer1.' + org)
+            self.ceh = channel.newChannelEventHub(target_peer, org_admin)
+            stream = self.ceh.connect()
+            self.cr1 = self.ceh.registerChaincodeEvent(CC_NAME, 'invoked')
+            self.cr2 = self.ceh.registerChaincodeEvent(CC_NAME, 'invoked')
+            self.cr3 = self.ceh.registerChaincodeEvent(CC_NAME, 'invoked',
+                                                       onEvent=onEvent)
 
-            await asyncio.wait_for(asyncio.gather(stream, return_exceptions=True), timeout=120)
+            await asyncio.wait_for(asyncio.gather(stream,
+                                                  return_exceptions=True),
+                                   timeout=120)
 
         logger.info("E2E: Chaincode Channel Event Hub test done")
 
@@ -837,12 +842,7 @@ class E2eMutualTest(BaseTestCase):
             'block_number': block_number
         }
 
-        if tx_id == 'all':
-            if tx_id not in self.txs:
-                self.txs[tx_id] = []
-            self.txs[tx_id] += [o]
-        else:
-            self.txs[tx_id] = o
+        self.txs[tx_id] = o
 
     async def get_tx_events(self):
 
@@ -865,7 +865,7 @@ class E2eMutualTest(BaseTestCase):
 
         channel_event_hub.disconnect()
 
-        self.assertEqual(len(self.txs['all']), 4)
+        self.assertEqual(len(self.txs.keys()), 4)
 
     def test_in_sequence(self):
 
