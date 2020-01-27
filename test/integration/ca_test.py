@@ -66,6 +66,14 @@ class CATest(unittest.TestCase):
         ca_chain = ca_client.get_cainfo()
         self.assertTrue(ca_chain.startswith(b"-----BEGIN CERTIFICATE-----"))
 
+    def test_idemix_enroll(self):
+
+        ca_service = CAService("http://" + self._ca_server_address)
+        enrollment = ca_service.enroll(self._enrollment_id,
+                                       self._enrollment_secret)
+        idemix = ca_service.idemix_enroll(enrollment, 'Org1')
+
+
     def test_enroll_success(self):
         """Test enroll success.
         """

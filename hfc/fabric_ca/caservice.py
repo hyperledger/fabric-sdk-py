@@ -13,6 +13,7 @@
 # limitations under the License.
 #
 import base64
+import binascii
 import json
 import logging
 
@@ -20,6 +21,7 @@ from numbers import Number
 
 import requests
 import six
+from Cryptodome import Random
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.serialization import Encoding
@@ -29,6 +31,8 @@ from hfc.fabric_ca.certificateService import CertificateService
 from hfc.fabric_ca.identityService import IdentityService
 from hfc.fabric_ca.affiliationService import AffiliationService
 from hfc.util.crypto.crypto import ecies
+
+from hfc.fabric_ca.mpin import create_csprng
 
 DEFAULT_CA_ENDPOINT = 'http://localhost:7054'
 DEFAULT_CA_BASE_URL = '/api/v1/'
@@ -322,6 +326,80 @@ class CAClient(object):
             raise ValueError("get_cainfo failed with errors {0}"
                              .format(res['errors']))
 
+    def _get_rand(self):
+        seedLength = 32
+        seed = Random.get_random_bytes(seedLength)
+        return create_csprng(seed)
+
+    def _randModOrder(self, rng):
+        pass
+        # FIXME
+
+    def idemix_enroll(self, req, enrollment):
+        authorization = self.generateAuthToken(req, enrollment)
+
+        res, st = self._send_ca_post(path="idemix/credential",
+                                     json=req,
+                                     headers={'Authorization': authorization},
+                                     verify=self._ca_certs_path)
+
+        _logger.debug("Response status {0}".format(st))
+        _logger.debug("Raw response json {0}".format(res))
+
+        if res['success']:
+            r = res['result']
+            nonce = binascii.b2a_hex(base64.b64decode(r['nonce']))
+            info = r['CAInfo']
+
+            ipk = info['IssuerPublicKey']
+            rpk = info['IssuerRevocationPublicKey']
+
+            rng = self._get_rand()
+            sk = self._randModOrder(rng)
+
+            idemixCredRequest = {
+                'sk': sk,
+                'nonce': nonce,
+                'ipk': ipk
+            }
+
+            req.update({
+                'request': {
+                    'nym': {
+                        'x': 'fixme',
+                        'y': 'fixme'
+                    },
+                    'issuer_nonce': 'fixme',
+                    'proofC': 'fixme',
+                    'proofS': 'fixme'
+                }
+            })
+            res, st = self._send_ca_post(path="idemix/credential",
+                                         json=req,
+                                         headers={'Authorization': authorization},
+                                         verify=self._ca_certs_path)
+
+            if res['success']:
+                r = res['result']
+                credential = r['Credential']
+                credBytes = binascii.b2a_hex(base64.b64decode(credential))
+
+                criStr = r['CRI']
+                criBytes = binascii.b2a_hex(base64.b64decode(criStr))
+
+                attrs = r['Attrs']
+                ou = attrs['OU']
+                role = attrs['Role']
+
+                # TODO use: Credential, CredentialRevocationInformation protos
+                # return IdemixEnrollment(ipk, rpk, mspID, sk, cred, cri, ou, role)
+                return r
+            else:
+                raise Exception('No response received for idemix enrollment request')
+        else:
+            raise ValueError("Enrollment failed with errors {0}"
+                             .format(res['errors']))
+
     def enroll(self, enrollment_id, enrollment_secret, csr, profile='',
                attr_reqs=None):
         if not enrollment_id or not enrollment_secret or not csr:
@@ -455,6 +533,29 @@ class CAService(object):
         self._crypto = crypto
         self._ca_client = CAClient(target, ca_certs_path, ca_name=ca_name,
                                    cryptoPrimitives=self._crypto)
+
+    def idemix_enroll(self, enrollment, mspID):
+        """Register a user in order to receive a secret
+
+        Args:
+            registrar (Enrollment): The registrar
+        Returns:
+
+        Raises:
+            RequestException: errors in requests.exceptions
+            ValueError: Failed response, json parse error, args missing
+
+        """
+        req = {
+            'mspID': mspID
+        }
+
+        if self._ca_client._ca_name != '':
+            req.update({
+                'caname': self._ca_client._ca_name
+            })
+
+        return self._ca_client.idemix_enroll(req, enrollment)
 
     def enroll(self, enrollment_id, enrollment_secret, csr=None, profile='',
                attr_reqs=None):
