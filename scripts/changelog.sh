@@ -7,9 +7,9 @@
 
 set -o pipefail -o noglob
 
-if [[ $# != 2 ]]; then
+if [[ $# != 3 ]]; then
     echo "ERROR: Expecting 3 args"
-    echo "usage: $(basename $0) start finish release"
+    echo "usage: $(basename $0) start_commit finish_commit release_version"
     exit 1
 fi
 echo "## $3" > CHANGELOG.new
@@ -23,5 +23,6 @@ git log $1..$2 --oneline | grep -v Merge | sed \
 echo "" >> CHANGELOG.new
 
 # Prepend the new log entries to the top of the old log
-cat CHANGELOG.md >> CHANGELOG.new
-mv -f CHANGELOG.new CHANGELOG.md
+Changelog="$(dirname $0)/../CHANGELOG.md"
+cat $Changelog >> CHANGELOG.new
+mv -f CHANGELOG.new $Changelog
