@@ -38,7 +38,7 @@ fi
 
 # pull fabric images
 baseimage_release=0.4.14
-export BASE_VERSION=1.4.1
+BASE_VERSION=1.4.1
 project_version=1.4.0
 img_tag=1.4.0
 
@@ -59,12 +59,11 @@ if ! type configtxgen; then
         mkdir -p fabric-bin
         kernel=$(uname -s | tr '[:upper:]' '[:lower:]' | sed 's/mingw64_nt.*/windows/')
         machine=$(uname -m | sed 's/x86_64/amd64/g' | tr '[:upper:]' '[:lower:]')
-        platform=$kernel-$machine
-        echo "===> Downloading '$platform' specific fabric binaries"
-        bin_url="https://nexus.hyperledger.org/content/repositories/releases/org"
-        bin_url+="/hyperledger/fabric/hyperledger-fabric/$platform-$project_version"
-        bin_url+="/hyperledger-fabric-$platform-$project_version.tar.gz"
-        if ! curl $bin_url | tar -C fabric-bin -vxz; then
+        platform=${kernel}-${machine}
+        echo "===> Downloading '${platform}' specific fabric binaries"
+        bin_url="https://github.com/hyperledger/fabric/releases/download/v${project_version}"
+        bin_url+="/hyperledger-fabric-${platform}-${project_version}.tar.gz"
+        if ! curl -L $bin_url | tar -C fabric-bin -vxz; then
             echo "Binary download failed."
             exit 1
         fi

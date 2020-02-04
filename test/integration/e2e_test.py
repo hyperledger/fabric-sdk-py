@@ -204,7 +204,7 @@ class E2eTest(BaseTestCase):
                 wait_for_event_timeout=120,
                 cc_pattern="^invoked*"  # for chaincode event
             )
-            self.assertEqual(response, '400')
+            self.assertEqual(response, '400')  # 300 + 100
 
         logger.info("E2E: chaincode invoke done")
 
