@@ -615,7 +615,6 @@ class Client(object):
         channel = self.get_channel(channel_name)
         if not channel:
             _logger.warning(f"channel {channel_name} not existed when join")
-            print(f"channel {channel_name} not existed when join")
             return False
 
         target_orderer = None
@@ -626,7 +625,6 @@ class Client(object):
 
         if not target_orderer:
             _logger.warning(f"orderer {orderer} not existed when channel join")
-            print(f"orderer {orderer} not existed when channel join")
             return False
 
         tx_prop_req = TXProposalRequest()
@@ -1570,7 +1568,7 @@ class Client(object):
                                wait_for_event=False,
                                wait_for_event_timeout=30,
                                grpc_broker_unavailable_retry=0,
-                               grpc_broker_unavailable_retry_delay=3000): # ms
+                               grpc_broker_unavailable_retry_delay=3000):  # ms
         """
         Invoke chaincode for ledger update
 
@@ -1632,13 +1630,15 @@ class Client(object):
         res = await asyncio.gather(*responses, return_exceptions=True)
         failed_res = list(map(lambda x: isinstance(x, _MultiThreadedRendezvous), res))
 
-        # remove failed_res from res, orderer will take care of unmet policy
-        # (can be different between app, you should costumize this method to your own needs)
+        # remove failed_res from res, orderer will take care of unmet policy (can be different between app,
+        # you should costumise this method to your own needs)
         if not all([x is False for x in failed_res]):
             res = list(filter(lambda x: hasattr(x, 'response') and x.response.status == 200, res))
 
             # should we retry on failed?
             if grpc_broker_unavailable_retry:
+                _logger.debug(f'Retry on failed proposal responses')
+
                 retry = 0
                 ok = False
 
@@ -1646,8 +1646,8 @@ class Client(object):
                 failed_target_peers = list(itertools.compress(target_peers, failed_res))
 
                 while retry < grpc_broker_unavailable_retry:
-                    _logger.debug(f'Retrying getting proposal responses from peers: {[x.name for x in failed_target_peers]}, retry: {retry}')
-                    print(f'Retrying getting proposal responses from peers: {[x.name for x in failed_target_peers]}, retry: {retry}')
+                    _logger.debug(f'Retrying getting proposal responses from peers:'
+                                  f' {[x.name for x in failed_target_peers]}, retry: {retry}')
 
                     retry_responses, _, _ = channel.send_tx_proposal(tx_context, failed_target_peers)
                     retry_res = await asyncio.gather(*retry_responses, return_exceptions=True)
@@ -1655,7 +1655,7 @@ class Client(object):
                     # get failed res
                     failed_res = list(map(lambda x: isinstance(x, _MultiThreadedRendezvous), retry_res))
 
-                    # remove from failed_target_peers the ones who succeeded and add successful responses to res
+                    # remove from failed_target_peers the ones who succeeded and add succesful response to res
                     res += list(filter(lambda x: hasattr(x, 'response') and x.response.status == 200, retry_res))
                     failed_target_peers = list(itertools.compress(failed_target_peers, failed_res))
 
@@ -1664,11 +1664,14 @@ class Client(object):
                         break
 
                     retry += 1
-                    #TODO should we use a backoff?
+                    # TODO should we use a backoff?
                     sleep(grpc_broker_unavailable_retry_delay / 1000)  # milliseconds
+                    _logger.debug(f'Retry in {grpc_broker_unavailable_retry_delay}ms')
 
                 if not ok:
-                    raise Exception(f'Could not reach peer grpc broker {[x.name for x in failed_target_peers]} even after {grpc_broker_unavailable_retry} retries.')
+                    # TODO should we really raise or send to the orderer without issue?
+                    raise Exception(f'Could not reach peer grpc broker {[x.name for x in failed_target_peers]}'
+                                    f' even after {grpc_broker_unavailable_retry} retries.')
 
         # send transaction to the orderer
         tran_req = utils.build_tx_req((res, proposal, header))
