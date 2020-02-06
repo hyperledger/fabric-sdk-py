@@ -1631,8 +1631,8 @@ class Client(object):
         failed_res = list(map(lambda x: isinstance(x, _MultiThreadedRendezvous), res))
 
         # remove failed_res from res, orderer will take care of unmet policy (can be different between app,
-        # you should costumise this method to your own needs)
-        if not all([x is False for x in failed_res]):
+        # you should costumize this method to your own needs)
+        if any(failed_res):
             res = list(filter(lambda x: hasattr(x, 'response') and x.response.status == 200, res))
 
             # should we retry on failed?
@@ -1640,9 +1640,8 @@ class Client(object):
                 _logger.debug(f'Retry on failed proposal responses')
 
                 retry = 0
-                ok = False
 
-                # recreate responses from unreachable peers
+                # get failed peers
                 failed_target_peers = list(itertools.compress(target_peers, failed_res))
 
                 while retry < grpc_broker_unavailable_retry:
@@ -1655,23 +1654,24 @@ class Client(object):
                     # get failed res
                     failed_res = list(map(lambda x: isinstance(x, _MultiThreadedRendezvous), retry_res))
 
-                    # remove from failed_target_peers the ones who succeeded and add succesful response to res
+                    # add successful responses to res and recompute failed_target_peers
                     res += list(filter(lambda x: hasattr(x, 'response') and x.response.status == 200, retry_res))
                     failed_target_peers = list(itertools.compress(failed_target_peers, failed_res))
 
                     if len(failed_target_peers) == 0:
-                        ok = True
                         break
 
                     retry += 1
                     # TODO should we use a backoff?
-                    sleep(grpc_broker_unavailable_retry_delay / 1000)  # milliseconds
                     _logger.debug(f'Retry in {grpc_broker_unavailable_retry_delay}ms')
+                    sleep(grpc_broker_unavailable_retry_delay / 1000)  # milliseconds
 
-                if not ok:
+                if len(failed_target_peers) > 0:
                     # TODO should we really raise or send to the orderer without issue?
                     raise Exception(f'Could not reach peer grpc broker {[x.name for x in failed_target_peers]}'
                                     f' even after {grpc_broker_unavailable_retry} retries.')
+                else:
+                    _logger.debug('Proposals retrying successful.')
 
         # send transaction to the orderer
         tran_req = utils.build_tx_req((res, proposal, header))
