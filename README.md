@@ -1,7 +1,5 @@
 # Fabric-SDK-Py
 
-**Note:** This is a **read-only mirror** of the [Gerrit](https://gerrit.hyperledger.org/r/#/admin/projects/fabric-sdk-py) repository.
-
 Fabric-SDK-Py is an implementation of the Hyperledger fabric SDK with Python 3.x!
 
 ## Pre-requisite

@@ -1,3 +1,22 @@
+## v0.9.0
+Sat Feb  1 03:36:37 UTC 2020
+
+* [df19cf5](https://github.com/hyperledger/fabric-sdk-py/commit/df19cf5) Convert CODEOWNERS to pointer
+* [7b5989d](https://github.com/hyperledger/fabric-sdk-py/commit/7b5989d) Remove spurious Travis config (#13)
+* [80697d5](https://github.com/hyperledger/fabric-sdk-py/commit/80697d5) Add channel event hub test
+* [25f274f](https://github.com/hyperledger/fabric-sdk-py/commit/25f274f) Fixed syntax error due to python 2 to 3 porting
+* [3a7d935](https://github.com/hyperledger/fabric-sdk-py/commit/3a7d935) [FAB-16916] Correct GitHub ID
+* [c15d296](https://github.com/hyperledger/fabric-sdk-py/commit/c15d296) [FAB-16926] Defang Stalebot
+* [0432d0e](https://github.com/hyperledger/fabric-sdk-py/commit/0432d0e) [FABP-261] Add AZP definition file
+* [a14c277](https://github.com/hyperledger/fabric-sdk-py/commit/a14c277) [FABP-260] empty array args in invoke
+* [8c2a55e](https://github.com/hyperledger/fabric-sdk-py/commit/8c2a55e) [IN-68] Add default GitHub SECURITY policy
+* [36cc150](https://github.com/hyperledger/fabric-sdk-py/commit/36cc150) [FABP-259] chaincode upgrade hotfix
+* [de18ba0](https://github.com/hyperledger/fabric-sdk-py/commit/de18ba0) [FAB-16489] Add CODEOWNERS
+* [7772adc](https://github.com/hyperledger/fabric-sdk-py/commit/7772adc) [FABP-257] Update documentation
+* [7f6161a](https://github.com/hyperledger/fabric-sdk-py/commit/7f6161a) [FABP-248] Channel Event Hub options
+* [697abfb](https://github.com/hyperledger/fabric-sdk-py/commit/697abfb) [FABP-251] rework create_seek_info
+* [b3dd51c](https://github.com/hyperledger/fabric-sdk-py/commit/b3dd51c) [FABP-250] block decoder filtered chaincode_actions
+
 ## 0.8.1
 Sun Jul 21 10:44:11 UTC 2019
 

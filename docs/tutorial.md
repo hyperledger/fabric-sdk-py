@@ -34,7 +34,7 @@ Optionally, you can also verify the version number or run all testing cases.
 $ python
 >>> import hfc
 >>> print(hfc.VERSION)
-0.7.0
+0.9.0
 >>> exit()
 
 $ make check
@@ -94,7 +94,7 @@ cli = Client(net_profile="test/fixtures/network.json")
 print(cli.organizations)  # orgs in the network
 print(cli.peers)  # peers in the network
 print(cli.orderers)  # orderers in the network
-print(cli.CAs)  # ca nodes in the network, TODO
+print(cli.CAs)  # ca nodes in the network
 ```
 
 ### 1.2 Prepare User Id (Optionally)
@@ -124,14 +124,20 @@ Here demos how to interact with Fabric CA.
 * Re-enroll the `user1`;
 * Revoke the `user1`.
 
+To use CA, a CA server must be started. For example,
+
+```bash
+$ docker-compose -f test/fixtures/fixtures/ca/docker-compose.yml up
+```
+
 ```python
 from hfc.fabric_ca.caservice import ca_service
 
-cli = ca_service(target="https://127.0.0.1:7054")
-adminEnrollment = cli.enroll("admin", "pass") # now local will have the admin enrollment
+cacli = ca_service(target="https://127.0.0.1:7054")
+adminEnrollment = cacli.enroll("admin", "pass") # now local will have the admin enrollment
 secret = adminEnrollment.register("user1") # register a user to ca
-user1Enrollment = cli.enroll("user1", secret) # now local will have the user enrollment
-user1ReEnrollment = cli.reenroll(user1Enrollment) # now local will have the user reenrolled object
+user1Enrollment = cacli.enroll("user1", secret) # now local will have the user enrollment
+user1ReEnrollment = cacli.reenroll(user1Enrollment) # now local will have the user reenrolled object
 RevokedCerts, CRL = adminEnrollment.revoke("user1") # revoke the user if you need
 ```
 
@@ -184,9 +190,7 @@ responses = loop.run_until_complete(cli.channel_join(
                channel_name='businesschannel',
                peers=['peer0.org1.example.com',
                       'peer1.org1.example.com'],
-
-               orderer='orderer.example.com',
-               orderer_admin=orderer_admin
+               orderer='orderer.example.com'
                ))
 print(len(responses) == 2)
 
@@ -200,8 +204,7 @@ responses = loop.run_until_complete(cli.channel_join(
                channel_name='businesschannel',
                peers=['peer0.org2.example.com',
                       'peer1.org2.example.com'],
-               orderer='orderer.example.com',
-               orderer_admin=orderer_admin
+               orderer='orderer.example.com'
                ))
 print(len(responses) == 2)
 ```
@@ -371,8 +374,9 @@ response = loop.run_until_complete(cli.query_installed_chaincodes(
 
 chaincodes {
   name: "example_cc"
-  version: "1.0"
+  version: "v1.0"
   path: "github.com/example_cc"
+  id: "\374\361\027j(\332\225\367\253\030\242\303U&\356\326\241\2003|\033\266:\314\250\032\254\221L#\006G"
 }
 """
 
@@ -390,27 +394,9 @@ channels {
   channel_id: "businesschannel"
 }
 """
-
-# Query Channel Info
-response = loop.run_until_complete(cli.query_info(
-               requestor=org1_admin,
-               channel_name='businesschannel',
-               peers=['peer0.org1.example.com'],
-               decode=True
-               ))
-
-# Query Block by tx id
-# example txid of instantiated chaincode transaction
-response = loop.run_until_complete(cli.query_block_by_txid(
-               requestor=org1_admin,
-               channel_name='businesschannel',
-               peers=['peer0.org1.example.com'],
-               tx_id=cli.txid_for_test,
-               decode=True
-               ))
 ```
 
-### 4.2 Query Block by block hash
+### 4.2 Query Block by block hash & transaction id
 
 ```python
 import asyncio
@@ -428,6 +414,14 @@ response = loop.run_until_complete(cli.query_info(
                decode=True
                ))
 
+"""
+# An example response:
+
+height: 3
+currentBlockHash: "\\\255\317\341$\"\371\242aP\030u\325~\263!\352G\014\007\353\353\247\235<\353\020\026\345\254\252r"
+previousBlockHash: "\324\214\275z\301)\351\224 \225\306\"\250jBMa\3432r\035\023\310\250\017w\013\303!f\340\272"
+"""
+
 test_hash = response.currentBlockHash
 
 response = loop.run_until_complete(cli.query_block_by_hash(
@@ -435,6 +429,18 @@ response = loop.run_until_complete(cli.query_block_by_hash(
                channel_name='businesschannel',
                peers=['peer0.org1.example.com'],
                block_hash=test_hash,
+               decode=True
+               ))
+
+tx_id = response.get('data').get('data')[0].get(
+    'payload').get('header').get(
+    'channel_header').get('tx_id')
+
+response = loop.run_until_complete(cli.query_block_by_txid(
+               requestor=org1_admin,
+               channel_name='businesschannel',
+               peers=['peer0.org1.example.com'],
+               tx_id=tx_id,
                decode=True
                ))
 ```
@@ -464,7 +470,7 @@ response = loop.run_until_complete(cli.query_transaction(
                requestor=org1_admin,
                channel_name='businesschannel',
                peers=['peer0.org1.example.com'],
-               tx_id=cli.txid_for_test,
+               tx_id=tx_id, # tx_id same at 4.2
                decode=True
                ))
 
