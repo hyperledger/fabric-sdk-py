@@ -127,17 +127,17 @@ Here demos how to interact with Fabric CA.
 To use CA, a CA server must be started. For example,
 
 ```bash
-$ docker-compose -f test/fixtures/fixtures/ca/docker-compose.yml up
+$ docker-compose -f test/fixtures/ca/docker-compose.yml up
 ```
 
 ```python
 from hfc.fabric_ca.caservice import ca_service
 
-cacli = ca_service(target="https://127.0.0.1:7054")
-adminEnrollment = cacli.enroll("admin", "pass") # now local will have the admin enrollment
+casvc = ca_service(target="http://127.0.0.1:7054")
+adminEnrollment = casvc.enroll("admin", "adminpw") # now local will have the admin enrollment
 secret = adminEnrollment.register("user1") # register a user to ca
-user1Enrollment = cacli.enroll("user1", secret) # now local will have the user enrollment
-user1ReEnrollment = cacli.reenroll(user1Enrollment) # now local will have the user reenrolled object
+user1Enrollment = casvc.enroll("user1", secret) # now local will have the user enrollment
+user1ReEnrollment = casvc.reenroll(user1Enrollment) # now local will have the user reenrolled object
 RevokedCerts, CRL = adminEnrollment.revoke("user1") # revoke the user if you need
 ```
 
@@ -146,10 +146,10 @@ You can also use the new identity management system:
 ```python
 from hfc.fabric_ca.caservice import ca_service
 
-cacli = ca_service(target="https://127.0.0.1:7054")
-identityService = cacli.newIdentityService()
+casvc = ca_service(target="http://127.0.0.1:7054")
+identityService = casvc.newIdentityService()
 
-admin = cacli.enroll("admin", "pass") # now local will have the admin user
+admin = casvc.enroll("admin", "adminpw") # now local will have the admin user
 secret = identityService.create(admin, 'foo') # create user foo
 res = identityService.getOne('foo', admin) # get user foo
 res = identityService.getAll(admin) # get all users
