@@ -265,6 +265,16 @@ class Client(object):
                 if target_name not in self._peers:
                     self._peers[target_name] = peer
 
+    async def close_grpc_channels(self):
+        """
+        Close the peers/orderers gRPC channels
+        :return:
+        """
+        for name in self._peers:
+            await self._peers[name]._channel.close()
+        for name in self._orderers:
+            await self._orderers[name]._channel.close()
+
     def set_tls_client_cert_and_key(self, client_key_file=None,
                                     client_cert_file=None):
 
