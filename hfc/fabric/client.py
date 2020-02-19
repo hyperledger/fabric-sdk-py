@@ -1578,7 +1578,8 @@ class Client(object):
                                wait_for_event=False,
                                wait_for_event_timeout=30,
                                grpc_broker_unavailable_retry=0,
-                               grpc_broker_unavailable_retry_delay=3000):  # ms
+                               grpc_broker_unavailable_retry_delay=3000,  # ms
+                               raise_broker_unavailable=True):
         """
         Invoke chaincode for ledger update
 
@@ -1597,6 +1598,13 @@ class Client(object):
         :param wait_for_event_timeout: Time to wait for the event from each
          peer's deliver filtered service signifying that the 'invoke'
           transaction has been committed successfully (default 30s)
+        :param grpc_broker_unavailable_retry: Number of retry if a broker
+         is unavailable (default 0)
+        :param grpc_broker_unavailable_retry_delay : Delay in ms to retry
+         (default 3000 ms)
+        :param raise_broker_unavailable: Raise if any broker is unavailable,
+         else always send the proposal regardless of unavailable brokers.
+
         :return: invoke result
         """
         target_peers = []
@@ -1677,9 +1685,12 @@ class Client(object):
                     sleep(grpc_broker_unavailable_retry_delay / 1000)  # milliseconds
 
                 if len(failed_target_peers) > 0:
-                    # TODO should we really raise or send to the orderer without issue?
-                    raise Exception(f'Could not reach peer grpc broker {[x.name for x in failed_target_peers]}'
-                                    f' even after {grpc_broker_unavailable_retry} retries.')
+                    if raise_broker_unavailable:
+                        raise Exception(f'Could not reach peer grpc broker {[x.name for x in failed_target_peers]}'
+                                        f' even after {grpc_broker_unavailable_retry} retries.')
+                    else:
+                        _logger.debug(f'Could not reach peer grpc broker {[x.name for x in failed_target_peers]}'
+                                      f' even after {grpc_broker_unavailable_retry} retries.')
                 else:
                     _logger.debug('Proposals retrying successful.')
 
