@@ -1694,6 +1694,11 @@ class Client(object):
                 else:
                     _logger.debug('Proposals retrying successful.')
 
+        # if proposal was not good, return
+        if any([x.response.status != 200 for x in res]):
+            return '; '.join({x.response.message for x in res
+                             if x.response.status != 200})
+
         # send transaction to the orderer
         tran_req = utils.build_tx_req((res, proposal, header))
         tx_context_tx = create_tx_context(
