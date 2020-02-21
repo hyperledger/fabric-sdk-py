@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+import itertools
 import json
 import sys
 import os
@@ -9,6 +10,8 @@ import subprocess
 import shutil
 import uuid
 from _sha256 import sha256
+
+from time import sleep
 
 from hfc.fabric.channel.channel import Channel
 from hfc.fabric.orderer import Orderer
@@ -34,13 +37,14 @@ from hfc.util.keyvaluestore import FileKeyValueStore
 from hfc.fabric.config.default import DEFAULT
 from hfc.util.utils import pem_to_der
 
+from grpc._channel import _MultiThreadedRendezvous
+
 assert DEFAULT
-# consoleHandler = logging.StreamHandler()
+consoleHandler = logging.StreamHandler()
 _logger = logging.getLogger(__name__)
 
-
-# _logger.setLevel(logging.DEBUG)
-# _logger.addHandler(consoleHandler)
+_logger.setLevel(logging.DEBUG)
+_logger.addHandler(consoleHandler)
 
 
 class Client(object):
@@ -621,7 +625,6 @@ class Client(object):
         channel = self.get_channel(channel_name)
         if not channel:
             _logger.warning(f"channel {channel_name} not existed when join")
-            print(f"channel {channel_name} not existed when join")
             return False
 
         target_orderer = None
@@ -632,7 +635,6 @@ class Client(object):
 
         if not target_orderer:
             _logger.warning(f"orderer {orderer} not existed when channel join")
-            print(f"orderer {orderer} not existed when channel join")
             return False
 
         tx_prop_req = TXProposalRequest()
@@ -1574,7 +1576,10 @@ class Client(object):
                                fcn='invoke', cc_pattern=None,
                                transient_map=None,
                                wait_for_event=False,
-                               wait_for_event_timeout=30):
+                               wait_for_event_timeout=30,
+                               grpc_broker_unavailable_retry=0,
+                               grpc_broker_unavailable_retry_delay=3000,  # ms
+                               raise_broker_unavailable=True):
         """
         Invoke chaincode for ledger update
 
@@ -1593,6 +1598,13 @@ class Client(object):
         :param wait_for_event_timeout: Time to wait for the event from each
          peer's deliver filtered service signifying that the 'invoke'
           transaction has been committed successfully (default 30s)
+        :param grpc_broker_unavailable_retry: Number of retry if a broker
+         is unavailable (default 0)
+        :param grpc_broker_unavailable_retry_delay : Delay in ms to retry
+         (default 3000 ms)
+        :param raise_broker_unavailable: Raise if any broker is unavailable,
+         else always send the proposal regardless of unavailable brokers.
+
         :return: invoke result
         """
         target_peers = []
@@ -1629,17 +1641,65 @@ class Client(object):
         channel = self.get_channel(channel_name)
 
         # send proposal
-        responses, proposal, header = channel.send_tx_proposal(tx_context,
-                                                               target_peers)
+        responses, proposal, header = channel.send_tx_proposal(tx_context, target_peers)
 
         # The proposal return does not contain the transient map
         # because we do not sent it in the real transaction later
-        res = await asyncio.gather(*responses)
+        res = await asyncio.gather(*responses, return_exceptions=True)
+        failed_res = list(map(lambda x: isinstance(x, _MultiThreadedRendezvous), res))
+
+        # remove failed_res from res, orderer will take care of unmet policy (can be different between app,
+        # you should costumize this method to your own needs)
+        if any(failed_res):
+            res = list(filter(lambda x: hasattr(x, 'response') and x.response.status == 200, res))
+
+            # should we retry on failed?
+            if grpc_broker_unavailable_retry:
+                _logger.debug(f'Retry on failed proposal responses')
+
+                retry = 0
+
+                # get failed peers
+                failed_target_peers = list(itertools.compress(target_peers, failed_res))
+
+                while retry < grpc_broker_unavailable_retry:
+                    _logger.debug(f'Retrying getting proposal responses from peers:'
+                                  f' {[x.name for x in failed_target_peers]}, retry: {retry}')
+
+                    retry_responses, _, _ = channel.send_tx_proposal(tx_context, failed_target_peers)
+                    retry_res = await asyncio.gather(*retry_responses, return_exceptions=True)
+
+                    # get failed res
+                    failed_res = list(map(lambda x: isinstance(x, _MultiThreadedRendezvous), retry_res))
+
+                    # add successful responses to res and recompute failed_target_peers
+                    res += list(filter(lambda x: hasattr(x, 'response') and x.response.status == 200, retry_res))
+                    failed_target_peers = list(itertools.compress(failed_target_peers, failed_res))
+
+                    if len(failed_target_peers) == 0:
+                        break
+
+                    retry += 1
+                    # TODO should we use a backoff?
+                    _logger.debug(f'Retry in {grpc_broker_unavailable_retry_delay}ms')
+                    sleep(grpc_broker_unavailable_retry_delay / 1000)  # milliseconds
+
+                if len(failed_target_peers) > 0:
+                    if raise_broker_unavailable:
+                        raise Exception(f'Could not reach peer grpc broker {[x.name for x in failed_target_peers]}'
+                                        f' even after {grpc_broker_unavailable_retry} retries.')
+                    else:
+                        _logger.debug(f'Could not reach peer grpc broker {[x.name for x in failed_target_peers]}'
+                                      f' even after {grpc_broker_unavailable_retry} retries.')
+                else:
+                    _logger.debug('Proposals retrying successful.')
 
         # if proposal was not good, return
-        if not all([x.response.status == 200 for x in res]):
-            return res[0].response.message
+        if any([x.response.status != 200 for x in res]):
+            return '; '.join({x.response.message for x in res
+                             if x.response.status != 200})
 
+        # send transaction to the orderer
         tran_req = utils.build_tx_req((res, proposal, header))
         tx_context_tx = create_tx_context(
             requestor,
