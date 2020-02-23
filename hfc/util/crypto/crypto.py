@@ -27,7 +27,8 @@ from cryptography.hazmat.primitives import constant_time
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric.ec \
-    import EllipticCurvePublicNumbers
+    import EllipticCurvePublicKey
+from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.utils \
     import decode_dss_signature, encode_dss_signature
 from cryptography.exceptions import InvalidSignature
@@ -313,9 +314,8 @@ class Ecies(Crypto):
         em = cipher_text[rb_len:ct_len - d_len]
         d = cipher_text[ct_len - d_len:ct_len]
 
-        ephemeral_public_key = EllipticCurvePublicNumbers \
-            .from_encoded_point(self.curve(), rb) \
-            .public_key(default_backend())
+        ephemeral_public_key = EllipticCurvePublicKey \
+            .from_encoded_point(self.curve(), rb)
         z = private_key.exchange(ec.ECDH(), ephemeral_public_key)
         hkdf_output = Hkdf(salt=None, input_key_material=z, hash=self._hash) \
             .expand(length=AES_KEY_LENGTH + HMAC_KEY_LENGTH)
@@ -349,7 +349,10 @@ class Ecies(Crypto):
         :Returns: cipher text
         """
         ephemeral_private_key = self.generate_private_key()
-        rb = ephemeral_private_key.public_key().public_numbers().encode_point()
+        rb = ephemeral_private_key.public_key().public_bytes(
+            serialization.Encoding.X962,
+            serialization.PublicFormat.UncompressedPoint
+        )
 
         z = ephemeral_private_key.exchange(ec.ECDH(), public_key)
         hkdf_output = Hkdf(salt=None, input_key_material=z, hash=self._hash) \
