@@ -15,6 +15,7 @@
 import base64
 import json
 import logging
+import os
 
 from numbers import Number
 
@@ -22,6 +23,7 @@ import requests
 import six
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.serialization import Encoding
 from cryptography.x509 import NameOID
 
@@ -480,6 +482,13 @@ class CAService(object):
 
         """
 
+        # Create wallet if not exist
+        dir_name = os.getcwd() + '/tmp/hfc-kvs'
+        os.makedirs(dir_name, exist_ok=True)
+
+        dir_name = dir_name + '/' + enrollment_id + '/'
+        os.makedirs(dir_name, exist_ok=True)
+
         if attr_reqs:
             if not isinstance(attr_reqs, list):
                 raise ValueError("attr_reqs must be an array of"
@@ -499,12 +508,29 @@ class CAService(object):
                 [x509.NameAttribute(NameOID.COMMON_NAME,
                                     six.u(enrollment_id))]))
 
+        pvt_key = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption())
+            
+        f = open(dir_name+'private_sk', 'wb')
+        f.write(pvt_key)
+        f.close()
+
         enrollmentCert, caCertChain = self._ca_client.enroll(
             enrollment_id,
             enrollment_secret,
             csr.public_bytes(Encoding.PEM).decode('utf-8'),
             profile,
             attr_reqs)
+
+        f = open(dir_name+'enrollmentCert.pem', 'wb')
+        f.write(enrollmentCert)
+        f.close()
+
+        f = open(dir_name+'caCert.pem', 'wb')
+        f.write(caCertChain)
+        f.close()
 
         return Enrollment(private_key, enrollmentCert, caCertChain, self)
 
