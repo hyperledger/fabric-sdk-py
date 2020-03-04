@@ -4,7 +4,6 @@ import shutil
 
 from cryptography.hazmat.primitives import serialization
 
-from hfc.fabric_ca.caservice import ca_service
 from hfc.fabric_ca.caservice import Enrollment
 
 
@@ -59,4 +58,3 @@ class Identity(object):
         f = open(sub_directory+'enrollmentCert.pem', 'wb')
         f.write(self._PrivateKey)
         f.close()
-        
