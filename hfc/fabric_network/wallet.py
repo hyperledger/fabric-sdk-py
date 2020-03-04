@@ -1,29 +1,41 @@
 import os
 import shutil
 
+
+from cryptography.hazmat.primitives import serialization
+
 from hfc.fabric_ca.caservice import ca_service
 from hfc.fabric_ca.caservice import Enrollment
-from cryptography.hazmat.primitives import serialization
 
 
 class FileSystenWallet(object):
-
+    """ FileSystemWallet stores the identities of users and admins
+        ie. it contains the Private Key and Enrollment Certificate
+    """
     def __init__(self, path=os.getcwd() + '/tmp/hfc-kvs'):
         self._path = path
         
         os.makedirs(path, exist_ok=True)
 
     def exists(self, enrollment_id):
+        """ Returns whether or not the creds of a user with a given user_id
+            exists in the wallet
+        """
         return os.path.exists(self._path+'/'+enrollment_id)
 
     def remove(self, enrollment_id):
+        """ Deletes identities of users with the given user_id """
         dirpath = self._path+'/'+enrollment_id
         if dirpath.exists() and dirpath.is_dir():
             shutil.rmtree(dirpath)
 
 
 class Identity(object):
-
+    """ Class represents a tuple containing
+        1) enrollment_id
+        2) Enrollment Certificate of user
+        3) Private Key of user
+    """
     def __init__(self, enrollment_id, user):
 
         if not isinstance(user, Enrollment):
@@ -36,7 +48,7 @@ class Identity(object):
                             encryption_algorithm=serialization.NoEncryption())
 
     def CreateIdentity(self, Wallet):
-
+        """ Saves the particular Identity in the wallet """
         sub_directory = Wallet._path + '/' + self._enrollment_id + '/'
         os.makedirs(sub_directory, exist_ok=True)
 
