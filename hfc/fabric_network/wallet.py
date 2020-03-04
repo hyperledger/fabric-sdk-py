@@ -59,3 +59,4 @@ class Identity(object):
         f = open(sub_directory+'enrollmentCert.pem', 'wb')
         f.write(self._PrivateKey)
         f.close()
+        
