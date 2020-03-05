@@ -13,7 +13,7 @@ class FileSystenWallet(object):
     """
     def __init__(self, path=os.getcwd() + '/tmp/hfc-kvs'):
         self._path = path
-        
+
         os.makedirs(path, exist_ok=True)
 
     def exists(self, enrollment_id):
@@ -43,8 +43,8 @@ class Identity(object):
         self._enrollment_id = enrollment_id
         self._EnrollmentCert = user.cert
         self._PrivateKey = user.private_key.private_bytes(encoding=serialization.Encoding.PEM,
-                            format=serialization.PrivateFormat.PKCS8,
-                            encryption_algorithm=serialization.NoEncryption())
+                                                          format=serialization.PrivateFormat.PKCS8,
+                                                          encryption_algorithm=serialization.NoEncryption())
 
     def CreateIdentity(self, Wallet):
         """ Saves the particular Identity in the wallet """

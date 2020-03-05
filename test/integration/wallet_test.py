@@ -4,12 +4,12 @@ import time
 
 from test.integration.utils import cli_call
 
-from hfc.fabric_ca.caservice import Enrollment
 from hfc.fabric_ca.caservice import ca_service
 from hfc.fabric_network import wallet
 
 ENROLLMENT_ID = "admin"
 ENROLLMENT_SECRET = "adminpw"
+
 
 class WalletTest(unittest.TestCase):
     def setUp(self):
