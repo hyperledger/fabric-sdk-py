@@ -31,7 +31,7 @@ class FileSystenWallet(object):
             shutil.rmtree(dirpath)
 
     def get_user(self, enrollment_id, org, msp_id, state_store=None):
-        """ Returns an instance of a user whose identity 
+        """ Returns an instance of a user whose identity
             is stored in the FileSystemWallet
         """
         if not self.exists(enrollment_id):
