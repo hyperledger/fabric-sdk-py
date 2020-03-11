@@ -5,6 +5,8 @@ import shutil
 from cryptography.hazmat.primitives import serialization
 
 from hfc.fabric_ca.caservice import Enrollment
+from hfc.fabric.user import create_user
+from hfc.util.keyvaluestore import FileKeyValueStore
 
 
 class FileSystenWallet(object):
@@ -27,6 +29,18 @@ class FileSystenWallet(object):
         dirpath = self._path+'/'+enrollment_id
         if dirpath.exists() and dirpath.is_dir():
             shutil.rmtree(dirpath)
+
+    def create_user(self, enrollment_id, org, msp_id, state_store=None):
+        """ Returns an instance of a user whose identity
+            is stored in the FileSystemWallet
+        """
+        if not self.exists(enrollment_id):
+            raise AttributeError('"user" does not exist')
+        state_store = FileKeyValueStore(self._path)
+        cert_path = self._path + '/' + enrollment_id + '/' + 'private_sk'
+        key_path = self._path + '/' + enrollment_id + '/' + 'enrollmentCert.pem'
+        user = create_user(enrollment_id, org, state_store, msp_id, key_path, cert_path)
+        return user
 
 
 class Identity(object):
