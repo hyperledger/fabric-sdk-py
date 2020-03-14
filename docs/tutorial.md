@@ -157,6 +157,36 @@ res = identityService.update('foo', admin, maxEnrollments=3, affiliation='.', en
 res = identityService.delete('foo', admin) # delete user foo
 ```
 
+You can also store the newly created credentials in the FileSystemWallet:
+
+```python
+from hfc.fabric_ca.caservice import ca_service
+from hfc.fabric_network import wallet
+
+casvc = ca_service(target="http://127.0.0.1:7054")
+adminEnrollment = casvc.enroll("admin", "adminpw") # now local will have the admin enrollment
+secret = adminEnrollment.register("user1") # register a user to ca
+user1Enrollment = casvc.enroll("user1", secret) # now local will have the user enrollment
+new_wallet = wallet.FileSystenWallet() # Creates default wallet at ./tmp/hfc-kvs
+user_identity = wallet.Identity("user1", user1Enrollment) # Creates a new Identity of the enrolled user
+user_identity.CreateIdentity(new_wallet) # Stores this identity in the FileSystemWallet
+user1 = new_wallet.create_user("user1", "Org1", "Org1MSP") # Returns an instance of the user object with the newly created credentials
+```
+
+You can also store the newly created credentials in the InMemoryWallet:
+
+```python
+from hfc.fabric_ca.caservice import ca_service
+from hfc.fabric_network import inmemorywallet
+
+casvc = ca_service(target="http://127.0.0.1:7054")
+adminEnrollment = casvc.enroll("admin", "adminpw") # now local will have the admin enrollment
+secret = adminEnrollment.register("user1") # register a user to ca
+user1Enrollment = casvc.enroll("user1", secret) # now local will have the user enrollment
+new_wallet = inmemorywallet.InMemoryWallet() # Creates a new instance of the class InMemoryWallet
+new_wallet.put("user1", user1Enrollment) # Saves the credentials of 'user1' in the wallet
+```
+
 ## 2. Operate Channels with Fabric Network
 
 
