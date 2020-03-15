@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Triggered by the ci
-# To run some specific case, run like `tox -e py30 -- test/integration/create_channel_test.py`
+# To run some specific case, run like `tox -e py3 -- test/integration/create_channel_test.py`
 PATH := fabric-bin/bin:$(PATH)
 SHELL := env PATH=$(PATH) /bin/bash
 check: clean
@@ -12,7 +12,7 @@ check: clean
 # Tox related variables
 TOX = tox
 TOX_VENV_NAMES = pylint flake8 py36
-# [tox.pylint, tox.flake8, tox.py30, tox.py36]
+# [tox.pylint, tox.flake8, tox.py36]
 TOX_VENVS = $(patsubst %, $(TOX).%, $(TOX_VENV_NAMES))
 
 # Run all unit test cases
