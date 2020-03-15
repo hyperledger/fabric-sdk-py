@@ -68,8 +68,6 @@ $ git checkout -b FABP-164
 ```sh
 $ make check
   ...
-  py27: commands succeeded
-  py30: commands succeeded
   py35: commands succeeded
   flake8: commands succeeded
   congratulations :)
