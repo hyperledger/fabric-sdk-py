@@ -488,7 +488,7 @@ def package_chaincode(cc_path, cc_type=CC_TYPE_GOLANG):
         tar_stream = io.BytesIO()
         with zeroTimeContextManager():
             dist = tarfile.open(fileobj=tar_stream,
-                                mode='w|gz')
+                                mode='w|gz', format=tarfile.GNU_FORMAT)
             for dir_path, _, file_names in os.walk(proj_path):
                 for filename in file_names:
                     file_path = os.path.join(dir_path, filename)
