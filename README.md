@@ -43,7 +43,7 @@ The following command will run the testing.
 ```sh
 $ make check # Check environment and run tests
 $ make test # Only run test cases
-$ tox -e py30 -- test/integration/ca_test.py  # Run specified test case
+$ tox -e py3 -- test/integration/ca_test.py  # Run specified test case
 ```
 
 ## Generating Docker images
@@ -65,7 +65,7 @@ See [Change Log](CHANGELOG.md) for the commit logs. Run `make changelog` to upda
 
 ## Other Important Links
 
-* [Fabric SDK Python Wiki](wiki.hyperledger.org/projects/fabric-sdk-py)
+* [Fabric SDK Python Wiki](https://wiki.hyperledger.org/display/fabric/Hyperledger+Fabric+SDK+Py)
 * [Hyperledger Project](https://www.hyperledger.org)
 * [Hyperledger mailing lists](http://lists.hyperledger.org/)
 
