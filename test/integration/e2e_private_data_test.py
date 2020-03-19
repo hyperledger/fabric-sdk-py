@@ -1,6 +1,5 @@
-# Copyright IBM Corp. 2017 All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
-#
+
 import asyncio
 import os
 import time
@@ -210,7 +209,8 @@ class E2ePrivateDataTest(BaseTestCase):
             cc_version=CC_VERSION,
             cc_endorsement_policy=policy,
             collections_config=collections_config,
-            wait_for_event=True
+            wait_for_event=True,
+            wait_for_event_timeout=40
         )
         logger.info(
             "E2E: Chaincode instantiation response {}".format(response))
@@ -273,7 +273,7 @@ class E2ePrivateDataTest(BaseTestCase):
                 args=None,
                 cc_name=CC_NAME,
                 wait_for_event=True,
-                wait_for_event_timeout=30,
+                wait_for_event_timeout=40,
                 transient_map={"marble": marble}
             )
             self.assertFalse(response)

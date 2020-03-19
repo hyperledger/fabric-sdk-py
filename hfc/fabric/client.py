@@ -127,6 +127,7 @@ class Client(object):
             peer.init_with_bundle(peers[name])
             self._peers[name] = peer
 
+    # TODO: make this function optional when starting the client.
     async def init_with_discovery(self, requestor, peer_target,
                                   channel_name=None):
         """
@@ -138,10 +139,10 @@ class Client(object):
         """
 
         if not isinstance(requestor, User):
-            return
+            raise ValueError('requestor must be of User instance.')
 
         if not isinstance(peer_target, Peer):
-            return
+            raise ValueError('peer_target must be of Peer instance.')
         else:
             self._peers[peer_target._name] = peer_target
 
@@ -163,6 +164,8 @@ class Client(object):
 
             members = response.results[0].members
             config_result = None
+            _logger.info('channel name is empty.')
+            return
         else:
             self.new_channel(channel_name)
             channel = self.get_channel(channel_name)
