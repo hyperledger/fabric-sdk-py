@@ -7,9 +7,10 @@
 
 set -o pipefail -o noglob
 
+# pull fabric core images
 dockerFabricPull() {
   local img_tag=$1
-  for images in peer tools orderer ccenv ca; do
+  for images in peer orderer ca ccenv tools; do
       local hlf_img=hyperledger/fabric-$images:$img_tag
       echo "==> Check IMAGE: $hlf_img"
       if [[ -z "$(docker images -q $hlf_img 2> /dev/null)" ]]; then  # not exist
@@ -36,23 +37,17 @@ else
    pip install tox
 fi
 
-# pull fabric images
-baseimage_release=0.4.14
-BASE_VERSION=1.4.1
-project_version=1.4.0
-img_tag=1.4.0
-
-: ${fabric_tag:=$img_tag}
-
-echo "=====> Pulling fabric Images"
-dockerFabricPull $fabric_tag
-
-img=hyperledger/fabric-baseimage:$baseimage_release
+img_tag=1.4.6
+baseimage_tag=0.4.16
+echo "=====> Pulling fabric Images with tag= ${img_tag}, baseimage_tag= ${baseimage_tag}"
+dockerFabricPull ${img_tag}
+img=hyperledger/fabric-baseimage:$baseimage_tag
+[ -z "$(docker images -q $img 2> /dev/null)" ] && docker pull $img
+img=hyperledger/fabric-baseos:$baseimage_tag
 [ -z "$(docker images -q $img 2> /dev/null)" ] && docker pull $img
 
-img=hyperledger/fabric-baseos:$baseimage_release
-[ -z "$(docker images -q $img 2> /dev/null)" ] && docker pull $img
-
+project_version=1.4.6
+echo "=====> Downloading fabric binaries with version= ${project_version}"
 if ! type configtxgen; then
     if  [[ ! -e fabric-bin/bin/configtxgen ]]; then
         echo "configtxgen doesn't exits."
