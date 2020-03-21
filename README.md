@@ -1,6 +1,8 @@
 # Fabric-SDK-Py
 
-Fabric-SDK-Py is an implementation of the Hyperledger fabric SDK with Python 3.x!
+Fabric-SDK-Py is the Python 3.x implementation of Hyperledger Fabric SDK!
+
+Currently, it mainly supports Fabric 1.4.x version.
 
 ## Pre-requisite
 
@@ -14,14 +16,11 @@ Run the following cmd to install the pre-requisites if you do not have:
 | Redhat/CentOS | `sudo yum install python-devel python3-devel openssl-devel` |
 | MacOS | `brew install python python3 openssl` |
 
-More details to build the crypto lib, can be found at
-
-* https://cryptography.io/en/latest/installation/#building-cryptography-on-linux
-* https://cryptography.io/en/latest/installation/#building-cryptography-on-macos
+More details to build the crypto lib, can be found at [Install Python Cryotography Lib](https://cryptography.io/en/latest/installation).
 
 ## Tutorial
 
-See [Tutorial](docs/tutorial.md) to get familiar with the major SDK APIs.
+Read the [Tutorial](docs/tutorial.md) to get familiar with the APIs.
 
 ## Quick Testing
 
@@ -57,22 +56,22 @@ $ make image
 
 Make sure you have `grpcio-tools` installed (`pip install grpcio-tools`)
 ```sh
-make proto
+$ make proto
 ```
 
 ## Change Logs
 See [Change Log](CHANGELOG.md) for the commit logs. Run `make changelog` to update the changelog before new release.
+
+## Bug, Question and Code Contributions
+Welcome for any kind of contributions, e.g., [bugs](https://jira.hyperledger.org/projects/FABP), [questions](https://chat.hyperledger.org/channel/fabric-sdk-py) and [documentation](https://github.com/hyperledger/fabric-sdk-py/tree/master/docs)!
+
+Recommend to read [How to Contribution](CONTRIBUTING.md) before taking action.
 
 ## Other Important Links
 
 * [Fabric SDK Python Wiki](https://wiki.hyperledger.org/display/fabric/Hyperledger+Fabric+SDK+Py)
 * [Hyperledger Project](https://www.hyperledger.org)
 * [Hyperledger mailing lists](http://lists.hyperledger.org/)
-
-## Bug, Question and Code Contributions
-Welcome for any kind of contributions, e.g., [bugs](https://jira.hyperledger.org/projects/FABP), [questions](https://chat.hyperledger.org/channel/fabric-sdk-py) and [documentation](https://github.com/hyperledger/fabric-sdk-py/tree/master/docs)!
-
-Recommend to read [How to Contribution](CONTRIBUTING.md) before taking action.
 
 ## Incubation Notice
 

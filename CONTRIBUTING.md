@@ -5,7 +5,7 @@ Before taking actions, we highly recommend reading the documentation in [docs](d
 
 ## LF ID Application
 
-All the tools require an Linux Foundation (LF) ID.
+All the tools require an Linux Foundation (LF) ID and Github ID.
 
 If you do not have an LF ID, can [apply one](https://identity.linuxfoundation.org) for free.
 
@@ -32,15 +32,18 @@ We're following [pep8 style guide](https://www.python.org/dev/peps/pep-0008/) an
 
 ## Code Commit Steps
 
-The project employs [Gerrit](https://gerrit.hyperledger.org) as the code commit/review system. More details about Gerrit can be learned from the [Hyperledger Fabric Gerrit Doc](https://github.com/hyperledger/fabric/blob/master/docs/Gerrit/).
+The project employs [Github](https://github.com/hyperledger/fabric-sdk-py) as the code commit/review system, and use [hub](https://github.com/github/hub#installation) tool.
 
-*Before committing code, please go to [Jira](https://jira.hyperledger.org/secure/RapidBoard.jspa?rapidView=85) to create a new task or check if there's related existing one, then assign yourself as the assignee. Notice each task will get a Jira number like [FAB-163](https://jira.hyperledger.org/browse/FABP-3082).
+*Before committing code, please go to [Jira](https://jira.hyperledger.org/secure/RapidBoard.jspa?rapidView=85) to create a new task or check if there's related existing one, then assign yourself as the assignee. Notice each task will get a Jira number like [FABP-3082](https://jira.hyperledger.org/browse/FABP-3082).
 
 
-* Clone the project into your working directory with your LF ID (`LF ID`).
+* Clone the project into your working directory with your Github ID.
 
 ```sh
-$ git clone ssh://LFID@gerrit.hyperledger.org:29418/fabric-sdk-py && scp -p -P 29418 LFID@gerrit.hyperledger.org:hooks/commit-msg fabric-sdk-py/.git/hooks/
+$ git clone https://github.com/hyperledger/cello.git
+$ cd cello
+$ hub fork --remote-name=origin
+$ git branch master --set-upstream-to origin/master
 ```
 
 (Optionally) Config your git name and email if not setup previously.
@@ -49,18 +52,12 @@ $ git clone ssh://LFID@gerrit.hyperledger.org:29418/fabric-sdk-py && scp -p -P 2
 $ git config user.name "your name"
 $ git config user.email "your email"
 ```
-
-(Optionally) Setup git-review by inputting your LF ID. Notice this is only necessary once.
-```sh
-$ git review -s
-```
-
-* Assign yourself a `To Do` Jira task, mark it as `In progress`, then create a branch with the Jira task number off of your cloned repository, e.g., for FABP-164, it can be:
+* Assign yourself a `To Do` Jira task, mark it as `In progress`, then create a branch with the Jira task number off of your cloned repository, e.g., for FABP-XXXX, it can be:
 
 ```sh
 $ cd fabric-sdk-py
-$ git pull
-$ git checkout -b FABP-164
+$ git fetch upstream master && git rebase FETCH_HEAD && git push -f origin
+$ git checkout -b FABP-XXXX
 ```
 
 * After modifying the code, run `make check` to make sure all the checking is passed. Then Commit your code with `-s` to sign-off, and `-a` to automatically add changes (or run `git add .` to include all changes manually).
@@ -68,7 +65,7 @@ $ git checkout -b FABP-164
 ```sh
 $ make check
   ...
-  py35: commands succeeded
+  py37: commands succeeded
   flake8: commands succeeded
   congratulations :)
 
@@ -83,23 +80,15 @@ Example commit msg may look like:
 You can add more details here in several paragraphs, but please keep each line
 width less than 80 characters. A bug fix should include the issue number.
 
-Fix https://jira.hyperledger.org/browse/FABP-164.
-
 Change-Id: Ife0f1a3866a636991e36b0b5b25b8f58c9208b79
 Signed-off-by: Your Name <committer@email.address>
 ```
 
-* Submit your commit using `git review`.
+* Push the code to the origin repo and create a pull request.
 
 ```sh
-$ git review
-remote: Processing changes: new: 1, refs: 1, done
-remote:
-remote: New Changes:
-remote:   http://gerrit.hyperledger.org/r/25966 [FABP-164] Enhance the contribution documentation
-remote:
-To ssh://gerrit.hyperledger.org:29418/fabric-sdk-py
- * [new branch]      HEAD -> refs/publish/master/FABP-164
+$ hub push --set-upstream origin FABP-xxxx
+$ hub pull-request
 ```
 
 Notice you will get a [gerrit item url](http://gerrit.hyperledger.org/r/7917), open and check the status.
