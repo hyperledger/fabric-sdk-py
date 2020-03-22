@@ -15,10 +15,7 @@ class CouchDBWalletStore(object):
     def exists(self, enrollment_id):
         try:
             enrollment_dict = self.db[enrollment_id]
-            if not isinstance(enrollment_dict[enrollment_id].pop(), Enrollment):
-                raise ValueError('"user" is not a valid Enrollment object')
-            else:
-                return True
+            return True
         except:
             return False
 
@@ -28,5 +25,7 @@ class CouchDBWalletStore(object):
         PrivateKey = user_enrollment.private_key.private_bytes(encoding=serialization.Encoding.PEM,
                                                     format=serialization.PrivateFormat.PKCS8,
                                                     encryption_algorithm=serialization.NoEncryption())
-        doc = {enrollment_id: {user_enrollment}}
+
+        EnrollmentCert = user_enrollment.cert
+        doc = {'EnrollmentCert':EnrollmentCert, 'PrivateKey':PrivateKey}
         self.db[enrollment_id] = doc
