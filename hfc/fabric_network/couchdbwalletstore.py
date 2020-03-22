@@ -1,9 +1,11 @@
 import couchdb
 
+from cryptography.hazmat.primitives import serialization
+
 from hfc.fabric_ca.caservice import Enrollment
 
 class CouchDBWalletStore(object):
-    def __init__(self, config='http://localhost:5984',  dbName):
+    def __init__(self, dbName, config='http://localhost:5984'):
         self.server = couchdb.Server(config)
         try:
             self.db = self.server[dbName]
@@ -13,7 +15,7 @@ class CouchDBWalletStore(object):
     def exists(self, enrollment_id):
         try:
             enrollment_dict = self.db[enrollment_id]
-            if not isinstance(enrollment_dict[enrollment_id], Enrollment):
+            if not isinstance(enrollment_dict[enrollment_id].pop(), Enrollment):
                 raise ValueError('"user" is not a valid Enrollment object')
             else:
                 return True
@@ -23,5 +25,8 @@ class CouchDBWalletStore(object):
     def put(self, enrollment_id, user_enrollment):
         if not isinstance(user_enrollment, Enrollment):
             raise ValueError('"user_enrollment" is not a valid Enrollment object')
-        doc = {enrollment_id: user_enrollment}
+        PrivateKey = user_enrollment.private_key.private_bytes(encoding=serialization.Encoding.PEM,
+                                                    format=serialization.PrivateFormat.PKCS8,
+                                                    encryption_algorithm=serialization.NoEncryption())
+        doc = {enrollment_id: {user_enrollment}}
         self.db[enrollment_id] = doc
