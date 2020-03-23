@@ -37,9 +37,6 @@ else
    pip install tox
 fi
 
-echo "===> Installing couchdb"
-snap install couchdb
-
 img_tag=1.4.6
 baseimage_tag=0.4.16
 echo "=====> Pulling fabric Images with tag= ${img_tag}, baseimage_tag= ${baseimage_tag}"

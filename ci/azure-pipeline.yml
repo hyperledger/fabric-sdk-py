@@ -22,3 +22,7 @@ steps:
     displayName: Install VirtualEnv
   - script: make check
     displayName: Run Checks
+  - script: |
+      apt update
+      apt install snapd
+      snap install couchdb
