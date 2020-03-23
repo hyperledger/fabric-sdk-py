@@ -1,0 +1,305 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Python Coding Style &mdash; fabric-sdk-py  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="CONTRIBUTING.html" />
+    <link rel="prev" title="Release Notes" href="release_note.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> fabric-sdk-py
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.9.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#prepare-a-testing-environment">0. Prepare a Testing Environment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#install-fabric-sdk">0.1. Install Fabric SDK</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#setup-a-fabric-network">0.2. Setup a Fabric Network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#create-the-connection-profile">0.3. Create the Connection Profile</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#get-credentials">1. Get Credentials</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#load-the-connection-profile">1.1 Load the Connection Profile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#prepare-user-id-optionally">1.2 Prepare User Id (Optionally)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#using-local-credential">1.2.1 Using Local Credential</a></li>
+<li class="toctree-l4"><a class="reference internal" href="tutorial.html#get-credentail-from-fabric-ca">1.2.2 Get Credentail from Fabric CA</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#operate-channels-with-fabric-network">2. Operate Channels with Fabric Network</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#create-a-new-channel-and-join-it">2.1 Create a new channel and join it</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#update-the-channel-configuration">2.2 Update the Channel Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#operate-chaincodes-with-fabric-network">3. Operate Chaincodes with Fabric Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#query-informations">4. Query Informations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#basic-usage">4.1 Basic Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#query-block-by-block-hash-transaction-id">4.2 Query Block by block hash &amp; transaction id</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#query-block-transaction-and-instantiated-chaincodes">4.3 Query Block, Transaction and Instantiated Chaincodes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#get-channel-configuration">4.4 Get channel configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial.html#use-channel-discovery">4.5 Use channel discovery</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#license-a-name-license-a">License <a name="license"></a></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="release_note.html">Release Note</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="release_note.html#v0-8-0-apr-12-2019">v0.8.0 Apr 12, 2019</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="release_note.html#add-new-features">Add new features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="release_note.html#improvements">Improvements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="release_note.html#known-vulnerabilities">Known Vulnerabilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="release_note.html#resolved-vulnerabilities">Resolved Vulnerabilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="release_note.html#change-log">Change Log</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Code Style</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#license-a-name-license-a">License <a name="license"></a></a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">fabric-sdk-py</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Python Coding Style</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/code_style.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="python-coding-style">
+<h1>Python Coding Style<a class="headerlink" href="#python-coding-style" title="Permalink to this headline">¶</a></h1>
+<p>In order to make the code more maintainable, and helps developers understand code in reviews, we have a set of style guidelines for clarity.</p>
+<ul class="simple">
+<li><p>Please read <a class="reference external" href="https://www.python.org/dev/peps/pep-0008/">pep8 style guide</a> before you try to contribute any code. The guidelines gives some basic coding conventions, including:</p>
+<ul>
+<li><p>Code lay-out</p></li>
+<li><p>String Quotes</p></li>
+<li><p>Naming Conventions</p></li>
+<li><p>Comments</p></li>
+</ul>
+</li>
+<li><p>Some general guidelines you should follow like following when you write SDK code:</p>
+<ul>
+<li><p>Use only UNIX style newlines (\n), not Windows style (\r\n)</p></li>
+<li><p>It is preferred to wrap long lines in parentheses and not a backslash for line continuation.</p></li>
+<li><p>Do not import more than one module per line</p></li>
+<li><p>Docstrings should not start with a space.</p></li>
+<li><p>Multi line docstrings should end on a new line.</p></li>
+<li><p>Multi line docstrings should start without a leading new line.</p></li>
+<li><p>Multi line docstrings should start with a one line summary followed by an empty line.</p></li>
+</ul>
+</li>
+<li><p>For every api which will be used by our client, the api Docstrings are mandatory. The Google style guide contains an excellent Python style guide, we should follow. For example:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">square_root</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the square root of a number.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        n: the number to get the square root of.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        the square root of n.</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        TypeError: if n is not a number.</span>
+<span class="sd">        ValueError: if n is negative.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>To extend this style to also include type information in the arguments, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add a new value.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value (str): the value to add.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<div class="section" id="license-a-name-license-a">
+<h2>License <a name="license"></a><a class="headerlink" href="#license-a-name-license-a" title="Permalink to this headline">¶</a></h2>
+<p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This document is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="CONTRIBUTING.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="release_note.html" class="btn btn-neutral float-left" title="Release Notes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Hyperledger Community
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
