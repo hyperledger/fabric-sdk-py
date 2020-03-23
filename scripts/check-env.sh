@@ -38,9 +38,9 @@ else
 fi
 
 echo "===> Installing couchdb"
-sudo apt update
-sudo apt install snapd
-sudo snap install couchdb
+apt update
+apt install snapd
+snap install couchdb
 
 img_tag=1.4.6
 baseimage_tag=0.4.16
