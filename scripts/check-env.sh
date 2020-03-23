@@ -38,8 +38,6 @@ else
 fi
 
 echo "===> Installing couchdb"
-apt update
-apt install snapd
 snap install couchdb
 
 img_tag=1.4.6
