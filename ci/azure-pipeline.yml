@@ -21,10 +21,10 @@ steps:
   - script: pip install virtualenv
     displayName: Install VirtualEnv
   - script: |
-      curl localhost:5984
       sudo apt update
       sudo apt install snapd
       sudo snap install couchdb
+      curl localhost:5984
     displayName: Install CouchDB
   - script: make check
     displayName: Run Checks
