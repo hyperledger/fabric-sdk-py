@@ -22,9 +22,9 @@ steps:
     displayName: Install VirtualEnv
   - script: |
       curl localhost:5984
-      apt update
-      apt install snapd
-      snap install couchdb
+      sudo apt update
+      sudo apt install snapd
+      sudo snap install couchdb
     displayName: Install CouchDB
   - script: make check
     displayName: Run Checks
