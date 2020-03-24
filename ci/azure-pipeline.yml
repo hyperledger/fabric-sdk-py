@@ -20,10 +20,11 @@ steps:
       versionSpec: '3.6'
   - script: pip install virtualenv
     displayName: Install VirtualEnv
-  - script: make check
-    displayName: Run Checks
   - script: |
       curl localhost:5984
       apt update
       apt install snapd
       snap install couchdb
+    displayName: Install CouchDB
+  - script: make check
+    displayName: Run Checks
