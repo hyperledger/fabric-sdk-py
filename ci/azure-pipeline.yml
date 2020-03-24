@@ -23,6 +23,7 @@ steps:
   - script: make check
     displayName: Run Checks
   - script: |
+      curl localhost:5984
       apt update
       apt install snapd
       snap install couchdb
