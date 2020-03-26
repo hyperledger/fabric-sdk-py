@@ -43,7 +43,8 @@ class CouchDBWalletStore(object):
             raise ValueError('"user_enrollment" is not a valid Enrollment object')
         PrivateKey = user_enrollment.private_key.private_bytes(encoding=serialization.Encoding.PEM,
                                                                format=serialization.PrivateFormat.PKCS8,
-                                                               encryption_algorithm=serialization.NoEncryption())
-        EnrollmentCert = user_enrollment.cert
+                                                               encryption_algorithm=serialization.NoEncryption()
+                                                               ).decode()
+        EnrollmentCert = user_enrollment.cert.decode()
         doc = {'EnrollmentCert': EnrollmentCert, 'PrivateKey': PrivateKey}
         self.db[enrollment_id] = doc
