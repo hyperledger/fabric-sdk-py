@@ -13,7 +13,16 @@ pr:
       - master
 pool:
   vmImage: ubuntu-18.04
+  
+resources:
+  containers:
+  - container: couchdb
+    image: couchdb
+    ports:
+    - 5984:5984
 
+services:
+  couchdb: couchdb
 steps:
   - task: UsePythonVersion@0
     inputs:
@@ -21,11 +30,13 @@ steps:
   - script: pip install virtualenv
     displayName: Install VirtualEnv
   - script: |
-      sudo ufw allow from any to any port 5948 proto tcp
-      sudo apt update
-      sudo apt install snapd
       sudo snap install couchdb
-      curl localhost:5984
+      sudo snap set couchdb admin=admin
+      sudo snap start couchdb
+      sudo snap connect couchdb:mount-observe
+      sudo snap connect couchdb:process-control
+  - script: sleep 5
+  - script: curl localhost:5984
     displayName: Install CouchDB
   - script: make check
     displayName: Run Checks
