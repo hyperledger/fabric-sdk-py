@@ -1,6 +1,6 @@
 Documentation for `fabric-sdk-py` package.
 
-Prerequisuites:
+Commands to build at local:
 
 ```bash
 $ pip install sphinx

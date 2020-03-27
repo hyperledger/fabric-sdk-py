@@ -20,7 +20,7 @@ More details to build the crypto lib, can be found at [Install Python Cryotograp
 
 ## Tutorial
 
-Read the [Tutorial](https://fabric-sdk-py.readthedocs.io/tutorial.html) ([Source](docs/source/tutorial.md)) to get familiar with the APIs.
+Read the [Tutorial](https://fabric-sdk-py.readthedocs.io/en/latest/tutorial.html) ([Source](docs/source/tutorial.md)) to get familiar with the APIs.
 
 ## Quick Testing
 
