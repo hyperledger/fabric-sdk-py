@@ -37,11 +37,11 @@ The project employs [Github](https://github.com/hyperledger/fabric-sdk-py) as th
 *Before committing code, please go to [Jira](https://jira.hyperledger.org/secure/RapidBoard.jspa?rapidView=85) to create a new task or check if there's related existing one, then assign yourself as the assignee. Notice each task will get a Jira number like [FABP-3082](https://jira.hyperledger.org/browse/FABP-3082).
 
 
-* Clone the project into your working directory with your Github ID.
+* Clone this project `fabric-sdk-py` into your working directory.
 
 ```sh
-$ git clone https://github.com/hyperledger/cello.git
-$ cd cello
+$ git clone https://github.com/hyperledger/fabric-sdk-py.git
+$ cd fabric-sdk-py
 $ hub fork --remote-name=origin
 $ git branch master --set-upstream-to origin/master
 ```
@@ -52,6 +52,7 @@ $ git branch master --set-upstream-to origin/master
 $ git config user.name "your name"
 $ git config user.email "your email"
 ```
+
 * Assign yourself a `To Do` Jira task, mark it as `In progress`, then create a branch with the Jira task number off of your cloned repository, e.g., for FABP-XXXX, it can be:
 
 ```sh
