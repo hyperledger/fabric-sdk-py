@@ -37,8 +37,8 @@ class FileSystenWallet(object):
         if not self.exists(enrollment_id):
             raise AttributeError('"user" does not exist')
         state_store = FileKeyValueStore(self._path)
-        cert_path = self._path + '/' + enrollment_id + '/' + 'private_sk'
-        key_path = self._path + '/' + enrollment_id + '/' + 'enrollmentCert.pem'
+        key_path = self._path + '/' + enrollment_id + '/' + 'private_sk'
+        cert_path = self._path + '/' + enrollment_id + '/' + 'enrollmentCert.pem'
         user = create_user(enrollment_id, org, state_store, msp_id, key_path, cert_path)
         return user
 
@@ -70,5 +70,5 @@ class Identity(object):
         f.close()
 
         f = open(sub_directory+'enrollmentCert.pem', 'wb')
-        f.write(self._PrivateKey)
+        f.write(self._EnrollmentCert)
         f.close()
