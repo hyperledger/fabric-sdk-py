@@ -88,4 +88,15 @@ install:
 format:
 	python3 -m autopep8 --in-place --recursive --exclude=./hfc/protos .
 
-.PHONY: check clean proto image install format test venv
+doc:
+	cd docs && make install html
+
+.PHONY: check \
+		clean \
+		doc \
+		proto \
+		image \
+		install \
+		format \
+		test \
+		venv

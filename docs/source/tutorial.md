@@ -5,7 +5,7 @@
 TLDR, run a quick testing.
 
 ```bash
-$ HLF_VERSION=1.4.0
+$ HLF_VERSION=1.4.6
 $ docker pull hyperledger/fabric-peer:${HLF_VERSION} \
     && docker pull hyperledger/fabric-orderer:${HLF_VERSION} \
     && docker pull hyperledger/fabric-ca:${HLF_VERSION} \
