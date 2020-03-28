@@ -198,8 +198,27 @@
             
   <div class="section" id="welcome-to-fabric-sdk-py-s-documentation">
 <h1>Welcome to fabric-sdk-py’s documentation!<a class="headerlink" href="#welcome-to-fabric-sdk-py-s-documentation" title="Permalink to this headline">¶</a></h1>
+<h2>Fabric-sdk-py</h2>
+<p>Fabric-SDK-Py is the Python 3.x implementation of Hyperledger Fabric SDK! Currently, it mainly supports Fabric 1.4.x version.</p>
+<h2>Pre-requisite for he fabric-sdk-py</h2>
+<p>The SDK requires the <code>Python3</code> and <code>Libssl</code> pkgs. Run the following cmd to install the pre-requisites if you do not have:</p>
+<p>For Ubuntu/Debian run: <code>sudo apt-get install python-dev python3-dev libssl-dev</code></p>
+<p>For Redhat/CentOS run: <code>sudo yum install python-devel python3-devel openssl-devel</code></p>
+<p>For MacOS run: <code>brew install python python3 openssl</code></p>
+<h2>Creating the Virtual Evironment</h2>
+<p>Virtual environment helps provide a clean environment for makin the changes and test them locally, Also we suggest suggest to use it to test.</p>
+<p>To install the virtualenv tool if not installed run: <code>$ pip3 install virtualenv</code></p>
+<p>To create a virtual env run: <code>$ make venv</code></p>
+<p>Activate the virtual environment, locate and do the testing<code> $ source venv/bin/activate </code></p>
+<p>Deactive the virtual Environment run: <code>$ deactivate</code></p> 
+<p>To clean the temporary files run: <code>$ make clean</code></p>
+<h2>For running integration testing</h2>
+<p>To Check environment and run tests<code>$ make check</code></p>
+<p>To only run test cases run: <code>$ make test</code></p>
+<p>To run specified test case run: <code>$ tox -e py3 -- test/integration/ca_test.py</code></p>
+<hr>
 <div class="section" id="package-reference">
-<h2>Package Reference<a class="headerlink" href="#package-reference" title="Permalink to this headline">¶</a></h2>
+<h2>Package References<a class="headerlink" href="#package-reference" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
