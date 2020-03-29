@@ -19,6 +19,19 @@ The list of lables can be found [here](https://github.com/hyperledger/fabric-sdk
 
 In brief, if you want to contribute, create or find some an `open` issue, and assign it to yourself.
 
+## Jira board usage
+
+We are using [Jira](https://jira.hyperledger.org/secure/RapidBoard.jspa?rapidView=85) to track the project progress, and welcome to report bug issues or create to-do tasks there. Each item should try keeping simple and focused, hence easy to fix and review.
+
+After login with your LF ID, you can see those task items may have 4 status:
+
+* `To Do`: Available for picking.
+* `In Progress`: Picked by someone (check the assignee) to work on.
+* `In Review`: Related patchset has been submitted for review.
+* `Done`: Patchset merged, the item is done.
+
+In brief, if you want to contribute, create or find some `To Do` item, and assign it to yourself, then update its status to `In Progress`. After the item is fixed, remember to mark it as `In Review` and `Done` when the patch is submitted and merged.
+
 ## Questions and discussions
 
 * [RocketChat](https://chat.hyperledger.org/channel/fabric-sdk-py): technical discussions and questions, login with your LF ID.
