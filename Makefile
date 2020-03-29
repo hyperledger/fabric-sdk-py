@@ -4,6 +4,8 @@
 # To run some specific case, run like `tox -e py3 -- test/integration/create_channel_test.py`
 PATH := fabric-bin/bin:$(PATH)
 SHELL := env PATH=$(PATH) /bin/bash
+PIP := pip3
+PYTHON := python3
 check: clean
 	scripts/check-env.sh
 	echo "=== Testing started... ==="
@@ -53,7 +55,7 @@ image:
 # Generate the protobuf python files
 proto:
 	shopt -s globstar
-	python3 -m grpc.tools.protoc \
+	$(PYTHON) -m grpc.tools.protoc \
 		-I./\
 		--python_out=./ \
 		--grpc_python_out=./ \
@@ -69,24 +71,24 @@ clean:
 venv:
 	@echo "virtualenv can be installed by: pip3 install virtualenv"
 	rm -rf venv
-	virtualenv -p python3 venv
+	virtualenv -p $(PYTHON) venv
 	source venv/bin/activate;\
-		pip install tox;\
-		python --version;\
-		pip --version;\
+		$(PIP) install tox;\
+		$(PYTHON) --version;\
+		$(PIP) --version;\
 		tox --version;\
-		pip install -r requirements.txt;\
-		pip install -r requirements-test.txt
+		$(PIP) install -r requirements.txt;\
+		$(PIP)  install -r requirements-test.txt
 	@echo "Active the virtual env: source venv/bin/activate"
 	@echo "Deactive when done: deactivate"
 
 # Install sdk to local python env
 install:
-	python3 setup.py install
+	$(PYTHON) setup.py install
 
 # Auto-format to pep8
 format:
-	python3 -m autopep8 --in-place --recursive --exclude=./hfc/protos .
+	$(PYTHON) -m autopep8 --in-place --recursive --exclude=./hfc/protos .
 
 doc:
 	cd docs && make install html
