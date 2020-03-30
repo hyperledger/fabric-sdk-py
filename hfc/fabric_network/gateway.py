@@ -16,19 +16,19 @@ class Gateway(object):
         self.network = {}
         self.options = {}
 
-    async def connect(self, config, options):
+    async def connect(self, net_profile, options):
 
         if 'wallet' not in options:
             _logger.error("A wallet must be assigned to a gateway instance")
 
-        if not config:
+        if not net_profile:
             self.client = Client()
         else:
-            self.client = Client(net_profile=config)
+            self.client = Client(net_profile=net_profile)
 
         if 'identity' in options:
-            self.current_identity = self.clientget_user(org_name=options['identity']['org_name'],
-                                                        name=options['identity']['name'])
+            self.current_identity = self.client.get_user(org_name=options['identity']['org_name'],
+                                                         name=options['identity']['name'])
 
     def get_current_identity(self):
         return self.current_identity
