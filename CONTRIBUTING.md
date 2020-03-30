@@ -9,6 +9,16 @@ All the tools require an Linux Foundation (LF) ID and Github ID.
 
 If you do not have an LF ID, can [apply one](https://identity.linuxfoundation.org) for free.
 
+## GitHub Issues
+
+We are using [GitHub Issues](https://github.com/hyperledger/fabric-sdk-py/issues) for issue management and you are welcome to report bug issues there.
+
+Labels on GitHub help you organize and prioritize your work. You can apply labels to issues to signify priority, category, or any other information you find useful.
+
+The list of lables can be found [here](https://github.com/hyperledger/fabric-sdk-py/labels).
+
+In brief, if you want to contribute, create or find some an `open` issue, and assign it to yourself.
+
 ## Jira board usage
 
 We are using [Jira](https://jira.hyperledger.org/secure/RapidBoard.jspa?rapidView=85) to track the project progress, and welcome to report bug issues or create to-do tasks there. Each item should try keeping simple and focused, hence easy to fix and review.
