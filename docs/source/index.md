@@ -41,6 +41,27 @@ $ tox -e py3 -- test/integration/ca_test.py  # Run specified test case
 
 ```
 
+## Reporting Bug
+We welcome any kind of contribution, You can see open issues, requests, code components and also can report your issue (here)[https://jira.hyperledger.org/projects/FABP/issues/FABP-255?filter=allopenissues]
+
+## Ask Question
+We are are the opensource community and we always welcome your questions.
+Feel free to ask any question on our community (here)[https://chat.hyperledger.org/channel/fabric-sdk-py]
+
+## Get started and read our Documentation
+You can find our documentation (here)[https://github.com/hyperledger/fabric-sdk-py/tree/master/docs]
+
+## Feel free to contribute
+Let's get started and contribute to Fabric-sdk-py. you can start (here)[https://github.com/hyperledger/fabric-sdk-py/blob/master/CONTRIBUTING.md]
+
+## Some Important Link
+* (Fabric SDK Python Wiki)[https://wiki.hyperledger.org/display/fabric/Hyperledger+Fabric+SDK+Py]
+* (Hyperledger Project)[https://www.hyperledger.org/]
+* (Hyperledger mailing lists)[https://lists.hyperledger.org/g/main]
+
+## License
+The Hyperledger Fabric-SDK-Py software uses the (Apache License Version 2.0)[https://github.com/hyperledger/fabric-sdk-py/blob/master/LICENSE] software license.
+This document is licensed under a (Creative Commons Attribution 4.0 International License.)[https://creativecommons.org/licenses/by/4.0/]
 
 ## Package Reference
 
