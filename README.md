@@ -72,6 +72,7 @@ Recommend to read [How to Contribution](CONTRIBUTING.md) before taking action.
 * [Fabric SDK Python Wiki](https://wiki.hyperledger.org/display/fabric/Hyperledger+Fabric+SDK+Py)
 * [Hyperledger Project](https://www.hyperledger.org)
 * [Hyperledger mailing lists](http://lists.hyperledger.org/)
+* [Hyperledger's Rocket.Chat](https://chat.hyperledger.org)
 
 ## Incubation Notice
 
