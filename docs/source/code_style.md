@@ -17,28 +17,21 @@ In order to make the code more maintainable, and helps developers understand cod
     - Multi line docstrings should start without a leading new line.
     - Multi line docstrings should start with a one line summary followed by an empty line.
 
-* For every api which will be used by our client, the api Docstrings are mandatory. We are here following the [Sphinx docstring format](https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html). For example:
+* For every api which will be used by our client, the api Docstrings are mandatory. We are here following the Python docstring format. For example:
 
 ```
 def square_root(n):
     """Calculate the square root of a number
-    :param n: the number to get the square root of
-    :raises TypeError: if n is not a number
-    :raises ValueError: if n is negative
-    :return: the square root of n
-    """
-    pass
-```
 
-To extend this style to also include type information in the arguments and return value, for example:
-
-```
-def add_value(self, value):
-    """Add a new value
-    :param value: the value to add
-    :type value: str
-    :return: list obtained after adding the new value
-    :rtype: list
+    Args:
+        n (int): the number to get the square root of
+    
+    Returns:
+        square_root (float): the square root of n
+    
+    Raises:
+        TypeError: if n is not a number
+        ValueError: if n is negative
     """
     pass
 ```
