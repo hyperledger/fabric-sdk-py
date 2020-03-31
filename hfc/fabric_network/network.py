@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+
 import logging
 
 from hfc.fabric.channel.channel import Channel
