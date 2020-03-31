@@ -15,12 +15,12 @@ class Gateway(object):
     The gateway peer provides the connection point for an application to access the Fabric network.
     It can then be connected to a fabric network using the path to network profile.
     """
-    def __init(self):
+    def __init__(self):
         """ Construct Gateway. """
         self.client = None
         self.wallet = None
-        self.networks = {}
-        self.options = {}
+        self.networks = dict()
+        self.options = dict()
 
     # TODO : Write function to merge options
     async def connect(self, net_profile, options):

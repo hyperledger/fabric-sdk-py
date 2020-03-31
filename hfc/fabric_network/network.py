@@ -10,15 +10,25 @@ _logger.addHandler(consoleHandler)
 
 
 class Network(object):
+    """
+    A Network represents the set of peers in a Fabric network.
+    Applications should get a Network instance using the
+    gateway's getNetwork method.
+    """
     def __init__(self, gateway, channel):
+        """ Construct Network. """
         self.gateway = gateway
         self.channel = channel
-        self.contracts = {}
+        self.contracts = dict()
         self.initialized = False
-        self.listeners = {}
+        self.listeners = dict()
         self.discovery_enabled = False
 
     async def __init_internal_channel(self, discovery):
+        """
+        Initialize the channel if it hasn't been done
+        :param discovery: must include requestor
+        """
         if discovery:
             self.discovery_enabled = True
             client = self.gateway.get_client()
@@ -49,6 +59,10 @@ class Network(object):
                 break
 
     async def _initialize(self, discover=None):
+        """
+        Initialize this network instance
+        :param discover
+        """
         if self.initialized:
             return
         await self.__init_internal_channel(discover)
