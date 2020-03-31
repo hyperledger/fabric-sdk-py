@@ -35,18 +35,18 @@ class Network(object):
         success = False
 
         for ledger_peer in ledger_peers:
-            if success:
-                break
             try:
-                await self.gateway.client.init_with_discovery(discovery.requestor,
-                                                              ledger_peer,
+                await self.gateway.client.init_with_discovery(discovery['requestor'],
+                                                              ledger_peers[ledger_peer],
                                                               self.channel)
-                self.channel = self.gateway.client.get_channel(self.channel)
                 success = True
+                self.channel = self.gateway.client.get_channel(self.channel)
             except Exception:
                 _logger.warning('Unable to initialize channel. Attempted to contact %s Peers. Last error was %s',
                                 ledger_peer,
                                 Exception)
+            if success:
+                break
 
     async def _initialize(self, discover=None):
         if self.initialized:
