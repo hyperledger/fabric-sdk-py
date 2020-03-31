@@ -10,14 +10,18 @@ _logger.addHandler(consoleHandler)
 
 
 class Gateway(object):
+    """
+    The gateway peer provides the connection point for an application to access the Fabric network.
+    It can then be connected to a fabric network using the path to network profile.
+    """
     def __init(self):
         self.client = None
         self.wallet = None
-        self.network = {}
+        self.networks = {}
         self.options = {}
 
+    # TODO : Write function to merge options
     async def connect(self, net_profile, options):
-
         if 'wallet' not in options:
             _logger.error("A wallet must be assigned to a gateway instance")
 
@@ -38,3 +42,7 @@ class Gateway(object):
 
     def get_options(self):
         return self.options
+
+    # TODO : Complete this after writing Network
+    def get_network(self, network_name):
+        return True
