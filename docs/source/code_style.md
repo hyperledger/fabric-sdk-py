@@ -17,32 +17,21 @@ In order to make the code more maintainable, and helps developers understand cod
     - Multi line docstrings should start without a leading new line.
     - Multi line docstrings should start with a one line summary followed by an empty line.
 
-* For every api which will be used by our client, the api Docstrings are mandatory. The Google style guide contains an excellent Python style guide, we should follow. For example:
+* For every api which will be used by our client, the api Docstrings are mandatory. We are here following the Python docstring format. For example:
 
 ```
 def square_root(n):
-    """Calculate the square root of a number.
+    """Calculate the square root of a number
 
     Args:
-        n: the number to get the square root of.
+        n (int): the number to get the square root of
+    
     Returns:
-        the square root of n.
+        square_root (float): the square root of n
+    
     Raises:
-        TypeError: if n is not a number.
-        ValueError: if n is negative.
-
-    """
-    pass
-```
-
-To extend this style to also include type information in the arguments, for example:
-
-```
-def add_value(self, value):
-    """Add a new value.
-
-    Args:
-        value (str): the value to add.
+        TypeError: if n is not a number
+        ValueError: if n is negative
     """
     pass
 ```
