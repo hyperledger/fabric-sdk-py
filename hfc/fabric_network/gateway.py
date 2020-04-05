@@ -63,7 +63,7 @@ class Gateway(object):
         :param requestor: User role who issue the request
         :return: Network instance
         """
-        new_network = Network(self, 'mychannel')
+        new_network = Network(self, network_name)
         await new_network._initialize({'requestor': requestor})
         self.networks[network_name] = new_network
         return new_network
