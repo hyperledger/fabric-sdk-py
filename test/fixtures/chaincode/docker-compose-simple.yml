@@ -12,7 +12,7 @@ version: '2'
 services:
   ca:
     container_name: fabric-ca
-    image: hyperledger/fabric-ca:1.4.0
+    image: hyperledger/fabric-ca:${HLF_VERSION}
     ports:
       - "7054:7054"
     volumes:
@@ -23,7 +23,7 @@ services:
 
   orderer:
     container_name: fabric-orderer
-    image: hyperledger/fabric-orderer:1.4.0
+    image: hyperledger/fabric-orderer:${HLF_VERSION}
     environment:
       - ORDERER_GENERAL_ORDERERTYPE=solo
       - ORDERER_GENERAL_LEDGERTYPE=ram
@@ -40,7 +40,7 @@ services:
 
   peer:
     container_name: fabric-peer
-    image: hyperledger/fabric-peer:1.4.0
+    image: hyperledger/fabric-peer:${HLF_VERSION}
     environment:
       - CORE_PEER_ID=peer0
       - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050

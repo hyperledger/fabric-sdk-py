@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-# This compose file will start a Hyperledger Fabric 1.4.0 with peer create and peer join done. including
+# This compose file will start a Hyperledger Fabric 1.4.6 with peer create and peer join done. including
 # * 1 ca
 # * 1 orderer
 # * 1 peers in 1 orgs

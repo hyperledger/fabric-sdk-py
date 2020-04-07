@@ -47,7 +47,7 @@ If you already have a running fabric network, ignore this.
 To start an example fabric network you can simply run the following command:
 
 ```bash
-$ HLF_VERSION=1.4.0
+$ HLF_VERSION=1.4.6
 $ docker pull hyperledger/fabric-peer:${HLF_VERSION}
 $ docker pull hyperledger/fabric-orderer:${HLF_VERSION}
 $ docker pull hyperledger/fabric-ca:${HLF_VERSION}
