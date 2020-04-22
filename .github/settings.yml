@@ -1,0 +1,14 @@
+repository:
+  name: fabric-sdk-py
+  description: Hyperledger Fabric Python SDK
+  homepage: https://fabric-sdk-py.readthedocs.io/en/latest/
+  default_branch: master
+  has_downloads: true
+  has_issues: true
+  has_projects: false
+  has_wiki: true
+  archived: false
+  private: false
+  allow_squash_merge: true
+  allow_merge_commit: true
+  allow_rebase_merge: true
