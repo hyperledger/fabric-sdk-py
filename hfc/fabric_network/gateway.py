@@ -53,7 +53,13 @@ class Gateway(object):
 
     def get_options(self):
         """ :return the options being used. """
+        _logger.debug('in get_options')
         return self.options
+
+    def disconnect(self):
+        """ Clean up and disconnect this Gateway connection """
+        _logger.debug('in disconnect')
+        self.networks.clear()
 
     # TODO : remove requestor and integrate this with wallet and identity
     async def get_network(self, network_name, requestor):
@@ -63,6 +69,13 @@ class Gateway(object):
         :param requestor: User role who issue the request
         :return: Network instance
         """
+        method = 'get_network'
+
+        existing_network = self.networks.get(network_name)
+        if existing_network:
+            _logger.debug('%s - returning existing network:%s', method, network_name)
+            return existing_network
+        
         new_network = Network(self, network_name)
         await new_network._initialize({'requestor': requestor})
         self.networks[network_name] = new_network
