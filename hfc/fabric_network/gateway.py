@@ -75,7 +75,7 @@ class Gateway(object):
         if existing_network:
             _logger.debug('%s - returning existing network:%s', method, network_name)
             return existing_network
-        
+
         new_network = Network(self, network_name)
         await new_network._initialize({'requestor': requestor})
         self.networks[network_name] = new_network
