@@ -48,9 +48,11 @@ _logger.addHandler(consoleHandler)
 
 
 class Client(object):
-    """
-        Main interaction handler with end user.
-        Client can maintain several channels.
+    """Main interaction handler with end user.
+       Client can maintain several channels.
+
+    :param object:
+    :type object:
     """
 
     def __init__(self, net_profile=None):
@@ -284,19 +286,16 @@ class Client(object):
 
     def set_tls_client_cert_and_key(self, client_key_file=None,
                                     client_cert_file=None):
+        """Set tls client certificate and key for mutual tls for all peers and orderers
 
-        """
-        Set tls client certificate and key for mutual tls for all peers
-        and orderers
-
-        Args:
-            client_key (str): file path for Private key used for TLS when
-                making client connections
-            client_cert (str): file path for X.509 certificate used for TLS
-                when making client connections
-
-        Returns:
-            bool: set success value
+        :param client_key_file: file path for Private key used for TLS when making
+                                client connections, defaults to None
+        :type client_key_file: str
+        :param client_cert_file: file path for X.509 certificate used for TLS when making
+                                client connections, defaults to None
+        :type client_cert_file: str
+        :return: set success value
+        :rtype: Boolean
         """
 
         self._client_key_path = client_key_file
@@ -423,13 +422,12 @@ class Client(object):
     def new_channel(self, name):
         """Create a channel handler instance with given name.
 
-        Args:
-            name (str): The name of the channel.
-
-        Returns:
-            channel: The inited channel.
-
+        :param name: The name of the channel.
+        :type name: str
+        :return: The inited channel.
+        :rtype: channel
         """
+
         _logger.debug("New channel with name = {}".format(name))
         if name not in self._channels:
             self._channels[name] = Channel(name, self)
@@ -438,13 +436,12 @@ class Client(object):
     def get_channel(self, name):
         """Get a channel handler instance.
 
-        Args:
-            name (str): The name of the channel.
-
-        Returns:
-            Get the channel instance with the name or None
-
+        :param name: The name of the channel.
+        :type name: str
+        :return: Get the channel instance with the name or None
+        :rtype: str/None
         """
+
         return self._channels.get(name, None)
 
     # TODO pass enveloppe directly
@@ -796,24 +793,22 @@ class Client(object):
         return config_envelope
 
     def extract_channel_config(self, config_envelope):
-        """Extracts the protobuf 'ConfigUpdate' out of
-        the 'ConfigEnvelope' that is produced by the configtxgen tool
+        """Extracts the protobuf 'ConfigUpdate' out of the
+           'ConfigEnvelope' that is produced by the configtxgen tool.
 
-        The returned object may then be signed using sign_channel_config()
-        method.
+           The returned object may then be signed using sign_channel_config()
+           method.
 
-        Once all the signatures have been collected, the 'ConfigUpdate' object
-        and the signatures may be used on create_channel() or update_channel()
-        calls
+           Once all the signatures have been collected, the 'ConfigUpdate' object
+           and the signatures may be used on create_channel() or update_channel()
+           calls
 
-        Args:
-            config_envelope (bytes): encoded bytes of the ConfigEnvelope
-            protobuf
-
-        Returns:
-            config_update (bytes): encoded bytes of ConfigUpdate protobuf,
-            ready to be signed
+        :param config_envelope: encoded bytes of the ConfigEnvelope protobuf
+        :type config_envelope: bytes
+        :return: encoded bytes of ConfigUpdate protobuf, ready to be signed
+        :rtype: bytes
         """
+
         _logger.debug('extract_channel_config start')
 
         envelope = common_pb2.Envelope()
@@ -830,15 +825,13 @@ class Client(object):
         """This method uses the client instance's current signing identity to
          sign over the configuration bytes passed in.
 
-        Args:
-            config: The configuration update in bytes form.
-            tx_context: Transaction Context
-            to_string: Whether to convert the result to string
-
-        Returns:
-            config_signature (common_pb2.ConfigSignature):
-            The signature of the current user of the config bytes.
-
+        :param config: The configuration update in bytes form.
+        :param tx_context: Transaction Context
+        :param to_string: Whether to convert the result to string,
+                          defaults to True
+        :type to_string: bool
+        :return: The signature of the current user of the config bytes.
+        :rtype: config_signature(common_pb2.ConfigSignature)
         """
 
         sign_channel_context = self.tx_context
@@ -872,12 +865,10 @@ class Client(object):
     async def _create_or_update_channel(self, request):
         """Calls the orderer to start building the new channel.
 
-        Args:
-            request (dct): The create channel request.
-
-        Returns:
-            OrdererResponse or an error.
-
+        :param request: The create channel request.
+        :type request: dict
+        :return: OrdererResponse or an error.
+        :rtype: Response/Error
         """
         have_envelope = False
         _logger.debug(request)
@@ -903,15 +894,13 @@ class Client(object):
     def _create_or_update_channel_request(self, request, have_envelope):
         """Inits the create of update channel process.
 
-        Args:
-            request (dct): A create_update channel request.
-            have_envelope (bool): Signals if the requests contains a finished
-            protobuf envelope.
-
-        Returns:
-            BroadcastResponse which includes status and info
-
+        :param request: A create_update channel request.
+        :type request: dict
+        :param have_envelope: Signals if the requests contains a finished protobuf envelope.
+        :type have_envelope: Boolean
+        :return: BroadcastResponse which includes status and info
         """
+
         _logger.debug('_create_or_update_channel - start')
 
         error_msg = None
@@ -1008,29 +997,26 @@ class Client(object):
     def crypto_suite(self):
         """Get the crypto suite.
 
-        Returns: The crypto_suite instance or None
-
+        :return: The crypto_suite instance or None
         """
+
         return self._crypto_suite
 
     @crypto_suite.setter
     def crypto_suite(self, crypto_suite):
         """Set the crypto suite to given one.
 
-        Args:
-            crypto_suite: The crypto_suite to use.
-
-        Returns: None
-
+        :param crypto_suite: The crypto_suite to use.
         """
+
         self._crypto_suite = crypto_suite
 
     @property
     def tx_context(self):
-        """ Get the current tx_context for the client.
+        """Get the current tx_context for the client.
 
-        Returns: The tx_context object or None
-
+        :return: The tx_context object or None
+        :rtype: object/None
         """
         return self._tx_context
 
@@ -1038,55 +1024,45 @@ class Client(object):
     def tx_context(self, tx_context):
         """Set the tx_context to the given one.
 
-        Args:
-            tx_context: The tx_context to be used.
-
-        Return: None
-
+        :param tx_context: The tx_context to be used.
         """
         self._tx_context = tx_context
 
     @property
     def state_store(self):
-        """ Get the KeyValue store.
+        """Get the KeyValue store.
 
-        Return the keyValue store instance or None
-
+        :return: Return the keyValue store instance or None
+        :rtype: object/None
         """
         return self._state_store
 
     @state_store.setter
     def state_store(self, state_store):
-        """ Set the KeyValue store.
+        """Set the KeyValue store.
 
-        Args:
-            state_store: the KeyValue store to use.
-
-        No return Value
-
+        :param state_store: the KeyValue store to use.
         """
         self._state_store = state_store
 
     def send_install_proposal(self, tx_context, peers):
-        """ Send install proposal
-        Args:
-            tx_context: transaction context
-            peers: peers
-        Returns: A set of proposal_response
+        """Send install proposal
+
+        :param tx_context: transaction context
+        :param peers: peers
+        :return: A set of proposal_response
         """
         return utils.send_install_proposal(tx_context, peers)
 
     def send_instantiate_proposal(self, tx_context, peers,
                                   channel_name):
-        """ Send instantiate proposal
+        """Send instantiate proposal
 
-        Args:
-            tx_context: transaction context
-            peers: peers
-            channel_name: the name of channel
-
-        Returns: A set of proposal_response
-
+        :param tx_context: transaction context
+        :param peers: peers
+        :param channel_name: name of the channel
+        :type channel_name: str
+        :return: A set of proposal_response
         """
         app_channel = self.get_channel(channel_name)
         _logger.debug("context {}".format(tx_context))
@@ -1094,32 +1070,31 @@ class Client(object):
 
     def send_upgrade_proposal(self, tx_context, peers,
                               channel_name):
-        """ Send upgrade proposal
+        """Send upgrade proposal
 
-        Args:
-            tx_context: transaction context
-            peers: peers
-            channel_name: the name of channel
-
-        Returns: A set of proposal_response
-
+        :param tx_context: transaction context
+        :param peers: peers
+        :param channel_name: the name of channel
+        :type channel_name: str
+        :return: A set of proposal_response
         """
         app_channel = self.get_channel(channel_name)
         _logger.debug("context {}".format(tx_context))
         return app_channel.send_upgrade_proposal(tx_context, peers)
 
     def generate_channel_tx(self, channel_name, cfg_path, channel_profile):
-        """ Creates channel configuration transaction
+        """Creates channel configuration transaction
 
-        Args:
-            :param channel_name: Name of the channel
-            :param cfg_path: Directory path of config yaml to be set for
-            FABRIC_CFG_PATH variable
-            :param channel_profile: Name of the channel profile defined inside
-            config yaml file
-        Returns: path to tx file if success else None
-
+        :param channel_name: Name of the channel
+        :type channel_name: str
+        :param cfg_path: Directory path of config yaml to be set for
+        :type cfg_path: str
+        :param channel_profile: Name of the channel profile defined inside
+        :type channel_profile: str
+        :return: path to tx file if success else None
+        :rtype: str/None
         """
+
         if 'fabric-bin/bin' not in os.environ['PATH']:
             executable_path = os.path.join(
                 os.path.dirname(__file__).rsplit('/', 2)[0], 'fabric-bin/bin')
