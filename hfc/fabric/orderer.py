@@ -31,8 +31,8 @@ _logger = logging.getLogger(__name__ + ".orderer")
 
 class Orderer(object):
     """A orderer node in the network. It has a specific grpc channel address.
-    :param object: 
-    :type object: 
+    :param object:
+    :type object:
     """
 
     def __init__(self, name='orderer', endpoint=DEFAULT_ORDERER_ENDPOINT,
@@ -46,14 +46,16 @@ class Orderer(object):
         :type endpoint: str
         :param tls_ca_cert_file: The tls certificate for the given orderer as bytes, defaults to None
         :type tls_ca_cert_file: str
-        :param client_key_file: file path for Private key used for TLS when making client connections, defaults to None
+        :param client_key_file: file path for Private key used for TLS when making client connections,
+                                defaults to None
         :type client_key_file: str
-        :param client_cert_file: file path for X.509 certificate used for TLS when making client connections, defaults to None
-        :type client_cert_file: str        
+        :param client_cert_file: file path for X.509 certificate used for TLS when making client connections,
+                                 defaults to None
+        :type client_cert_file: str
         :param opts: Additional grpc config options as tuple e.g. ((key, val),), defaults to None
         :type opts: tuple
         """
-        
+
         self._name = name
         self._endpoint = endpoint
         if opts:
@@ -144,7 +146,7 @@ class Orderer(object):
         :param envelope: The message envelope
         :return: orderer_response or exception
         """
-        
+
         _logger.debug("Send envelope={}".format(envelope))
 
         # this is a stream response
@@ -186,7 +188,7 @@ class Orderer(object):
         :return: name of orderer
         :rtype: str
         """
-        
+
         return self._name
 
     def _handle_response_stream(self, responses):
@@ -196,7 +198,7 @@ class Orderer(object):
         :return: response
         :rtype: tuple
         """
-        
+
         for response in responses:
             return response, self
 
@@ -204,9 +206,11 @@ class Orderer(object):
                                     client_cert_file=None):
         """Set tls client's cert and key for mutual tls
 
-        :param client_key_file: file path for Private key used for TLS when making client connections, defaults to None
+        :param client_key_file: file path for Private key used for TLS when making client connections,
+                                defaults to None
         :type client_key_file: str
-        :param client_cert_file: file path for X.509 certificate used for TLS when making client connections, defaults to None
+        :param client_cert_file: file path for X.509 certificate used for TLS when making client connections,
+                                 defaults to None
         :type client_cert_file: str
         :return: set success value
         :rtype: Boolean
