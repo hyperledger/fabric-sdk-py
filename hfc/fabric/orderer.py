@@ -30,9 +30,9 @@ _logger = logging.getLogger(__name__ + ".orderer")
 
 
 class Orderer(object):
-    """ A orderer node in the network.
-
-    It has a specific grpc channel address.
+    """A orderer node in the network. It has a specific grpc channel address.
+    :param object:
+    :type object:
     """
 
     def __init__(self, name='orderer', endpoint=DEFAULT_ORDERER_ENDPOINT,
@@ -40,18 +40,22 @@ class Orderer(object):
                  client_cert_file=None, opts=None):
         """Creates an orderer object.
 
-        Args:
-            endpoint (str): The grpc endpoint of the orderer.
-            tls_ca_cert_file (str): The tls certificate for the given
-                orderer as bytes.
-            client_key (str): file path for Private key used for TLS when
-                making client connections
-            client_cert (str): file path for X.509 certificate used for TLS
-                when making client connections
-            opts (tuple): Additional grpc config options as
-                tuple e.g. ((key, val),).
-
+        :param name: defaults to 'orderer'
+        :type name: str
+        :param endpoint: The grpc endpoint of the orderer, defaults to DEFAULT_ORDERER_ENDPOINT
+        :type endpoint: str
+        :param tls_ca_cert_file: The tls certificate for the given orderer as bytes, defaults to None
+        :type tls_ca_cert_file: str
+        :param client_key_file: file path for Private key used for TLS when making client connections,
+                                defaults to None
+        :type client_key_file: str
+        :param client_cert_file: file path for X.509 certificate used for TLS when making client connections,
+                                 defaults to None
+        :type client_cert_file: str
+        :param opts: Additional grpc config options as tuple e.g. ((key, val),), defaults to None
+        :type opts: tuple
         """
+
         self._name = name
         self._endpoint = endpoint
         if opts:
@@ -68,11 +72,13 @@ class Orderer(object):
         self._orderer_client = ab_pb2_grpc.AtomicBroadcastStub(self._channel)
 
     def init_with_bundle(self, info):
-        """
-        Init the peer with given info dict
+        """Init the peer with given info dict
+
         :param info: Dict including all info, e.g., endpoint, grpc option
-        :return: True or False
+        :return: True/False
+        :rtype: Boolean
         """
+
         try:
             self._endpoint = info['url']
             self._grpc_options = info['grpcOptions']
@@ -98,8 +104,10 @@ class Orderer(object):
         return True
 
     def get_genesis_block(self, tx_context, channel_name):
-        """ get the genesis block of the channel.
-        Return: the genesis block in success or None in fail.
+        """get the genesis block of the channel
+
+        :return: the genesis block in success or None in fail
+        :rtype: Block/None
         """
         _logger.info("get genesis block - start")
 
@@ -135,26 +143,23 @@ class Orderer(object):
     def broadcast(self, envelope):
         """Send an broadcast envelope to orderer.
 
-        Args:
-            envelope: The message envelope
-
-        Returns: orderer_response or exception
-
+        :param envelope: The message envelope
+        :return: orderer_response or exception
         """
+
         _logger.debug("Send envelope={}".format(envelope))
 
         # this is a stream response
         return self._orderer_client.Broadcast(stream_envelope(envelope))
 
     def delivery(self, envelope, scheduler=None):
-        """ Send an delivery envelop to orderer.
+        """Send an delivery envelop to orderer.
 
-        Args:
-            envelope: The message envelope
-
-        Returns: orderer_response or exception
-
+        :param envelope: The message envelope
+        :param scheduler: defaults to None
+        :return: orderer_response or exception
         """
+
         _logger.debug("Send envelope={}".format(envelope))
 
         # this is a stream response
@@ -172,8 +177,7 @@ class Orderer(object):
     def endpoint(self):
         """Return the endpoint of the orderer.
 
-        Returns: endpoint
-
+        :return: endpoint
         """
         return self._endpoint
 
@@ -181,20 +185,20 @@ class Orderer(object):
     def name(self):
         """Return the name of the orderer.
 
-        Returns: name
-
+        :return: name of orderer
+        :rtype: str
         """
+
         return self._name
 
     def _handle_response_stream(self, responses):
         """Handle response stream.
 
-        Args:
-            responses: responses
-
-        Returns: a (response,self) tuple
-
+        :param responses: responses
+        :return: response
+        :rtype: tuple
         """
+
         for response in responses:
             return response, self
 
@@ -202,15 +206,16 @@ class Orderer(object):
                                     client_cert_file=None):
         """Set tls client's cert and key for mutual tls
 
-        Args:
-            client_key (str): file path for Private key used for TLS when
-                making client connections
-            client_cert (str): file path for X.509 certificate used for TLS
-                when making client connections
-
-        Returns:
-            bool: set success value
+        :param client_key_file: file path for Private key used for TLS when making client connections,
+                                defaults to None
+        :type client_key_file: str
+        :param client_cert_file: file path for X.509 certificate used for TLS when making client connections,
+                                 defaults to None
+        :type client_cert_file: str
+        :return: set success value
+        :rtype: Boolean
         """
+
         try:
             self._client_key_path = client_key_file
             self._client_cert_path = client_cert_file
