@@ -57,25 +57,22 @@ class Peer(object):
         self._event_client = events_pb2_grpc.DeliverStub(self._channel)
 
     def send_proposal(self, proposal):
-        """ Send an endorsement proposal to endorser
+        """Send an endorsement proposal to endorser
 
-        Args:
-            proposal: The endorsement proposal
-
-        Returns: ProposalResponse or exception
-
+        :param proposal: The endorsement proposal
+        :return: ProposalResponse or exception
+        :rtype: Response/Exception
         """
+
         _logger.debug("Send proposal={}".format(proposal))
         return self._endorser_client.ProcessProposal(proposal)
 
     def send_discovery(self, request):
         """Send an request to discovery server
 
-        Args:
-            request: a signed request
-
-        Returns:
-            QueryResult or exception
+        :param request: a signed request
+        :return: QueryResult or exception
+        :rtype: Result/Exception
         """
         _logger.debug("Send discovery={}".format(request))
         return self._discovery_client.Discover(request)
@@ -125,8 +122,7 @@ class Peer(object):
     def endpoint(self):
         """Return the endpoint of the peer.
 
-        Returns: endpoint
-
+        :return: endpoint
         """
         return self._endpoint
 
@@ -138,17 +134,15 @@ class Peer(object):
     def name(self):
         """Get the peer name
 
-        Return: The peer name
-
+        :return: The peer name
+        :rtype: str
         """
         return self._name
 
     def join(self, chan):
-        """ Join a channel
+        """Join a channel
 
-        Args:
-            chan: a channel instance
-
+        :param chan: a channel instance
         """
         with self._lock:
             self._channels.append(chan)
@@ -159,13 +153,13 @@ class Peer(object):
             return self._channels
 
     def delivery(self, envelope, scheduler=None, filtered=True):
-        """ Send an delivery envelop to event service.
+        """Send an delivery envelop to event service.
 
-        Args:
-            envelope: The message envelope
-
-        Returns: orderer_response or exception
-
+        :param envelope: The message envelope
+        :param scheduler: defaults to None
+        :param filtered: defaults to True
+        :type filtered: bool
+        :return: orderer_response or exception
         """
         _logger.debug("Send envelope={}".format(envelope))
 
@@ -181,14 +175,14 @@ class Peer(object):
                                     client_cert_file=None):
         """Set tls client's cert and key for mutual tls
 
-        Args:
-            client_key (str): file path for Private key used for TLS when
-                making client connections
-            client_cert (str): file path for X.509 certificate used for TLS
-                when making client connections
-
-        Returns:
-            bool: set success value
+        :param client_key_file: file path for Private key used for TLS when
+                making client connections, defaults to None
+        :type client_key_file: str
+        :param client_cert_file: file path for X.509 certificate used for TLS
+                when making client connections, defaults to None
+        :type client_cert_file: str
+        :return: set success value
+        :rtype: bool
         """
 
         try:
@@ -212,17 +206,15 @@ class Peer(object):
 
 def create_peer(endpoint=DEFAULT_PEER_ENDPOINT, tls_cacerts=None,
                 client_key=None, client_cert=None, opts=None):
-    """ Factory method to construct a peer instance
+    """Factory method to construct a peer instance
 
-    Args:
-        endpoint: endpoint
-        tls_cacerts: pem
-        client_key: pem
-        client_cert: pem
-        opts: opts
-
-    Returns: a peer instance
-
+    :param endpoint: endpoint, defaults to DEFAULT_PEER_ENDPOINT
+    :param tls_cacerts: pem, defaults to None
+    :param client_key: pem, defaults to None
+    :param client_cert: pem, defaults to None
+    :param opts: opts, defaults to None
+    :type opts: opts
+    :return: a peer instance
     """
     return Peer(endpoint=endpoint, tls_ca_cert_file=tls_cacerts,
                 client_key_file=client_key, client_cert_file=client_cert,
