@@ -101,10 +101,9 @@ Signed-off-by: Your Name <committer@email.address>
 $ hub push --set-upstream origin FABP-xxxx
 $ hub pull-request
 ```
+Notice you will get a [GitHub URL](https://github.com/hyperledger/fabric-sdk-py/pull/77), open and check the status.
 
-Notice you will get a [gerrit item url](http://gerrit.hyperledger.org/r/7917), open and check the status.
-
-After the ci checking passed, add [reviewers](https://wiki.hyperledger.org/projects/fabric-sdk-py#contributors) to the reviewer list and also post the gerrit item url at the [RocketChat channel](https://chat.hyperledger.org/channel/fabric-sdk-py). The patch will be merged into the `master` branch after passing the review, then mark the Jira item as `Done`.
+After the ci checking passed, add [reviewers](https://wiki.hyperledger.org/projects/fabric-sdk-py#contributors) to the reviewer list and also post the GitHub PR url in the [chat channel](https://chat.hyperledger.org/channel/fabric-sdk-py). The patch will be merged into the `master` branch after passing the review, then mark the Jira item as `Done`.
 
 * If you need to refine the patch further as the reviewers may suggest, you can change on the same branch, and commit the new code with `git commit -a --amend`, and then use the `git review` command again.
 
