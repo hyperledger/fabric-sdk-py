@@ -20,7 +20,5 @@ steps:
       versionSpec: '3.6'
   - script: pip install virtualenv
     displayName: Install VirtualEnv
-  - script: |
-      curl localhost:5984
   - script: make check
     displayName: Run Checks
