@@ -27,6 +27,10 @@ class WalletTest(unittest.TestCase):
             os.path.join(os.path.dirname(__file__),
                          "../fixtures/ca/docker-compose.yml")
         )
+        self._couch_compose_file_path = os.path.normpath(
+            os.path.join(os.path.dirname(__file__),
+                         "../fixtures/docker-compose-couch.yaml")
+        )
         self.start_test_env()
 
     def tearDown(self):
@@ -34,16 +38,18 @@ class WalletTest(unittest.TestCase):
 
     def start_test_env(self):
         cli_call(["docker-compose", "-f", self._compose_file_path, "up", "-d"])
+        cli_call(["docker-compose", "-f", self._couch_compose_file_path, "up", "-d"])
         time.sleep(5)
 
     def shutdown_test_env(self):
         cli_call(["docker-compose", "-f", self._compose_file_path, "down"])
+        cli_call(["docker-compose", "-f", self._couch_compose_file_path, "down"])
 
     def test_enroll(self):
         casvc = ca_service("http://" + self._ca_server_address)
         adminEnrollment = casvc.enroll(self._enrollment_id,
                                        self._enrollment_secret)
-        config = f'http://{ENROLLMENT_ID}:{ENROLLMENT_SECRET}@localhost:5984'
+        config = f'http://localhost:5984'
         server = CouchDBWalletStore(DB_NAME, config)
         server.put(self._enrollment_id, adminEnrollment)
 
