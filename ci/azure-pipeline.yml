@@ -14,24 +14,11 @@ pr:
 pool:
   vmImage: ubuntu-18.04
 
-resources:
-  containers:
-  - container: couchdb
-    image: couchdb
-    options: -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=adminpw
-    ports:
-    - 5984:5984
-
-services:
-  couchdb: couchdb
-
 steps:
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '3.6'
   - script: pip install virtualenv
     displayName: Install VirtualEnv
-  - script: |
-      curl localhost:5984
   - script: make check
     displayName: Run Checks
