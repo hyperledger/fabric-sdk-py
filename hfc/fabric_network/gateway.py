@@ -30,7 +30,7 @@ class Gateway(object):
         result = currentOptions
         for prop in additionalOptions:
             if prop in result and isinstance(result[prop], dict) and isinstance(additionalOptions[prop], dict):
-                dict_merge(result[prop], additionalOptions[prop])
+                mergeOptions(result[prop], additionalOptions[prop])
             else:
                 result[prop] = additionalOptions[prop]
         return result
