@@ -23,17 +23,14 @@ class Gateway(object):
         self.wallet = None
         self.networks = dict()
         self.options = dict()
-    
+
     async def mergeOptions(self, currentOptions, additionalOptions):
         """Merge default or current options with additional options
         """
         result = currentOptions
         for prop in additionalOptions:
-            if additionalOptions[prop]:
-                if prop not in result:
-                    result[prop] = additionalOptions[prop]
-                else:
-                    mergeOptions(result[prop], additionalOptions[prop])
+            if prop in result and isinstance(result[prop], dict) and isinstance(additionalOptions[prop], dict):
+                dict_merge(result[prop], additionalOptions[prop])
             else:
                 result[prop] = additionalOptions[prop]
         return result
