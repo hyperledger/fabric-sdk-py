@@ -23,8 +23,21 @@ class Gateway(object):
         self.wallet = None
         self.networks = dict()
         self.options = dict()
+    
+    async def mergeOptions(self, currentOptions, additionalOptions):
+        """Merge default or current options with additional options
+        """
+        result = currentOptions
+        for prop in additionalOptions:
+            if additionalOptions[prop]:
+                if prop not in result:
+                    result[prop] = additionalOptions[prop]
+                else:
+                    mergeOptions(result[prop], additionalOptions[prop])
+            else:
+                result[prop] = additionalOptions[prop]
+        return result
 
-    # TODO : Write function to merge options
     async def connect(self, net_profile, options):
         """
         Connect to the Gateway with a connection profile and connection options.
@@ -48,7 +61,7 @@ class Gateway(object):
         return self.current_identity
 
     def get_client(self):
-        """ :retyrn Client instance. """
+        """ :return Client instance. """
         return self.client
 
     def get_options(self):
