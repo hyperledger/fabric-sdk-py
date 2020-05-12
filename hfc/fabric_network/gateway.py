@@ -33,7 +33,7 @@ class Gateway(object):
                 self.mergeOptions(result[prop], additionalOptions[prop])
             else:
                 result[prop] = additionalOptions[prop]
-        return result 
+        return result
 
     async def connect(self, net_profile, options):
         """
