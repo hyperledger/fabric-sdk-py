@@ -24,7 +24,17 @@ class Gateway(object):
         self.networks = dict()
         self.options = dict()
 
-    # TODO : Write function to merge options
+    def mergeOptions(self, currentOptions, additionalOptions):
+        """Merge additional options to current options
+        """
+        result = currentOptions
+        for prop in additionalOptions:
+            if prop in result and isinstance(result[prop], dict) and isinstance(additionalOptions[prop], dict):
+                self.mergeOptions(result[prop], additionalOptions[prop])
+            else:
+                result[prop] = additionalOptions[prop]
+        return result
+
     async def connect(self, net_profile, options):
         """
         Connect to the Gateway with a connection profile and connection options.

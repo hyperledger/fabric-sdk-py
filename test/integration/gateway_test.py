@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+import copy
 
 from hfc.fabric_network.gateway import Gateway
 from hfc.fabric_network.network import Network
@@ -40,6 +41,123 @@ class GatewayTest(BaseTestCase):
 
         # Create Gateway connection
         new_gateway = Gateway()
+
+        defaultOptions = dict({
+            'top1': {
+                'inner11': 10,
+                'inner12': 'ten'
+                    },
+            'top2': {
+                'inner21': 20,
+                'inner22': 'twenty'
+                    }
+                })
+
+        overrideOptions = dict({
+                    'top1': {
+                        'top13': {
+                            'inner131': 131
+                        }
+                    }
+                })
+
+        expectedOptions = dict({
+                    'top1': {
+                        'inner11': 10,
+                        'inner12': 'ten',
+                        'top13': {
+                            'inner131': 131
+                        }
+                    },
+                    'top2': {
+                        'inner21': 20,
+                        'inner22': 'twenty'
+                    }
+                })
+
+        currentOptions = copy.deepcopy(defaultOptions)
+        result = new_gateway.mergeOptions(currentOptions, overrideOptions)
+        self.assertDictEqual(expectedOptions, result)
+
+        overrideOptions = {
+                    'top1': {
+                        'inner11': 20,
+                        'inner12': 'twenty'
+                    },
+                }
+        expectedOptions = {
+                        'top1': {
+                            'inner11': 20,
+                            'inner12': 'twenty'
+                        },
+                        'top2': {
+                            'inner21': 20,
+                            'inner22': 'twenty'
+                        }
+                    }
+
+        currentOptions = copy.deepcopy(defaultOptions)
+        result = new_gateway.mergeOptions(currentOptions, overrideOptions)
+        self.assertDictEqual(expectedOptions, result)
+
+        overrideOptions = {
+                    'top1': {
+                        'inner11': 20
+                    },
+                }
+        expectedOptions = {
+                    'top1': {
+                        'inner11': 20,
+                        'inner12': 'ten'
+                    },
+                    'top2': {
+                        'inner21': 20,
+                        'inner22': 'twenty'
+                    }
+                }
+
+        currentOptions = copy.deepcopy(defaultOptions)
+        result = new_gateway.mergeOptions(currentOptions, overrideOptions)
+        self.assertDictEqual(expectedOptions, result)
+
+        overrideOptions = {
+                    'top1': {
+                        'inner11': None
+                    },
+                }
+        expectedOptions = {
+                    'top1': {
+                        'inner11': None,
+                        'inner12': 'ten'
+                    },
+                    'top2': {
+                        'inner21': 20,
+                        'inner22': 'twenty'
+                    }
+                }
+
+        currentOptions = copy.deepcopy(defaultOptions)
+        result = new_gateway.mergeOptions(currentOptions, overrideOptions)
+        self.assertDictEqual(expectedOptions, result)
+
+        overrideOptions = {
+                    'single': True
+                }
+        expectedOptions = {
+                    'top1': {
+                        'inner11': 10,
+                        'inner12': 'ten'
+                    },
+                    'top2': {
+                        'inner21': 20,
+                        'inner22': 'twenty'
+                    },
+                    'single': True
+                }
+
+        currentOptions = copy.deepcopy(defaultOptions)
+        result = new_gateway.mergeOptions(currentOptions, overrideOptions)
+        self.assertDictEqual(expectedOptions, result)
 
         # TODO: Change this after wallet has been integrated
         options = {'wallet': ''}

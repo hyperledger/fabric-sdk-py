@@ -199,8 +199,8 @@ class ChannelEventHub(object):
             if not ((isinstance(start, int)
                     or start in ('oldest', 'newest'))
                     or start is None):
-                raise Exception(f'start value must be: last_seen, oldest,'
-                                f' newest or an integer')
+                raise Exception('start value must be: last_seen, oldest,'
+                                ' newest or an integer')
 
             if stop == 'last_seen':
                 stop = self._last_seen
@@ -208,8 +208,8 @@ class ChannelEventHub(object):
             if not ((isinstance(stop, int)
                     or stop == 'newest')
                     or stop is None):
-                raise Exception(f'stop value must be: last_seen, newest,'
-                                f' sys.maxsize or an integer')
+                raise Exception('stop value must be: last_seen, newest,'
+                                ' sys.maxsize or an integer')
 
             if isinstance(start, int) \
                     and isinstance(stop, int)\
