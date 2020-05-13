@@ -38,7 +38,7 @@ else
 fi
 
 img_tag=1.4.6
-baseimage_tag=0.4.16
+baseimage_tag=0.4.20
 echo "=====> Pulling fabric Images with tag= ${img_tag}, baseimage_tag= ${baseimage_tag}"
 dockerFabricPull ${img_tag}
 img=hyperledger/fabric-baseimage:$baseimage_tag
