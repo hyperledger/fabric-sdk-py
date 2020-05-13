@@ -1633,7 +1633,7 @@ class Client(object):
 
             # should we retry on failed?
             if grpc_broker_unavailable_retry:
-                _logger.debug(f'Retry on failed proposal responses')
+                _logger.debug('Retry on failed proposal responses')
 
                 retry = 0
 

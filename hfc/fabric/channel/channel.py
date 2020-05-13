@@ -229,14 +229,11 @@ class Channel(object):
 
         if peer not in self._peers.values():
             raise ValueError(
-                "Channel %s does not have peer %s".format(self._name,
-                                                          peer.endpoint))
+                "Channel {:s} does not have peer {:s}".format(self._name, peer.endpoint))
 
         if self not in peer.channels:
             raise ValueError(
-                "Peer %s not joined this channel %s".format(peer.endpoint,
-                                                            self._name)
-            )
+                "Peer {:s} not joined this channel {:s}".format(peer.endpoint, self._name))
 
     def _validate_peers(self, peers):
         """Validate peer set
