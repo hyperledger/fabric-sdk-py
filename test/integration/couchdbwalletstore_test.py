@@ -49,7 +49,7 @@ class WalletTest(unittest.TestCase):
         casvc = ca_service("http://" + self._ca_server_address)
         adminEnrollment = casvc.enroll(self._enrollment_id,
                                        self._enrollment_secret)
-        config = f'http://localhost:5984'
+        config = 'http://localhost:5984'
         server = CouchDBWalletStore(DB_NAME, config)
         server.put(self._enrollment_id, adminEnrollment)
 

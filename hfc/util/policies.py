@@ -34,10 +34,10 @@ class String2Dict(Transformer):
         self.id = 0
         self.roles = []
 
-    def unique_list_of_dict(self, l):
+    def unique_list_of_dict(self, lis):
         unique_l = []
 
-        for item in l:
+        for item in lis:
             if item not in unique_l:
                 unique_l.append(item)
 
