@@ -189,27 +189,24 @@ class ChannelEventHub(object):
     def check_start_stop_connect(self, start=None, stop=None):
         if start is not None or stop is not None:
             if self._start_stop_action:
-                raise Exception('Not able to connect with start/stop'
-                                ' block when a registered listener has'
-                                ' those options.')
+                raise Exception('Not able to connect with start/stop block'
+                                ' when a registered listener has those options.')
 
             if start == 'last_seen':
                 start = self._last_seen
 
             if not ((isinstance(start, int)
-                    or start in ('oldest', 'newest'))
+                     or start in ('oldest', 'newest'))
                     or start is None):
-                raise Exception('start value must be: last_seen, oldest,'
-                                ' newest or an integer')
+                raise Exception('start value must be: last_seen, oldest, newest or an integer')
 
             if stop == 'last_seen':
                 stop = self._last_seen
 
             if not ((isinstance(stop, int)
-                    or stop == 'newest')
+                     or stop == 'newest')
                     or stop is None):
-                raise Exception('stop value must be: last_seen, newest,'
-                                ' sys.maxsize or an integer')
+                raise Exception('stop value must be: last_seen, newest, sys.maxsize or an integer')
 
             if isinstance(start, int) \
                     and isinstance(stop, int)\
@@ -504,8 +501,8 @@ class ChannelEventHub(object):
 
     def have_registrations(self):
         return self._reg_nums != [] \
-               or self._tx_ids != {} \
-               or self._reg_ids != {}
+            or self._tx_ids != {} \
+            or self._reg_ids != {}
 
     def _on_end_actions(self, event_reg, unregister_action, startstop_mode,
                         unregister, disconnect):
