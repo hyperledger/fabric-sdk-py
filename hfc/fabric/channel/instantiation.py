@@ -36,28 +36,22 @@ class Instantiation(TransactionProposalHandler):
     def handle(self, tran_prop_req, scheduler=None):
         """Execute chaincode instantiation transaction proposal request.
 
-        Args:
-            scheduler: see rx.Scheduler
-            tran_prop_req: chaincode instantiation transaction proposal request
-
-        Returns: An rx.Observer wrapper of chaincode instantiation response
-
+        :param tran_prop_req: chaincode instantiation transaction proposal request
+        :param scheduler: see rx.Scheduler, defaults to None
+        :return: An rx.Observer wrapper of chaincode instantiation response
         """
         return _instantiate_chaincode(self._chain, tran_prop_req, scheduler)
 
 
 def _create_instantiation_proposal(tran_prop_req, chain):
     """Create a chaincode instantiation proposal
-
     This involves assembling the proposal with the data (chaincodeID,
     chaincode invocation spec, etc.) and signing it using the private key
     corresponding to the ECert to sign.
 
-    Args:
-        tran_prop_req: see TransactionProposalRequest
-
-    Returns: (Proposal): The created Proposal instance or None.
-
+    :param tran_prop_req: see TransactionProposalRequest
+    :param chain: chain instance
+    :return: (Proposal): The created Proposal instance or None.
     """
     args = ["init" if not tran_prop_req.fcn
             else tran_prop_req.fcn] + tran_prop_req.args
@@ -99,13 +93,10 @@ def _create_instantiation_proposal(tran_prop_req, chain):
 def _instantiate_chaincode(chain, cc_instantiation_request, scheduler=None):
     """Instantiate chaincode.
 
-    Args:
-        chain: chain instance
-        scheduler: see rx.Scheduler
-        cc_instantiation_request: see TransactionProposalRequest
-
-    Returns: An rx.Observable of instantiation response
-
+    :param chain: chain instance
+    :param cc_instantiation_request: see TransactionProposalRequest
+    :param scheduler: see rx.Scheduler, defaults to None
+    :return: An rx.Observable of instantiation response
     """
     if len(chain.peers) < 1:
         return rx.Observable.just(ValueError(
@@ -139,18 +130,17 @@ def create_instantiation_proposal_req(chaincode_id, chaincode_path,
                                       targets=None):
     """Create instantiation proposal request.
 
-    Args:
-        fcn: chaincode init function
-        args: init function args
-        targets: peers
-        nonce: nonce
-        chaincode_id: chaincode_id
-        chaincode_path: chaincode_path
-        chaincode_version: chaincode_version
-        creator: user
-
-    Returns: see TransactionProposalRequest
-
+    :param chaincode_id: chaincode_id
+    :param chaincode_path: chaincode_path
+    :type chaincode_path: str
+    :param chaincode_version: chaincode_version
+    :type chaincode_version: str
+    :param creator: user
+    :param fcn: chaincode init function, defaults to 'init'
+    :param args: init function args, defaults to None
+    :param nonce: nonce, defaults to crypto.generate_nonce(24)
+    :param targets: peers, defaults to None
+    :return: see TransactionProposalRequest
     """
     return TransactionProposalRequest(chaincode_id, creator, CC_INSTANTIATE,
                                       chaincode_path, chaincode_version,
@@ -161,10 +151,7 @@ def create_instantiation_proposal_req(chaincode_id, chaincode_path,
 def chaincode_instantiation(chain):
     """Create instantiate.
 
-    Args:
-        chain: chain instance
-
-    Returns: Instantiate instance
-
+    :param chain: chain instance
+    :return: Instantiate instance
     """
     return Instantiation(chain)
