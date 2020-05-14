@@ -561,6 +561,7 @@ class E2eTest(BaseTestCase):
                                               chname=SYSTEM_CHANNEL_NAME):
         """
         Test get channel config on orderer
+
          :return:
         """
         logger.info(f"E2E: Get channel {chname} config start")

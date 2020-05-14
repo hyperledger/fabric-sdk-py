@@ -385,7 +385,7 @@ class E2ePrivateDataTest(BaseTestCase):
         """
         logger.info("E2E: Query instantiated chaincode start")
 
-        orgs = ["org1.example.com", "org2.example.com"]
+        orgs = ["org1.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
 
@@ -429,6 +429,7 @@ class E2ePrivateDataTest(BaseTestCase):
                                               chname=SYSTEM_CHANNEL_NAME):
         """
         Test get channel config on orderer
+
          :return:
         """
         logger.info(f"E2E: Get channel {chname} config start")
