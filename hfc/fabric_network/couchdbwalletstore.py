@@ -1,8 +1,13 @@
 import couchdb
 
+from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
 from hfc.fabric_ca.caservice import Enrollment
+from hfc.fabric.user import User
+from hfc.fabric.user import validate
+from hfc.util.crypto.crypto import ecies
 
 
 class CouchDBWalletStore(object):
@@ -48,3 +53,25 @@ class CouchDBWalletStore(object):
         EnrollmentCert = user_enrollment.cert.decode()
         doc = {'EnrollmentCert': EnrollmentCert, 'PrivateKey': PrivateKey}
         self.db[enrollment_id] = doc
+
+    def create_user(self, enrollment_id, org, msp_id, state_store=None):
+        """ Returns an instance of a user whose identity
+            is stored in the CouchDBWallet
+        """
+        crypto_suit = ecies()
+
+        if not self.exists(enrollment_id):
+            raise AttributeError('"user" does not exist')
+
+        key_pem = self.db[enrollment_id]['PrivateKey']
+        cert_pem = self.db[enrollment_id]['EnrollmentCert']
+
+        private_key = load_pem_private_key(key_pem, None, default_backend())
+        enrollment = Enrollment(private_key, cert_pem)
+
+        user = User(enrollment_id, org, state_store)
+        user.enrollment = enrollment
+        user.msp_id = msp_id
+        user.cryptoSuite = crypto_suit
+
+        return validate(user)

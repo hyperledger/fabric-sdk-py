@@ -1,4 +1,7 @@
 from hfc.fabric_ca.caservice import Enrollment
+from hfc.fabric.user import User
+from hfc.fabric.user import validate
+from hfc.util.crypto.crypto import ecies
 
 
 class InMemoryWalletStore(object):
@@ -23,3 +26,19 @@ class InMemoryWalletStore(object):
         if not isinstance(user_enrollment, Enrollment):
             raise ValueError('"user_enrollment" is not a valid Enrollment object')
         self._Map[enrollment_id] = user_enrollment
+
+    def create_user(self, enrollment_id, org, msp_id, state_store=None):
+        """ Returns an instance of a user whose identity
+            is stored in the InMemoryWallet
+        """
+        crypto_suit = ecies()
+
+        if not self.exists(enrollment_id):
+            raise AttributeError('"user" does not exist')
+
+        user = User(enrollment_id, org, state_store)
+        user.enrollment = self._Map[enrollment_id]
+        user.msp_id = msp_id
+        user.cryptoSuite = crypto_suit
+
+        return validate(user)
