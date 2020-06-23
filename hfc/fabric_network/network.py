@@ -3,6 +3,7 @@
 import logging
 
 from hfc.fabric.channel.channel import Channel
+from hfc.fabric_network.contract import Contract
 
 consoleHandler = logging.StreamHandler()
 _logger = logging.getLogger(__name__)
@@ -69,3 +70,13 @@ class Network(object):
             return
         await self.__init_internal_channel(discover)
         self.initialized = True
+
+    def get_contract(self, chaincode_id):
+        if not self.initialized:
+            _logger.error("Unable to get contract as network has failed to initialize")
+
+        if chaincode_id not in self.contracts:
+            contract = Contract(self, chaincode_id, self.gateway)
+            self.contracts[chaincode_id] = contract
+
+        return self.contracts[chaincode_id]
