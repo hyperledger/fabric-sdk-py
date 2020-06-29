@@ -1,7 +1,5 @@
 # Tutorial of Using Fabric Python SDK
 
-**Note: Python3 is required, and the sample code can be found at [sample.py](sample.py).**
-
 TLDR, run a quick testing.
 
 ```bash
@@ -14,7 +12,7 @@ $ docker-compose -f test/fixtures/docker-compose-2orgs-4peers-tls.yaml up
 $ pip3 install virtualenv; make venv
 $ source venv/bin/activate
 $ make install
-$ python docs/sample.py
+$ tox -e py3 -- test/integration/e2e_test.py # Run specified test case
 $ deactive
 ```
 
