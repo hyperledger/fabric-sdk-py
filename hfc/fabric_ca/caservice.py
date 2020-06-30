@@ -50,7 +50,7 @@ reasons = (
 
 
 class Enrollment(object):
-    """ Class represents enrollment. """
+    """Class represents enrollment."""
 
     def __init__(self, private_key, enrollmentCert, caCertChain=None,
                  service=None):
@@ -61,58 +61,52 @@ class Enrollment(object):
 
     @property
     def private_key(self):
-        """ Get private key
+        """Get private key
 
-        Returns: private key
-
+        :return: private key
         """
         return self._private_key
 
     @private_key.setter
     def private_key(self, private_key):
-        """ Set the private key
+        """Set the private key
 
-        Args:
-            private_key: private key
-
+        :param private_key: private key
+        :return:
         """
         self._private_key = private_key
 
     @property
     def cert(self):
-        """ Get cert
+        """Get cert
 
-        Returns: cert
-
+        :return: cert
         """
         return self._cert
 
     @cert.setter
     def cert(self, cert):
-        """ Set cert
+        """Set cert
 
-        Args:
-            cert: cert
-
+        :param cert: cert
+        :return:
         """
         self._cert = cert
 
     @property
     def caCert(self):
-        """ Get caCert
+        """Get caCert
 
-        Returns: caCert
-
+        :return: caCert
         """
         return self._caCert
 
     @caCert.setter
     def caCert(self, caCert):
-        """ Set caCert
+        """Set caCert
 
-        Args:
-            cert: caCert
-
+        :param caCert: caCert
+        :return:
         """
         self._caCert = caCert
 
@@ -208,13 +202,13 @@ class CAClient(object):
                  cryptoPrimitives=ecies()):
         """ Init CA client.
 
-        Args:
-            target (str): CA server address including protocol,hostname,port
-            ca_certs_path (str): Local ca certs path
-            ca_name (str): The optional name of the CA. Fabric-ca servers
-            support multiple Certificate Authorities from a single server
-            If omitted or null or an empty string, then the default CA is
-            the target of requests.
+        :param target: CA server address including protocol,hostname,port
+        :param ca_certs_path: Local ca certs path
+        :param ca_name: The optional name of the CA. Fabric-ca servers
+        support multiple Certificate Authorities from a single server
+        If omitted or null or an empty string, then the default CA is
+        the target of requests.
+        :return: An instance of CAClient
         """
         self._ca_certs_path = ca_certs_path
         self._base_url = target + base_url
@@ -223,10 +217,13 @@ class CAClient(object):
 
     def generateAuthToken(self, req, registrar):
         """Generate authorization token required for accessing fabric-ca APIs
-        Args:
-            req (dict): request body
-            registrar (Enrollment): Required. The identity of the registrar
-         (i.e. who is performing the request)
+
+        :param req: request body
+        :type req: dict
+        :param registrar: Required. The identity of the registrar
+        (i.e. who is performing the request)
+        :type registrar: Enrollment
+        :return: auth token
         """
         b64Cert = base64.b64encode(registrar._cert)
 
@@ -248,53 +245,41 @@ class CAClient(object):
         return b'%s.%s' % (b64Cert, b64Sign)
 
     def _send_ca_post(self, path, **param):
-        """ Send a post request to the ca service
+        """Send a post request to the ca service
 
-        Args:
-            path: sub path after the base_url
-            **param: post request params
-
-        Returns: the response body in json
-
+        :param path: sub path after the base_url
+        :param **param: post request params
+        :return: the response body in json
         """
         r = requests.post(url=self._base_url + path, **param)
         return r.json(), r.status_code
 
     def _send_ca_get(self, path, **param):
-        """ Send a get request to the ca service
+        """Send a get request to the ca service
 
-        Args:
-            path: sub path after the base_url
-            **param: get request params
-
-        Returns: the response body in json
-
+        :param path: sub path after the base_url
+        :param **param: get request params
+        :return: the response body in json
         """
         r = requests.get(url=self._base_url + path, **param)
         return r.json(), r.status_code
 
     def _send_ca_delete(self, path, **param):
-        """ Send a delete request to the ca service
+        """Send a delete request to the ca service
 
-        Args:
-            path: sub path after the base_url
-            **param: delete request params
-
-        Returns: the response body in json
-
+        :param path: sub path after the base_url
+        :param **param: delete request params
+        :return: the response body in json
         """
         r = requests.delete(url=self._base_url + path, **param)
         return r.json(), r.status_code
 
     def _send_ca_update(self, path, **param):
-        """ Send a update request to the ca service
+        """Send a update request to the ca service
 
-        Args:
-            path: sub path after the base_url
-            **param: update request params
-
-        Returns: the response body in json
-
+        :param path: sub path after the base_url
+        :param **param: update request params
+        :return: the response body in json
         """
         r = requests.put(url=self._base_url + path, **param)
         return r.json(), r.status_code
@@ -302,10 +287,7 @@ class CAClient(object):
     def get_cainfo(self):
         """Query the ca service information.
 
-        Args:
-
-        Returns: The base64 encoded CA PEM file content for the caname
-
+        :return: The base64 encoded CA PEM file content for the caname
         """
         if self._ca_name != "":
             body_data = {"caname": self._ca_name}
@@ -443,14 +425,14 @@ class CAService(object):
                  ca_certs_path=None, crypto=ecies(), ca_name=''):
         """ Init CA service.
 
-        Args:
-            target (str): CA server address including protocol,hostname,port
-            ca_certs_path (str): Local ca certs path
-            crypto (Crypto): A crypto instance
-            ca_name (str): The optional name of the CA, Fabric-ca servers
-            support multiple Certificate Authorties from a signle server.
-            If omitted or null or an empty string, then the default CA
-            is the target of requests
+        :param target: CA server address including protocol, hostname, port
+        :param ca_certs_path: Local ca certs path
+        :param crypto:  A crypto instance
+        :param ca_name: The optional name of the CA, Fabric-ca servers
+        support multiple Certificate Authorties from a signle server.
+        If omitted or null or an empty string, then the default CA
+        is the target of requests
+        :return: An instance of CAService
         """
         self._crypto = crypto
         self._ca_client = CAClient(target, ca_certs_path, ca_name=ca_name,
@@ -461,23 +443,23 @@ class CAService(object):
         """Enroll a registered user in order to receive a signed X509
          certificate
 
-        Args:
-            enrollment_id (str): The registered ID to use for enrollment
-            enrollment_secret (str): The secret associated with the
+        :param enrollment_id: The registered ID to use for enrollment
+        :type enrollment_id: str
+        :param enrollment_secret: The secret associated with the
                                      enrollment ID
-            profile (str): The profile name.  Specify the 'tls' profile for a
-             TLS certificate; otherwise, an enrollment certificate is issued.
-            csr (str): Optional. PEM-encoded PKCS#10 Certificate Signing
+        :type enrollment_secret: str
+        :param profile: The profile name.  Specify the 'tls' profile for a
+             TLS certificate; otherwise, an enrollment certificate is issued. (Default value = '')
+        :type profile: str
+        :param csr: Optional. PEM-encoded PKCS#10 Certificate Signing
              Request. The message sent from client side to Fabric-ca for the
-              digital identity certificate.
-            attr_reqs (list): An array of AttributeRequest
-
-        Returns: PEM-encoded X509 certificate
-
-        Raises:
-            RequestException: errors in requests.exceptions
-            ValueError: Failed response, json parse error, args missing
-
+              digital identity certificate. (Default value = None)
+        :type csr: str
+        :param attr_reqs: An array of AttributeRequest
+        :return: PEM-encoded X509 certificate (Default value = None)
+        :type attr_reqs: list
+        :raises RequestException: errors in requests.exceptions
+        :raises ValueError: Failed response, json parse error, args missing
         """
 
         if attr_reqs:
@@ -512,18 +494,15 @@ class CAService(object):
         """Re-enroll the member in cases such as the existing enrollment
          certificate is about to expire, or it has been compromised
 
-        Args:
-            currentUser (Enrollment): The identity of the current user that
+        :param currentUser: The identity of the current user that
              holds the existing enrollment certificate
-            attr_reqs (list): Optional. An array of AttributeRequest that
+        :type currentUser: Enrollment
+        :param attr_reqs: Optional. An array of AttributeRequest that
              indicate attributes to be included in the certificate
-
-        Returns: PEM-encoded X509 certificate
-
-        Raises:
-            RequestException: errors in requests.exceptions
-            ValueError: Failed response, json parse error, args missing
-
+        :return: PEM-encoded X509 certificate (Default value = None)
+        :type attr_reqs: list
+        :raises RequestException: errors in requests.exceptions
+        :raises ValueError: Failed response, json parse error, args missing
         """
 
         if not isinstance(currentUser, Enrollment):
@@ -561,29 +540,31 @@ class CAService(object):
                  maxEnrollments, attrs, registrar):
         """Register a user in order to receive a secret
 
-        Args:
-            registrar (Enrollment): The registrar
-            enrollmentID (str): enrollmentID ID which will be used for
+        :param registrar: The registrar
+        :type registrar: Enrollment
+        :param enrollmentID: enrollmentID ID which will be used for
              enrollment
-            enrollmentSecret (str): enrollmentSecret Optional enrollment secret
+        :type enrollmentID: str
+        :param enrollmentSecret: enrollmentSecret Optional enrollment secret
              to set for the registered user.
              If not provided, the server will generate one.
              When not including, use a null for this parameter.
-            role (str): Optional type of role for this user.
+        :type enrollmentSecret: str
+        :param role: Optional type of role for this user.
                         When not including, use a null for this parameter.
-            affiliation (str):  Affiliation with which this user will be
+        :type role: str
+        :param affiliation: Affiliation with which this user will be
              associated
-            maxEnrollments (number): The maximum number of times the user is
+        :type affiliation: str
+        :param maxEnrollments: The maximum number of times the user is
              permitted to enroll
-            attrs (dict):  Array of key/value attributes to assign to the user
-
-        Returns: secret (str): The enrollment secret to use when this user
+        :type maxEnrollments: number
+        :param attrs: Array of key/value attributes to assign to the user
+        :return The enrollment secret to use when this user
          enrolls
-
-        Raises:
-            RequestException: errors in requests.exceptions
-            ValueError: Failed response, json parse error, args missing
-
+        :type attrs: dict
+        :raises RequestException: errors in requests.exceptions
+        :raises ValueError: Failed response, json parse error, args missing
         """
         req = {
             "id": enrollmentID,
@@ -610,23 +591,24 @@ class CAService(object):
             revoking by enrollment id, then all future requests to enroll this
              id will be rejected.
 
-        Args:
-            registrar (Enrollment): The registrar
-            enrollmentID (str): enrollmentID ID to revoke
-            aki (str): Authority Key Identifier string, hex encoded, for the
+        :param registrar: The registrar
+        :type registrar: Enrollment
+        :param enrollmentID: enrollmentID ID to revoke
+        :type enrollmentID: str
+        :param aki: Authority Key Identifier string, hex encoded, for the
              specific certificate to revoke
-            serial (str): Serial number string, hex encoded, for the specific
+        :type aki: str
+        :param serial: Serial number string, hex encoded, for the specific
              certificate to revoke
-            reason (str): The reason for revocation.
+        :type serial: str
+        :param reason: The reason for revocation.
              See https://godoc.org/golang.org/x/crypto/ocsp for valid values
-            gencrl (bool): GenCRL specifies whether to generate a CRL
-
-        Returns: results (str): The revocation results
-
-        Raises:
-            RequestException: errors in requests.exceptions
-            ValueError: Failed response, json parse error, args missing
-
+        :type reason: str
+        :param gencrl: GenCRL specifies whether to generate a CRL
+        :return: The revocation results
+        :type gencrl: bool
+        :raises RequestException: errors in requests.exceptions
+        :raises ValueError: Failed response, json parse error, args missing
         """
         req = {
             "id": enrollmentID,
@@ -647,17 +629,16 @@ class CAService(object):
                     expireAfter, registrar):
         """Generate CRL
 
-        Args
-        revokedBefore (Date) - Include certificates that were revoked before
+        :param revokedBefore: Include certificates that were revoked before
          this UTC timestamp (in RFC3339 format) in the CRL
-        revokedAfter (Date) - Include certificates that were revoked after
+        :param revokedAfter: Include certificates that were revoked after
          this UTC timestamp (in RFC3339 format) in the CRL
-        expireBefore (Date) - Include revoked certificates that expire before
+        :param expireBefore: Include revoked certificates that expire before
          this UTC timestamp (in RFC3339 format) in the CRL
-        expireAfter (Date) - Include revoked certificates that expire after
-         this UTC timestamp (in RFC3339 format) in the CRL
-
-         Returns: CRL (str): The Certificate Revocation List (CRL)
+        :param expireAfter: Include revoked certificates that expire after
+         this UTC timestamp (in RFC3339 format) in the CRL 
+        :param registrar: registrar
+        :return: The Certificate Revocation List (CRL)
         """
         req = {
             'revokedBefore': revokedBefore,
@@ -687,13 +668,10 @@ def ca_service(target=DEFAULT_CA_ENDPOINT,
                ca_certs_path=None, crypto=ecies(), ca_name=""):
     """Create ca service
 
-    Args:
-        target: url
-        ca_certs_path: certs path
-        crypto: crypto
-        ca_name: CA name
-
-    Returns: ca service instance
-
+    :param target: url (Default value = DEFAULT_CA_ENDPOINT)
+    :param ca_certs_path: certs path (Default value = None)
+    :param crypto: crypto (Default value = ecies())
+    :param ca_name: CA name
+    :return: ca service instance (Default value = "")
     """
     return CAService(target, ca_certs_path, crypto, ca_name)
