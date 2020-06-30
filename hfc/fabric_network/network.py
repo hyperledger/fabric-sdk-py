@@ -17,6 +17,7 @@ class Network(object):
     Applications should get a Network instance using the
     gateway's getNetwork method.
     """
+
     def __init__(self, gateway, channel):
         """ Construct Network. """
         self.gateway = gateway

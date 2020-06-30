@@ -15,6 +15,7 @@ class Contract(object):
     networks's get_contract method.
     :return: an instance of Contract
     """
+
     def __init__(self, network, cc_name, gateway):
         self.network = network
         self.channel = network.channel

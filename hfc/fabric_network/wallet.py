@@ -13,6 +13,7 @@ class FileSystenWallet(object):
     """FileSystemWallet stores the identities of users and admins
         ie. it contains the Private Key and Enrollment Certificate
     """
+
     def __init__(self, path=os.getcwd() + '/tmp/hfc-kvs'):
         self._path = path
 
@@ -62,6 +63,7 @@ class Identity(object):
         2) Enrollment Certificate of user
         3) Private Key of user
     """
+
     def __init__(self, enrollment_id, user):
 
         if not isinstance(user, Enrollment):

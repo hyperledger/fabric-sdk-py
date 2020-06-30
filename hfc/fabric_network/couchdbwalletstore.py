@@ -15,6 +15,7 @@ class CouchDBWalletStore(object):
         in a CouchDB with given config
         ie. it contains the Private Key and Enrollment Certificate
     """
+
     def __init__(self, dbName, config='http://localhost:5984'):
         self.server = couchdb.Server(config)
         try:

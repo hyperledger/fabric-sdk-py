@@ -8,6 +8,7 @@ class InMemoryWalletStore(object):
     """InMemoryWalletStore stores the identities of users and admins
         in memory
     """
+
     def __init__(self):
         self._Map = {}
 
