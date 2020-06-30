@@ -11,8 +11,7 @@ from hfc.util.crypto.crypto import ecies
 
 
 class CouchDBWalletStore(object):
-    """
-        CouchDBWalletStore stores the identities of users and admins
+    """CouchDBWalletStore stores the identities of users and admins
         in a CouchDB with given config
         ie. it contains the Private Key and Enrollment Certificate
     """
@@ -24,9 +23,11 @@ class CouchDBWalletStore(object):
             self.db = self.server.create(dbName)
 
     def exists(self, enrollment_id):
-        """
-            Returns whether or not the creds of a user with a given user_id
+        """Returns whether or not the creds of a user with a given user_id
             exists in the wallet
+
+        :param enrollment_id: enrollment id
+        :return: True or False
         """
         try:
             self.db[enrollment_id]
@@ -35,14 +36,19 @@ class CouchDBWalletStore(object):
             return False
 
     def remove(self, enrollment_id):
-        """
-            deletes identities of user with given enrollment_id
+        """deletes identities of user with given enrollment_id
+
+        :param enrollment_id: enrollment id
+        :return:
         """
         self.db.delete(self.db[enrollment_id])
 
     def put(self, enrollment_id, user_enrollment):
-        """
-            Saves the particular Identity in the wallet
+        """Saves the particular Identity in the wallet
+
+        :param enrollment_id: enrollment id
+        :param user_enrollment: Enrollment object
+        :return:
         """
         if not isinstance(user_enrollment, Enrollment):
             raise ValueError('"user_enrollment" is not a valid Enrollment object')
@@ -55,8 +61,14 @@ class CouchDBWalletStore(object):
         self.db[enrollment_id] = doc
 
     def create_user(self, enrollment_id, org, msp_id, state_store=None):
-        """ Returns an instance of a user whose identity
+        """Returns an instance of a user whose identity
             is stored in the CouchDBWallet
+
+        :param enrollment_id: enrollment id
+        :param org: organization
+        :param msp_id: MSP id
+        :param state_store:  (Default value = None)
+        :return: a validated user instance
         """
         crypto_suit = ecies()
 

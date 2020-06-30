@@ -10,7 +10,7 @@ from hfc.util.keyvaluestore import FileKeyValueStore
 
 
 class FileSystenWallet(object):
-    """ FileSystemWallet stores the identities of users and admins
+    """FileSystemWallet stores the identities of users and admins
         ie. it contains the Private Key and Enrollment Certificate
     """
     def __init__(self, path=os.getcwd() + '/tmp/hfc-kvs'):
@@ -19,20 +19,33 @@ class FileSystenWallet(object):
         os.makedirs(path, exist_ok=True)
 
     def exists(self, enrollment_id):
-        """ Returns whether or not the creds of a user with a given user_id
+        """Returns whether or not the credentials of a user with a given user_id
             exists in the wallet
+
+        :param enrollment_id: enrollment id
+        :return: True or False
         """
         return os.path.exists(self._path+'/'+enrollment_id)
 
     def remove(self, enrollment_id):
-        """ Deletes identities of users with the given user_id """
+        """Deletes identities of users with the given user_id
+
+        :param enrollment_id: enrollment id
+        :return:
+        """
         dirpath = self._path+'/'+enrollment_id
         if dirpath.exists() and dirpath.is_dir():
             shutil.rmtree(dirpath)
 
     def create_user(self, enrollment_id, org, msp_id, state_store=None):
-        """ Returns an instance of a user whose identity
+        """Returns an instance of a user whose identity
             is stored in the FileSystemWallet
+
+        :param enrollment_id: enrollment id
+        :param org: organization
+        :param msp_id: MSP id
+        :param state_store: state store (Default value = None)
+        :return: a user instance
         """
         if not self.exists(enrollment_id):
             raise AttributeError('"user" does not exist')
@@ -44,7 +57,7 @@ class FileSystenWallet(object):
 
 
 class Identity(object):
-    """ Class represents a tuple containing
+    """Class represents a tuple containing
         1) enrollment_id
         2) Enrollment Certificate of user
         3) Private Key of user
@@ -61,7 +74,11 @@ class Identity(object):
                                                           encryption_algorithm=serialization.NoEncryption())
 
     def CreateIdentity(self, Wallet):
-        """ Saves the particular Identity in the wallet """
+        """Saves the particular Identity in the wallet
+
+        :param Wallet: 
+        :return:
+        """
         sub_directory = Wallet._path + '/' + self._enrollment_id + '/'
         os.makedirs(sub_directory, exist_ok=True)
 
