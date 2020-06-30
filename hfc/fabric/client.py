@@ -444,13 +444,12 @@ class Client(object):
 
         return self._channels.get(name, None)
 
-    # TODO pass enveloppe directly
-    # TODO channel_create and channel_update are almost the same, refacto
-    async def channel_create(self, orderer, channel_name, requestor,
-                             config_yaml=None, channel_profile=None,
-                             config_tx=None):
+    # TODO pass envelope directly
+    def get_headers_create_or_update_channel(self, orderer, channel_name, requestor,
+                                             config_yaml=None, channel_profile=None,
+                                             config_tx=None, signatures=None):
         """
-        Create a channel, send request to orderer, and check the response
+        Get headers to send request to orderer, and check the response
 
         :param orderer: Name or Orderer instance of orderer to get
         genesis block from
@@ -462,86 +461,8 @@ class Client(object):
         config yaml file
         :param config_tx: Path of the configtx file of createchannel generated
         with configtxgen
-        :return: True (creation succeeds) or False (creation failed)
-        """
-        if self.get_channel(channel_name):
-            msg = f"channel {channel_name} already existed when creating"
-            _logger.warning(msg)
-            raise Exception(msg)
-
-        target_orderer = None
-        if isinstance(orderer, Orderer):
-            target_orderer = orderer
-        elif isinstance(orderer, str):
-            target_orderer = self.get_orderer(orderer)
-
-        if not target_orderer:
-            _logger.error(f"No orderer instance found with name {orderer}")
-            return False
-
-        if config_tx is not None:
-            config_tx = config_tx if os.path.isabs(config_tx) else \
-                os.getcwd() + "/" + config_tx
-            with open(config_tx, 'rb') as f:
-                envelope = f.read()
-                config = utils.extract_channel_config(envelope)
-        elif config_yaml is not None and channel_profile is not None:
-            tx = self.generate_channel_tx(channel_name, config_yaml,
-                                          channel_profile)
-            if tx is None:
-                _logger.error('Configtx is empty')
-                return False
-            _logger.info("Configtx file successfully created in current \
-            directory")
-
-            with open(tx, 'rb') as f:
-                envelope = f.read()
-                config = utils.extract_channel_config(envelope)
-        else:
-            _logger.error('Configtx or (config_yaml + channel) \
-            profile must be provided.')
-            return False
-
-        # convert envelope to config
-        self.tx_context = TXContext(requestor, requestor.cryptoSuite, {})
-        tx_id = self.tx_context.tx_id
-        nonce = self.tx_context.nonce
-        signatures = []
-        org1_admin_signature = self.sign_channel_config(config)
-        # append org1_admin_signature to signatures
-        signatures.append(org1_admin_signature)
-
-        request = {
-            'tx_id': tx_id,
-            'nonce': nonce,
-            'signatures': signatures,
-            'config': config,
-            'orderer': target_orderer,
-            'channel_name': channel_name
-        }
-        responses = await self._create_or_update_channel(request)
-
-        if not all([x.status == 200 for x in responses]):
-            raise Exception(responses)
-
-        self.new_channel(channel_name)
-        return True
-
-    # TODO pass envelope directly if possible
-    # TODO support passing config as a python object directly
-    async def channel_update(self, orderer, channel_name, requestor,
-                             config_yaml=None, channel_profile=None,
-                             config_tx=None, signatures=None):
-        """
-        Update a channel, send request to orderer, and check the response
-
-        :param orderer: Name or Orderer instance of orderer to get
-        genesis block from
-        :param channel_name: Name of channel to create
-        :param requestor: Name of creator
-        :param config_tx: Path of the configtx file of createchannel generated
-        with configtxgen
-        :return: True (creation succeeds) or False (creation failed)
+        :param signatures: signatures
+        :return: request dictionary with headers
         """
         if signatures is None:
             signatures = []
@@ -601,6 +522,54 @@ class Client(object):
             'orderer': target_orderer,
             'channel_name': channel_name
         }
+        return request
+
+    async def channel_create(self, orderer, channel_name, requestor,
+                             config_yaml=None, channel_profile=None,
+                             config_tx=None):
+        """
+        Create a channel, send request to orderer, and check the response
+
+        :param orderer: Name or Orderer instance of orderer to get
+        genesis block from
+        :param channel_name: Name of channel to create
+        :param requestor: Name of creator
+        :param config_yaml: Directory path of config yaml to be set for FABRIC_
+        CFG_PATH variable
+        :param channel_profile: Name of the channel profile defined inside
+        config yaml file
+        :param config_tx: Path of the configtx file of createchannel generated
+        with configtxgen
+        :return: True (creation succeeds) or False (creation failed)
+        """
+        request = self.get_headers_create_or_update_channel(orderer=orderer, channel_name=channel_name, requestor=requestor,
+                                                            config_yaml=config_yaml, channel_profile=channel_profile, config_tx=config_tx, signatures=None)
+        responses = await self._create_or_update_channel(request)
+
+        if not all([x.status == 200 for x in responses]):
+            raise Exception(responses)
+
+        self.new_channel(channel_name)
+        return True
+
+    # TODO pass envelope directly if possible
+    # TODO support passing config as a python object directly
+    async def channel_update(self, orderer, channel_name, requestor,
+                             config_yaml=None, channel_profile=None,
+                             config_tx=None, signatures=None):
+        """
+        Update a channel, send request to orderer, and check the response
+
+        :param orderer: Name or Orderer instance of orderer to get
+        genesis block from
+        :param channel_name: Name of channel to create
+        :param requestor: Name of creator
+        :param config_tx: Path of the configtx file of createchannel generated
+        with configtxgen
+        :return: True (creation succeeds) or False (creation failed)
+        """
+        request = self.get_headers_create_or_update_channel(orderer=orderer, channel_name=channel_name, requestor=requestor,
+                                                            config_yaml=config_yaml, channel_profile=channel_profile, config_tx=config_tx, signatures=signatures)
         responses = await self._create_or_update_channel(request)
 
         if not all([x.status == 200 for x in responses]):
