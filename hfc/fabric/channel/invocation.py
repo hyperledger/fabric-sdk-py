@@ -31,33 +31,28 @@ _logger = logging.getLogger(__name__ + ".invocation")
 
 
 class Invocation(TransactionProposalHandler):
-    """Chaincode invocation transaction proposal handler. """
+    """Chaincode invocation transaction proposal handler."""
 
     def handle(self, tran_prop_req, scheduler=None):
         """Execute chaincode invocation transaction proposal request.
 
-        Args:
-            scheduler: see rx.Scheduler
-            tran_prop_req: chaincode invocation transaction proposal request
-
-        Returns: An rx.Observer wrapper of chaincode invocation response
-
+        :param scheduler: see rx.Scheduler (Default value = None)
+        :param tran_prop_req: chaincode invocation transaction proposal request
+        :return: An rx.Observer wrapper of chaincode invocation response
         """
         return _invoke_chaincode(self._chain, tran_prop_req, scheduler)
 
 
 def _create_invocation_proposal(tran_prop_req, chain):
     """Create a chaincode invocation proposal
-
+    
     This involves assembling the proposal with the data (chaincodeID,
     chaincode invocation spec, etc.) and signing it using the private key
     corresponding to the ECert to sign.
 
-    Args:
-        tran_prop_req: see TransactionProposalRequest
-
-    Returns: (Proposal): The created Proposal instance or None.
-
+    :param tran_prop_req: see TransactionProposalRequest
+    :param chain: chain instance
+    :return: The created Proposal instance or None.
     """
     args = ["invoke" if not tran_prop_req.fcn
             else tran_prop_req.fcn] + tran_prop_req.args
@@ -92,12 +87,10 @@ def _create_invocation_proposal(tran_prop_req, chain):
 def _invoke_chaincode(chain, cc_invocation_request, scheduler=None):
     """Invoke chaincode.
 
-    Args:
-        chain: chain instance
-        scheduler: see rx.Scheduler
-        cc_invocation_request: see TransactionProposalRequest
-
-    Returns: An rx.Observable of invocation response
+    :param chain: chain instance
+    :param scheduler: see rx.Scheduler (Default value = None)
+    :param cc_invocation_request: see TransactionProposalRequest
+    :return: An rx.Observable of invocation response
 
     """
     if len(chain.peers) < 1:
@@ -132,16 +125,14 @@ def create_invocation_proposal_req(chaincode_id,
                                    targets=None):
     """Create invocation proposal request.
 
-    Args:
-        fcn: chaincode invoke function
-        args: invoke function args
-        targets: peers
-        nonce: nonce
-        chaincode_id: chaincode_id
-        chaincode_version: chaincode_version
-        creator: user
-
-    Returns: see TransactionProposalRequest
+    :param fcn: chaincode invoke function (Default value = 'invoke')
+    :param args: invoke function args (Default value = None)
+    :param targets: peers (Default value = None)
+    :param nonce: nonce (Default value = crypto.generate_nonce(24))
+    :param chaincode_id: chaincode_id
+    :param chaincode_version: chaincode_version
+    :param creator: user
+    :return: see TransactionProposalRequest
 
     """
     return TransactionProposalRequest(chaincode_id, creator, CC_INVOKE,
@@ -153,10 +144,8 @@ def create_invocation_proposal_req(chaincode_id,
 def chaincode_invocation(chain):
     """Create invocation.
 
-    Args:
-        chain: chain instance
-
-    Returns: Invocation instance
+    :param chain: chain instance
+    :return: Invocation instance
 
     """
     return Invocation(chain)

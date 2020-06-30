@@ -27,16 +27,15 @@ _logger = logging.getLogger(__name__ + ".user")
 
 
 class User(object):
-    """ The default implementation of user. """
+    """The default implementation of user."""
 
     def __init__(self, name, org, state_store):
         """Constructor for a user.
 
-        Args:
-            name: name
-            org: org
-            state_store: persistent state store as a cache
-
+        :param name: name
+        :param org: org
+        :param state_store: persistent state store as a cache
+        :return: An instance of user object
         """
         self._name = name
         self._org = org
@@ -60,26 +59,21 @@ class User(object):
     @property
     def name(self):
         """Get the user name
-
-        Return: The user name
-
+        :return: The user name
         """
         return self._name
 
     @property
     def org(self):
         """Get the org
-
-        Return: The org
-
+        :return: The org
         """
         return self._org
 
     @property
     def roles(self):
         """Get the roles
-
-        Return: The roles
+        :return: The roles
         """
         return self._roles
 
@@ -87,8 +81,8 @@ class User(object):
     def roles(self, roles):
         """Set the roles
 
-        Args:
-            roles: the roles
+        :param roles: the roles
+        :return:
         """
         self._roles = roles
         self._save_state()
@@ -96,8 +90,7 @@ class User(object):
     @property
     def account(self):
         """Get the account
-
-        Return: The account
+        :return: The account
         """
         return self._account
 
@@ -105,8 +98,8 @@ class User(object):
     def account(self, account):
         """Set the account
 
-        Args:
-            account: the account
+        :param account: the account
+        :return:
         """
         self._account = account
         self._save_state()
@@ -114,8 +107,7 @@ class User(object):
     @property
     def affiliation(self):
         """Get the affiliation
-
-        Return: The affiliation
+        :return: The affiliation
         """
         return self._affiliation
 
@@ -123,102 +115,89 @@ class User(object):
     def affiliation(self, affiliation):
         """Set the affiliation
 
-        Args:
-            affiliation: the affiliation
+        :param affiliation: the affiliation
+        :return:
         """
         self._affiliation = affiliation
         self._save_state()
 
     @property
     def enrollment(self):
-        """Get the enrollment
-
-        Return: The enrollment
-        """
+        """Get the enrollment"""
         return self._enrollment
 
     @enrollment.setter
     def enrollment(self, enrollment):
         """Set the enrollment
 
-        Args:
-            enrollment: the enrollment
+        :param enrollment: the enrollment
+        :return:
         """
         self._enrollment = enrollment
         self._save_state()
 
     @property
     def enrollment_secret(self):
-        """Get the enrollment_secret
-
-        Return: The enrollment_secret
-        """
+        """Get the enrollment_secret"""
         return self._enrollment_secret
 
     @enrollment_secret.setter
     def enrollment_secret(self, enrollment_secret):
         """Set the enrollment_secret
 
-        Args:
-            enrollment_secret: the enrollment_secret
+        :param enrollment_secret: the enrollment_secret
+        :return:
         """
         self._enrollment_secret = enrollment_secret
         self._save_state()
 
     @property
     def msp_id(self):
-        """Get the msp_id
-
-        Return: The msp_id
-        """
+        """Get the msp_id"""
         return self._msp_id
 
     @msp_id.setter
     def msp_id(self, msp_id):
         """Set the msp_id
 
-        Args:
-            msp_id: the msp_id
+        :param msp_id: the msp_id
+        :return:
         """
         self._msp_id = msp_id
         self._save_state()
 
     @property
     def cryptoSuite(self):
-        """Get the cryptoSuite
-
-        Return: The cryptoSuite
-        """
+        """Get the cryptoSuite"""
         return self._cryptoSuite
 
     @cryptoSuite.setter
     def cryptoSuite(self, cryptoSuite):
         """Set the cryptoSuite
 
-        Args:
-            msp_id: the cryptoSuite
+        :param msp_id: the cryptoSuite
+        :param cryptoSuite: 
+        :return:
         """
         self._cryptoSuite = cryptoSuite
         self._save_state()
 
     def is_registered(self):
         """Check if user registered
-
-        Returns: boolean
-
+        
+        :return: boolean
         """
         return self._enrollment_secret is not None
 
     def is_enrolled(self):
         """Check if user enrolled
-
-        Returns: boolean
-
+        
+        :return: boolean
         """
         return self._enrollment is not None
 
     def _save_state(self):
-        """ Persistent user state. """
+        """Persistent user state."""
         try:
             state = {
                 'name': self.name, 'org': self.org, 'roles': self.roles,
@@ -247,7 +226,7 @@ class User(object):
             raise IOError("Cannot serialize the user", e)
 
     def _restore_state(self):
-        """ Restore user state. """
+        """Restore user state."""
         try:
             state = self._state_store.get_value(self._state_store_key)
             state_dict = pickle.loads(
@@ -281,14 +260,11 @@ class User(object):
 
 
 def validate(user):
-    """ Check the user.
+    """Check the user.
 
-    Args:
-        user: A user object
-
-    Raises:
-        ValueError: When user property is invalid
-
+    :param user: A user object
+    :return: A validated user object
+    :raises ValueError: When user property is invalid
     """
     if not user:
         raise ValueError("User cannot be empty.")
@@ -319,18 +295,15 @@ def create_user(name, org, state_store, msp_id, key_path, cert_path,
                 crypto_suite=ecies()):
     """Create user
 
-    Args:
-        name: user's name
-        org: org name
-        state_store: user state store
-        msp_id: msp id for the user
-        crypto_suite: the cryptoSuite used to store crypto and key store
-         settings
-        key_path: identity private key path
-        cert_path: identity public cert path
-
-    Returns: a user instance
-
+    :param name: user's name
+    :param org: org name
+    :param state_store: user state store
+    :param msp_id: msp id for the user
+    :param crypto_suite: the cryptoSuite used to store crypto and key store
+         settings (Default value = ecies())
+    :param key_path: identity private key path
+    :param cert_path: identity public cert path
+    :return: a user instance
     """
 
     _logger.debug("Create user with {}:{}:{}:{}:{}:{}".format(

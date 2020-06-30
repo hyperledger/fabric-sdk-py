@@ -15,7 +15,7 @@ CC_TYPE_CAR = "CAR"
 
 
 class TXProposalRequest(object):
-    """ Class represents transaction proposal request."""
+    """Class represents transaction proposal request."""
 
     def __init__(self, prop_type=None, cc_path=None,
                  cc_type=CC_TYPE_GOLANG, cc_name=None,
@@ -25,18 +25,18 @@ class TXProposalRequest(object):
                  collections_config=None):
         """ Construct transaction proposal request
 
-        Args:
-            cc_type (str): chaincode type
-            prop_type (str): proposal type
-            packaged_cc (bytearray): chaincode gz.tar bytes
-            transient_map (list): transient data map
-            cc_endorsement_policy (bytearray): chaincode endorsement policy
-            args (list): function arguments
-            fcn (str): function name
-            cc_version (str): chaincode version
-            cc_name (str): chaincode name
-            cc_path (str): chaincode path
-            collections_config: collection config
+        :param cc_type: chaincode type
+        :param prop_type: proposal type
+        :param packaged_cc: chaincode gz.tar bytes
+        :param transient_map: transient data map
+        :param cc_endorsement_policy: chaincode endorsement policy
+        :param args: function arguments
+        :param fcn: function name
+        :param cc_version: chaincode version
+        :param cc_name: chaincode name
+        :param cc_path: chaincode path
+        :param collections_config: collection config
+        :return: An instance of TXProposalRequest or None
 
         """
         self._cc_type = cc_type
@@ -60,8 +60,8 @@ class TXProposalRequest(object):
     @property
     def cc_type(self):
         """Get chaincode type
-
-        Returns: return chaincode type
+        
+        :return: return chaincode type
 
         """
         return self._cc_type
@@ -70,8 +70,7 @@ class TXProposalRequest(object):
     def cc_type(self, cc_type):
         """Set chaincode type
 
-        Args:
-            cc_type: chaincode type
+        :param cc_type: chaincode type
 
         """
         self._cc_type = cc_type
@@ -79,8 +78,8 @@ class TXProposalRequest(object):
     @property
     def prop_type(self):
         """Get proposal type
-
-        Returns: return proposal type
+        
+        :return: return proposal type
 
         """
         return self._prop_type
@@ -89,8 +88,8 @@ class TXProposalRequest(object):
     def prop_type(self, prop_type):
         """Set proposal type
 
-        Args:
-            prop_type: proposal type
+        :param prop_type: proposal type
+        :return:
 
         """
         self._prop_type = prop_type
@@ -98,8 +97,8 @@ class TXProposalRequest(object):
     @property
     def cc_path(self):
         """Get chaincode path
-
-        Returns: return chaincode path
+        
+        :return: return chaincode path
 
         """
         return self._cc_path
@@ -108,8 +107,8 @@ class TXProposalRequest(object):
     def cc_path(self, cc_path):
         """Set chaincode path
 
-        Args:
-            cc_path: chaincode path
+        :param cc_path: chaincode path
+        :return:
 
         """
         self._cc_path = cc_path
@@ -117,8 +116,8 @@ class TXProposalRequest(object):
     @property
     def cc_name(self):
         """Get chaincode name
-
-        Returns: return chaincode name
+        
+        :return: return chaincode name
 
         """
         return self._cc_name
@@ -127,8 +126,8 @@ class TXProposalRequest(object):
     def cc_name(self, cc_name):
         """Set chaincode name
 
-        Args:
-            cc_name: chaincode name
+        :param cc_name: chaincode name
+        :return:
 
         """
         self._cc_name = cc_name
@@ -136,8 +135,8 @@ class TXProposalRequest(object):
     @property
     def cc_version(self):
         """Get chaincode version
-
-        Returns: return chaincode version
+        
+        :return: return chaincode version
 
         """
         return self._cc_version
@@ -146,8 +145,8 @@ class TXProposalRequest(object):
     def cc_version(self, cc_version):
         """Set chaincode version
 
-        Args:
-            cc_version: chaincode version
+        :param cc_version: chaincode version
+        :return:
 
         """
         self._cc_version = cc_version
@@ -155,8 +154,8 @@ class TXProposalRequest(object):
     @property
     def fcn(self):
         """Get function name
-
-        Returns: return function name
+        
+        :return: return function name
 
         """
         return self._fcn
@@ -165,8 +164,8 @@ class TXProposalRequest(object):
     def fcn(self, fcn):
         """Set function name
 
-        Args:
-            fcn: function name
+        :param fcn: function name
+        :return:
 
         """
         self._fcn = fcn
@@ -174,8 +173,8 @@ class TXProposalRequest(object):
     @property
     def args(self):
         """Get function arguments
-
-        Returns: return function arguments
+        
+        :return: return function arguments
 
         """
         return self._args
@@ -184,8 +183,8 @@ class TXProposalRequest(object):
     def args(self, args):
         """Set function arguments
 
-        Args:
-            args: function arguments
+        :param args: function arguments
+        :return:
 
         """
         self._args = args
@@ -193,8 +192,8 @@ class TXProposalRequest(object):
     @property
     def packaged_cc(self):
         """Get packaged chaincode
-
-        Returns: return packaged chaincode
+        
+        :return: return packaged chaincode
 
         """
         return self._packaged_cc
@@ -203,8 +202,8 @@ class TXProposalRequest(object):
     def packaged_cc(self, packaged_cc):
         """Set packaged chaincode
 
-        Args:
-            packaged_cc: packaged chaincode
+        :param packaged_cc: packaged chaincode
+        :return:
 
         """
         self._packaged_cc = packaged_cc
@@ -212,8 +211,8 @@ class TXProposalRequest(object):
     @property
     def cc_endorsement_policy(self):
         """Get endorsement policy
-
-        Returns: return endorsement policy
+        
+        :return: return endorsement policy
 
         """
         return self._cc_endorsement_policy
@@ -222,8 +221,8 @@ class TXProposalRequest(object):
     def cc_endorsement_policy(self, cc_endorsement_policy):
         """Set endorsement policy
 
-        Args:
-            cc_endorsement_policy: endorsement policy
+        :param cc_endorsement_policy: endorsement policy
+        :return:
 
         """
         self._cc_endorsement_policy = cc_endorsement_policy
@@ -231,8 +230,8 @@ class TXProposalRequest(object):
     @property
     def transient_map(self):
         """Get transient map
-
-        Returns: return transient map
+        
+        :return: return transient map
 
         """
         return self._transient_map
@@ -241,8 +240,8 @@ class TXProposalRequest(object):
     def transient_map(self, transient_map):
         """Set transient map
 
-        Args:
-            transient_map: transient map
+        :param transient_map: transient map
+        :return:
 
         """
         self._transient_map = transient_map
@@ -250,8 +249,8 @@ class TXProposalRequest(object):
     @property
     def collections_config(self):
         """Get collections config
-
-        Returns: return collections config
+        
+        :return: return collections config
 
         """
         return self._collections_config
@@ -260,8 +259,8 @@ class TXProposalRequest(object):
     def collections_config(self, collections_config):
         """Set collections config
 
-        Args:
-            collections_config: collections config
+        :param collections_config: collections config
+        :return:
 
         """
         self._collections_config = collections_config
@@ -270,13 +269,9 @@ class TXProposalRequest(object):
 def validate(tx_prop_req):
     """Check transaction proposal request.
 
-    Args:
-        tx_prop_req: see TXProposalRequest
-
-    Returns: transaction proposal request if no error
-
-    Raises:
-            ValueError: Invalid transaction proposal request
+    :param tx_prop_req: see TXProposalRequest
+    :return: transaction proposal request if no error
+    :raises ValueError: Invalid transaction proposal request
 
     """
     if not tx_prop_req:
@@ -315,18 +310,18 @@ def create_tx_prop_req(prop_type=None, cc_path=None, cc_type=CC_TYPE_GOLANG,
                        collections_config=None):
     """Create a transaction proposal request
 
-    Args:
-        prop_type: proposal request type
-        cc_path: chaincode path
-        cc_name: chaincode name
-        cc_version: chaincode version
-        fcn: function name
-        args: function arguments
-        cc_endorsement_policy: chaincode endorsement policy
-        transient_map: transient data map
-        packaged_cc: packaged chaincode source
-
-    Returns: a transaction proposal request
+    :param prop_type: proposal request type (Default value = None)
+    :param cc_path: chaincode path (Default value = None)
+    :param cc_name: chaincode name (Default value = None)
+    :param cc_version: chaincode version (Default value = None)
+    :param fcn: function name (Default value = None)
+    :param args: function arguments (Default value = None)
+    :param cc_endorsement_policy: chaincode endorsement policy (Default value = None)
+    :param transient_map: transient data map (Default value = None)
+    :param packaged_cc: packaged chaincode source
+    :param cc_type:  (Default value = CC_TYPE_GOLANG)
+    :param collections_config:  (Default value = None)
+    :return: a transaction proposal request (Default value = None)
 
     """
     tx_prop_req = TXProposalRequest(

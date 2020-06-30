@@ -40,6 +40,8 @@ START_AND_END = 3
 
 
 class EventRegistration(object):
+    """A class represents event registration."""
+
     def __init__(self, onEvent=None, unregister=True, disconnect=False):
         self.onEvent = onEvent
         self.unregister = unregister
@@ -47,6 +49,8 @@ class EventRegistration(object):
 
 
 class ChaincodeRegistration(object):
+    """A class represents chaincode registration."""
+
     def __init__(self, ccid, pattern, er, as_array):
         self.uuid = uuid.uuid4().hex
         self.ccid = ccid
@@ -85,8 +89,7 @@ class ChannelEventHub(object):
     @property
     def connected(self):
         """Get the connected
-
-        Return: The connected
+        :return: The connected
         """
         return self._connected
 
@@ -94,8 +97,8 @@ class ChannelEventHub(object):
     def connected(self, connected):
         """Set the connected
 
-        Args:
-            connected: the connected
+        :param connected: the connected
+        :return:
         """
         self._connected = connected
 
@@ -145,8 +148,9 @@ class ChannelEventHub(object):
         return seek_info
 
     def _get_stream(self):
-        """ get the events of the channel.
-        Return: the events in success or None in fail.
+        """get the events of the channel.
+
+        :return: the events in success or None in fail.
         """
         _logger.info("create peer delivery stream")
 

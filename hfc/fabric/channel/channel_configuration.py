@@ -19,10 +19,9 @@ class ChannelConfiguration(object):
 
     def __init__(self, config=None, file_path=None):
         """Construct ChannelConfiguration by args.
-
-        Args:
-            config: raw config bytes
-            file_path: config file path
+        :param config: raw config bytes
+        :param file_path: config file path
+        :return:
         """
         self._config = None
 
@@ -36,17 +35,14 @@ class ChannelConfiguration(object):
     @property
     def config(self):
         """Get config bytes.
-
-        Returns: raw config bytes
-
+        :return: raw config bytes
         """
         return self._config
 
     @config.setter
     def config(self, config):
         """Set config bytes.
-
-        Args:
-            config: raw config bytes
+        :param config: raw config bytes
+        :return:
         """
         self._config = config

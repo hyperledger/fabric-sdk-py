@@ -6,16 +6,17 @@ from hfc.util.utils import create_serialized_identity
 
 
 class TXContext(object):
-    """ A class represent Transaction context."""
+    """A class represent Transaction context."""
 
     def __init__(self, user, crypto, tx_prop_req, prop_wait_time=-1):
         """ Construct transaction context
 
-        Args:
-            prop_wait_time (int): proposal request wait timeout
-            tx_prop_req (object): transaction proposal request
-            user: user
-            crypto: crypto
+        :param prop_wait_time: proposal request wait timeout
+        :param tx_prop_req: transaction proposal request
+        :param user: user
+        :param crypto: crypto
+        :return: The created TXContext instance or None
+
         """
         self._tx_prop_req = tx_prop_req
         self._user = user
@@ -36,17 +37,17 @@ class TXContext(object):
 
     @property
     def tx_id(self):
-        """ Get transaction id."""
+        """Get transaction id."""
         return self._tx_id
 
     @property
     def epoch(self):
-        """ Get epoch."""
+        """Get epoch."""
         return 0
 
     @property
     def nonce(self):
-        """ Get nonce"""
+        """Get nonce"""
         return self._nonce
 
     @property
@@ -55,7 +56,12 @@ class TXContext(object):
         return self._identity
 
     def sign(self, plain_text):
-        """Sign the text"""
+        """Sign the text
+
+        :param plain_text: plain text
+        :return: the signed text
+
+        """
         return self._crypto.sign(self._user.enrollment.private_key,
                                  plain_text)
 
@@ -66,7 +72,12 @@ class TXContext(object):
 
     @prop_wait_time.setter
     def prop_wait_time(self, proposal_wait_time):
-        """Set proposal wait time"""
+        """Set proposal wait time
+
+        :param proposal_wait_time: proposal wait time
+        :return:
+
+        """
         self._prop_wait_time = proposal_wait_time
 
     @property
@@ -76,7 +87,12 @@ class TXContext(object):
 
     @tx_prop_req.setter
     def tx_prop_req(self, tx_prop_req):
-        """Set transaction proposal request"""
+        """Set transaction proposal request
+
+        :param tx_prop_req: transaction proposal request
+        :return:
+
+        """
         self._tx_prop_req = tx_prop_req
 
     @property
@@ -86,20 +102,16 @@ class TXContext(object):
 
     @property
     def crypto(self):
-        """Get """
+        """Get"""
         return self._crypto
 
 
 def validate(tx_context):
     """Validate transaction context
 
-    Args:
-        tx_context: transaction context
-
-    Returns: transaction context if no error
-
-    Raises:
-            ValueError: Invalid transaction context
+    :param tx_context: transaction context
+    :return: transaction context if no error
+    :raises ValueError: Invalid transaction context
 
     """
     if not tx_context:
@@ -122,13 +134,11 @@ def validate(tx_context):
 def create_tx_context(user, crypto, tx_prop_req, prop_wait_time=-1):
     """Create transaction context
 
-    Args:
-        tx_prop_req: transaction proposal request
-        user: user
-        crypto: crypto
-        prop_wait_time: proposal wait time
-
-    Returns: a transaction context instance
+    :param tx_prop_req: transaction proposal request
+    :param user: user
+    :param crypto: crypto
+    :param prop_wait_time: proposal wait time
+    :return: a transaction context instance (Default value = -1)
 
     """
     tx_context = TXContext(user, crypto, tx_prop_req, prop_wait_time)

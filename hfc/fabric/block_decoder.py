@@ -52,20 +52,16 @@ _logger = logging.getLogger(__name__ + ".block_decoder")
 
 
 class BlockDecoder(object):
-    """
-        An object of a fully decoded protobuf message "Block"
-    """
+    """An object of a fully decoded protobuf message "Block" """
 
     @staticmethod
     def decode(block_bytes):
-        """
-        Constructs a JSON Object containing all decoded values from
+        """Constructs a JSON Object containing all decoded values from
         protobuf encoded `Block` bytes.
 
-        Args:
-            block_bytes (bytes): Block instance
-
-        Returns: Dictionary containing decoded Block instance.
+        :param block_bytes: Block instance
+        :return: Dictionary containing decoded Block instance.
+        :type block_bytes: bytes
         """
         block = {}
         try:
@@ -80,16 +76,11 @@ class BlockDecoder(object):
 
     @staticmethod
     def decode_transaction(processed_tx_bytes):
-        """
-        Decodes a transaction proto and constructs a deserialized object
+        """Decodes a transaction proto and constructs a deserialized object
 
-        Args:
-            processed_tx_bytes {str} -- Binary content of tx
-
-        Returns: Dictionary containing tx block information
-
-        Raises:
-            ValueError -- If data is not passed to the method
+        :param processed_tx_bytes: Binary content of tx
+        :return: Dictionary containing tx block information
+        :raises ValueError: If data is not passed to the method
         """
         if not processed_tx_bytes:
             raise ValueError("BlockDecoder :: decode_transaction \
@@ -106,20 +97,16 @@ class BlockDecoder(object):
 
 
 class FilteredBlockDecoder(object):
-    """
-        An object of a fully decoded protobuf message "FilteredBlock"
-    """
+    """An object of a fully decoded protobuf message "FilteredBlock" """
 
     @staticmethod
     def decode(block_bytes):
-        """
-        Constructs a JSON Object containing all decoded values from
+        """Constructs a JSON Object containing all decoded values from
         protobuf encoded `FilteredBlock` bytes.
 
-        Args:
-            block_bytes (bytes): FilteredBlock instance
-
-        Returns: Dictionary containing decoded Filtered Block instance.
+        :param block_bytes: FilteredBlock instance
+        :return: Dictionary containing decoded Filtered Block instance.
+        :type block_bytes: bytes
         """
 
         filtered_block = {}
@@ -203,9 +190,7 @@ policy_policy_type = ['UNKNOWN', 'SIGNATURE', 'MSP', 'IMPLICIT_META']
 
 
 class HeaderType(object):
-    """
-        HeaderType class having decodePayload and convertToString methods
-    """
+    """HeaderType class having decodePayload and convertToString methods"""
 
     @staticmethod
     def convert_to_string(type_value):
@@ -229,13 +214,11 @@ class HeaderType(object):
 
 
 def decode_block_header(proto_block_header):
-    """
-    Decodes the header of Block
+    """Decodes the header of Block
 
-    Args:
-        proto_block_header (str): Block Header proto
-
-    Returns: Decoded BlockHeader inside Block instance.
+    :param proto_block_header: Block Header proto
+    :return: Decoded BlockHeader inside Block instance.
+    :type proto_block_header: str
     """
     block_header = {}
     block_header['number'] = proto_block_header.number
@@ -248,11 +231,11 @@ def decode_block_header(proto_block_header):
 def decode_block_data(proto_block_data, not_proto=False):
     """Decodes the data of Block.
 
-    Args:
-        proto_block_data (str): Block Data proto.
-        not_proto (bool): Boolean for if proto.
-
-    Returns: deserialized block_data
+    :param proto_block_data: Block Data proto.
+    :type proto_block_data: str
+    :param not_proto: Boolean for if proto.
+    :return: deserialized block_data (Default value = False)
+    :type not_proto: bool
     """
     data = {}
     data['data'] = []
@@ -270,10 +253,9 @@ def decode_block_data(proto_block_data, not_proto=False):
 def decode_block_metadata(proto_block_metadata):
     """Decodes block metadata from block
 
-    Args:
-        proto_block_metadata (bytes): Block metadata proto content
-
-    Returns: deserialized metadata contents
+    :param proto_block_metadata: Block metadata proto content
+    :return: deserialized metadata contents
+    :type proto_block_metadata: bytes
     """
     metadata = {}
     metadata['metadata'] = []
@@ -296,10 +278,9 @@ def decode_block_metadata(proto_block_metadata):
 def decode_block_data_envelope(proto_envelope):
     """Decodes the envelope contents of Block
 
-    Args:
-        proto_envelope (str): Envelope proto
-
-    Returns: deserialized block envelope
+    :param proto_envelope: Envelope proto
+    :return: deserialized block envelope
+    :type proto_envelope: str
     """
     envelope = {}
     envelope['signature'] = proto_envelope.signature
@@ -320,10 +301,9 @@ def decode_block_data_envelope(proto_envelope):
 def decode_header(proto_header):
     """Decodes the Payload header in envelope
 
-    Args:
-        proto_header (str): Envelope Payload
-
-    Returns: deserialized envelope header
+    :param proto_header: Envelope Payload
+    :return: deserialized envelope header
+    :type proto_header: str
     """
     header = {}
     header['channel_header'] = \
@@ -336,10 +316,9 @@ def decode_header(proto_header):
 def decode_channel_header(header_bytes):
     """Decodes channel header for Payload channel header
 
-    Args:
-        header_bytes (str): Bytes channel header
-
-    Return: deserialized payload channel_header
+    :param header_bytes: Bytes channel header
+    :return: deserialized payload channel_header
+    :type header_bytes: str
     """
     channel_header = {}
     proto_channel_header = common_pb2.ChannelHeader()
@@ -358,10 +337,8 @@ def decode_channel_header(header_bytes):
 def timestamp_to_date(timestamp):
     """Converts timestamp to current date
 
-    Args:
-        timestamp: Timestamp value
-
-    Returns: String formatted date in %Y-%m-%d %H:%M:%S
+    :param timestamp: Timestamp value
+    :return: String formatted date in %Y-%m-%d %H:%M:%S
     """
     if not timestamp:
         return None
@@ -375,10 +352,8 @@ def timestamp_to_date(timestamp):
 def decode_version(version_long):
     """Takes version proto object and returns version
 
-    Args:
-        version_long
-
-    Returns: integer value of version_long
+    :param version_long: version proto object
+    :return: integer value of version_long
     """
     return int(version_long)
 
@@ -386,10 +361,8 @@ def decode_version(version_long):
 def decode_signature_header(signature_header_bytes):
     """Decode signature header
 
-    Args:
-        signature_header_bytes: signature header bytes
-
-    Returns: deserialized signature_header
+    :param signature_header_bytes: signature header bytes
+    :return: deserialized signature_header
     """
     signature_header = {}
     proto_signature_header = common_pb2.SignatureHeader()
@@ -404,10 +377,8 @@ def decode_signature_header(signature_header_bytes):
 def decode_identity(id_bytes):
     """Decodes identity
 
-    Args:
-        id_bytes: byte of identity
-
-    Returns: deserialized identity
+    :param id_bytes: byte of identity
+    :return: deserialized identity
     """
     identity = {}
     try:
@@ -423,10 +394,9 @@ def decode_identity(id_bytes):
 def decode_metadata_signatures(metadata_bytes):
     """Decodes metadata signature from bytes
 
-    Args:
-        metadata_bytes (str): Metadata object proto
-
-    Returns: deserialized Metadata blocks
+    :param metadata_bytes: Metadata object proto
+    :return: deserialized Metadata blocks
+    :type metadata_bytes: str
     """
     metadata = {}
     proto_metadata = common_pb2.Metadata()
@@ -440,10 +410,9 @@ def decode_metadata_signatures(metadata_bytes):
 def decode_metadata_value_signatures(proto_meta_signatures):
     """Decodes all signatures in metadata values
 
-    Args:
-        proto_meta_signatures (list(str)): List of value objects
-
-    Returns: deserialized list of signatures from metadata values
+    :param proto_meta_signatures: List of value objects
+    :return: deserialized list of signatures from metadata values
+    :type proto_meta_signatures: list(str
     """
     signatures = []
     if proto_meta_signatures:
@@ -459,10 +428,9 @@ def decode_metadata_value_signatures(proto_meta_signatures):
 def decode_last_config_sequence_number(metadata_bytes):
     """Decodes last configuration and index for sequence number
 
-    Args:
-        metadata_bytes (str): encoded content for sequence number
-
-    Returns: deserialized dictionary of config sequence number
+    :param metadata_bytes: encoded content for sequence number
+    :return: deserialized dictionary of config sequence number
+    :type metadata_bytes: str
     """
     last_config = {
         'value': {
@@ -484,10 +452,9 @@ def decode_last_config_sequence_number(metadata_bytes):
 def decode_transaction_filter(metadata_bytes):
     """Decodes transaction filter from metadata bytes
 
-    Args:
-        metadata_bytes (str): Encoded list of transaction filters
-
-    Returns: decoded transaction_filter list
+    :param metadata_bytes: Encoded list of transaction filters
+    :return: decoded transaction_filter list
+    :type metadata_bytes: str
     """
     transaction_filter = []
     if not metadata_bytes:
@@ -501,10 +468,8 @@ def decode_transaction_filter(metadata_bytes):
 def decode_endorser_transaction(trans_bytes):
     """Decodes
 
-    Args:
-        trans_bytes {[type]}: Serialized endorser transaction bytes
-
-    Returns: deserialized dictionary of endorser transaction data
+    :param trans_bytes: Serialized endorser transaction bytes
+    :return: deserialized dictionary of endorser transaction data
     """
     data = {}
     if trans_bytes:
@@ -525,10 +490,8 @@ def decode_endorser_transaction(trans_bytes):
 def decode_config_envelope(config_envelope_bytes):
     """Decodes configuration envelope
 
-    Args:
-        config_envelope_bytes: byte of config envelope
-
-    Returns: deserialized config envelope
+    :param config_envelope_bytes: byte of config envelope
+    :return: deserialized config envelope
     """
     config_envelope = {}
     proto_config_envelope = configtx_pb2.ConfigEnvelope()
@@ -552,10 +515,9 @@ def decode_config_envelope(config_envelope_bytes):
 def decode_config(proto_config):
     """Decodes configuration from config envelope
 
-    Args:
-        proto_config (bytes): Config value
-
-    Returns: deserialized config
+    :param proto_config: Config value
+    :type proto_config: bytes
+    :return: deserialized config
     """
     config = {}
     config['sequence'] = str(proto_config.sequence)
@@ -568,10 +530,9 @@ def decode_config(proto_config):
 def decode_config_update_envelope(config_update_envelope_bytes):
     """Decode config update envelope
 
-    Args:
-        config_update_envelope_bytes (str): Bytes of update envelope
-
-    Returns: deserialized config update envelope signatures
+    :param config_update_envelope_bytes: Bytes of update envelope
+    :type config_update_envelope_bytes: str
+    :return: deserialized config update envelope signatures
     """
     config_update_envelope = {}
     proto_config_update_envelope = configtx_pb2.ConfigUpdateEnvelope()
@@ -590,10 +551,9 @@ def decode_config_update_envelope(config_update_envelope_bytes):
 def decode_config_update(config_update_bytes):
     """Decodes update bytes in configuration
 
-    Args:
-        config_update_bytes (str): Bytes
-
-    Returns: deserialized configuration update
+    :param config_update_bytes: Bytes
+    :type config_update_bytes: str
+    :return: deserialized configuration update
     """
     config_update = {}
     proto_config_update = configtx_pb2.ConfigUpdate()
@@ -610,10 +570,9 @@ def decode_config_update(config_update_bytes):
 def decode_config_groups(config_group_map):
     """Decodes configuration groups inside ConfigGroup
 
-    Args:
-        config_group_map (str): Serialized ConfigGroup.groups object
-
-    Returns: map of configuration groups.
+    :param config_group_map: Serialized ConfigGroup.groups object
+    :type config_group_map: str
+    :return: map of configuration groups.
     """
     config_groups = {}
     keys = config_group_map.keys()
@@ -625,10 +584,9 @@ def decode_config_groups(config_group_map):
 def decode_config_group(proto_config_group):
     """Decodes configuration group from config protos
 
-    Args:
-        proto_config_group (str): serialized ConfigGroup() object
-
-    Returns: deserialized config_groups dictionary
+    :param proto_config_group: serialized ConfigGroup() object
+    :type proto_config_group: str
+    :return: deserialized config_groups dictionary
     """
 
     if not proto_config_group:
@@ -646,10 +604,9 @@ def decode_config_group(proto_config_group):
 def decode_config_values(config_value_map):
     """Decodes configuration values inside each configuration key
 
-    Args:
-        config_value_map (str): Serialized values map for each config key
-
-    Returns: map of configuration values for each key
+    :param config_value_map: Serialized values map for each config key
+    :type config_value_map: str
+    :return: map of configuration values for each key
     """
     config_values = {}
     keys = config_value_map.keys()
@@ -661,11 +618,11 @@ def decode_config_values(config_value_map):
 def decode_config_value(proto_config_value, key):
     """Decodes ConfigValue from map with a given key
 
-    Arguments:
-        proto_config_value (str): A bytes string of config_value
-        key (str): Map key for the configuration value
-
-    Returns: config_value: Dictionary of configuration value deserialized
+    :param proto_config_value: A bytes string of config_value
+    :type proto_config_value: str
+    :param key: Map key for the configuration value
+    :type key: str
+    :return: Dictionary of configuration value deserialized
     """
     config_value_key = key
     config_value = {}
@@ -746,10 +703,9 @@ def decode_config_value(proto_config_value, key):
 def decode_config_policies(config_policy_map):
     """Decodes list of configuration policies
 
-    Args:
-        config_policy_map (str): Serialized list of configuration policies
-
-    Returns: deserialized map of config policies.
+    :param config_policy_map: Serialized list of configuration policies
+    :type config_policy_map: str
+    :return: deserialized map of config policies.
     """
     config_policies = {}
     keys = config_policy_map.keys()
@@ -761,10 +717,8 @@ def decode_config_policies(config_policy_map):
 def decode_config_policy(proto_config_policy):
     """Decodes config policy based on type of policy
 
-    Args:
-        proto_config_policy: Configuration policy bytes
-
-    Returns: deserialized config_policy based on policy type.
+    :param proto_config_policy: Configuration policy bytes
+    :return: deserialized config_policy based on policy type.
     """
     config_policy = {}
     config_policy['version'] = decode_version(proto_config_policy.version)
@@ -793,10 +747,9 @@ def decode_config_policy(proto_config_policy):
 def decode_implicit_meta_policy(implicit_meta_policy_bytes):
     """Decodes implicit meta policy in a policy
 
-    Args:
-        implicit_meta_policy_bytes (str): Bytes of implicit meta policy
-
-    Returns: deserialized implicit_meta_policy value.
+    :param implicit_meta_policy_bytes: Bytes of implicit meta policy
+    :type implicit_meta_policy_bytes: str
+    :return: deserialized implicit_meta_policy value.
     """
     implicit_meta_policy = {}
     proto_implicit_meta_policy = policies_pb2.ImplicitMetaPolicy()
@@ -811,10 +764,9 @@ def decode_implicit_meta_policy(implicit_meta_policy_bytes):
 def decode_signature_policy_envelope(signature_policy_envelope_bytes):
     """Decodes signature policy envelope bytes
 
-    Args:
-        signature_policy_envelope_bytes (str): Serialized signature envelope
-
-    Returns: deserialized signature policy envelope contents.
+    :param signature_policy_envelope_bytes: Serialized signature envelope
+    :type signature_policy_envelope_bytes: str
+    :return: deserialized signature policy envelope contents.
     """
     signature_policy_envelope = {}
     proto_signature_policy_envelope = policies_pb2.SignaturePolicyEnvelope()
@@ -837,10 +789,8 @@ def decode_signature_policy_envelope(signature_policy_envelope_bytes):
 def decode_signature_policy(proto_signature_policy):
     """Decodes signature policy based on field
 
-    Args:
-        proto_signature_policy: Object of SignaturePolicy()
-
-    Returns: deserialized signature policy after decoding based on field.
+    :param proto_signature_policy: Object of SignaturePolicy()
+    :return: deserialized signature policy after decoding based on field.
     """
     signature_policy = {}
     if proto_signature_policy.HasField('n_out_of'):
@@ -861,10 +811,9 @@ def decode_signature_policy(proto_signature_policy):
 def decode_MSP_principal(proto_msp_principal):
     """Decodes MSP Principal
 
-    Args:
-        proto_msp_principal (str): Bytes for MSP Principals
-
-    Returns: deserialized MSP Principal based on classification.
+    :param proto_msp_principal: Bytes for MSP Principals
+    :type proto_msp_principal: str
+    :return: deserialized MSP Principal based on classification.
     """
     msp_principal = {}
     msp_principal['principal_classification'] = \
@@ -904,10 +853,9 @@ def decode_MSP_principal(proto_msp_principal):
 def decode_config_signature(proto_configSignature):
     """Decodes Configuration Signature
 
-    Args:
-        proto_configSignature (str): ConfigSignature() object
-
-    Returns: deserialized config signature after header decode.
+    :param proto_configSignature: ConfigSignature() object
+    :type proto_configSignature: str
+    :return: deserialized config signature after header decode.
     """
     config_signature = {}
     config_signature['signature_header'] = \
@@ -919,10 +867,9 @@ def decode_config_signature(proto_configSignature):
 def decode_fabric_MSP_config(msp_config_bytes):
     """Decodes Fabric MSP Configuration
 
-    Args:
-        msp_config_bytes (str): Serialized configuration for MSP
-
-    Returns: Deserialized MSP configuration and certs.
+    :param msp_config_bytes: Serialized configuration for MSP
+    :type msp_config_bytes: str
+    :return: Deserialized MSP configuration and certs.
     """
     msp_config = {}
     proto_msp_config = msp_config_pb2.FabricMSPConfig()
@@ -956,10 +903,9 @@ def decode_fabric_MSP_config(msp_config_bytes):
 def decode_fabric_OU_identifier(FabricOUIdentifier):
     """Decodes Fabric OU Identifier
 
-    Args:
-        FabricOUIdentifier (str): OU Identifier
-
-    Returns: OU Identifier object.
+    :param FabricOUIdentifier: OU Identifier
+    :type FabricOUIdentifier: str
+    :return: OU Identifier object.
     """
 
     return {
@@ -972,10 +918,9 @@ def decode_fabric_OU_identifier(FabricOUIdentifier):
 def decode_fabric_Nodes_OUs(proto_node_organizational_units):
     """Decodes Fabric Node OUs
 
-    Args:
-        proto_node_organizational_units (str): OUs
-
-    Returns: deserialized list of OU Identifier objects.
+    :param proto_node_organizational_units: OUs
+    :type proto_node_organizational_units: str
+    :return: deserialized list of OU Identifier objects.
     """
     node_organizational_units = {}
 
@@ -995,10 +940,9 @@ def decode_fabric_Nodes_OUs(proto_node_organizational_units):
 def to_PEM_certs(buffer_array_in):
     """Decodes String buffer input to PEM Certs
 
-    Args:
-        buffer_array_in (str): certificate contents buffer
-
-    Returns: Concats buffer contents and returns certs
+    :param buffer_array_in: certificate contents buffer
+    :type buffer_array_in: str
+    :return: Concats buffer contents and returns certs
     """
     return [b64encode(x).decode() for x in buffer_array_in]
 
@@ -1006,10 +950,9 @@ def to_PEM_certs(buffer_array_in):
 def decode_signing_identity_info(signing_identity_info_bytes):
     """Decodes Signing identity information from MSP Configuration
 
-    Args:
-        signing_identity_info_bytes (str): Byte string of the identity info
-
-    Returns: deserialized signing identity information.
+    :param signing_identity_info_bytes: Byte string of the identity info
+    :type signing_identity_info_bytes: str
+    :return: deserialized signing identity information.
     """
     if signing_identity_info_bytes == b'':
         return None
@@ -1031,10 +974,9 @@ def decode_signing_identity_info(signing_identity_info_bytes):
 def decode_key_info(key_info_bytes):
     """Decodes Key Infor in MSP Configuration
 
-    Args:
-        key_info_bytes (str): Byte information containing KeyInfo
-
-    Returns: deserialized key information.
+    :param key_info_bytes: Byte information containing KeyInfo
+    :type key_info_bytes: str
+    :return: deserialized key information.
     """
     key_info = {}
     if key_info_bytes:
@@ -1048,10 +990,9 @@ def decode_key_info(key_info_bytes):
 def decode_crypto_config(crypto_config_bytes):
     """Decodes Crypto Config in MSP Configuration
 
-    Args:
-        crypto_config_bytes (str): Byte information of FabricCyptoConfig
-
-    Returns: deserialized key information.
+    :param crypto_config_bytes: Byte information of FabricCyptoConfig
+    :type crypto_config_bytes: str
+    :return: deserialized key information.
     """
     crypto_config = {}
     if crypto_config_bytes:
@@ -1067,10 +1008,9 @@ def decode_crypto_config(crypto_config_bytes):
 def decode_chaincode_action_payload(payload_bytes):
     """Decodes chaincode action payload from ChaincodeAction
 
-    Args:
-        payload_bytes (str): Bytes buffer of the payload
-
-    Returns: deserialized payload information and action.
+    :param payload_bytes: Bytes buffer of the payload
+    :type payload_bytes: str
+    :return: deserialized payload information and action.
     """
     payload = {}
     proto_chaincode_action_payload = transaction_pb2.ChaincodeActionPayload()
@@ -1086,10 +1026,9 @@ def decode_chaincode_action_payload(payload_bytes):
 def decode_chaincode_proposal_payload(chaincode_proposal_payload_bytes):
     """Decodes chaincode proposal payload from ChaincodeProposal
 
-    Args:
-        chaincode_proposal_payload_bytes (str): Bytes of chaincode proposal
-
-    Returns: deserialized chaincode proposal payload information
+    :param chaincode_proposal_payload_bytes: Bytes of chaincode proposal
+    :type chaincode_proposal_payload_bytes: str
+    :return: deserialized chaincode proposal payload information
     """
     chaincode_proposal_payload = {}
     proto_chaincode_proposal_payload = proposal_pb2.ChaincodeProposalPayload()
@@ -1104,10 +1043,8 @@ def decode_chaincode_proposal_payload(chaincode_proposal_payload_bytes):
 def decode_chaincode_endorsed_action(proto_chaincode_endorsed_action):
     """Decodes chaincode endorsed action
 
-    Args:
-        proto_chaincode_endorsed_action = Object containing endorsements
-
-    Returns: deserialized chaincode endorsement action.
+    :param proto_chaincode_endorsed_action: Object containing endorsements
+    :return: deserialized chaincode endorsement action.
     """
     action = {}
     action['proposal_response_payload'] = \
@@ -1123,11 +1060,9 @@ def decode_chaincode_endorsed_action(proto_chaincode_endorsed_action):
 def decode_endorsement(proto_endorsement):
     """Decodes each endorsement
 
-    Args:
-        proto_endorsement: Object of endorsed content containing endorser
+    :param proto_endorsement: Object of endorsed content containing endorser
                            & related signature
-
-    Returns: deserialized endorsement content
+    :return: deserialized endorsement content
     """
     endorsement = {}
     endorsement['endorser'] = decode_identity(proto_endorsement.endorser)
@@ -1138,10 +1073,8 @@ def decode_endorsement(proto_endorsement):
 def decode_proposal_response_payload(proposal_response_payload_bytes):
     """Decodes response payload in the proposal
 
-    Args:
-        proposal_response_payload_bytes: Byte string of response payload
-
-    Returns: deserialized proposal response payload.
+    :param proposal_response_payload_bytes: Byte string of response payload
+    :return: deserialized proposal response payload.
     """
     proposal_response_payload = {}
     proto_proposal_response_payload = \
@@ -1158,10 +1091,9 @@ def decode_proposal_response_payload(proposal_response_payload_bytes):
 def decode_chaincode_action(action_bytes):
     """Decodes chaincode actions
 
-    Args:
-        action_bytes (str): Byte buffer of the chaincode action
-
-    Returns: deserialized chaincode action of results, events and response
+    :param action_bytes: Byte buffer of the chaincode action
+    :type action_bytes: str
+    :return: deserialized chaincode action of results, events and response
     """
     chaincode_action = {}
     proto_chaincode_action = proposal_pb2.ChaincodeAction()
@@ -1180,10 +1112,9 @@ def decode_chaincode_action(action_bytes):
 def decode_chaincode_events(event_bytes):
     """Decodes events in the chaincode
 
-    Args:
-        event_bytes (str): Byte buffer of event content
-
-    Returns: deserialized event contents.
+    :param event_bytes: Byte buffer of event content
+    :type event_bytes: str
+    :return: deserialized event contents.
     """
     events = {}
     proto_events = chaincode_event_pb2.ChaincodeEvent()
@@ -1198,10 +1129,8 @@ def decode_chaincode_events(event_bytes):
 def decode_chaincode_id(proto_chaincode_id):
     """Decodes chaincode ID information
 
-    Args:
-        proto_chaincode_id: Object containing chaincode details
-
-    Returns: deserialized chaincode ID with path, name and version.
+    :param proto_chaincode_id: Object containing chaincode details
+    :return: deserialized chaincode ID with path, name and version.
     """
     chaincode_id = {}
     if not proto_chaincode_id:
@@ -1215,10 +1144,9 @@ def decode_chaincode_id(proto_chaincode_id):
 def decode_readwrite_sets(rw_sets_bytes):
     """Decodes read write sets from a given TxReadWriteSet
 
-    Args:
-        rw_sets_bytes (str): Byte buffer of the TxReadWriteSet
-
-    Returns: deserialized transaction read write set contents.
+    :param rw_sets_bytes: Byte buffer of the TxReadWriteSet
+    :type rw_sets_bytes: str
+    :return: deserialized transaction read write set contents.
     """
     proto_tx_read_write_set = rwset_pb2.TxReadWriteSet()
     proto_tx_read_write_set.ParseFromString(rw_sets_bytes)
@@ -1241,10 +1169,9 @@ def decode_readwrite_sets(rw_sets_bytes):
 def decode_kv_rw_set(kv_bytes):
     """Decodes Key Value Read Write Set from KV Bytes
 
-    Args:
-        kv_bytes (str): Buffer of key value bytes
-
-    Returns: deserialized key value read write set of reads, writes
+    :param kv_bytes: Buffer of key value bytes
+    :type kv_bytes: str
+    :return: deserialized key value read write set of reads, writes
              and range queries information.
     """
     proto_kv_rw_set = kv_rwset_pb2.KVRWSet()
@@ -1279,10 +1206,8 @@ def decode_kv_rw_set(kv_bytes):
 def decode_kv_read(proto_kv_read):
     """Decodes Key Value Read
 
-    Args:
-        proto_kv_read: Object of the key value with read contents
-
-    Returns: deserialized key value read contents with block num and tx_num
+    :param proto_kv_read: Object of the key value with read contents
+    :return: deserialized key value read contents with block num and tx_num
     """
     kv_read = {}
     kv_read['key'] = proto_kv_read.key
@@ -1299,10 +1224,8 @@ def decode_kv_read(proto_kv_read):
 def decode_range_query_info(proto_range_query_info):
     """Decodes range query information from KV RW sets.
 
-    Args:
-        proto_range_query_info: Object of key value read write range queries
-
-    Returns: deserialized range query information with merkle hashes.
+    :param proto_range_query_info: Object of key value read write range queries
+    :return: deserialized range query information with merkle hashes.
     """
     range_query_info = {}
     range_query_info['start_key'] = proto_range_query_info.start_key
@@ -1333,10 +1256,8 @@ def decode_range_query_info(proto_range_query_info):
 def decode_kv_write(proto_kv_write):
     """Decodes key value write instance
 
-    Args:
-        proto_kv_write: Object containing key value writes
-
-    Returns: deserialized key value write contents and values.
+    :param proto_kv_write: Object containing key value writes
+    :return: deserialized key value write contents and values.
     """
     kv_write = {}
     kv_write['key'] = proto_kv_write.key
@@ -1348,10 +1269,8 @@ def decode_kv_write(proto_kv_write):
 def decode_response(proto_response):
     """Decodes response containing status, message and payload
 
-    Args:
-        proto_response: Object containing proto responses
-
-    Returns: deserialized response from protobuf objects
+    :param proto_response: Object containing proto responses
+    :return: deserialized response from protobuf objects
     """
     response = {}
     if proto_response:
@@ -1364,10 +1283,9 @@ def decode_response(proto_response):
 def decode_fabric_peers_info(peers_info_bytes):
     """Decodes Fabric Peers Information
 
-    Args:
-        peer_bytes (str): Serialized information about Peer
-
-    Returns: Deserialized Peers information and certs.
+    :param peers_info_bytes: Serialized information about Peer
+    :type peers_info_bytes: str
+    :return: Deserialized Peers information and certs.
     """
     peers_info = []
 
@@ -1417,10 +1335,9 @@ def decode_fabric_peers_info(peers_info_bytes):
 def decode_fabric_endpoints(endpoints):
     """Decodes Fabric Endpoints
 
-    Args:
-        endpoints (str): Fabric Endpoints
-
-    Returns: Deserialized endpoints.
+    :param endpoints: Fabric Endpoints
+    :type endpoints: str
+    :return: Deserialized endpoints.
     """
 
     endpoints_info = []
