@@ -60,7 +60,7 @@ class TXProposalRequest(object):
     @property
     def cc_type(self):
         """Get chaincode type
-        
+
         :return: return chaincode type
 
         """
@@ -78,7 +78,7 @@ class TXProposalRequest(object):
     @property
     def prop_type(self):
         """Get proposal type
-        
+
         :return: return proposal type
 
         """
@@ -97,7 +97,7 @@ class TXProposalRequest(object):
     @property
     def cc_path(self):
         """Get chaincode path
-        
+
         :return: return chaincode path
 
         """
@@ -116,7 +116,7 @@ class TXProposalRequest(object):
     @property
     def cc_name(self):
         """Get chaincode name
-        
+
         :return: return chaincode name
 
         """
@@ -135,7 +135,7 @@ class TXProposalRequest(object):
     @property
     def cc_version(self):
         """Get chaincode version
-        
+
         :return: return chaincode version
 
         """
@@ -154,7 +154,7 @@ class TXProposalRequest(object):
     @property
     def fcn(self):
         """Get function name
-        
+
         :return: return function name
 
         """
@@ -173,7 +173,7 @@ class TXProposalRequest(object):
     @property
     def args(self):
         """Get function arguments
-        
+
         :return: return function arguments
 
         """
@@ -192,7 +192,7 @@ class TXProposalRequest(object):
     @property
     def packaged_cc(self):
         """Get packaged chaincode
-        
+
         :return: return packaged chaincode
 
         """
@@ -211,7 +211,7 @@ class TXProposalRequest(object):
     @property
     def cc_endorsement_policy(self):
         """Get endorsement policy
-        
+
         :return: return endorsement policy
 
         """
@@ -230,7 +230,7 @@ class TXProposalRequest(object):
     @property
     def transient_map(self):
         """Get transient map
-        
+
         :return: return transient map
 
         """
@@ -249,7 +249,7 @@ class TXProposalRequest(object):
     @property
     def collections_config(self):
         """Get collections config
-        
+
         :return: return collections config
 
         """

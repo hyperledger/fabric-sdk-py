@@ -45,7 +45,7 @@ class Invocation(TransactionProposalHandler):
 
 def _create_invocation_proposal(tran_prop_req, chain):
     """Create a chaincode invocation proposal
-    
+
     This involves assembling the proposal with the data (chaincodeID,
     chaincode invocation spec, etc.) and signing it using the private key
     corresponding to the ECert to sign.

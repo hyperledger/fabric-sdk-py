@@ -245,7 +245,7 @@ def send_transaction_proposal(proposal, tx_context, peers):
 def send_transaction(orderers, tran_req, tx_context):
     """Send a transaction to the chain's orderer service (one or more
     orderer endpoints) for consensus and committing to the ledger.
-    
+
     This call is asynchronous and the successful transaction commit is
     notified via a BLOCK or CHAINCODE event. This method must provide a
     mechanism for applications to attach event listeners to handle

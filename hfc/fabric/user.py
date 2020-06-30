@@ -184,14 +184,14 @@ class User(object):
 
     def is_registered(self):
         """Check if user registered
-        
+
         :return: boolean
         """
         return self._enrollment_secret is not None
 
     def is_enrolled(self):
         """Check if user enrolled
-        
+
         :return: boolean
         """
         return self._enrollment is not None
