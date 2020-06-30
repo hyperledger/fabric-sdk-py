@@ -19,16 +19,14 @@ def create_grpc_channel(target, cert_file=None, client_key=None,
                         client_cert=None, opts=None):
     """Construct a grpc channel.
 
-    Args:
-        target: server address include host:port
-        cert_file: ssl/tls root cert file for the connection
-        opts: grpc channel options
+    :param target: server address include host:port
+    :param cert_file: ssl/tls root cert file for the connection (Default value = None)
+    :param opts: grpc channel options
                 grpc.default_authority: default authority
                 grpc.ssl_target_name_override: ssl target name override
-
-    Returns:
-        grpc channel
-
+    :param client_key: client key (Default value = None)
+    :param client_cert: client certificate (Default value = None)
+    :return: grpc channel
     """
 
     root_cert = None
