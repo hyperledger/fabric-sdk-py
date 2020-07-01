@@ -19,10 +19,11 @@ class IdentityService(object):
 
         :param registrar: registrar
         :param enrollmentID: enrollmentID ID which will be used for enrollment
-        :param enrollmentSecret: enrollmentSecret Optional enrollment secret to set for the registered user. 
+        :param enrollmentSecret: enrollmentSecret Optional enrollment secret to set for the registered user.
         If not provided, the server will generate one.
         When not including, use a null for this parameter.(Default value = None)
-        :param role: Optional type of role for this user. When not including, use a null for this parameter. (Default value = None)
+        :param role: Optional type of role for this user.
+        When not including, use a null for this parameter. (Default value = None)
         :param affiliation: Affiliation with which this user will be associated (Default value = None)
         :param maxEnrollments: The maximum number of times the user is permitted to enroll (Default value = 1)
         :param attrs: Array of key/value attributes to assign to the user. (Default value = None)

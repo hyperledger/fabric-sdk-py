@@ -636,7 +636,7 @@ class CAService(object):
         :param expireBefore: Include revoked certificates that expire before
          this UTC timestamp (in RFC3339 format) in the CRL
         :param expireAfter: Include revoked certificates that expire after
-         this UTC timestamp (in RFC3339 format) in the CRL 
+         this UTC timestamp (in RFC3339 format) in the CRL
         :param registrar: registrar
         :return: The Certificate Revocation List (CRL)
         """

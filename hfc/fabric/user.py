@@ -176,7 +176,7 @@ class User(object):
         """Set the cryptoSuite
 
         :param msp_id: the cryptoSuite
-        :param cryptoSuite: 
+        :param cryptoSuite:
         :return:
         """
         self._cryptoSuite = cryptoSuite

@@ -196,7 +196,7 @@ class Channel(object):
         """Validate channel state.
 
 
-        :raises ValueError: 
+        :raises ValueError:
 
         """
         if not self._initialized:
@@ -212,7 +212,7 @@ class Channel(object):
         """Validate peer
 
         :param peer: peer
-        :raises ValueError: 
+        :raises ValueError:
 
         """
         if not peer:
@@ -233,7 +233,7 @@ class Channel(object):
         """Validate peer set
 
         :param peers: peers
-        :raises ValueError: 
+        :raises ValueError:
 
         """
         if not peers:
@@ -1088,7 +1088,7 @@ class Channel(object):
     def _build_proto_cc_interest(self, interest):
         """Use a list of DiscoveryChaincodeCall to build an interest.
 
-        :param interest: 
+        :param interest:
         :return:
         """
         cc_calls = []

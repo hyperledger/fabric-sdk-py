@@ -78,7 +78,7 @@ class Identity(object):
     def CreateIdentity(self, Wallet):
         """Saves the particular Identity in the wallet
 
-        :param Wallet: 
+        :param Wallet:
         :return:
         """
         sub_directory = Wallet._path + '/' + self._enrollment_id + '/'

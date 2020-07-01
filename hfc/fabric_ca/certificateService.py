@@ -29,7 +29,8 @@ class CertificateService(object):
         :param aki: Authority Key Identifier string, hex encoded, for the
           specific certificate (Default value = None)
         :param serial: The serial number for a certificate (Default value = None)
-        :param revoked_start: Get revoked certificates starting at the specified time, either as timestamp (RFC3339 format) or duration (-30d) (Default value = None)
+        :param revoked_start: Get revoked certificates starting at the specified time,
+         either as timestamp (RFC3339 format) or duration (-30d) (Default value = None)
         :param revoked_end: Get revoked certificates before the specified time,
          either as timestamp * (RFC3339 format) or duration (-15d) (Default value = None)
         :param expired_start: Get expired certificates starting at the

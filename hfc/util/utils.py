@@ -304,7 +304,7 @@ def sign_tran_payload(tx_context, tran_payload_bytes):
     :param signing_identity: id to sign with
     :param tran_payload: transaction payload to sign on
     :param tx_context:
-    :param tran_payload_bytes: 
+    :param tran_payload_bytes:
     :return: Envelope
     """
     sig = tx_context.sign(tran_payload_bytes)
@@ -320,7 +320,7 @@ def build_tx_req(ProposalResponses):
     """Check the endorsements from peers
 
     :param reponses: ProposalResponse from endorsers
-    :param ProposalResponses: 
+    :param ProposalResponses:
     :return: an instance of TXRequest
     """
 

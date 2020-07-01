@@ -17,7 +17,7 @@ class InMemoryWalletStore(object):
             exists in the wallet
 
         :param enrollment_id: enrollment id
-        :return: True or False 
+        :return: True or False
         """
         return enrollment_id in self._Map
 
