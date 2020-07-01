@@ -52,7 +52,7 @@ IV_LENGTH = 16
 
 @six.add_metaclass(ABCMeta)
 class Key(object):
-    """ An abstract base class for Key.
+    """An abstract base class for Key.
 
     Key represents a base cryptographic key. It can be symmetric or asymmetric.
     In asymmetric case, the private key can retrieve public key with the
@@ -67,20 +67,20 @@ class Key(object):
         """ Return if this key is with symmetric crypt, i.e. whether it's a
         symmetric key.
 
-        :Returns: True or False
+        :return: True or False
         """
 
     @abstractmethod
     def get_SKI(self):
         """ Return the SKI string
 
-        :Returns: string represent the SKI
+        :return: string represent the SKI
         """
 
 
 @six.add_metaclass(ABCMeta)
 class AsymmetricKey(Key):
-    """ An asymmetric key.
+    """An asymmetric key.
 
     Can be a public key or private key, the private key can retrieve public
     key with the corresponding method.
@@ -90,80 +90,73 @@ class AsymmetricKey(Key):
     def is_private(self):
         """ Return if this key is private key
 
-        :Returns: True or False
+        :return: True or False
         """
 
     @abstractmethod
     def get_public_key(self):
-        """ Get the corresponding public key for this private key.
+        """Get the corresponding public key for this private key.
 
         If this key is already a public one, then return itself.
 
-        :Returns: Public key
+        :return: Public key
         """
 
 
 @six.add_metaclass(ABCMeta)
 class Crypto(object):
-    """ An abstract base class for crypto. """
+    """An abstract base class for crypto."""
 
     @abstractmethod
     def generate_private_key(self):
-        """ Generate asymmetric key pair.
+        """Generate asymmetric key pair.
 
-        :Returns: An private key object which include public key object.
+        :return: An private key object which include public key object.
         """
 
     @abstractmethod
     def encrypt(self, public_key, message):
-        """ Encrypt the message by encryption public key.
+        """Encrypt the message by encryption public key.
 
         :param public_key: Encryption public key
         :param message: message need encrypt
-
-        :Returns: An object including secure context
+        :return: An object including secure context
         """
 
     @abstractmethod
     def decrypt(self, private_key, cipher_text):
-        """ Decrypt the cipher text by encryption private key.
+        """Decrypt the cipher text by encryption private key.
 
         :param private_key: Encryption private key
         :param cipher_text: Cipher text received
-
-        :Returns: An object including secure context
+        :return: An object including secure context
         """
 
     @abstractmethod
     def sign(self, private_key, message):
-        """ Sign the origin message by signing private key.
+        """Sign the origin message by signing private key.
 
         :param private_key: Signing private key
         :param message: Origin message
-
-        :Returns: An object including secure context
+        :return: An object including secure context
         """
 
     @abstractmethod
     def verify(self, public_key, message, signature):
-        """ Verify the signature by signing public key.
+        """Verify the signature by signing public key.
 
         :param public_key: Signing public key
         :param message: Origin message
         :param signature: Signature of message
-
-        :Returns: A boolean True as valid
+        :return: A boolean True as valid
         """
 
     @staticmethod
     def generate_nonce(size):
-        """ Generate a secure random for cryptographic use.
+        """Generate a secure random for cryptographic use.
 
-        Args:
-            size: Number of bytes for the nonce
-
-        Returns: Generated random bytes
-
+        :param size: Number of bytes for the nonce
+        :return: Generated random bytes
         """
         return Random.get_random_bytes(size)
 
@@ -172,22 +165,21 @@ def generate_nonce(size):
     # TODO still has old dependencies but has to be deleted
     """ Generate a secure random for cryptographic use.
 
-    Args:
-        size: Number of bytes for the nonce
-
-    Returns: Generated random bytes
+    :param size: Number of bytes for the nonce
+    :return: Generated random bytes
     """
     return Random.get_random_bytes(size)
 
 
 class Ecies(Crypto):
-    """ A crypto implementation based on ECDSA and SHA. """
+    """A crypto implementation based on ECDSA and SHA."""
 
     def __init__(self, security_level=CURVE_P_256_Size, hash_algorithm=SHA2):
         """ Init curve and hash function.
 
         :param security_level: security level
         :param hash_algorithm: hash function
+        :return: an instance of Ecies
         """
         if security_level == CURVE_P_256_Size:
             # order = openssl.backend._lib.BN_new()
@@ -225,8 +217,7 @@ class Ecies(Crypto):
     def hash(self):
         """Get hash function
 
-        Returns: hash function
-
+        :return: hash function
         """
         return self._hash
 
@@ -235,7 +226,7 @@ class Ecies(Crypto):
 
         :param private_key: private key
         :param message: message to sign
-        :Returns: signature
+        :return: signature
         """
         signer = private_key.sign(message, ec.ECDSA(self.sign_hash_algorithm))
         return self._prevent_malleability(signer)
@@ -246,7 +237,7 @@ class Ecies(Crypto):
         :param public_key: Signing public key
         :param message: Origin message
         :param signature: Signature of message
-        :Returns: verify result boolean, True means valid
+        :return: verify result boolean, True means valid
         """
         if not (self._check_malleability(signature)):
             return False
@@ -274,12 +265,12 @@ class Ecies(Crypto):
     def generate_private_key(self):
         """ECDSA key pair generation by current curve.
 
-        :Returns: A private key object which include public key object.
+        :return: A private key object which include public key object.
         """
         return ec.generate_private_key(self.curve, default_backend())
 
     def decrypt(self, private_key, cipher_text):
-        """Ecies decrypt cipher text.
+        """ECIES decrypt cipher text.
 
         First restore the ephemeral public key from bytes(97 bytes for 384,
          65 bytes for 256).
@@ -290,7 +281,7 @@ class Ecies(Crypto):
 
         :param private_key: private key
         :param cipher_text: cipher text
-        :Returns: plain text
+        :return: plain text
         """
         key_len = private_key.curve.key_size
         if key_len != self.curve.key_size:
@@ -333,7 +324,7 @@ class Ecies(Crypto):
         return aes_cipher.decrypt(em[IV_LENGTH:len(em)])
 
     def encrypt(self, public_key, plain_text):
-        """Ecies encrypt plain text.
+        """ECIES encrypt plain text.
 
         First create a ephemeral ecdsa key pair, then serialize the public
         key for part of result.
@@ -346,7 +337,7 @@ class Ecies(Crypto):
 
         :param public_key: public key
         :param plain_text: plain text
-        :Returns: cipher text
+        :return: cipher text
         """
         ephemeral_private_key = self.generate_private_key()
         rb = ephemeral_private_key.public_key().public_bytes(
@@ -371,12 +362,11 @@ class Ecies(Crypto):
     def generate_csr(self, private_key, subject_name, extensions=None):
         """Generate certificate signing request.
 
-        Args:
-            private_key: Private key
-            subject_name (x509.Name): Subject name
-            extensions
-        Returns: x509.CertificateSigningRequest
-
+        :param private_key: Private key
+        :param subject_name: Subject name
+        :type subject_name: x509.Name
+        :param extensions:  (Default value = None)
+        return: x509.CertificateSigningRequest
         """
         builder = x509.CertificateSigningRequestBuilder(
             subject_name, [] if extensions is None else extensions)
@@ -388,11 +378,8 @@ class Ecies(Crypto):
 def ecies(security_level=CURVE_P_256_Size, hash_algorithm=SHA2):
     """Factory method for creating a Ecies instance.
 
-    Args:
-        security_level: Security level
-        hash_algorithm: Hash algorithm
-
-    Returns: A Ecies instance
-
+    :param security_level: Security level (Default value = CURVE_P_256_Size)
+    :param hash_algorithm: Hash algorithm
+    :return: A Ecies instance (Default value = SHA2)
     """
     return Ecies(security_level, hash_algorithm)

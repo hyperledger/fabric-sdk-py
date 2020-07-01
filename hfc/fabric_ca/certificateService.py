@@ -17,39 +17,33 @@ class CertificateService(object):
                         revoked_start=None, revoked_end=None,
                         expired_start=None, expired_end=None,
                         notexpired=None, notrevoked=None, ca=None):
-        """
-        The caller will be able to view certificates that it owns. In addition,
+        """The caller will be able to view certificates that it owns. In addition,
         if the caller has **hf.Registrar.Roles** or **hf.Revoker** attribute,
         it will be able to view certificates for identities that have
          affiliations equal to or below the caller's affiliation.
 
-        id (str): The enrollment ID that uniquely identifies an identity
-        aki (str): Authority Key Identifier string, hex encoded, for the
-         specific certificate
-        serial (str): The serial number for a certificate
-        revoked_start (str): Get revoked certificates starting at the
-         specified time, either as timestamp (RFC3339 format) or duration
-          (-30d)
-        revoked_end (str): Get revoked certificates before the specified time,
-         either as timestamp * (RFC3339 format) or duration (-15d)
-        expired_start (str): Get expired certificates starting at the
-         specified time, either as timestamp (RFC3339 format) or duration
-          (-30d)
-        expired_end (str): Get expired certificates before the specified time,
-         either as timestamp (RFC3339 format) or duration (-15d)
-        notexpired (bool): Don't return expired certificates
-        notrevoked (bool): Don't return revoked certificates
-        ca (str): The name of the CA to direct this request to within the
-         server, or the default CA if not specified
-        registrar (Enrollment): Required. The identity of the registrar
+        :param registrar: Required. The identity of the registrar
          (i.e. who is performing the revocation) signing certificate, hash
           algorithm and signature algorithm
-
-        Returns: res (Dict): result
-
-        Raises:
-            RequestException: errors in requests.exceptions
-            ValueError: Failed response, json parse error, args missing
+        :param id: The enrollment ID that uniquely identifies an identity (Default value = None)
+        :param aki: Authority Key Identifier string, hex encoded, for the
+          specific certificate (Default value = None)
+        :param serial: The serial number for a certificate (Default value = None)
+        :param revoked_start: Get revoked certificates starting at the specified time,
+         either as timestamp (RFC3339 format) or duration (-30d) (Default value = None)
+        :param revoked_end: Get revoked certificates before the specified time,
+         either as timestamp * (RFC3339 format) or duration (-15d) (Default value = None)
+        :param expired_start: Get expired certificates starting at the
+         specified time, either as timestamp (RFC3339 format) or duration (-30d) (Default value = None)
+        :param expired_end:  Get expired certificates before the specified time,
+         either as timestamp (RFC3339 format) or duration (-15d) (Default value = None)
+        :param notexpired: Don't return expired certificates (Default value = None)
+        :param notrevoked: Don't return revoked certificates (Default value = None)
+        :param ca: The name of the CA to direct this request to within the
+         server, or the default CA if not specified (Default value = None)
+        :return: result
+        :raises RequestException: errors in requests.exceptions
+        :raises ValueError: Failed response, json parse error, args missing
         """
 
         path = 'certificates'

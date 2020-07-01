@@ -12,32 +12,24 @@ class IdentityService(object):
 
     def create(self, registrar, enrollmentID, enrollmentSecret=None, role=None,
                affiliation=None, maxEnrollments=1, attrs=None):
-        """
-        Create a new identity with the Fabric CA server.
+        """Create a new identity with the Fabric CA server.
         An enrollment secret is returned which can then be used, along with
-         the enrollment ID, to enroll a new identity.
+        the enrollment ID, to enroll a new identity.
         The caller must have `hf.Registrar` authority.
 
-        enrollmentID (str): enrollmentID ID which will be used for
-         enrollment
-        enrollmentSecret (str): enrollmentSecret Optional enrollment secret
-         to set for the registered user.
-         If not provided, the server will generate one.
-         When not including, use a null for this parameter.
-        role (str): Optional type of role for this user.
-                    When not including, use a null for this parameter.
-        affiliation (str):  Affiliation with which this user will be
-         associated
-        maxEnrollments (number): The maximum number of times the user is
-         permitted to enroll
-        attrs (dict):  Array of key/value attributes to assign to the user
-
-        Returns: secret (str): The enrollment secret to use when this user
-         enrolls
-
-        Raises:
-            RequestException: errors in requests.exceptions
-            ValueError: Failed response, json parse error, args missing
+        :param registrar: registrar
+        :param enrollmentID: enrollmentID ID which will be used for enrollment
+        :param enrollmentSecret: enrollmentSecret Optional enrollment secret to set for the registered user.
+        If not provided, the server will generate one.
+        When not including, use a null for this parameter.(Default value = None)
+        :param role: Optional type of role for this user.
+        When not including, use a null for this parameter. (Default value = None)
+        :param affiliation: Affiliation with which this user will be associated (Default value = None)
+        :param maxEnrollments: The maximum number of times the user is permitted to enroll (Default value = 1)
+        :param attrs: Array of key/value attributes to assign to the user. (Default value = None)
+        :return: The enrollment secret to use when this user enrolls
+        :raises RequestException: errors in requests.exceptions
+        :raises ValueError: Failed response, json parse error, args missing
         """
 
         # TODO, default should be equal to registrar
