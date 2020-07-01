@@ -470,7 +470,7 @@ class Client(object):
         channel = self.get_channel(channel_name)
         if not channel:
             _logger.warning(f"channel {channel_name} does not exist")
-            return False
+            return None
 
         target_orderer = None
         if isinstance(orderer, Orderer):
@@ -480,7 +480,7 @@ class Client(object):
 
         if not target_orderer:
             _logger.error(f"No orderer instance found with name {orderer}")
-            return False
+            return None
 
         if config_tx is not None:
             config_tx = config_tx if os.path.isabs(config_tx) else \
@@ -493,7 +493,7 @@ class Client(object):
                                           channel_profile)
             if tx is None:
                 _logger.error('Configtx is empty')
-                return False
+                return None
             _logger.info("Configtx file successfully created in current \
             directory")
 
@@ -502,7 +502,7 @@ class Client(object):
                 config = utils.extract_channel_config(envelope)
         else:
             _logger.error('Configtx must be provided.')
-            return False
+            return None
 
         # convert envelope to config
         self.tx_context = TXContext(requestor, requestor.cryptoSuite, {})
@@ -542,8 +542,12 @@ class Client(object):
         with configtxgen
         :return: True (creation succeeds) or False (creation failed)
         """
-        request = self.get_headers_create_or_update_channel(orderer=orderer, channel_name=channel_name, requestor=requestor,
-                                                            config_yaml=config_yaml, channel_profile=channel_profile, config_tx=config_tx, signatures=None)
+        request = self.get_headers_create_or_update_channel(orderer=orderer, channel_name=channel_name,
+                                                            requestor=requestor, config_yaml=config_yaml,
+                                                            channel_profile=channel_profile, config_tx=config_tx,
+                                                            signatures=None)
+        if request is None:
+            return False
         responses = await self._create_or_update_channel(request)
 
         if not all([x.status == 200 for x in responses]):
@@ -568,8 +572,12 @@ class Client(object):
         with configtxgen
         :return: True (creation succeeds) or False (creation failed)
         """
-        request = self.get_headers_create_or_update_channel(orderer=orderer, channel_name=channel_name, requestor=requestor,
-                                                            config_yaml=config_yaml, channel_profile=channel_profile, config_tx=config_tx, signatures=signatures)
+        request = self.get_headers_create_or_update_channel(orderer=orderer, channel_name=channel_name,
+                                                            requestor=requestor, config_yaml=config_yaml,
+                                                            channel_profile=channel_profile, config_tx=config_tx,
+                                                            signatures=signatures)
+        if request is None:
+            return False
         responses = await self._create_or_update_channel(request)
 
         if not all([x.status == 200 for x in responses]):
