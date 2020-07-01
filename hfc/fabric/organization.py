@@ -64,13 +64,10 @@ class Organization(object):
 
 def create_org(name, info, state_store):
     """ Factory method to construct an organization instance
-
-    Args:
-        name: Name of the organization
-        info: Info dict for initialization
-        state_store: State store for data cache
-
-    Returns: an organization instance
+    :param name: Name of the organization
+    :param info: Info dict for initialization
+    :param state_store: State store for data cache
+    :return: an organization instance
     """
     org = Organization(name=name, state_store=state_store)
     org.init_with_bundle(info)

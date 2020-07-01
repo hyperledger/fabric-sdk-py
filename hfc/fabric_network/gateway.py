@@ -13,10 +13,10 @@ _logger.addHandler(consoleHandler)
 
 
 class Gateway(object):
-    """
-    The gateway peer provides the connection point for an application to access the Fabric network.
+    """The gateway peer provides the connection point for an application to access the Fabric network.
     It can then be connected to a fabric network using the path to network profile.
     """
+
     def __init__(self):
         """ Construct Gateway. """
         self.client = None
@@ -26,6 +26,10 @@ class Gateway(object):
 
     def mergeOptions(self, currentOptions, additionalOptions):
         """Merge additional options to current options
+
+        :param currentOptions: current options
+        :param additionalOptions: additional options to be merged
+        :return: result
         """
         result = currentOptions
         for prop in additionalOptions:
@@ -40,6 +44,7 @@ class Gateway(object):
         Connect to the Gateway with a connection profile and connection options.
         :param net_profile: Path to the Connection Profile
         :param options: Options such as wallet identity and user identity
+        :return:
         """
         if 'wallet' not in options:
             _logger.error("A wallet must be assigned to a gateway instance")
@@ -54,20 +59,20 @@ class Gateway(object):
                                                          name=options['identity']['name'])
 
     def get_current_identity(self):
-        """ :return The current identity being used in the gateway. """
+        """:return: The current identity being used in the gateway."""
         return self.current_identity
 
     def get_client(self):
-        """ :retyrn Client instance. """
+        """:return: Client instance."""
         return self.client
 
     def get_options(self):
-        """ :return the options being used. """
+        """:return: the options being used."""
         _logger.debug('in get_options')
         return self.options
 
     def disconnect(self):
-        """ Clean up and disconnect this Gateway connection """
+        """Clean up and disconnect this Gateway connection"""
         _logger.debug('in disconnect')
         self.networks.clear()
 

@@ -10,11 +10,12 @@ _logger.addHandler(consoleHandler)
 
 
 class Contract(object):
-    """
-    Represents a smart contract (chaincode) instance in a network.
+    """Represents a smart contract (chaincode) instance in a network.
     Applications should get a Contract instance using the
     networks's get_contract method.
+    :return: an instance of Contract
     """
+
     def __init__(self, network, cc_name, gateway):
         self.network = network
         self.channel = network.channel

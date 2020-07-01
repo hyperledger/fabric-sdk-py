@@ -46,13 +46,11 @@ proto_b = \
 def create_serialized_identity(user):
     """Create serialized identity from user.
 
-    Args:
-        user (user object): The user object that should be serialized.
-
-    Returns:
-        serialized_identity: Protobuf SerializedIdentity of
+    :param user: The user object that should be serialized.
+    :type user: user object
+    :return: Protobuf SerializedIdentity of
             the given user object.
-
+    :rtype: serialized_identity
     """
     serialized_identity = identities_pb2.SerializedIdentity()
     serialized_identity.mspid = user.msp_id
@@ -63,15 +61,14 @@ def create_serialized_identity(user):
 def build_header(creator, channel_header, nonce):
     """This function will build the common header.
 
-    Args:
-        creator (protobuf SerializedIdentity):
-            Serialized identity of the creator.
-        channel_header (protobuf ChannelHeader): ChannelHeader
-        nonce (str): Nonce that has been used for the tx_id.
-
-    Returns:
-        header: Returns created protobuf common header.
-
+    :param creator: Serialized identity of the creator.
+    :type creator: protobuf SerializedIdentity
+    :param channel_header: ChannelHeader
+    :type channel_header: protobuf ChannelHeader
+    :param nonce: Nonce that has been used for the tx_id.
+    :type nonce: str
+    :return: Returns created protobuf common header.
+    :rtype: header
     """
     signature_header = common_pb2.SignatureHeader()
     signature_header.creator = creator
@@ -89,17 +86,19 @@ def build_channel_header(type, tx_id, channel_id,
                          tls_cert_hash=None):
     """Build channel header.
 
-    Args:
-        type (common_pb2.HeaderType): type
-        tx_id (str): transaction id
-        channel_id (str): channel id
-        timestamp (grpc.timestamp): timestamp
-        epoch (int): epoch
-        extension: extension
-
-    Returns:
-        common_proto.Header instance
-
+    :param type: type
+    :type type: common_pb2.HeaderType
+    :param tx_id: transaction id
+    :type tx_id: str
+    :param channel_id: channel id
+    :type channel_id: str
+    :param timestamp: timestamp
+    :type timestamp: grpc.timestamp
+    :param epoch: epoch (Default value = 0)
+    :type epoch: int
+    :param extension: extension (Default value = None)
+    :param tls_cert_hash:  (Default value = None)
+    :return: common_proto.Header instance
     """
     channel_header = common_pb2.ChannelHeader()
     channel_header.type = type
@@ -120,13 +119,11 @@ def build_channel_header(type, tx_id, channel_id,
 def string_to_signature(string_signatures):
     """Check if signatures are already in protobuf format.
 
-    Args:
-        string_signatures (list): An list of protobuf ConfigSignatures either
+    :param string_signatures: An list of protobuf ConfigSignatures either
             represented as or serialized as byte strings.
-
-    Returns:
-         list: List of protobuf ConfigSignatures.
-
+    :type string_signatures: list
+    :returns: List of protobuf ConfigSignatures.
+    :rtype: list
     """
     signatures = []
 
@@ -150,9 +147,7 @@ def string_to_signature(string_signatures):
 def current_timestamp():
     """Get current timestamp.
 
-    Returns:
-        Current timestamp.
-
+    :return: Current timestamp.
     """
     timestamp = Timestamp()
     timestamp.GetCurrentTime()
@@ -160,18 +155,14 @@ def current_timestamp():
 
 
 def extract_channel_config(configtx_proto_envelope):
-    """ Extracts the protobuf 'ConfigUpdate' object out ouf the 'ConfigEnvelope'.
+    """Extracts the protobuf 'ConfigUpdate' object out ouf the 'ConfigEnvelope'.
 
-    Args:
-        configtx_proto_envelope (common_pb2.Envelope): The encoded bytes of the
+    :param configtx_proto_envelope: The encoded bytes of the
             ConfigEnvelope protofbuf.
-
-    Returns:
-        config_update (configtx_pb2.ConfigUpadeEnvelope.config_update):
-            The encoded bytes of the ConfigUpdate protobuf, ready to be signed
-
-    Raises:
-        ValueError: If there is an error in protobuf_decode due to a wrong or
+    :type configtx_proto_envelope: common_pb2.Envelope
+    :return: (config_update) The encoded bytes of the ConfigUpdate protobuf, ready to be signed
+    :rtype: configtx_pb2.ConfigUpadeEnvelope.config_update
+    :raises ValueError: If there is an error in protobuf_decode due to a wrong or
             not valid profobuf file a ValueError is raised.
 
     """
@@ -197,15 +188,12 @@ def extract_channel_config(configtx_proto_envelope):
 
 
 def build_cc_proposal(cci_spec, header, transient_map):
-    """ Create an chaincode transaction proposal
+    """Create an chaincode transaction proposal
 
-    Args:
-        transient_map: transient data map
-        cci_spec: The spec
-        header: header of the proposal
-
-    Returns: The created proposal
-
+    :param transient_map: transient data map
+    :param cci_spec: The spec
+    :param header: header of the proposal
+    :return: The created proposal
     """
     cc_payload = proposal_pb2.ChaincodeProposalPayload()
     cc_payload.input = cci_spec.SerializeToString()
@@ -221,13 +209,11 @@ def build_cc_proposal(cci_spec, header, transient_map):
 
 
 def sign_proposal(tx_context, proposal):
-    """ Sign a proposal
-    Args:
-        tx_context: transaction context
-        proposal: proposal to sign on
+    """Sign a proposal
 
-    Returns: Signed proposal
-
+    :param tx_context: transaction context
+    :param proposal: proposal to sign on
+    :return: Signed proposal
     """
     proposal_bytes = proposal.SerializeToString()
     sig = tx_context.sign(proposal_bytes)
@@ -242,14 +228,11 @@ def sign_proposal(tx_context, proposal):
 def send_transaction_proposal(proposal, tx_context, peers):
     """Send transaction proposal
 
-    Args:
-        header: header
-        tx_context: transaction context
-        proposal: transaction proposal
-        peers: peers
-
-    Returns: a list containing all the proposal response
-
+    :param header: header
+    :param tx_context: transaction context
+    :param proposal: transaction proposal
+    :param peers: peers
+    :return: a list containing all the proposal response
     """
     signed_proposal = sign_proposal(tx_context, proposal)
 
@@ -268,15 +251,13 @@ def send_transaction(orderers, tran_req, tx_context):
     mechanism for applications to attach event listeners to handle
     'transaction submitted', 'transaction complete' and 'error' events.
 
-    Args:
-        tx_context: transaction context
-        orderers: orderers
-        tran_req (TransactionRequest): The transaction object
-
-    Returns:
-        result (EventEmitter): an handle to allow the application to
-        attach event handlers on 'submitted', 'complete', and 'error'.
-
+    :param tx_context: transaction context
+    :param orderers: orderers
+    :param tran_req: The transaction object
+    :type tran_req: TransactionRequest
+    :return: (EventEmitter) an handle to allow the application to attach event handlers on 'submitted',
+            'complete', and 'error'.
+    :rtype: EventEmitter
     """
     if not tran_req:
         _logger.warning("Missing input request object on the transaction "
@@ -320,12 +301,11 @@ def send_transaction(orderers, tran_req, tx_context):
 def sign_tran_payload(tx_context, tran_payload_bytes):
     """Sign a transaction payload
 
-    Args:
-        signing_identity: id to sign with
-        tran_payload: transaction payload to sign on
-
-    Returns: Envelope
-
+    :param signing_identity: id to sign with
+    :param tran_payload: transaction payload to sign on
+    :param tx_context:
+    :param tran_payload_bytes:
+    :return: Envelope
     """
     sig = tx_context.sign(tran_payload_bytes)
 
@@ -337,12 +317,11 @@ def sign_tran_payload(tx_context, tran_payload_bytes):
 
 
 def build_tx_req(ProposalResponses):
-    """ Check the endorsements from peers
+    """Check the endorsements from peers
 
-    Args:
-        reponses: ProposalResponse from endorsers
-
-    Return: transaction request or None for endorser failure
+    :param reponses: ProposalResponse from endorsers
+    :param ProposalResponses:
+    :return: an instance of TXRequest
     """
 
     class TXRequest(object):
@@ -371,11 +350,9 @@ def build_tx_req(ProposalResponses):
 def send_install_proposal(tx_context, peers):
     """Send install chaincode proposal
 
-    Args:
-        tx_context: transaction context
-        peers: peers to install chaincode
-
-    Returns: a set of proposal response
+    :param tx_context: transaction context
+    :param peers: peers to install chaincode
+    :return: a set of proposal response
     """
 
     if not tx_context:
@@ -462,10 +439,11 @@ class zeroTimeContextManager(object):
 
 
 def package_chaincode(cc_path, cc_type=CC_TYPE_GOLANG):
-    """ Package all chaincode env into a tar.gz file
-    Args:
-        cc_path: path to the chaincode
-    Returns: The chaincode pkg path or None
+    """Package all chaincode env into a tar.gz file
+
+    :param cc_path: path to the chaincode
+    :param cc_type: chaincode type (Default value = CC_TYPE_GOLANG)
+    :return: The chaincode pkg path or None
     """
     _logger.debug('Packaging chaincode path={}, chaincode type={}'.format(
         cc_path, cc_type))

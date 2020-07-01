@@ -9,25 +9,21 @@ class AffiliationService(object):
         self._client = client
 
     def create(self, registrar, name, caname='', force=False):
-        """
-        Create a new affiliation.
+        """Create a new affiliation.
         The caller must have hf.AffiliationMgr authority.
 
         If any of the parent affiliations do not exist and 'force' is true,
         create all parent affiliations also.
 
-        name (str): The affiliation path to create
-        caname (str): Optional. Name of the CA to send the request to within
-         the Fabric CA server
-        force (boolean): Optional.
-        registrar (Enrollment): Required. The identity of the registrar
+        :param registrar: Required. The identity of the registrar
          (i.e. who is performing the registration)
-
-        Returns: res (Dict): result
-
-        Raises:
-            RequestException: errors in requests.exceptions
-            ValueError: Failed response, json parse error, args missing
+        :param name: The affiliation path to create
+        :param caname: Optional. Name of the CA to send the request to within
+         the Fabric CA server (Default value = '')
+        :param force: Optional. (Default value = False)
+        :raises RequestException: errors in requests.exceptions
+        :raises ValueError: Failed response, json parse error, args missing
+        :return: result
         """
 
         path = 'affiliations'
@@ -57,19 +53,15 @@ class AffiliationService(object):
         return res
 
     def getOne(self, affiliation, registrar):
-        """
-        List a specific affiliation at or below the caller's affinity.
+        """List a specific affiliation at or below the caller's affinity.
         The caller must have hf.AffiliationMgr authority.
 
-        affiliation (str): The affiliation path to be queried.
-        registrar (Enrollment): Required. The identity of the registrar
+        :param affiliation: The affiliation path to be queried.
+        :param registrar: Required. The identity of the registrar
          (i.e. who is performing the registration)
-
-        Returns: res (Dict): result
-
-        Raises:
-            RequestException: errors in requests.exceptions
-            ValueError: Failed response, json parse error, args missing
+        :raises RequestException: errors in requests.exceptions
+        :raises ValueError: Failed response, json parse error, args missing
+        :return: result
         """
 
         if not isinstance(affiliation, str):
@@ -89,18 +81,14 @@ class AffiliationService(object):
         return res
 
     def getAll(self, registrar):
-        """
-        List all affiliations equal to and below the caller's affiliation.
+        """List all affiliations equal to and below the caller's affiliation.
         The caller must have hf.AffiliationMgr authority.
 
-        registrar (Enrollment): Required. The identity of the registrar
+        :param registrar: Required. The identity of the registrar
          (i.e. who is performing the registration)
-
-        Returns: res (Dict): result
-
-        Raises:
-            RequestException: errors in requests.exceptions
-            ValueError: Failed response, json parse error, args missing
+        :return: result
+        :raises RequestException: errors in requests.exceptions
+        :raises ValueError: Failed response, json parse error, args missing
         """
 
         path = 'affiliations'
@@ -117,8 +105,7 @@ class AffiliationService(object):
         return res
 
     def delete(self, affiliation, registrar, force=False):
-        """
-        Delete an affiliation.
+        """Delete an affiliation.
         The caller must have hf.AffiliationMgr authority.
         Ca server must have cfg.affiliations.allowremove: true
 
@@ -127,14 +114,13 @@ class AffiliationService(object):
          identities and child affiliations
         will be deleted; otherwise, an error is returned.
 
-        registrar (Enrollment): Required. The identity of the registrar
+        :param affiliation: affiliation
+        :param registrar: Required. The identity of the registrar
          (i.e. who is performing the registration)
-
-        Returns: res (Dict): result
-
-        Raises:
-            RequestException: errors in requests.exceptions
-            ValueError: Failed response, json parse error, args missing
+        :param force:  (Default value = False)
+        :return: result
+        :raises RequestException: errors in requests.exceptions
+        :raises ValueError: Failed response, json parse error, args missing
         """
 
         if not isinstance(affiliation, str):
@@ -158,27 +144,23 @@ class AffiliationService(object):
 
     def update(self, affiliation, registrar, name, caname='',
                force=False):
-        """
-        Rename an affiliation.
+        """Rename an affiliation.
         The caller must have hf.AffiliationMgr authority.
 
         If any identities are associated with this affiliation, 'force' is true
         causes these identities' affiliations to be renamed; otherwise, an
-         error is returned.
+        error is returned.
 
-        affiliation (str): The affiliation path to be updated.
-        name (str): The affiliation path to create
-        caname (str): Optional. Name of the CA to send the request to within
-         the Fabric CA server
-        force (boolean): Optional.
-        registrar (Enrollment): Required. The identity of the registrar
+        :param affiliation: The affiliation path to be updated.
+        :param registrar: Required. The identity of the registrar
          (i.e. who is performing the registration)
-
-        Returns: res (Dict): result
-
-        Raises:
-            RequestException: errors in requests.exceptions
-            ValueError: Failed response, json parse error, args missing
+        :param name: The affiliation path to create
+        :param caname: Optional. Name of the CA to send the request to within
+         the Fabric CA server (Default value = '')
+        :param force: Optional. (Default value = False)
+        :return: result
+        :raises RequestException: errors in requests.exceptions
+        :raises ValueError: Failed response, json parse error, args missing
         """
 
         if not isinstance(affiliation, str):
