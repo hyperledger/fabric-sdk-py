@@ -38,9 +38,9 @@ class Contract(object):
         evaluated on the list of peers discovered and then submitted to the ordering service
         for committing to the ledger.
         """
-        channel_name = self.network.channel.name()
-        peers = list(self.network.channel.peers().keys())
+        channel_name = self.network.channel
         cli = self.gatetway.client
+        peers = cli._peers
 
         response = await cli.chaincode_invoke(requestor=requestor,
                                               channel_name=channel_name,
@@ -60,9 +60,9 @@ class Contract(object):
         the ordering service and hence will not be committed to the ledger.
         This is used for querying the world state.
         """
-        channel_name = self.network.channel.name()
-        peers = list(self.network.channel.peers().keys())
+        channel_name = self.network.channel3
         cli = self.gatetway.client
+        peers = cli._peers
 
         response = await cli.chaincode_query(requestor=requestor,
                                              channel_name=channel_name,
