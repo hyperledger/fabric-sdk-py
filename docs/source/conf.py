@@ -19,6 +19,10 @@ sys.path.insert(0, os.path.abspath('../../'))
 from recommonmark.transform import AutoStructify
 from hfc import VERSION
 
+# source_parsers = {
+#     '.md': 'recommonmark.parser.CommonMarkParser',
+# }
+
 source_suffix = ['.rst', '.md']
 
 master_doc = 'index'
@@ -48,8 +52,13 @@ release = VERSION
 # ones.
 extensions = [
     'recommonmark',
-    'sphinx_rtd_theme'
+    'sphinx_rtd_theme',
+    'autoapi.extension',
+    'sphinx_markdown_tables'
 ]
+
+# autoapi
+autoapi_dirs = ['../../hfc/']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -68,6 +77,7 @@ language = None
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
+
 
 
 # -- Options for HTML output -------------------------------------------------
