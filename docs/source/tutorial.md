@@ -1,6 +1,6 @@
 # Tutorial of Using Fabric Python SDK
 
-TLDR, run a quick testing.
+TLDR, run a quick testing. 
 
 ```bash
 $ HLF_VERSION=1.4.6
