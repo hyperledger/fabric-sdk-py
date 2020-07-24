@@ -4,6 +4,7 @@ omit =
 	*/protos/*
 	*/test/*
 	*/scripts/*
+    */Tutorial.ipynb
 
 [report]
 precision = 2
