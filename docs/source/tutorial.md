@@ -584,6 +584,94 @@ response = loop.run_until_complete(cli.query_peers(
                decode=True
                ))
 ```
+
+
+## 5. Usage of Channel Event Hub
+In this section, we assume a channel named "business" channel is created and no chaincode is installed.
+```python
+import asyncio
+from hfc.fabric import Client
+
+loop = asyncio.get_event_loop()
+
+cli = Client(net_profile="test/fixtures/network.json")
+org1_admin = cli.get_user('org1.example.com', 'Admin')
+
+# Make the client know there is a channel in the network
+cli.new_channel('businesschannel')
+
+# Install Example Chaincode to Peers
+# GOPATH setting is only needed to use the example chaincode inside sdk
+import os
+gopath_bak = os.environ.get('GOPATH', '')
+gopath = os.path.normpath(os.path.join(
+                      os.path.dirname(os.path.realpath('__file__')),
+                      'test/fixtures/chaincode'
+                     ))
+os.environ['GOPATH'] = os.path.abspath(gopath)
+
+# Chaincode information
+CC_PATH = 'github.com/example_cc_with_event'
+CC_NAME = 'example_cc_with_event'
+CC_VERSION = 'v1.0'
+peer = cli.get_peer('peer0.org1.example.com')
+
+# The response should be true if succeed
+responses = loop.run_until_complete(cli.chaincode_install(
+               requestor=org1_admin,
+               peers=['peer0.org1.example.com',
+                      'peer1.org1.example.com'],
+               cc_path=CC_PATH,
+               cc_name=CC_NAME,
+               cc_version='v1.0'
+               ))
+
+# Instantiate the installed chaincode
+args = ['a', '200', 'b', '300']
+
+# policy, see https://hyperledger-fabric.readthedocs.io/en/release-1.4/endorsement-policies.html
+policy = {
+    'identities': [
+        {'role': {'name': 'member', 'mspId': 'Org1MSP'}},
+    ],
+    'policy': {
+        '1-of': [
+            {'signed-by': 0},
+        ]
+    }
+}
+
+response = loop.run_until_complete(cli.chaincode_instantiate(
+               requestor=org1_admin,
+               channel_name='businesschannel',
+               peers=['peer0.org1.example.com'],
+               args=args,
+               cc_name=CC_NAME,
+               cc_version=CC_VERSION,
+               cc_endorsement_policy=policy, # optional, but recommended
+               collections_config=None, # optional, for private data policy
+               transient_map=None, # optional, for private data
+               wait_for_event=True # optional, for being sure chaincode is instantiated
+               ))
+
+def getBlocks(blocks):
+    # On event complition the block is appended to the list of blocks
+    def onEvent(block):
+        blocks.append(block)
+    # Returns an instance of the onEvent function
+    return onEvent
+
+blocks = [] # empty list
+
+channel = cli.get_channel('businesschannel')
+channel_event_hub = channel.newChannelEventHub(peer, org1_admin)
+channel_event_hub.registerBlockEvent(start=0, onEvent=getBlocks(blocks))
+
+stream = channel_event_hub.connect()
+print(blocks)
+```
+
+
 ## License <a name="license"></a>
 
 <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This document is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
