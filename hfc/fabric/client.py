@@ -761,7 +761,8 @@ class Client(object):
 
     async def get_channel_config_with_orderer(self, requestor,
                                               channel_name,
-                                              orderer=None):
+                                              orderer=None,
+                                              decode=True):
         """
         Get configuration block for the channel with the orderer
 
@@ -788,7 +789,8 @@ class Client(object):
 
         config_envelope = await channel.get_channel_config_with_orderer(
             tx_context,
-            target_orderer)
+            target_orderer,
+            decode)
 
         return config_envelope
 

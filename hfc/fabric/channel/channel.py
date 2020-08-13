@@ -929,7 +929,7 @@ class Channel(object):
         tx_context.tx_prop_req = request
         return self.send_tx_proposal(tx_context, peers)
 
-    async def get_channel_config_with_orderer(self, tx_context, orderer):
+    async def get_channel_config_with_orderer(self, tx_context, orderer, decode=True):
         """Query the current config block for this channel
 
         :param tx_context: tx_context instance
@@ -974,9 +974,8 @@ class Channel(object):
             block = v.block
             break
 
-        block = BlockDecoder().decode(block.SerializeToString())
-
-        last_config = block['metadata']['metadata'][common_pb2.LAST_CONFIG]
+        decoded_block = BlockDecoder().decode(block.SerializeToString())
+        last_config = decoded_block['metadata']['metadata'][common_pb2.LAST_CONFIG]
 
         # if nor first block
         if 'index' in last_config['value']:
@@ -996,9 +995,14 @@ class Channel(object):
                 block = v.block
                 break
 
-            block = BlockDecoder().decode(block.SerializeToString())
+            if not decode:
+                return block.SerializeToString()
+            decoded_block = BlockDecoder().decode(block.SerializeToString())
 
-        envelope = block['data']['data'][0]
+        if not decode:
+            return block.SerializeToString()
+
+        envelope = decoded_block['data']['data'][0]
         payload = envelope['payload']
         channel_header = payload['header']['channel_header']
 
