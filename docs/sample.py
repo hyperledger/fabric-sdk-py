@@ -3,6 +3,7 @@
 #
 
 import os
+import asyncio
 from hfc.fabric import Client
 from hfc.fabric.channel.channel import SYSTEM_CHANNEL_NAME
 
@@ -15,6 +16,7 @@ CC_VERSION = '1.0'
 
 if __name__ == "__main__":
     cli = Client(net_profile=CONNECTION_PROFILE_PATH)
+    loop = asyncio.get_event_loop()
 
     print(cli.organizations)  # orgs in the network
     print(cli.peers)  # peers in the network
@@ -25,13 +27,13 @@ if __name__ == "__main__":
     org1_admin = cli.get_user(org_name='org1.example.com', name='Admin')
 
     # Create a New Channel, the response should be true if succeed
-    response = cli.channel_create(
+    response = loop.run_until_complete(cli.channel_create(
         orderer='orderer.example.com',
         channel_name='businesschannel',
         requestor=org1_admin,
         config_yaml=CONFIG_YAML_PATH,
         channel_profile='TwoOrgsChannel'
-    )
+    ))
     if response:
         print("Create channel successful")
     else:
@@ -40,11 +42,11 @@ if __name__ == "__main__":
         exit(-1)
 
     # Join Peers into Channel, the response should be true if succeed
-    response = cli.channel_join(
+    response = loop.run_until_complete(cli.channel_join(
         requestor=org1_admin,
         channel_name='businesschannel',
         peers=['peer0.org1.example.com', 'peer1.org1.example.com'],
-        orderer='orderer.example.com')
+        orderer='orderer.example.com'))
     if response:
         print("Join channel successful")
     else:
@@ -55,11 +57,11 @@ if __name__ == "__main__":
     org2_admin = cli.get_user(org_name='org2.example.com', name='Admin')
 
     # org2_admin is required to operate peers of org2.example.com
-    response = cli.channel_join(
+    response = loop.run_until_complete(cli.channel_join(
         requestor=org2_admin,
         channel_name='businesschannel',
         peers=['peer0.org2.example.com', 'peer1.org2.example.com'],
-        orderer='orderer.example.com')
+        orderer='orderer.example.com'))
     if response:
         print("Join channel successful")
     else:
@@ -76,22 +78,22 @@ if __name__ == "__main__":
     os.environ['GOPATH'] = os.path.abspath(gopath)
 
     # The response should be true if succeed
-    response = cli.chaincode_install(
+    response = loop.run_until_complete(cli.chaincode_install(
         requestor=org1_admin,
         peers=['peer0.org1.example.com', 'peer1.org1.example.com'],
         cc_path=CC_PATH,
         cc_name=CC_NAME,
-        cc_version=CC_VERSION)
+        cc_version=CC_VERSION))
 
     # Instantiate Chaincode in Channel, the response should be true if succeed
     args = ['a', '200', 'b', '300']
-    response = cli.chaincode_instantiate(
+    response = loop.run_until_complete(cli.chaincode_instantiate(
         requestor=org1_admin,
         channel_name='businesschannel',
         peers=['peer0.org1.example.com'],
         args=args,
         cc_name=CC_NAME,
-        cc_version=CC_VERSION)
+        cc_version=CC_VERSION))
     if response:
         print("Instantiate chaincode successful")
     else:
@@ -101,43 +103,43 @@ if __name__ == "__main__":
     # Invoke a chaincode
     args = ['a', 'b', '100']
     # The response should be true if succeed
-    response = cli.chaincode_invoke(
+    response = loop.run_until_complete(cli.chaincode_invoke(
         requestor=org1_admin,
         channel_name='businesschannel',
         peers=['peer0.org1.example.com'],
         args=args,
         cc_name=CC_NAME
-    )
+    ))
     print("Invoke chaincode done.")
     print(response)
 
     # Query a chaincode
     args = ['b']
     # The response should be true if succeed
-    response = cli.chaincode_query(
+    response = loop.run_until_complete(cli.chaincode_query(
         requestor=org1_admin,
         channel_name='businesschannel',
         peers=['peer0.org1.example.com'],
         args=args,
         cc_name=CC_NAME
-    )
+    ))
     print("Query chaincode done.")
     print(response)
 
     # Query Peer installed chaincodes
-    response = cli.query_installed_chaincodes(
+    response = loop.run_until_complete(cli.query_installed_chaincodes(
         requestor=org1_admin,
         peers=['peer0.org1.example.com']
-    )
+    ))
     print("Query installed chaincode.")
     print(response)
 
     # Get channel config
-    response = cli.get_channel_config(
+    response = loop.run_until_complete(cli.get_channel_config(
         requestor=org1_admin,
         channel_name='businesschannel',
         peers=['peer0.org1.example.com']
-    )
+    ))
     print("Get channel config done.")
     print(response)
 
@@ -166,20 +168,20 @@ if __name__ == "__main__":
     print(response)
 
     # Query Info
-    response = cli.query_info(
+    response = loop.run_until_complete(cli.query_info(
         requestor=orgq_admin,
         channel_name='businesschannel',
         peers=['peer0.org1.example.com', 'peer1.org1.example.com']
-    )
+    ))
     print(response)
 
     # The info acquired from the query_info is used to query block by hash
-    response = cli.query_block_by_hash(
+    response = loop.run_until_complete(cli.query_block_by_hash(
         requestor=org1_admin,
         channel_name='businesschannel',
         peers=['peer0.org1.example.com', 'peer1.org1.example.com'],
         block_hash=response.currentBlockHash
-    )
+    ))
     print(response)
 
     # TxID is extracted from the block information
@@ -188,41 +190,41 @@ if __name__ == "__main__":
         'channel_header').get('tx_id')
 
     # Query block by txid
-    response = cli.query_block_by_txid(
+    response = loop.run_until_complete(cli.query_block_by_txid(
         requestor=org1_admin,
         channel_name='businesschannel',
         peers=['peer0.org1.example.com', 'peer1.org1.example.com'],
         tx_id=tx_id
-    )
+    ))
     print(response)
 
     # Query by block number
-    response = cli.query_block(
+    response = loop.run_until_complete(cli.query_block(
         requestor=org1_admin,
         channel_name='businesschannel',
         peers=['peer0.org1.example.com', 'peer1.org1.example.com'],
         block_number='0'
-    )
+    ))
     print(response)
 
     # Query instantiated chaincodes
-    responses = self.client.query_instantiated_chaincodes(
+    responses = loop.run_until_complete(cli.query_instantiated_chaincodes(
         requestor=org1_admin,
         channel_name='businesschannel',
         peers=['peer0.org1.example.com', 'peer1.org1.example.com']
-    )
+    ))
     print(response)
 
     # Get Channel configuration
-    responses = self.client.get_channel_config(
+    responses = loop.run_until_complete(cli.get_channel_config(
         requestor=org1_admin,
         channel_name='businesschannel',
         peers=['peer0.org1.example.com', 'peer1.org1.example.com']
-    )
+    ))
 
     # Get channel config from orderer
-    response = self.client.get_channel_config_with_orderer(
+    response = loop.run_until_complete(cli.get_channel_config_with_orderer(
         orderer='orderer.example.com',
         requestor=org1_admin,
         channel_name=SYSTEM_CHANNEL_NAME,
-    )
+    ))
