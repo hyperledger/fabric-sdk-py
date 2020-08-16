@@ -213,7 +213,7 @@ if __name__ == "__main__":
         channel_name='businesschannel',
         peers=['peer0.org1.example.com', 'peer1.org1.example.com']
     ))
-    print(response)
+    print(responses)
 
     # Get Channel configuration
     responses = loop.run_until_complete(cli.get_channel_config(
@@ -221,6 +221,7 @@ if __name__ == "__main__":
         channel_name='businesschannel',
         peers=['peer0.org1.example.com', 'peer1.org1.example.com']
     ))
+    print(responses)
 
     # Get channel config from orderer
     response = loop.run_until_complete(cli.get_channel_config_with_orderer(
@@ -228,3 +229,4 @@ if __name__ == "__main__":
         requestor=org1_admin,
         channel_name=SYSTEM_CHANNEL_NAME,
     ))
+    print(response)
