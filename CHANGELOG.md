@@ -1,3 +1,83 @@
+## v1.0.0
+Tue Aug 18 06:43:52 UTC 2020
+
+* [ac5a062](https://github.com/hyperledger/fabric-sdk-py/commit/ac5a062) Add tutorial for channel event service
+* [6abd1e6](https://github.com/hyperledger/fabric-sdk-py/commit/6abd1e6) Jupyter Notebook (#99)
+* [5c983c6](https://github.com/hyperledger/fabric-sdk-py/commit/5c983c6) Update documentation #40 (#97)
+* [f01111c](https://github.com/hyperledger/fabric-sdk-py/commit/f01111c) code snippets (#96)
+* [c9c8a08](https://github.com/hyperledger/fabric-sdk-py/commit/c9c8a08) Adopt sphynx style for API documentation. (#94)
+* [01e2ad9](https://github.com/hyperledger/fabric-sdk-py/commit/01e2ad9) Fix missing link in tutorial #92 #93
+* [dd1d0c5](https://github.com/hyperledger/fabric-sdk-py/commit/dd1d0c5) Contract (#91)
+* [168a9ae](https://github.com/hyperledger/fabric-sdk-py/commit/168a9ae) create user in wallets (#85)
+* [3e5f91d](https://github.com/hyperledger/fabric-sdk-py/commit/3e5f91d) fixed instantiation doc (#84)
+* [70ef1ef](https://github.com/hyperledger/fabric-sdk-py/commit/70ef1ef) Minor fix on flake8 error (#83)
+* [b06ae3e](https://github.com/hyperledger/fabric-sdk-py/commit/b06ae3e) Added mergeOptions alongwith tests (#82)
+* [c7df77d](https://github.com/hyperledger/fabric-sdk-py/commit/c7df77d) Couch db (#79)
+* [899cb98](https://github.com/hyperledger/fabric-sdk-py/commit/899cb98) Update CONTRIBUTING file (#77)
+* [a721309](https://github.com/hyperledger/fabric-sdk-py/commit/a721309) Fixed peer-api doc (#74)
+* [e0517ac](https://github.com/hyperledger/fabric-sdk-py/commit/e0517ac) LSI-14: Add missing SPDX headers (#73)
+* [2cad3b4](https://github.com/hyperledger/fabric-sdk-py/commit/2cad3b4) Fixed documentation for Client API (#72)
+* [d29c826](https://github.com/hyperledger/fabric-sdk-py/commit/d29c826) Updated gateway (#68)
+* [10097f5](https://github.com/hyperledger/fabric-sdk-py/commit/10097f5) Edited Orderer Documentation (#70)
+* [10e16e5](https://github.com/hyperledger/fabric-sdk-py/commit/10e16e5) Updated index (#69)
+* [191aca0](https://github.com/hyperledger/fabric-sdk-py/commit/191aca0) [FAB-17777](https://jira.hyperledger.org/browse/FAB-17777) Create basic settings.yaml (#64)
+* [2dfd366](https://github.com/hyperledger/fabric-sdk-py/commit/2dfd366) fix docker version incompatible (#60)
+* [5822fa6](https://github.com/hyperledger/fabric-sdk-py/commit/5822fa6) gateway tests (#61)
+* [d4e6cef](https://github.com/hyperledger/fabric-sdk-py/commit/d4e6cef) Changed the docstring format to Sphinx in coding style docs (#57)
+* [727d37c](https://github.com/hyperledger/fabric-sdk-py/commit/727d37c) Gateway and Network functionalities (#58)
+* [4ef5ff1](https://github.com/hyperledger/fabric-sdk-py/commit/4ef5ff1) Added Hyperledger's Rocketchat link in README.md (#55)
+* [88f6753](https://github.com/hyperledger/fabric-sdk-py/commit/88f6753) Documentation Updates (#54)
+* [282b33c](https://github.com/hyperledger/fabric-sdk-py/commit/282b33c) Remove Jira (#49)
+* [721bff3](https://github.com/hyperledger/fabric-sdk-py/commit/721bff3) modify makefile to be more flexible (#52)
+* [19ef498](https://github.com/hyperledger/fabric-sdk-py/commit/19ef498) Use docker instance for couchdb
+* [285465f](https://github.com/hyperledger/fabric-sdk-py/commit/285465f) Add `make doc` to generate docs (#48)
+* [51d5716](https://github.com/hyperledger/fabric-sdk-py/commit/51d5716) [FABP-269](https://jira.hyperledger.org/brwose/FABP-269) Modify CONTRIBUTING.md to be better understand
+* [cc90ab5](https://github.com/hyperledger/fabric-sdk-py/commit/cc90ab5) Update release note #41
+* [5834b8a](https://github.com/hyperledger/fabric-sdk-py/commit/5834b8a) [FABP-268](https://jira.hyperledger.org/brwose/FABP-268) Update .gitignore to support MacOS (#45)
+* [8f89f71](https://github.com/hyperledger/fabric-sdk-py/commit/8f89f71) decode
+* [619f863](https://github.com/hyperledger/fabric-sdk-py/commit/619f863) remove container str
+* [f19a233](https://github.com/hyperledger/fabric-sdk-py/commit/f19a233) azure pipeline
+* [da9eff7](https://github.com/hyperledger/fabric-sdk-py/commit/da9eff7) azure setting
+* [777d1ba](https://github.com/hyperledger/fabric-sdk-py/commit/777d1ba) Install CouchDB
+* [d8e9514](https://github.com/hyperledger/fabric-sdk-py/commit/d8e9514) Install CouchDB
+* [4d5deea](https://github.com/hyperledger/fabric-sdk-py/commit/4d5deea) Install CouchDB
+* [8846d00](https://github.com/hyperledger/fabric-sdk-py/commit/8846d00) curl
+* [87389c6](https://github.com/hyperledger/fabric-sdk-py/commit/87389c6) build docs #37
+* [f2733ab](https://github.com/hyperledger/fabric-sdk-py/commit/f2733ab) pipeline yaml
+* [1aa243d](https://github.com/hyperledger/fabric-sdk-py/commit/1aa243d) check pipeline issue
+* [52b687d](https://github.com/hyperledger/fabric-sdk-py/commit/52b687d) check pipeline issue
+* [da1de96](https://github.com/hyperledger/fabric-sdk-py/commit/da1de96) permission
+* [09591ee](https://github.com/hyperledger/fabric-sdk-py/commit/09591ee) installing couchdb
+* [1823408](https://github.com/hyperledger/fabric-sdk-py/commit/1823408) requirements
+* [4ccbb8b](https://github.com/hyperledger/fabric-sdk-py/commit/4ccbb8b) Integration Test
+* [dada3c7](https://github.com/hyperledger/fabric-sdk-py/commit/dada3c7) added comments
+* [dd38e6b](https://github.com/hyperledger/fabric-sdk-py/commit/dd38e6b) CouchDB *Add Comments*
+* [07cf0d1](https://github.com/hyperledger/fabric-sdk-py/commit/07cf0d1) fixed wallet
+* [33f68be](https://github.com/hyperledger/fabric-sdk-py/commit/33f68be) couch db put
+* [f6bd046](https://github.com/hyperledger/fabric-sdk-py/commit/f6bd046) couch db put
+* [1be35b1](https://github.com/hyperledger/fabric-sdk-py/commit/1be35b1) couch
+* [bcd123e](https://github.com/hyperledger/fabric-sdk-py/commit/bcd123e) CouchDBWallet
+* [1c26040](https://github.com/hyperledger/fabric-sdk-py/commit/1c26040) Update the check process
+* [75bf28e](https://github.com/hyperledger/fabric-sdk-py/commit/75bf28e) FABP267 fix init_with_discovery bug (#35)
+* [c974ba6](https://github.com/hyperledger/fabric-sdk-py/commit/c974ba6) FABP 263 update README (#31)
+* [5349937](https://github.com/hyperledger/fabric-sdk-py/commit/5349937) [FABP-265](https://jira.hyperledger.org/browse/FABP-265) (#33)
+* [74b7e87](https://github.com/hyperledger/fabric-sdk-py/commit/74b7e87) [FABP-264](https://jira.hyperledger.org/browse/FABP-264) make compatible with py38 (#32)
+* [f40312b](https://github.com/hyperledger/fabric-sdk-py/commit/f40312b) documentation (#30)
+* [3eec20b](https://github.com/hyperledger/fabric-sdk-py/commit/3eec20b) [FABP-266](https://jira.hyperledger.org/browse/FABP-266) fix PR pipline (#34)
+* [ef05491](https://github.com/hyperledger/fabric-sdk-py/commit/ef05491) In memory wallet store (#29)
+* [5408dc3](https://github.com/hyperledger/fabric-sdk-py/commit/5408dc3) Get user from cert (#28)
+* [918ba27](https://github.com/hyperledger/fabric-sdk-py/commit/918ba27) Fabric network (#27): Implement module for FileSystemWallet and Identity
+* [5f64078](https://github.com/hyperledger/fabric-sdk-py/commit/5f64078) Update docker-compose version for requests compatibility (#25)
+* [4a7b888](https://github.com/hyperledger/fabric-sdk-py/commit/4a7b888) Bump requests from 2.14.2 to 2.20.0 (#12)
+* [a666391](https://github.com/hyperledger/fabric-sdk-py/commit/a666391) Fix Crypto warning (#23)
+* [27a06fc](https://github.com/hyperledger/fabric-sdk-py/commit/27a06fc) Restore proposal return when it is KO (#22)
+* [5949c1d](https://github.com/hyperledger/fabric-sdk-py/commit/5949c1d) Add option raise if broker unavailable (#21)
+* [a9afcf6](https://github.com/hyperledger/fabric-sdk-py/commit/a9afcf6) Grpc14 (#18)
+* [2f51de8](https://github.com/hyperledger/fabric-sdk-py/commit/2f51de8) add client method to close gRPC channels (#20)
+* [9f521bb](https://github.com/hyperledger/fabric-sdk-py/commit/9f521bb) Tutorial Update (#19)
+* [589ee39](https://github.com/hyperledger/fabric-sdk-py/commit/589ee39) update tutorial (#17)
+* [4408d05](https://github.com/hyperledger/fabric-sdk-py/commit/4408d05) cut for v0.9.0 release
+
 ## v0.9.0
 Sat Feb  1 03:36:37 UTC 2020
 
