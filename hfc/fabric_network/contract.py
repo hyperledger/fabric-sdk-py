@@ -38,7 +38,7 @@ class Contract(object):
         evaluated on the list of peers discovered and then submitted to the ordering service
         for committing to the ledger.
         """
-        channel_name = self.network.channel
+        channel_name = self.network.channel._name
         cli = self.gatetway.client
         peers = cli._peers
 
