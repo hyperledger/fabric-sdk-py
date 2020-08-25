@@ -12,6 +12,7 @@ services:
   peer-base:
     image: hyperledger/fabric-peer:${HLF_VERSION}
     environment:
+      - CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:1.4.6
       - GODEBUG=netdns=go+1
       - FABRIC_LOGGING_SPEC=debug
      #- CORE_PEER_ID=peer0
