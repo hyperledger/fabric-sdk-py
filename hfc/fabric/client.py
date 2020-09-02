@@ -125,7 +125,7 @@ class Client(object):
         peers = self.get_net_info('peers')
         _logger.debug("Import peers = {}".format(peers.keys()))
         for name in peers:
-            peer = Peer(name=name)
+            peer = Peer(name=name, endpoint=peers[name]['url'])
             peer.init_with_bundle(peers[name])
             self._peers[name] = peer
 
