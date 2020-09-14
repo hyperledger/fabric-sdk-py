@@ -23,12 +23,16 @@ E2E_CONFIG = {
             'compose_file_tls': 'test/fixtures/docker-compose-2orgs-4peers-tls.yaml',
             'compose_file_tls_cli': 'test/fixtures/docker-compose-2orgs-4peers-tls-cli.yaml',
             'compose_file_mutual_tls': 'test/fixtures/docker-compose-2orgs-4peers-mutual-tls.yaml',
+            'compose_file_raft': 'test/fixtures/e2e_raft/docker-compose-2orgs-4peers-tls.yaml',
+            'compose_file_orderer_raft': 'test/fixtures/e2e_raft/docker-compose-etcdraft2.yaml',
         },
         'channel-artifacts': {
             'channel_id': 'businesschannel',
             'channel.tx': 'test/fixtures/e2e_cli/channel-artifacts/channel.tx',
             'config_yaml': 'test/fixtures/e2e_cli/',
-            'channel_profile': 'TwoOrgsChannel'
+            'channel_profile': 'TwoOrgsChannel',
+            'raft_channel.tx': 'test/fixtures/e2e_raft/channel-artifacts/channel.tx',
+            'raft_config_yaml': 'test/fixtures/e2e_raft',
         },
         'orderer': {
             'grpc_endpoint': 'localhost:7050',
@@ -39,7 +43,7 @@ E2E_CONFIG = {
             'users': {
                 'Admin': {
                     'cert': 'Admin@example.com-cert.pem',
-                    'private_key': '630e3767a6e1d3c8e646460123d397455103a900efb4d6fb679a9d9c481841fc_sk'}
+                    'private_key': '5ba7f687f7c784a4a8af9251d6fb5cc91778535ab86b76a4576887f02668b230_sk'}
             }
         },
         'org1.example.com': {
@@ -47,11 +51,11 @@ E2E_CONFIG = {
             'users': {
                 'Admin': {
                     'cert': 'Admin@org1.example.com-cert.pem',
-                    'private_key': 'c76527489d5820bd04da80a84c07033ca574413f80614091e04f05c276fb6896_sk'
+                    'private_key': '5f017750c105c40314864c9231915983521b594060a5708e01046f6ce8d78460_sk'
                 },
                 'User1': {
                     'cert': 'User1@org1.example.com-cert.pem',
-                    'private_key': 'da72fd6c0f4595d33eb9ae6f6d06cd171ebc3882fc856960c244b9b5c2b35a90_sk'
+                    'private_key': 'e2eede666b16e7f6b8e5f0f8db622d419f637acaf69dbebc5d192e6acc3eeebd_sk'
                 }
             },
             'peers': {
@@ -70,11 +74,11 @@ E2E_CONFIG = {
             'users': {
                 'Admin': {
                     'cert': 'Admin@org2.example.com-cert.pem',
-                    'private_key': '7e0b1c172161fe0f33603106935d2584918e12af955108e429dd63d4c043067a_sk'
+                    'private_key': '13226122360317d743e85addf0d2af7affdf0a45b06dcef03c32998c90715bcf_sk'
                 },
                 'User1': {
                     'cert': 'User1@org2.example.com-cert.pem',
-                    'private_key': '73beefad9003c589064deb2128c4f0831ba8003f1233102cc52a188afd05fe61_sk'
+                    'private_key': '037a30e0dbb4de6e9dfe9861ebd13f2b015c16c9c172cd3be555c14fe9395a9b_sk'
                 }
             },
             'peers': {
