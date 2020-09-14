@@ -15,6 +15,7 @@ from test.integration.utils import get_peer_org_user, ChannelEventHubTestCase
 from test.integration.config import E2E_CONFIG
 from test.integration.e2e_utils import build_channel_request, \
     build_join_channel_req, get_stream_result
+from hfc.protos.common import common_pb2
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -155,10 +156,6 @@ class QueryBlockTest(ChannelEventHubTestCase):
         stream = channel_event_hub.connect(filtered=False)
 
         self.evts = {}
-        # with tx event
-        # channel_event_hub.registerTxEvent(tx_context.tx_id,
-        #                                  unregister=True, disconnect=True,
-        #                                  onEvent=self.onTxEvent)
 
         # with chaincode event
         self.registerChaincodeEvent(tx_context.tx_id, CC_NAME, '^invoked*',
@@ -194,4 +191,91 @@ class QueryBlockTest(ChannelEventHubTestCase):
             self.assertTrue(all([x.response.status == 200 for x in res]))
 
             blocks = [BlockDecoder().decode(v.response.payload) for v in res]
+
             self.assertEqual(blocks[0]['header']['number'], 1)
+
+    def test_query_block_encoded(self):
+        loop = asyncio.get_event_loop()
+
+        loop.run_until_complete(self.invoke_chaincode())
+
+        orgs = ["org1.example.com"]
+        for org in orgs:
+            org_admin = self.client.get_user(org, "Admin")
+            response = self.client.query_block(requestor=org_admin,
+                                               channel_name=self.channel_name,
+                                               peers=[self.peer],
+                                               block_number='1',
+                                               decode=False)
+
+            res = loop.run_until_complete(asyncio.gather(response))
+            self.assertEqual(len(res), 1)
+
+            block = common_pb2.Block()
+            try:
+                block.ParseFromString(res[0])
+            except Exception as e:
+                raise e
+
+            self.assertEqual(block.header.number, 1)
+
+    def test_query_block_by_hash_success(self):
+        loop = asyncio.get_event_loop()
+
+        loop.run_until_complete(self.invoke_chaincode())
+
+        orgs = ["org1.example.com"]
+        for org in orgs:
+
+            org_admin = self.client.get_user(org, "Admin")
+            # get hash value from block
+            response = self.client.query_info(requestor=org_admin,
+                                              channel_name=self.channel_name,
+                                              peers=[self.peer],
+                                              decode=True)
+            channel_info = loop.run_until_complete(asyncio.gather(response))
+            last_block_hash = channel_info[0].currentBlockHash
+
+            response = self.client.query_block_by_hash(requestor=org_admin,
+                                                       channel_name=self.channel_name,
+                                                       peers=[self.peer],
+                                                       block_hash=last_block_hash,
+                                                       decode=True)
+
+            res = loop.run_until_complete(asyncio.gather(response))
+
+            self.assertEqual(res[0]['header']['number'], 2)
+
+    def test_query_block_by_hash_encoded(self):
+        loop = asyncio.get_event_loop()
+
+        loop.run_until_complete(self.invoke_chaincode())
+
+        orgs = ["org1.example.com"]
+        for org in orgs:
+            org_admin = self.client.get_user(org, "Admin")
+
+            # get hash value from block
+            response = self.client.query_info(requestor=org_admin,
+                                              channel_name=self.channel_name,
+                                              peers=[self.peer],
+                                              decode=True)
+            channel_info = loop.run_until_complete(asyncio.gather(response))
+            last_block_hash = channel_info[0].currentBlockHash
+
+            response = self.client.query_block_by_hash(requestor=org_admin,
+                                                       channel_name=self.channel_name,
+                                                       peers=[self.peer],
+                                                       block_hash=last_block_hash,
+                                                       decode=False)
+
+            res = loop.run_until_complete(asyncio.gather(response))
+            self.assertEqual(len(res), 1)
+
+            block = common_pb2.Block()
+            try:
+                block.ParseFromString(res[0])
+            except Exception as e:
+                raise e
+
+            self.assertEqual(block.header.number, 2)
