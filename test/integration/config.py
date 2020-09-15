@@ -23,12 +23,16 @@ E2E_CONFIG = {
             'compose_file_tls': 'test/fixtures/docker-compose-2orgs-4peers-tls.yaml',
             'compose_file_tls_cli': 'test/fixtures/docker-compose-2orgs-4peers-tls-cli.yaml',
             'compose_file_mutual_tls': 'test/fixtures/docker-compose-2orgs-4peers-mutual-tls.yaml',
+            'compose_file_raft': 'test/fixtures/e2e_raft/docker-compose-2orgs-4peers-tls.yaml',
+            'compose_file_orderer_raft': 'test/fixtures/e2e_raft/docker-compose-etcdraft2.yaml',
         },
         'channel-artifacts': {
             'channel_id': 'businesschannel',
             'channel.tx': 'test/fixtures/e2e_cli/channel-artifacts/channel.tx',
             'config_yaml': 'test/fixtures/e2e_cli/',
-            'channel_profile': 'TwoOrgsChannel'
+            'channel_profile': 'TwoOrgsChannel',
+            'raft_channel.tx': 'test/fixtures/e2e_raft/channel-artifacts/channel.tx',
+            'raft_config_yaml': 'test/fixtures/e2e_raft',
         },
         'orderer': {
             'grpc_endpoint': 'localhost:7050',
