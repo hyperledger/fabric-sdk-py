@@ -16,6 +16,7 @@ from test.integration.utils import get_peer_org_user, \
 from test.integration.config import E2E_CONFIG
 from test.integration.e2e_utils import build_channel_request, \
     build_join_channel_req, get_stream_result
+from hfc.protos.common import common_pb2
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -178,7 +179,7 @@ class QueryTransactionTest(ChannelEventHubTestCase):
 
         return tx_context.tx_id
 
-    def test_query_transaction_id_success(self, timeout=30):
+    def test_query_transaction_id_success(self):
         loop = asyncio.get_event_loop()
 
         tx_id = loop.run_until_complete(self.invoke_chaincode())
@@ -196,3 +197,24 @@ class QueryTransactionTest(ChannelEventHubTestCase):
         logger.debug('Responses of query transaction:\n {}'.format(res))
 
         self.assertEqual(res[0].response.status, 200)
+
+    def test_query_transaction_id_encoded(self):
+        loop = asyncio.get_event_loop()
+
+        tx_id = loop.run_until_complete(self.invoke_chaincode())
+        response = self.client.query_block_by_txid(requestor=self.org1_admin,
+                                                   channel_name=self.channel_name,
+                                                   peers=[self.peer],
+                                                   tx_id=tx_id,
+                                                   decode=False)
+
+        res = loop.run_until_complete(asyncio.gather(response))
+        self.assertEqual(len(res), 1)
+
+        block = common_pb2.Block()
+        try:
+            block.ParseFromString(res[0])
+        except Exception as e:
+            raise e
+
+        self.assertEqual(block.header.number, 2)
