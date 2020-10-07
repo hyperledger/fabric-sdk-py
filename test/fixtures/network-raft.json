@@ -24,7 +24,22 @@
       "users": {
         "Admin": {
           "cert": "test/fixtures/e2e_raft/crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/signcerts/Admin@example.com-cert.pem",
-          "private_key": "test/fixtures/e2e_raft/crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/keystore/5ba7f687f7c784a4a8af9251d6fb5cc91778535ab86b76a4576887f02668b230_sk"
+          "private_key": "test/fixtures/e2e_raft/crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/keystore/04f4c2549d1088d8550c8bd5cc56a0fb5929fbcccda8836a62a1f2e053c796f1_sk"
+        }
+      }
+    },
+    "orderer5.example.com": {
+      "mspid": "OrdererMSP",
+      "orderers": [
+        "orderer5.example.com"
+      ],
+      "certificateAuthorities": [
+        "ca-orderer"
+      ],
+      "users": {
+        "Admin": {
+          "cert": "test/fixtures/e2e_raft/crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/signcerts/Admin@example.com-cert.pem",
+          "private_key": "test/fixtures/e2e_raft/crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/keystore/04f4c2549d1088d8550c8bd5cc56a0fb5929fbcccda8836a62a1f2e053c796f1_sk"
         }
       }
     },
@@ -40,11 +55,11 @@
       "users": {
         "Admin": {
           "cert": "test/fixtures/e2e_raft/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem",
-          "private_key": "test/fixtures/e2e_raft/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/5f017750c105c40314864c9231915983521b594060a5708e01046f6ce8d78460_sk"
+          "private_key": "test/fixtures/e2e_raft/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/950277c228f0bce4ae28d042c18cfa117b49b632c07bcac6aa35d5c69382e343_sk"
         },
         "User1": {
           "cert": "test/fixtures/e2e_raft/crypto-config/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/signcerts/User1@org1.example.com-cert.pem",
-          "private_key": "test/fixtures/e2e_raft/crypto-config/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/e2eede666b16e7f6b8e5f0f8db622d419f637acaf69dbebc5d192e6acc3eeebd_sk"
+          "private_key": "test/fixtures/e2e_raft/crypto-config/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/3e9341760fc3329cc2e9331edccec7a7602bb61c9935e268bed9f0e299690262_sk"
         }
       }
     },
@@ -60,11 +75,11 @@
       "users": {
         "Admin": {
           "cert": "test/fixtures/e2e_raft/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/signcerts/Admin@org2.example.com-cert.pem",
-          "private_key": "test/fixtures/e2e_raft/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore/13226122360317d743e85addf0d2af7affdf0a45b06dcef03c32998c90715bcf_sk"
+          "private_key": "test/fixtures/e2e_raft/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore/2c1c3d586d7c019e01b66715c23db447c21b8f50a79152698c56847178048123_sk"
         },
         "User1": {
           "cert": "test/fixtures/e2e_raft/crypto-config/peerOrganizations/org2.example.com/users/User1@org2.example.com/msp/signcerts/User1@org2.example.com-cert.pem",
-          "private_key": "test/fixtures/e2e_raft/crypto-config/peerOrganizations/org2.example.com/users/User1@org2.example.com/msp/keystore/037a30e0dbb4de6e9dfe9861ebd13f2b015c16c9c172cd3be555c14fe9395a9b_sk"
+          "private_key": "test/fixtures/e2e_raft/crypto-config/peerOrganizations/org2.example.com/users/User1@org2.example.com/msp/keystore/521820fa8562950049b2648b52e623537fba98691529d70005dbd1f106c46c4e_sk"
         }
       }
     }
@@ -74,6 +89,16 @@
       "url": "localhost:7050",
       "grpcOptions": {
         "grpc.ssl_target_name_override": "orderer.example.com",
+        "grpc-max-send-message-length": 15
+      },
+      "tlsCACerts": {
+        "path": "test/fixtures/e2e_raft/crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem"
+      }
+    },
+    "orderer5.example.com": {
+      "url": "localhost:11050",
+      "grpcOptions": {
+        "grpc.ssl_target_name_override": "orderer5.example.com",
         "grpc-max-send-message-length": 15
       },
       "tlsCACerts": {

@@ -18,7 +18,7 @@ services:
 
   orderer2.example.com:
     extends:
-      file: orderer-base.yaml
+      file: base/peer-base.yaml
       service: orderer-base
     container_name: orderer2.example.com
     networks:
@@ -33,7 +33,7 @@ services:
 
   orderer3.example.com:
     extends:
-      file: orderer-base.yaml
+      file: base/peer-base.yaml
       service: orderer-base
     container_name: orderer3.example.com
     networks:
@@ -48,7 +48,7 @@ services:
 
   orderer4.example.com:
     extends:
-      file: orderer-base.yaml
+      file: base/peer-base.yaml
       service: orderer-base
     container_name: orderer4.example.com
     networks:
@@ -63,7 +63,7 @@ services:
 
   orderer5.example.com:
     extends:
-      file: orderer-base.yaml
+      file: base/peer-base.yaml
       service: orderer-base
     container_name: orderer5.example.com
     networks:

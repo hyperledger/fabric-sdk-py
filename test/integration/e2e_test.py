@@ -39,7 +39,7 @@ class E2eTest(BaseTestCase):
 
         # By default, self.user is the admin of org1
         response = await self.client.channel_create(
-            'orderer.example.com',
+            'orderer5.example.com',
             self.channel_name,
             self.user,
             config_yaml=self.config_yaml,
@@ -68,7 +68,7 @@ class E2eTest(BaseTestCase):
                 requestor=org_admin,
                 channel_name=self.channel_name,
                 peers=['peer0.' + org, 'peer1.' + org],
-                orderer='orderer.example.com'
+                orderer='orderer5.example.com'
             )
             self.assertTrue(response)
             # Verify the ledger exists now in the peer node
@@ -565,11 +565,11 @@ class E2eTest(BaseTestCase):
         """
         logger.info(f"E2E: Get channel {chname} config start")
 
-        orgs = ["orderer.example.com"]
+        orgs = ["orderer5.example.com"]
         for org in orgs:
             org_admin = self.client.get_user(org, "Admin")
             response = await self.client.get_channel_config_with_orderer(
-                orderer='orderer.example.com',
+                orderer='orderer5.example.com',
                 requestor=org_admin,
                 channel_name=chname,
             )
@@ -698,9 +698,8 @@ class E2eTest(BaseTestCase):
 
         self.client.new_channel(SYSTEM_CHANNEL_NAME)
 
-        loop.run_until_complete(self.get_channel_config_with_orderer())
-
         loop.run_until_complete(self.channel_create())
+        time.sleep(5)
 
         loop.run_until_complete(self.channel_join())
 
