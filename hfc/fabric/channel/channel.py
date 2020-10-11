@@ -302,7 +302,7 @@ class Channel(object):
 
         cci_spec = chaincode_pb2.ChaincodeInvocationSpec()
         cci_spec.chaincode_spec.type = \
-            chaincode_pb2.ChaincodeSpec.Type.Value(CC_TYPE_GOLANG)
+            chaincode_pb2.ChaincodeSpec.Type.Value(tx_context.tx_prop_req.cc_type)
         cci_spec.chaincode_spec.chaincode_id.name = proto_str("lscc")
         cci_spec.chaincode_spec.input.args.extend(
             [proto_b(CC_INSTALL), cc_deployment_spec.SerializeToString()])
@@ -352,10 +352,11 @@ class Channel(object):
         """
         pass
 
-    def join_channel(self, request):
+    def join_channel(self, request, cc_type=CC_TYPE_GOLANG):
         """To join the peer to a channel.
 
         :param request: request
+        :param cc_type: chaincode language type
         :return: A coroutine to handle thanks to asyncio with await asyncio.gather(*responses)
         """
         _logger.debug('channel_join - start')
@@ -371,7 +372,7 @@ class Channel(object):
         chaincode_id = chaincode_pb2.ChaincodeID()
         chaincode_id.name = proto_str("cscc")
 
-        cc_spec = create_cc_spec(chaincode_input, chaincode_id, 'GOLANG')
+        cc_spec = create_cc_spec(chaincode_input, chaincode_id, cc_type)
         cc_invoke_spec = chaincode_pb2.ChaincodeInvocationSpec()
         cc_invoke_spec.chaincode_spec.CopyFrom(cc_spec)
 
@@ -569,7 +570,8 @@ class Channel(object):
 
         return proto_signature_policy_envelope.SerializeToString()
 
-    def _send_cc_proposal(self, tx_context, command, peers):
+    def _send_cc_proposal(self, tx_context, command, peers,
+                          cc_type=CC_TYPE_GOLANG):
 
         args = []
         request = tx_context.tx_prop_req
@@ -585,7 +587,7 @@ class Channel(object):
 
         cc_input = chaincode_pb2.ChaincodeInput()
         cc_input.args.extend(args)
-        cc_spec = create_cc_spec(cc_input, cc_id, CC_TYPE_GOLANG)
+        cc_spec = create_cc_spec(cc_input, cc_id, cc_type)
 
         cc_dep_spec = chaincode_pb2.ChaincodeDeploymentSpec()
         cc_dep_spec.chaincode_spec.CopyFrom(cc_spec)
@@ -640,7 +642,7 @@ class Channel(object):
         cc_invoke_spec = chaincode_pb2.ChaincodeInvocationSpec()
         cc_invoke_spec.chaincode_spec.CopyFrom(create_cc_spec(invoke_input,
                                                               invoke_cc_id,
-                                                              CC_TYPE_GOLANG)
+                                                              cc_type)
                                                )
 
         extension = proposal_pb2.ChaincodeHeaderExtension()
@@ -685,7 +687,8 @@ class Channel(object):
         return Channel._send_tx_proposal(self.name, tx_context, peers)
 
     @staticmethod
-    def _send_tx_proposal(channel_id, tx_context, peers):
+    def _send_tx_proposal(channel_id, tx_context, peers,
+                          cc_type=CC_TYPE_GOLANG):
 
         request = tx_context.tx_prop_req
 
@@ -710,7 +713,7 @@ class Channel(object):
         cc_input.args.extend(args)
 
         cc_spec = chaincode_pb2.ChaincodeSpec()
-        cc_spec.type = chaincode_pb2.ChaincodeSpec.Type.Value(CC_TYPE_GOLANG)
+        cc_spec.type = chaincode_pb2.ChaincodeSpec.Type.Value(cc_type)
         cc_spec.chaincode_id.CopyFrom(cc_id)
         cc_spec.input.CopyFrom(cc_input)
 
@@ -745,19 +748,21 @@ class Channel(object):
         return responses, proposal, header
 
     def query_instantiated_chaincodes(self, tx_context, peers,
-                                      transient_map=None):
+                                      transient_map=None,
+                                      cc_type=CC_TYPE_GOLANG):
         """
 
         :param tx_context: tx_context instance
         :param peers: peers in the channel
         :param transient_map: transient map
+        :param cc_type: chaincode language type
         :return: chain code response (Default value = None)
         """
         request = create_tx_prop_req(
             prop_type=CC_QUERY,
             fcn='getchaincodes',
             cc_name='lscc',
-            cc_type=CC_TYPE_GOLANG,
+            cc_type=cc_type,
             args=[],
             transient_map=transient_map)
 
@@ -765,13 +770,14 @@ class Channel(object):
         return self.send_tx_proposal(tx_context, peers)
 
     def query_transaction(self, tx_context, peers, tx_id,
-                          transient_map=None):
+                          transient_map=None, cc_type=CC_TYPE_GOLANG):
         """Queries the ledger for Transaction by transaction ID.
 
         :param tx_context: tx_context instance
         :param peers: peers in the channel
         :param tx_id: transaction ID (string)
         :param transient_map: transient map
+        :param cc_type: chaincode language type
         :return: chain code response (Default value = None)
         """
         request = create_tx_prop_req(
@@ -779,7 +785,7 @@ class Channel(object):
             fcn='GetTransactionByID',
             cc_name='qscc',
             args=[self.name, tx_id],
-            cc_type=CC_TYPE_GOLANG,
+            cc_type=cc_type,
             transient_map=transient_map)
 
         tx_context.tx_prop_req = request
@@ -824,12 +830,13 @@ class Channel(object):
         return response[0].block
 
     def query_block(self, tx_context, peers, block_number,
-                    transient_map=None):
+                    transient_map=None, cc_type=CC_TYPE_GOLANG):
         """Queries the ledger for Block by block number.
 
         :param tx_context: tx_context instance
         :param peers: peers in the channel
         :param block_number: block to query for
+        :param cc_type: chaincode language type
         :param transient_map: transient map (Default value = None)
         :return: class BlockDecoder
         """
@@ -838,20 +845,21 @@ class Channel(object):
             fcn='GetBlockByNumber',
             cc_name='qscc',
             args=[self.name, block_number],
-            cc_type=CC_TYPE_GOLANG,
+            cc_type=cc_type,
             transient_map=transient_map)
 
         tx_context.tx_prop_req = request
         return self.send_tx_proposal(tx_context, peers)
 
     def query_block_by_hash(self, tx_context, peers, block_hash,
-                            transient_map=None):
+                            transient_map=None, cc_type=CC_TYPE_GOLANG):
         """
 
         :param tx_context: tx_context instance
         :param peers: peers in the channel
         :param block_hash: block to query for
         :param transient_map: transient map (Default value = None)
+        :param cc_type: chaincode language type
         :return: class ChaincodeQueryResponse
         """
         request = create_tx_prop_req(
@@ -859,20 +867,21 @@ class Channel(object):
             fcn='GetBlockByHash',
             cc_name='qscc',
             args=[self.name, block_hash],
-            cc_type=CC_TYPE_GOLANG,
+            cc_type=cc_type,
             transient_map=transient_map)
 
         tx_context.tx_prop_req = request
         return self.send_tx_proposal(tx_context, peers)
 
     def query_block_by_txid(self, tx_context, peers, tx_id,
-                            transient_map=None):
+                            transient_map=None, cc_type=CC_TYPE_GOLANG):
         """
 
         :param tx_context: tx_context instance
         :param peers: peers in the channel
         :param tx_id: transaction id
         :param transient_map: transient map (Default value = None)
+        :param cc_type: chaincode language type
         :return: class ChaincodeQueryResponse
         """
         request = create_tx_prop_req(
@@ -880,13 +889,13 @@ class Channel(object):
             fcn='GetBlockByTxID',
             cc_name='qscc',
             args=[self.name, tx_id],
-            cc_type=CC_TYPE_GOLANG,
+            cc_type=cc_type,
             transient_map=transient_map)
 
         tx_context.tx_prop_req = request
         return self.send_tx_proposal(tx_context, peers)
 
-    def query_info(self, tx_context, peers, transient_map=None):
+    def query_info(self, tx_context, peers, transient_map=None, cc_type=CC_TYPE_GOLANG):
         """Query the information of channel
 
         Queries for various useful information on the state of the channel
@@ -895,6 +904,7 @@ class Channel(object):
         :param tx_context: tx_context instance
         :param peers: peers in the channel
         :param transient_map:  (Default value = None)
+        :param cc_type: chaincode language type
         :return: class ChaincodeQueryResponse channelinfo with height, currently the only useful information.
         """
         request = create_tx_prop_req(
@@ -902,19 +912,20 @@ class Channel(object):
             fcn='GetChainInfo',
             cc_name='qscc',
             args=[self.name],
-            cc_type=CC_TYPE_GOLANG,
+            cc_type=cc_type,
             transient_map=transient_map)
 
         tx_context.tx_prop_req = request
         return self.send_tx_proposal(tx_context, peers)
 
     def get_channel_config(self, tx_context, peers,
-                           transient_map=None):
+                           transient_map=None, cc_type=CC_TYPE_GOLANG):
         """Query the current config block for this channel
 
         :param tx_context: tx_context instance
         :param peers: peers in the channel
         :param transient_map:  (Default value = None)
+        :param cc_type: chaincode language type
         :return: class ChaincodeQueryResponse channelinfo with height, currently the only useful information.
         """
 
@@ -923,7 +934,7 @@ class Channel(object):
             fcn='GetConfigBlock',
             cc_name='cscc',
             args=[self.name],
-            cc_type=CC_TYPE_GOLANG,
+            cc_type=cc_type,
             transient_map=transient_map)
 
         tx_context.tx_prop_req = request
