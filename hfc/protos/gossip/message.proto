@@ -1,23 +1,24 @@
-// Copyright IBM Corp. All Rights Reserved.
+// Copyright the Hyperledger Fabric contributors. All rights reserved.
 //
 // SPDX-License-Identifier: Apache-2.0
-//
+
 syntax = "proto3";
 
-option go_package = "github.com/hyperledger/fabric/protos/gossip" ;
+option go_package = "github.com/hyperledger/fabric-protos-go/gossip";
+option java_package = "org.hyperledger.fabric.protos.gossip";
 
 package gossip;
 
-import "hfc/protos/common/collection.proto";
+import "hfc/protos/peer/collection.proto";
 
 // Gossip
 service Gossip {
 
     // GossipStream is the gRPC stream used for sending and receiving messages
-    rpc GossipStream (stream Envelope) returns (stream Envelope) {}
+    rpc GossipStream (stream Envelope) returns (stream Envelope);
 
     // Ping is used to probe a remote peer's aliveness
-    rpc Ping (Empty) returns (Empty) {}
+    rpc Ping (Empty) returns (Empty);
 }
 
 
@@ -174,6 +175,7 @@ message ConnEstablish {
     bytes pki_id          = 1;
     bytes identity        = 2;
     bytes tls_cert_hash   = 3;
+    bool probe            = 4;
 }
 
 // PeerIdentity defines the identity of the peer
@@ -256,7 +258,7 @@ message PrivatePayload {
     string tx_id                = 3;
     bytes private_rwset         = 4;
     uint64 private_sim_height  = 5;
-    common.CollectionConfigPackage collection_configs = 6;
+    protos.CollectionConfigPackage collection_configs = 6;
 }
 
 // Membership messages

@@ -1,22 +1,22 @@
-// Copyright IBM Corp. All Rights Reserved.
+// Copyright the Hyperledger Fabric contributors. All rights reserved.
 //
 // SPDX-License-Identifier: Apache-2.0
-//
+
 syntax = "proto3";
+
+option go_package = "github.com/hyperledger/fabric-protos-go/discovery";
+option java_package = "org.hyperledger.fabric.protos.discovery";
+
+package discovery;
 
 import "hfc/protos/gossip/message.proto";
 import "hfc/protos/msp/msp_config.proto";
-import "hfc/protos/msp/identities.proto";
-
-option go_package = "github.com/hyperledger/fabric/protos/discovery" ;
-
-package discovery;
 
 // Discovery defines a service that serves information about the fabric network
 // like which peers, orderers, chaincodes, etc.
 service Discovery {
     // Discover receives a signed request, and returns a response.
-    rpc Discover (SignedRequest) returns (Response) {}
+    rpc Discover (SignedRequest) returns (Response);
 }
 
 // SignedRequest contains a serialized Request in the payload field
@@ -156,6 +156,8 @@ message ChaincodeInterest {
 message ChaincodeCall {
     string name = 1;
     repeated string collection_names = 2;
+    bool no_private_reads = 3; // Indicates we do not need to read from private data
+    bool no_public_writes = 4; // Indicates we do not need to write to the chaincode namespace
 }
 
 // ChaincodeQueryResult contains EndorsementDescriptors for
@@ -231,5 +233,3 @@ message Endpoint {
     string host = 1;
     uint32 port = 2;
 }
-
-

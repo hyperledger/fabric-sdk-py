@@ -1,18 +1,16 @@
-/*
-Copyright IBM Corp. 2017 All Rights Reserved.
-
-SPDX-License-Identifier: Apache-2.0
-*/
+// Copyright the Hyperledger Fabric contributors. All rights reserved.
+//
+// SPDX-License-Identifier: Apache-2.0
 
 syntax = "proto3";
 
-import "hfc/protos/common/common.proto";
-import "hfc/protos/common/policies.proto";
-
-option go_package = "github.com/hyperledger/fabric/protos/common";
+option go_package = "github.com/hyperledger/fabric-protos-go/common";
 option java_package = "org.hyperledger.fabric.protos.common";
 
 package common;
+
+import "hfc/protos/common/common.proto";
+import "hfc/protos/common/policies.proto";
 
 // ConfigEnvelope is designed to contain _all_ configuration for a chain with no dependency
 // on previous configuration transactions.
@@ -40,16 +38,6 @@ message ConfigEnvelope {
     Envelope last_update = 2; // The last CONFIG_UPDATE message which generated this current configuration
                               // Note that CONFIG_UPDATE has a Payload.Data of a Marshaled ConfigUpdate
 }
-
-message ConfigGroupSchema {
-    map<string, ConfigGroupSchema> groups = 1;
-    map<string, ConfigValueSchema> values = 2;
-    map<string, ConfigPolicySchema> policies = 3;
-}
-
-message ConfigValueSchema {}
-
-message ConfigPolicySchema {}
 
 // Config represents the config for a particular channel
 message Config {

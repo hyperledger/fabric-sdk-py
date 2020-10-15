@@ -25,7 +25,7 @@ from hfc.fabric.transaction.tx_proposal_request import TXProposalRequest, \
     CC_INVOKE, CC_QUERY, CC_UPGRADE
 from hfc.protos.common import common_pb2, configtx_pb2, ledger_pb2
 from hfc.protos.peer import query_pb2
-from hfc.protos.peer.chaincode_pb2 import ChaincodeData
+from hfc.protos.peer.chaincode_pb2 import ChaincodeData, CDSData
 from hfc.fabric.block_decoder import BlockDecoder, \
     decode_fabric_peers_info, decode_fabric_MSP_config, \
     decode_fabric_endpoints, decode_proposal_response_payload, \
@@ -1376,6 +1376,9 @@ class Client(object):
         payload = res['extension']['response']['payload']
         ccd.ParseFromString(payload)
 
+        cdsData = CDSData()
+        cdsData.ParseFromString(ccd.data)
+
         policy = decode_signature_policy_envelope(
             ccd.policy.SerializeToString())
         instantiation_policy = decode_signature_policy_envelope(
@@ -1387,8 +1390,8 @@ class Client(object):
             'vscc': ccd.vscc,
             'policy': policy,
             'data': {
-                'hash': ccd.data.hash,
-                'metadatahash': ccd.data.metadatahash,
+                'hash': cdsData.hash,
+                'metadatahash': cdsData.metadatahash,
             },
             'id': ccd.id,
             'instantiation_policy': instantiation_policy,
