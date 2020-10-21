@@ -11,7 +11,7 @@ import unittest
 from hfc.fabric.channel.channel import SYSTEM_CHANNEL_NAME
 from hfc.util.policies import s2d
 
-from test.integration.utils import BaseTestCase
+from test.integration.utils_raft import BaseTestCase
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)

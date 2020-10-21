@@ -23,15 +23,18 @@ class BaseTestCase(unittest.TestCase):
                                                "../fixtures/chaincode"))
         os.environ['GOPATH'] = os.path.abspath(gopath)
         self.channel_tx = \
-            E2E_CONFIG['test-network']['channel-artifacts']['channel.tx']
+            E2E_CONFIG['test-network']['channel-artifacts']['raft_channel.tx']
         self.compose_file_path = \
-            E2E_CONFIG['test-network']['docker']['compose_file_tls']
+            E2E_CONFIG['test-network']['docker']['compose_file_raft']
+
+        self.compose_file_orderer_path = \
+            E2E_CONFIG['test-network']['docker']['compose_file_orderer_raft']
 
         self.config_yaml = \
-            E2E_CONFIG['test-network']['channel-artifacts']['config_yaml']
+            E2E_CONFIG['test-network']['channel-artifacts']['raft_config_yaml']
         self.channel_profile = \
             E2E_CONFIG['test-network']['channel-artifacts']['channel_profile']
-        self.client = Client('test/fixtures/network.json')
+        self.client = Client('test/fixtures/network-raft.json')
         self.channel_name = "businesschannel"  # default application channel
         self.user = self.client.get_user('org1.example.com', 'Admin')
         self.assertIsNotNone(self.user, 'org1 admin should not be None')
@@ -46,14 +49,15 @@ class BaseTestCase(unittest.TestCase):
         self.shutdown_test_env()
 
     def check_logs(self):
-        cli_call(["docker-compose", "-f", self.compose_file_path, "logs",
+        cli_call(["docker-compose", "-f", self.compose_file_path, "-f", self.compose_file_orderer_path, "logs",
                   "--tail=200"])
 
     def start_test_env(self):
-        cli_call(["docker-compose", "-f", self.compose_file_path, "up", "-d"])
+        cli_call(["docker-compose", "-f", self.compose_file_path, "-f", self.compose_file_orderer_path, "up", "-d"])
+        time.sleep(10)
 
     def shutdown_test_env(self):
-        cli_call(["docker-compose", "-f", self.compose_file_path, "down"])
+        cli_call(["docker-compose", "-f", self.compose_file_path, "-f", self.compose_file_orderer_path, "down"])
 
 
 class ChannelEventHubTestCase(BaseTestCase):
