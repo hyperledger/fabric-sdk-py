@@ -1,0 +1,53 @@
+// Copyright the Hyperledger Fabric contributors. All rights reserved.
+//
+// SPDX-License-Identifier: Apache-2.0
+
+syntax = "proto3";
+
+option go_package = "github.com/hyperledger/fabric-protos-go/peer";
+option java_package = "org.hyperledger.fabric.protos.peer";
+
+package protos;
+
+import "google/protobuf/empty.proto";
+import "hfc/protos/common/common.proto";
+
+// SnapshotRequest contains information for a generate/cancel snapshot request
+message SnapshotRequest {
+    // The signature header that contains creator identity and nonce
+    common.SignatureHeader signature_header = 1;
+    // The channel ID
+    string channel_id = 2;
+    // The block number to generate a snapshot
+    uint64 block_number = 3;
+}
+
+// SnapshotQuery contains information for a query snapshot request
+message SnapshotQuery {
+    // The signature header that contains creator identity and nonce
+    common.SignatureHeader signature_header = 1;
+    // The channel ID
+    string channel_id = 2;
+}
+
+// SignedSnapshotRequest contains marshalled request bytes and signature
+message SignedSnapshotRequest {
+    // The bytes of SnapshotRequest or SnapshotQuery
+    bytes request = 1;
+    // Signaure over request bytes; this signature is to be verified against the client identity
+    bytes signature = 2;
+}
+
+// QueryPendingSnapshotsResponse specifies the response payload of a query pending snapshots request
+message QueryPendingSnapshotsResponse {
+    repeated uint64 block_numbers = 1;
+}
+
+service Snapshot {
+    // Generate a snapshot reqeust. SignedSnapshotRequest contains marshalled bytes for SnaphostRequest
+    rpc Generate(SignedSnapshotRequest) returns (google.protobuf.Empty) {}
+    // Cancel a snapshot reqeust. SignedSnapshotRequest contains marshalled bytes for SnaphostRequest
+    rpc Cancel(SignedSnapshotRequest) returns (google.protobuf.Empty) {}
+    // Query pending snapshots query. SignedSnapshotRequest contains marshalled bytes for SnaphostQuery
+    rpc QueryPendings(SignedSnapshotRequest) returns (QueryPendingSnapshotsResponse) {}
+}
