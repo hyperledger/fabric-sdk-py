@@ -88,7 +88,7 @@ install:
 
 # Auto-format to pep8
 format:
-	$(PYTHON) -m autopep8 --in-place --recursive --exclude=./hfc/protos .
+	$(PYTHON) -m autopep8 --in-place --recursive --exclude=protos,venv .
 
 doc:
 	cd docs && make install html

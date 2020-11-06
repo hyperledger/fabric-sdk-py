@@ -141,7 +141,13 @@ def get_peer_org_user(org, user, state_store):
 
     msp_id = E2E_CONFIG['test-network'][org]['mspid']
 
-    return create_user(user, org, state_store, msp_id, key_path, cert_path)
+    with open(key_path, 'rb') as f:
+        key_pem = f.read()
+
+    with open(cert_path, 'rb') as f:
+        cert_pem = f.read()
+
+    return create_user(user, org, state_store, msp_id, key_pem, cert_pem)
 
 
 def get_orderer_org_user(org='example.com', user='Admin', state_store=None):
@@ -166,7 +172,13 @@ def get_orderer_org_user(org='example.com', user='Admin', state_store=None):
     )
     msp_id = E2E_CONFIG['test-network']['orderer']['mspid']
 
-    return create_user(user, org, state_store, msp_id, key_path, cert_path)
+    with open(key_path, 'rb') as f:
+        key_pem = f.read()
+
+    with open(cert_path, 'rb') as f:
+        cert_pem = f.read()
+
+    return create_user(user, org, state_store, msp_id, key_pem, cert_pem)
 
 
 def cli_call(arg_list, expect_success=True, env=os.environ.copy()):

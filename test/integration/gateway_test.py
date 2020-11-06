@@ -46,114 +46,114 @@ class GatewayTest(BaseTestCase):
             'top1': {
                 'inner11': 10,
                 'inner12': 'ten'
-                    },
+            },
             'top2': {
                 'inner21': 20,
                 'inner22': 'twenty'
-                    }
-                })
+            }
+        })
 
         overrideOptions = dict({
-                    'top1': {
-                        'top13': {
-                            'inner131': 131
-                        }
-                    }
-                })
+            'top1': {
+                'top13': {
+                    'inner131': 131
+                }
+            }
+        })
 
         expectedOptions = dict({
-                    'top1': {
-                        'inner11': 10,
-                        'inner12': 'ten',
-                        'top13': {
-                            'inner131': 131
-                        }
-                    },
-                    'top2': {
-                        'inner21': 20,
-                        'inner22': 'twenty'
-                    }
-                })
+            'top1': {
+                'inner11': 10,
+                'inner12': 'ten',
+                'top13': {
+                    'inner131': 131
+                }
+            },
+            'top2': {
+                'inner21': 20,
+                'inner22': 'twenty'
+            }
+        })
 
         currentOptions = copy.deepcopy(defaultOptions)
         result = new_gateway.mergeOptions(currentOptions, overrideOptions)
         self.assertDictEqual(expectedOptions, result)
 
         overrideOptions = {
-                    'top1': {
-                        'inner11': 20,
-                        'inner12': 'twenty'
-                    },
-                }
+            'top1': {
+                'inner11': 20,
+                'inner12': 'twenty'
+            },
+        }
         expectedOptions = {
-                        'top1': {
-                            'inner11': 20,
-                            'inner12': 'twenty'
-                        },
-                        'top2': {
-                            'inner21': 20,
-                            'inner22': 'twenty'
-                        }
-                    }
+            'top1': {
+                'inner11': 20,
+                'inner12': 'twenty'
+            },
+            'top2': {
+                'inner21': 20,
+                'inner22': 'twenty'
+            }
+        }
 
         currentOptions = copy.deepcopy(defaultOptions)
         result = new_gateway.mergeOptions(currentOptions, overrideOptions)
         self.assertDictEqual(expectedOptions, result)
 
         overrideOptions = {
-                    'top1': {
-                        'inner11': 20
-                    },
-                }
+            'top1': {
+                'inner11': 20
+            },
+        }
         expectedOptions = {
-                    'top1': {
-                        'inner11': 20,
-                        'inner12': 'ten'
-                    },
-                    'top2': {
-                        'inner21': 20,
-                        'inner22': 'twenty'
-                    }
-                }
+            'top1': {
+                'inner11': 20,
+                'inner12': 'ten'
+            },
+            'top2': {
+                'inner21': 20,
+                'inner22': 'twenty'
+            }
+        }
 
         currentOptions = copy.deepcopy(defaultOptions)
         result = new_gateway.mergeOptions(currentOptions, overrideOptions)
         self.assertDictEqual(expectedOptions, result)
 
         overrideOptions = {
-                    'top1': {
-                        'inner11': None
-                    },
-                }
+            'top1': {
+                'inner11': None
+            },
+        }
         expectedOptions = {
-                    'top1': {
-                        'inner11': None,
-                        'inner12': 'ten'
-                    },
-                    'top2': {
-                        'inner21': 20,
-                        'inner22': 'twenty'
-                    }
-                }
+            'top1': {
+                'inner11': None,
+                'inner12': 'ten'
+            },
+            'top2': {
+                'inner21': 20,
+                'inner22': 'twenty'
+            }
+        }
 
         currentOptions = copy.deepcopy(defaultOptions)
         result = new_gateway.mergeOptions(currentOptions, overrideOptions)
         self.assertDictEqual(expectedOptions, result)
 
         overrideOptions = {
-                    'single': True
-                }
+            'single': True
+        }
         expectedOptions = {
-                    'top1': {
-                        'inner11': 10,
-                        'inner12': 'ten'
-                    },
-                    'top2': {
-                        'inner21': 20,
-                        'inner22': 'twenty'
-                    },
-                    'single': True
-                }
+            'top1': {
+                'inner11': 10,
+                'inner12': 'ten'
+            },
+            'top2': {
+                'inner21': 20,
+                'inner22': 'twenty'
+            },
+            'single': True
+        }
 
         currentOptions = copy.deepcopy(defaultOptions)
         result = new_gateway.mergeOptions(currentOptions, overrideOptions)
