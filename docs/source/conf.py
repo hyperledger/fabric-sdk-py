@@ -10,14 +10,14 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+from hfc import VERSION
+from recommonmark.transform import AutoStructify
 import os
 import sys
 
 
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../../'))
-from recommonmark.transform import AutoStructify
-from hfc import VERSION
 
 # source_parsers = {
 #     '.md': 'recommonmark.parser.CommonMarkParser',
@@ -29,6 +29,8 @@ master_doc = 'index'
 
 github_doc_root = 'https://github.com/hyperledger/fabric-sdk-py/tree/master/docs/'
 # app setup hook
+
+
 def setup(app):
     app.add_config_value('recommonmark_config', {
         # 'url_resolver': lambda url: github_doc_root + url,
@@ -37,6 +39,7 @@ def setup(app):
     app.add_transform(AutoStructify)
 
 # -- Project information -----------------------------------------------------
+
 
 project = 'fabric-sdk-py'
 copyright = '2020, Hyperledger Community'
@@ -77,7 +80,6 @@ language = None
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
-
 
 
 # -- Options for HTML output -------------------------------------------------

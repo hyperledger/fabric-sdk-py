@@ -3,11 +3,33 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+import base64
 
 from hfc.fabric.user import create_user
 
-
 _logger = logging.getLogger(__name__ + ".organization")
+
+
+def _handle_key_type(key):
+    """Utility method to return the key based on key type."""
+
+    key_pem = None
+    if isinstance(key, str):
+        with open(key, 'rb') as f:
+            key_pem = f.read()
+
+    elif isinstance(key, dict):
+        if 'pem' in key:
+            key_b64 = key.get('pem')
+            key_pem = base64.standard_b64decode(key_b64)
+
+        elif 'path' in key:
+            with open(key.get('path'), 'rb') as f:
+                key_pem = f.read()
+    else:
+        raise ValueError("was not able to determine key type/configuration used in connection profile: {}".format(key))
+
+    return key_pem
 
 
 class Organization(object):
@@ -45,9 +67,17 @@ class Organization(object):
         if 'users' in info:
             users = info['users']
             for name in users:
+                # maintain backward compatibility - wrap path and pem statements in 'private_key' and 'cert' objects
+                try:
+                    key_pem = _handle_key_type(users[name].get('private_key'))
+                    cert_pem = _handle_key_type(users[name].get('cert'))
+                except ValueError as e:
+                    _logger.error("error happened initializing user via bundle: {}".format(e))
+                    return False
+
                 user = create_user(name, self._name, self._state_store,
-                                   self._mspid, users[name].get('private_key'),
-                                   users[name].get('cert'))
+                                   self._mspid, key_pem,
+                                   cert_pem)
                 self._users[name] = user
         return True
 

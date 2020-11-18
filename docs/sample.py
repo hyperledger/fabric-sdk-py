@@ -151,7 +151,7 @@ if __name__ == "__main__":
         # Returns an instance of the onEvent function
         return onEvent
 
-    blocks = [] # empty list
+    blocks = []  # empty list
 
     channel = cli.get_channel('businesschannel')
     channel_event_hub = channel.newChannelEventHub(cli.get_peer('peer0.org1.example.com'), org1_admin)

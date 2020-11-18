@@ -291,7 +291,7 @@ def validate(user):
     return user
 
 
-def create_user(name, org, state_store, msp_id, key_path, cert_path,
+def create_user(name, org, state_store, msp_id, key_pem, cert_pem,
                 crypto_suite=ecies()):
     """Create user
 
@@ -301,19 +301,14 @@ def create_user(name, org, state_store, msp_id, key_path, cert_path,
     :param msp_id: msp id for the user
     :param crypto_suite: the cryptoSuite used to store crypto and key store
          settings (Default value = ecies())
-    :param key_path: identity private key path
-    :param cert_path: identity public cert path
+    :param key_pem: identity private key pem encoded
+    :param cert_pem: identity public cert pem encoded
     :return: a user instance
     """
 
-    _logger.debug("Create user with {}:{}:{}:{}:{}:{}".format(
-        name, org, state_store, msp_id, key_path, cert_path
+    _logger.debug("Create user with {}:{}:{}:{}:{}".format(
+        name, org, state_store, msp_id, cert_pem
     ))
-    with open(key_path, 'rb') as key:
-        key_pem = key.read()
-
-    with open(cert_path, 'rb') as cert:
-        cert_pem = cert.read()
 
     private_key = load_pem_private_key(key_pem, None, default_backend())
     enrollment = Enrollment(private_key, cert_pem)

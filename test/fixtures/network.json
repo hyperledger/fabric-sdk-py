@@ -60,11 +60,11 @@
       "users": {
         "Admin": {
           "cert": "test/fixtures/e2e_cli/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/signcerts/Admin@org2.example.com-cert.pem",
-          "private_key": "test/fixtures/e2e_cli/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore/7e0b1c172161fe0f33603106935d2584918e12af955108e429dd63d4c043067a_sk"
+          "private_key": {"pem": "LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JR0hBZ0VBTUJNR0J5cUdTTTQ5QWdFR0NDcUdTTTQ5QXdFSEJHMHdhd0lCQVFRZ1ZkOVJLeGhuMWNlQ0xrWXoKOUJxdWlCM2d2MkZPazQvVU9SRnlUQS9QUnU2aFJBTkNBQVRLU25ySnpRSkUrcDhVRzBwbFRKeElOUnpJNzg0VQo3aHZsOWhjYzJlcE9jUFI5MVo5M0FGVGRFaDBpeXVFQ0JSRmdjWVovOG1PWmFrWDVLUHFGMzdKUwotLS0tLUVORCBQUklWQVRFIEtFWS0tLS0tCg=="}
         },
         "User1": {
-          "cert": "test/fixtures/e2e_cli/crypto-config/peerOrganizations/org2.example.com/users/User1@org2.example.com/msp/signcerts/User1@org2.example.com-cert.pem",
-          "private_key": "test/fixtures/e2e_cli/crypto-config/peerOrganizations/org2.example.com/users/User1@org2.example.com/msp/keystore/73beefad9003c589064deb2128c4f0831ba8003f1233102cc52a188afd05fe61_sk"
+          "cert": {"pem": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUNLakNDQWRDZ0F3SUJBZ0lRWmxaZXI5T1ZvL2I0UWlpNDVzVWZFekFLQmdncWhrak9QUVFEQWpCek1Rc3cKQ1FZRFZRUUdFd0pWVXpFVE1CRUdBMVVFQ0JNS1EyRnNhV1p2Y201cFlURVdNQlFHQTFVRUJ4TU5VMkZ1SUVaeQpZVzVqYVhOamJ6RVpNQmNHQTFVRUNoTVFiM0puTWk1bGVHRnRjR3hsTG1OdmJURWNNQm9HQTFVRUF4TVRZMkV1CmIzSm5NaTVsZUdGdGNHeGxMbU52YlRBZUZ3MHhPREV3TVRrd016UTRNREJhRncweU9ERXdNVFl3TXpRNE1EQmEKTUd3eEN6QUpCZ05WQkFZVEFsVlRNUk13RVFZRFZRUUlFd3BEWVd4cFptOXlibWxoTVJZd0ZBWURWUVFIRXcxVApZVzRnUm5KaGJtTnBjMk52TVE4d0RRWURWUVFMRXdaamJHbGxiblF4SHpBZEJnTlZCQU1NRmxWelpYSXhRRzl5Clp6SXVaWGhoYlhCc1pTNWpiMjB3V1RBVEJnY3Foa2pPUFFJQkJnZ3Foa2pPUFFNQkJ3TkNBQVNhSkc4eHpkSncKREdvWENxb3VVWllIQ1c1NlNlM3NVOU9WaitOU0daeGV0Zm1tLythS0RxSU1FZCtiRFBWbjBIWnNaWUMvc1lXTApmd0lrdkk5VjIvNE5vMDB3U3pBT0JnTlZIUThCQWY4RUJBTUNCNEF3REFZRFZSMFRBUUgvQkFJd0FEQXJCZ05WCkhTTUVKREFpZ0NEdTJvY05LSkRWMkhtdFhuTFJRNXBzczViNk9XNE9DWXdJNkhOTStoRTVqREFLQmdncWhrak8KUFFRREFnTklBREJGQWlFQTJXc20wTW1RbVZwVU1DcitEeGtlbWhvMjZMa1FsNmtKYVBVbkdmaGNCbmNDSUN1aQpmbTZXcnBEL0xrODBaNFZPRGFBTGZxOVd0MVpPeEx4M1pXaDl1RUtLCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K" },
+          "private_key": {"path": "test/fixtures/e2e_cli/crypto-config/peerOrganizations/org2.example.com/users/User1@org2.example.com/msp/keystore/73beefad9003c589064deb2128c4f0831ba8003f1233102cc52a188afd05fe61_sk"}
         }
       }
     }
