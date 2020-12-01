@@ -38,7 +38,7 @@ class Contract(object):
         evaluated on the list of peers discovered and then submitted to the ordering service
         for committing to the ledger.
         """
-        channel_name = self.network.channel._name
+        channel_name = self.network.channel.name
         cli = self.gatetway.client
         peers = cli._peers
 
@@ -60,7 +60,7 @@ class Contract(object):
         the ordering service and hence will not be committed to the ledger.
         This is used for querying the world state.
         """
-        channel_name = self.network.channel3
+        channel_name = self.network.channel.name
         cli = self.gatetway.client
         peers = cli._peers
 
