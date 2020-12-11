@@ -2368,7 +2368,7 @@ class Client(object):
                     result = response.results[index]
                     if not result:
                         raise Exception("Discovery results are missing")
-                    if hasattr(result, 'error'):
+                    if hasattr(result, 'error') and result.error.content:
                         _logger.error(
                             "Channel {} received discovery error: {}".format(
                                 dummy_channel.name, result.error.content))
