@@ -13,7 +13,7 @@
 # limitations under the License.
 #
 import logging
-from _sha256 import sha256
+from hashlib import sha256
 
 from hfc.protos.common import common_pb2
 from hfc.protos.orderer import ab_pb2_grpc

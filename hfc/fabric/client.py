@@ -9,7 +9,7 @@ import os
 import subprocess
 import shutil
 import uuid
-from _sha256 import sha256
+from hashlib import sha256
 
 from time import sleep
 
