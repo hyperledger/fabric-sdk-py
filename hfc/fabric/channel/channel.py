@@ -5,7 +5,7 @@ import logging
 import random
 import sys
 import re
-from _sha256 import sha256
+from hashlib import sha256
 
 from hfc.protos.msp import msp_principal_pb2
 
