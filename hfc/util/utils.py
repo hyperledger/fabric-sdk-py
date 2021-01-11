@@ -437,7 +437,7 @@ class zeroTimeContextManager(object):
         time.time = self.real_time
 
 
-def _tar_path(proj_path):
+def _tar_path(proj_path, go_path=None):
     """Tar the project path
 
     :param proj_path: The full path to the code
@@ -456,7 +456,10 @@ def _tar_path(proj_path):
                 file_path = os.path.join(dir_path, filename)
 
                 with open(file_path, mode='rb') as f:
-                    arcname = os.path.relpath(file_path, proj_path)
+                    if go_path:
+                        arcname = os.path.relpath(file_path, go_path)
+                    else:
+                        arcname = os.path.relpath(file_path)
                     tarinfo = dist.gettarinfo(file_path, arcname)
                     tarinfo = zeroTarInfo(tarinfo)
                     dist.addfile(tarinfo, f)
@@ -489,7 +492,7 @@ def package_chaincode(cc_path, cc_type=CC_TYPE_GOLANG):
         proj_path = go_path + '/src/' + cc_path
         _logger.debug('Project path={}'.format(proj_path))
 
-        code_content = _tar_path(proj_path)
+        code_content = _tar_path(proj_path, go_path)
         if code_content:
             return code_content
         else:
