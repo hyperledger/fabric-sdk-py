@@ -1128,8 +1128,8 @@ class Client(object):
         return tx_path
 
     async def chaincode_install(self, requestor, peers, cc_path, cc_name,
-                                cc_version, packaged_cc=None,
-                                transient_map=None):
+                                cc_version, cc_type=CC_TYPE_GOLANG,
+                                packaged_cc=None, transient_map=None):
         """
         Install chaincode to given peers by requestor role
 
@@ -1140,6 +1140,7 @@ class Client(object):
         :param cc_version: chaincode version
         :param packaged_cc: packaged chaincode
         :param transient_map: transient map
+        :param cc_type: language type of the chaincode
         :return: True or False
         """
         target_peers = []
@@ -1159,7 +1160,7 @@ class Client(object):
             _logger.error(err_msg)
             raise Exception(err_msg)
 
-        tran_prop_req = create_tx_prop_req(CC_INSTALL, cc_path, CC_TYPE_GOLANG,
+        tran_prop_req = create_tx_prop_req(CC_INSTALL, cc_path, cc_type,
                                            cc_name, cc_version,
                                            packaged_cc=packaged_cc,
                                            transient_map=transient_map)
@@ -1247,7 +1248,8 @@ class Client(object):
                                     transient_map=None,
                                     collections_config=None,
                                     wait_for_event=False,
-                                    wait_for_event_timeout=30):
+                                    wait_for_event_timeout=30,
+                                    cc_type=CC_TYPE_GOLANG):
         """
             Instantiate installed chaincode to particular peer in
             particular channel
@@ -1267,6 +1269,7 @@ class Client(object):
         :param wait_for_event_timeout: Time to wait for the event from each
          peer's deliver filtered service signifying that the 'invoke'
           transaction has been committed successfully (default 30s)
+        :param cc_type: the language type of the chaincode
         :return: chaincode data payload
         """
         target_peers = []
@@ -1287,7 +1290,7 @@ class Client(object):
 
         tran_prop_req_dep = create_tx_prop_req(
             prop_type=CC_INSTANTIATE,
-            cc_type=CC_TYPE_GOLANG,
+            cc_type=cc_type,
             cc_name=cc_name,
             cc_version=cc_version,
             cc_endorsement_policy=cc_endorsement_policy,
@@ -1405,7 +1408,8 @@ class Client(object):
                                 transient_map=None,
                                 collections_config=None,
                                 wait_for_event=False,
-                                wait_for_event_timeout=30):
+                                wait_for_event_timeout=30,
+                                cc_type=CC_TYPE_GOLANG):
         """
             Upgrade installed chaincode to particular peer in
             particular channel
@@ -1427,6 +1431,7 @@ class Client(object):
         :param wait_for_event_timeout: Time to wait for the event from each
          peer's deliver filtered service signifying that the 'invoke'
           transaction has been committed successfully (default 30s)
+        :param cc_type: the language type of the chaincode
         :return: chaincode data payload
         """
         target_peers = []
@@ -1447,7 +1452,7 @@ class Client(object):
 
         tran_prop_req_dep = create_tx_prop_req(
             prop_type=CC_UPGRADE,
-            cc_type=CC_TYPE_GOLANG,
+            cc_type=cc_type,
             cc_name=cc_name,
             cc_version=cc_version,
             cc_endorsement_policy=cc_endorsement_policy,
@@ -1839,7 +1844,7 @@ class Client(object):
         return res[0].response.payload.decode('utf-8')
 
     async def query_channels(self, requestor, peers, transient_map=None,
-                             decode=True):
+                             decode=True, cc_type=CC_TYPE_GOLANG):
         """
         Queries channel name joined by a peer
 
@@ -1870,7 +1875,7 @@ class Client(object):
             prop_type=CC_QUERY,
             fcn='GetChannels',
             cc_name='cscc',
-            cc_type=CC_TYPE_GOLANG,
+            cc_type=cc_type,
             args=[],
             transient_map=transient_map
         )
@@ -2267,7 +2272,8 @@ class Client(object):
         return results
 
     async def query_installed_chaincodes(self, requestor, peers,
-                                         transient_map=None, decode=True):
+                                         transient_map=None, decode=True,
+                                         cc_type=CC_TYPE_GOLANG):
         """
         Queries installed chaincode, returns all chaincodes installed on a peer
 
@@ -2275,6 +2281,7 @@ class Client(object):
         :param peers: Names or Instance of the peers to query
         :param transient_map: transient map
         :param decode: Decode the response payload
+        :param cc_type: The chaincode language type
         :return: A `ChaincodeQueryResponse` or `ProposalResponse`
         """
         target_peers = []
@@ -2297,7 +2304,7 @@ class Client(object):
             prop_type=CC_QUERY,
             fcn='getinstalledchaincodes',
             cc_name='lscc',
-            cc_type=CC_TYPE_GOLANG,
+            cc_type=cc_type,
             args=[],
             transient_map=transient_map
         )

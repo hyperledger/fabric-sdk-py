@@ -27,9 +27,8 @@ from hfc.protos.common import common_pb2, configtx_pb2
 from hfc.protos.msp import identities_pb2
 from hfc.protos.peer import proposal_pb2, chaincode_pb2
 from hfc.protos.utils import create_tx_payload
-
-CC_INSTALL = "install"
-CC_TYPE_GOLANG = "GOLANG"
+from hfc.fabric.transaction.tx_proposal_request import CC_INSTALL, \
+                                    CC_TYPE_GOLANG, CC_TYPE_NODE
 
 _logger = logging.getLogger(__name__)
 
@@ -399,7 +398,7 @@ def send_install_proposal(tx_context, peers):
 
     cci_spec = chaincode_pb2.ChaincodeInvocationSpec()
     cci_spec.chaincode_spec.type = \
-        chaincode_pb2.ChaincodeSpec.Type.Value(CC_TYPE_GOLANG)
+        chaincode_pb2.ChaincodeSpec.Type.Value(tx_context.tx_prop_req.cc_type)
     cci_spec.chaincode_spec.chaincode_id.name = proto_str("lscc")
     cci_spec.chaincode_spec.input.args.extend(
         [proto_b(CC_INSTALL), cc_deployment_spec.SerializeToString()])
@@ -438,6 +437,38 @@ class zeroTimeContextManager(object):
         time.time = self.real_time
 
 
+def _tar_path(proj_path, go_path=None):
+    """Tar the project path
+
+    :param proj_path: The full path to the code
+    :return: The tar stream.
+    """
+
+    if not os.listdir(proj_path):
+        raise ValueError("No chaincode file found!")
+
+    tar_stream = io.BytesIO()
+    with zeroTimeContextManager():
+        dist = tarfile.open(fileobj=tar_stream,
+                            mode='w|gz', format=tarfile.GNU_FORMAT)
+        for dir_path, _, file_names in os.walk(proj_path):
+            for filename in file_names:
+                file_path = os.path.join(dir_path, filename)
+
+                with open(file_path, mode='rb') as f:
+                    if go_path:
+                        arcname = os.path.relpath(file_path, go_path)
+                    else:
+                        arcname = os.path.relpath(file_path)
+                    tarinfo = dist.gettarinfo(file_path, arcname)
+                    tarinfo = zeroTarInfo(tarinfo)
+                    dist.addfile(tarinfo, f)
+
+        dist.close()
+        tar_stream.seek(0)
+        return(tar_stream.read())
+
+
 def package_chaincode(cc_path, cc_type=CC_TYPE_GOLANG):
     """Package all chaincode env into a tar.gz file
 
@@ -448,11 +479,12 @@ def package_chaincode(cc_path, cc_type=CC_TYPE_GOLANG):
     _logger.debug('Packaging chaincode path={}, chaincode type={}'.format(
         cc_path, cc_type))
 
+    if not cc_path:
+        raise ValueError("Missing chaincode path parameter "
+                         "in install proposal request")
+
     if cc_type == CC_TYPE_GOLANG:
         go_path = os.environ['GOPATH']
-        if not cc_path:
-            raise ValueError("Missing chaincode path parameter "
-                             "in install proposal request")
 
         if not go_path:
             raise ValueError("No GOPATH env variable is found")
@@ -460,34 +492,25 @@ def package_chaincode(cc_path, cc_type=CC_TYPE_GOLANG):
         proj_path = go_path + '/src/' + cc_path
         _logger.debug('Project path={}'.format(proj_path))
 
-        if not os.listdir(proj_path):
-            raise ValueError("No chaincode file found!")
+        code_content = _tar_path(proj_path, go_path)
+        if code_content:
+            return code_content
+        else:
+            raise ValueError('No chaincode found')
 
-        tar_stream = io.BytesIO()
-        with zeroTimeContextManager():
-            dist = tarfile.open(fileobj=tar_stream,
-                                mode='w|gz', format=tarfile.GNU_FORMAT)
-            for dir_path, _, file_names in os.walk(proj_path):
-                for filename in file_names:
-                    file_path = os.path.join(dir_path, filename)
+    elif cc_type == CC_TYPE_NODE:
 
-                    with open(file_path, mode='rb') as f:
-                        arcname = os.path.relpath(file_path, go_path)
-                        tarinfo = dist.gettarinfo(file_path, arcname)
-                        tarinfo = zeroTarInfo(tarinfo)
-                        dist.addfile(tarinfo, f)
+        proj_path = cc_path
+        _logger.debug('Project path={}'.format(proj_path))
 
-            dist.close()
-            tar_stream.seek(0)
-            code_content = tar_stream.read()
-
+        code_content = _tar_path(proj_path)
         if code_content:
             return code_content
         else:
             raise ValueError('No chaincode found')
 
     else:
-        raise ValueError('Currently only support install GOLANG chaincode')
+        raise ValueError(f'Currently only support install {CC_TYPE_GOLANG}, {CC_TYPE_NODE} chaincodes')
 
 
 def pem_to_der(pem):
