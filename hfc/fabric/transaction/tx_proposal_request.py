@@ -4,7 +4,7 @@
 
 # import these constants for backwards compatibility in case someone uses them from here
 from hfc.util.consts import CC_INSTALL, CC_INSTANTIATE, CC_UPGRADE, CC_INVOKE, CC_QUERY, \
-    CC_TYPE_GOLANG, CC_TYPE_NODE, CC_TYPE_JAVA, CC_TYPE_CAR  # noqa: F401
+    CC_TYPE_GOLANG, CC_TYPE_NODE, CC_TYPE_JAVA, CC_TYPE_CAR  # noqa: F401 # lgtm[py/unused-import]
 
 
 class TXProposalRequest(object):
