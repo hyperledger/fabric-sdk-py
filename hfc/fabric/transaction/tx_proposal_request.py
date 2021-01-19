@@ -2,16 +2,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-CC_INSTALL = "install"
-CC_INSTANTIATE = "deploy"
-CC_INVOKE = "invoke"
-CC_UPGRADE = "upgrade"
-CC_QUERY = "query"
-
-CC_TYPE_GOLANG = "GOLANG"
-CC_TYPE_JAVA = "JAVA"
-CC_TYPE_NODE = "NODE"
-CC_TYPE_CAR = "CAR"
+# import these constants for backwards compatibility in case someone uses them from here
+from hfc.util.consts import CC_INSTALL, CC_INSTANTIATE, CC_UPGRADE, CC_INVOKE, CC_QUERY, \
+    CC_TYPE_GOLANG, CC_TYPE_NODE, CC_TYPE_JAVA, CC_TYPE_CAR  # noqa: F401
 
 
 class TXProposalRequest(object):

@@ -27,8 +27,7 @@ from hfc.protos.common import common_pb2, configtx_pb2
 from hfc.protos.msp import identities_pb2
 from hfc.protos.peer import proposal_pb2, chaincode_pb2
 from hfc.protos.utils import create_tx_payload
-from hfc.fabric.transaction.tx_proposal_request import CC_INSTALL, \
-                                    CC_TYPE_GOLANG, CC_TYPE_NODE
+from hfc.util.consts import CC_INSTALL, CC_TYPE_GOLANG, CC_TYPE_NODE
 
 _logger = logging.getLogger(__name__)
 

@@ -10,9 +10,7 @@ from hashlib import sha256
 from hfc.protos.msp import msp_principal_pb2
 
 from hfc.fabric.block_decoder import BlockDecoder
-from hfc.fabric.transaction.tx_proposal_request import \
-    create_tx_prop_req, CC_INSTALL, CC_TYPE_GOLANG, \
-    CC_INSTANTIATE, CC_UPGRADE, CC_INVOKE, CC_QUERY
+from hfc.fabric.transaction.tx_proposal_request import create_tx_prop_req
 from hfc.protos.common import common_pb2, policies_pb2, collection_pb2
 from hfc.protos.orderer import ab_pb2
 from hfc.protos.peer import chaincode_pb2, proposal_pb2
@@ -22,10 +20,9 @@ from hfc.protos.utils import create_cc_spec, create_seek_info, \
 from hfc.util import utils
 from hfc.util.utils import proto_str, current_timestamp, proto_b, \
     build_header, build_channel_header, build_cc_proposal, \
-    send_transaction_proposal, pem_to_der, package_chaincode
+    send_transaction_proposal, pem_to_der
+from hfc.util.consts import SYSTEM_CHANNEL_NAME, CC_INSTANTIATE, CC_UPGRADE, CC_INVOKE, CC_QUERY, CC_TYPE_GOLANG
 from .channel_eventhub import ChannelEventHub
-
-SYSTEM_CHANNEL_NAME = "testchainid"
 
 _logger = logging.getLogger(__name__)
 _logger.setLevel(logging.DEBUG)
@@ -244,77 +241,6 @@ class Channel(object):
 
         for peer in peers:
             self._validate_peer(peer)
-
-    def send_install_proposal(self, tx_context, peers=None):
-        """Send install chaincode proposal
-
-        :param install_proposal_req: install proposal request
-        :param targets: a set of peer to send
-        :param tx_context: a tx_context instance
-        :param peers: peers (Default value = None)
-        :return: a set of proposal response
-        """
-        if peers is None:
-            targets = self._peers.values()
-        else:
-            targets = peers
-        # self._validate_state() # TODO: enable this later
-        # self._validate_peers(targets)  # TODO: enable this later
-
-        if not tx_context:
-            raise ValueError("InstallProposalRequest is null.")
-
-        cc_deployment_spec = chaincode_pb2.ChaincodeDeploymentSpec()
-        cc_deployment_spec.chaincode_spec.type = \
-            chaincode_pb2.ChaincodeSpec.Type.Value(
-                utils.proto_str(tx_context.tx_prop_req.cc_type))
-        cc_deployment_spec.chaincode_spec.chaincode_id.name = \
-            proto_str(tx_context.tx_prop_req.cc_name)
-        cc_deployment_spec.chaincode_spec.chaincode_id.path = \
-            proto_str(tx_context.tx_prop_req.cc_path)
-        cc_deployment_spec.chaincode_spec.chaincode_id.version = \
-            proto_str(tx_context.tx_prop_req.cc_version)
-        if not self._is_dev_mode:
-            if not tx_context.tx_prop_req.packaged_cc:
-                cc_deployment_spec.code_package = \
-                    package_chaincode(
-                        tx_context.tx_prop_req.cc_path,
-                        tx_context.tx_prop_req.cc_type)
-            else:
-                cc_deployment_spec.code_package = \
-                    tx_context.tx_prop_req.packaged_cc
-
-        channel_header_extension = proposal_pb2.ChaincodeHeaderExtension()
-        channel_header_extension.chaincode_id.name = \
-            proto_str("lscc")
-        channel_header = utils.build_channel_header(
-            common_pb2.ENDORSER_TRANSACTION,
-            tx_context.tx_id,
-            '',
-            utils.current_timestamp(),
-            tx_context.epoch,
-            channel_header_extension.SerializeToString()
-        )
-
-        header = utils.build_header(tx_context.identity,
-                                    channel_header,
-                                    tx_context.nonce)
-
-        cci_spec = chaincode_pb2.ChaincodeInvocationSpec()
-        cci_spec.chaincode_spec.type = \
-            chaincode_pb2.ChaincodeSpec.Type.Value(tx_context.tx_prop_req.cc_type)
-        cci_spec.chaincode_spec.chaincode_id.name = proto_str("lscc")
-        cci_spec.chaincode_spec.input.args.extend(
-            [proto_b(CC_INSTALL), cc_deployment_spec.SerializeToString()])
-        proposal = utils.build_cc_proposal(
-            cci_spec, header,
-            tx_context.tx_prop_req.transient_map)
-        signed_proposal = utils.sign_proposal(tx_context, proposal)
-
-        responses = [peer.send_proposal(signed_proposal)
-                     for peer in targets]
-
-        return responses, proposal, header
 
     def _build_channel_header(type, tx_id, channel_id,
                               timestamp, epoch=0, extension=None):
