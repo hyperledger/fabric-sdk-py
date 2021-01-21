@@ -19,6 +19,8 @@ logger.setLevel(logging.DEBUG)
 CC_PATH = 'github.com/example_cc_with_event'
 CC_NAME = 'example_cc_with_event'
 CC_VERSION = '1.0'
+CC_UPGRADED_VERSION = '1.1'
+TOTAL_BLOCKS = 6
 
 
 class E2eTest(BaseTestCase):
@@ -84,12 +86,12 @@ class E2eTest(BaseTestCase):
 
         logger.info(f"E2E: Channel join done: name={self.channel_name}")
 
-    async def chaincode_install(self):
+    async def chaincode_install(self, cc_version=CC_VERSION):
         """
         Test installing an example chaincode to peer
         """
         logger.info("E2E: Chaincode install start")
-        cc = f'/var/hyperledger/production/chaincodes/{CC_NAME}.{CC_VERSION}'
+        cc = f'/var/hyperledger/production/chaincodes/{CC_NAME}.{cc_version}'
 
         # uncomment for testing with packaged_cc
 
@@ -108,7 +110,7 @@ class E2eTest(BaseTestCase):
                 peers=['peer0.' + org, 'peer1.' + org],
                 cc_path=CC_PATH,
                 cc_name=CC_NAME,
-                cc_version=CC_VERSION,
+                cc_version=cc_version,
                 # packaged_cc=code_package
             )
             self.assertTrue(responses)
@@ -177,6 +179,62 @@ class E2eTest(BaseTestCase):
         }
         self.assertEqual(response['name'], CC_NAME)
         self.assertEqual(response['version'], CC_VERSION)
+        self.assertEqual(response['policy'], policy)
+        logger.info("E2E: chaincode instantiation done")
+
+    async def chaincode_upgrade(self, cc_version):
+        """
+        Test upgrading an example chaincode
+        """
+        logger.info("E2E: Chaincode upgrade start")
+
+        org = "org1.example.com"
+        args = ['a', '200', 'b', '300']
+
+        # policy = s2d().parse("OR('Org1MSP.member', 'Org1MSP.admin')")
+        policy = s2d().parse("OR('Org1MSP.member')")
+
+        org_admin = self.client.get_user(org, "Admin")
+        response = await self.client.chaincode_upgrade(
+            requestor=org_admin,
+            channel_name=self.channel_name,
+            peers=['peer0.' + org],
+            args=args,
+            cc_name=CC_NAME,
+            cc_version=cc_version,
+            cc_endorsement_policy=policy,
+            wait_for_event=True
+        )
+        logger.info(
+            "E2E: Chaincode instantiation response {}".format(response))
+        policy = {
+            'version': 0,
+            'rule': {'n_out_of': {
+                'n': 1,
+                'rules': [
+                    {'signed_by': 0},
+                    # {'signed_by': 1}
+                ]}
+            },
+            'identities': [
+                {
+                    'principal_classification': 'ROLE',
+                    'principal': {
+                        'msp_identifier': 'Org1MSP',
+                        'role': 'MEMBER'
+                    }
+                },
+                # {
+                #     'principal_classification': 'ROLE',
+                #     'principal': {
+                #         'msp_identifier': 'Org1MSP',
+                #         'role': 'ADMIN'
+                #     }
+                # },
+            ]
+        }
+        self.assertEqual(response['name'], CC_NAME)
+        self.assertEqual(response['version'], cc_version)
         self.assertEqual(response['policy'], policy)
         logger.info("E2E: chaincode instantiation done")
 
@@ -357,7 +415,7 @@ class E2eTest(BaseTestCase):
             )
             self.assertEqual(
                 response.height,
-                4,
+                TOTAL_BLOCKS,
                 "Query failed")
 
         logger.info("E2E: Query info done")
@@ -509,7 +567,7 @@ class E2eTest(BaseTestCase):
 
         logger.info("E2E: Query transaction by tx id done")
 
-    async def query_instantiated_chaincodes(self):
+    async def query_instantiated_chaincodes(self, cc_version=CC_VERSION):
         """
         Test query instantiated chaincodes on peer
 
@@ -530,7 +588,7 @@ class E2eTest(BaseTestCase):
             self.assertEqual(
                 responses[0].chaincodes[0].name, CC_NAME, "Query failed")
             self.assertEqual(
-                responses[0].chaincodes[0].version, CC_VERSION, "Query failed")
+                responses[0].chaincodes[0].version, cc_version, "Query failed")
             self.assertEqual(
                 responses[0].chaincodes[0].path, CC_PATH, "Query failed")
 
@@ -603,7 +661,7 @@ class E2eTest(BaseTestCase):
 
         channel_event_hub.disconnect()
 
-        self.assertEqual(len(self.filtered_blocks), 4)
+        self.assertEqual(len(self.filtered_blocks), TOTAL_BLOCKS)
 
         block = self.filtered_blocks[0]
         self.assertEqual(block['number'], 0)
@@ -639,7 +697,7 @@ class E2eTest(BaseTestCase):
 
         channel_event_hub.disconnect()
 
-        self.assertEqual(len(self.blocks), 4)
+        self.assertEqual(len(self.blocks), TOTAL_BLOCKS)
 
         block = self.blocks[0]
         self.assertEqual(block['header']['number'], 0)
@@ -688,7 +746,7 @@ class E2eTest(BaseTestCase):
 
         channel_event_hub.disconnect()
 
-        self.assertEqual(len(self.txs['all']), 4)
+        self.assertEqual(len(self.txs['all']), TOTAL_BLOCKS)
 
     def test_in_sequence(self):
 
@@ -721,6 +779,16 @@ class E2eTest(BaseTestCase):
         loop.run_until_complete(self.chaincode_invoke_fail())
 
         loop.run_until_complete(self.chaincode_channel_event_hub())
+
+        loop.run_until_complete(self.chaincode_query())
+
+        loop.run_until_complete(self.chaincode_install(CC_UPGRADED_VERSION))
+
+        loop.run_until_complete(self.chaincode_upgrade(CC_UPGRADED_VERSION))
+
+        loop.run_until_complete(self.query_instantiated_chaincodes(CC_UPGRADED_VERSION))
+
+        loop.run_until_complete(self.chaincode_invoke())
 
         loop.run_until_complete(self.chaincode_query())
 

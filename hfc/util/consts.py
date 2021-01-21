@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: Apache-2.0
+
+SYSTEM_CHANNEL_NAME = "testchainid"
+
+CC_INSTALL = "install"
+CC_INSTANTIATE = "deploy"
+CC_INVOKE = "invoke"
+CC_UPGRADE = "upgrade"
+CC_QUERY = "query"
+
+CC_TYPE_GOLANG = "GOLANG"
+CC_TYPE_JAVA = "JAVA"
+CC_TYPE_NODE = "NODE"
+CC_TYPE_CAR = "CAR"
+
+DEFAULT_WAIT_FOR_EVENT_TIMEOUT = 30  # s
+GRPC_BROKER_UNAVAILABLE_RETRY_DELAY = 3000  # ms
+
+SUCCESS_STATUS = 200
