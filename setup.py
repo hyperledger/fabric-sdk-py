@@ -25,6 +25,10 @@ setup(
     description="Python SDK for Hyperledger Fabric.",
     long_description=io.open('README.md', encoding='utf-8').read(),
     author='Hyperledger Community',
+    project_urls={
+        'Documentation': 'https://fabric-sdk-py.readthedocs.io/en/latest/tutorial.html',
+        'Source': 'https://github.com/hyperledger/fabric-sdk-py',
+    },
     url='https://github.com/hyperledger/fabric-sdk-py/',
     download_url='https://github.com/hyperledger/fabric-sdk-py/',
     packages=find_packages(exclude=['docs', 'tests*']),
