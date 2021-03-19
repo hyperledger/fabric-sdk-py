@@ -73,7 +73,7 @@ A network connection profile helps SDK connect to the fabric network by providin
 
 * Client credentials file location;
 * Service endpoints for peer, orderer and ca;
-The [network.json](https://github.com/hyperledger/fabric-sdk-py/blob/master/test/fixtures/network.json
+The [network.json](https://github.com/hyperledger/fabric-sdk-py/blob/main/test/fixtures/network.json
 ) is an example, please modify the content accordingly.
 
 The user key and cert can be passed to the SDK via the connection profile in three different ways.
@@ -82,7 +82,7 @@ The user key and cert can be passed to the SDK via the connection profile in thr
 |------------------|-------------|-------------|
 | `"cert": {"pem": "base64 encoded cert"}` | The cert or key can be passed in a base64 encoded fashion via the `cert` parameter. | Good for testing and debugging. Should not be used for productive user-cases. |
 | `"private_key": {"path": "/path/to/the/private_key"}` | The path to the cert or can be passed via the `path` parameter. | Standard way for key and cert parameters. |
-| `"cert": "path/to/the/cert"` | The path can be passed directly without an additional `path` attribute. | Same as above, necessary to maintain backwards compatibility. 
+| `"cert": "path/to/the/cert"` | The path can be passed directly without an additional `path` attribute. | Same as above, necessary to maintain backwards compatibility.
 
 Now you can use the Python SDK to work with the fabric network!
 
