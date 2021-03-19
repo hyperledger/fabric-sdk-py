@@ -64,7 +64,7 @@ $ make proto
 See [Change Log](CHANGELOG.md) for the commit logs. Run `make changelog` to update the changelog before new release.
 
 ## Bug, Question and Code Contributions
-Welcome for any kind of contributions, e.g., [bugs](https://jira.hyperledger.org/projects/FABP), [questions](https://chat.hyperledger.org/channel/fabric-sdk-py) and [documentation](https://github.com/hyperledger/fabric-sdk-py/tree/master/docs)!
+Welcome for any kind of contributions, e.g., [bugs](https://jira.hyperledger.org/projects/FABP), [questions](https://chat.hyperledger.org/channel/fabric-sdk-py) and [documentation](https://github.com/hyperledger/fabric-sdk-py/tree/main/docs)!
 
 Recommend to read [How to Contribution](CONTRIBUTING.md) before taking action.
 

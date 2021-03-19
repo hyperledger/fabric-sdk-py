@@ -27,7 +27,7 @@ source_suffix = ['.rst', '.md']
 
 master_doc = 'index'
 
-github_doc_root = 'https://github.com/hyperledger/fabric-sdk-py/tree/master/docs/'
+github_doc_root = 'https://github.com/hyperledger/fabric-sdk-py/tree/main/docs/'
 # app setup hook
 
 

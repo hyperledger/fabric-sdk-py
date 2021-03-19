@@ -2,7 +2,7 @@ repository:
   name: fabric-sdk-py
   description: Hyperledger Fabric Python SDK
   homepage: https://fabric-sdk-py.readthedocs.io/en/latest/
-  default_branch: master
+  default_branch: main
   has_downloads: true
   has_issues: true
   has_projects: false

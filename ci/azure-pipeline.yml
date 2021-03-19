@@ -6,11 +6,11 @@ name: $(SourceBranchName)-$(Date:yyyyMMdd)$(Rev:.rrr)
 trigger:
   branches:
     include:
-      - master
+      - main
 pr:
   branches:
     include:
-      - master
+      - main
 pool:
   vmImage: ubuntu-18.04
 
