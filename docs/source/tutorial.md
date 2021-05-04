@@ -73,8 +73,7 @@ A network connection profile helps SDK connect to the fabric network by providin
 
 * Client credentials file location;
 * Service endpoints for peer, orderer and ca;
-The [network.json](https://github.com/hyperledger/fabric-sdk-py/blob/main/test/fixtures/network.json
-) is an example, please modify the content accordingly.
+The [network.json](https://github.com/hyperledger/fabric-sdk-py/blob/main/test/fixtures/network.json) is an example, please modify the content accordingly.
 
 The user key and cert can be passed to the SDK via the connection profile in three different ways.
 
