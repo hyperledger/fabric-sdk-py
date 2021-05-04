@@ -169,7 +169,7 @@ if __name__ == "__main__":
 
     # Query Info
     response = loop.run_until_complete(cli.query_info(
-        requestor=orgq_admin,
+        requestor=org1_admin,
         channel_name='businesschannel',
         peers=['peer0.org1.example.com', 'peer1.org1.example.com']
     ))
