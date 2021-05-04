@@ -28,6 +28,21 @@
         }
       }
     },
+    "orderer5.example.com": {
+      "mspid": "OrdererMSP",
+      "orderers": [
+        "orderer5.example.com"
+      ],
+      "certificateAuthorities": [
+        "ca-orderer"
+      ],
+      "users": {
+        "Admin": {
+          "cert": "test/fixtures/e2e_raft/crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/signcerts/Admin@example.com-cert.pem",
+          "private_key": "test/fixtures/e2e_raft/crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/keystore/5ba7f687f7c784a4a8af9251d6fb5cc91778535ab86b76a4576887f02668b230_sk"
+        }
+      }
+    },
     "org1.example.com": {
       "mspid": "Org1MSP",
       "peers": [
@@ -74,6 +89,16 @@
       "url": "localhost:7050",
       "grpcOptions": {
         "grpc.ssl_target_name_override": "orderer.example.com",
+        "grpc-max-send-message-length": 15
+      },
+      "tlsCACerts": {
+        "path": "test/fixtures/e2e_raft/crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem"
+      }
+    },
+    "orderer5.example.com": {
+      "url": "localhost:11050",
+      "grpcOptions": {
+        "grpc.ssl_target_name_override": "orderer5.example.com",
         "grpc-max-send-message-length": 15
       },
       "tlsCACerts": {
