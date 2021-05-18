@@ -3,14 +3,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 name: $(SourceBranchName)-$(Date:yyyyMMdd)$(Rev:.rrr)
-trigger:
-  branches:
-    include:
-      - main
+trigger: none
 pr:
-  branches:
-    include:
-      - main
+- main
+- release-2.*
+
 pool:
   vmImage: ubuntu-18.04
 
