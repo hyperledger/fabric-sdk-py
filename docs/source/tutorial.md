@@ -16,6 +16,11 @@ $ tox -e py3 -- test/integration/e2e_test.py # Run specified test case
 $ deactive
 ```
 
+If denied permission to connect to Docker daemon socket, run:
+```bash
+$ sudo chmod 666 /var/run/docker.sock
+```
+
 ## 0. Prepare a Testing Environment
 
 ### 0.1. Install Fabric SDK
