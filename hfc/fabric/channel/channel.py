@@ -601,7 +601,7 @@ class Channel(object):
         Send a transaction proposal to one or more endorser without
         creating a channel.
         :param tx_context: transaction context
-        :param peers: the pees to send this proposal
+        :param peers: the peers to send this proposal
                  if it is None the channel peers list will be used.
         channel_id: channel id
         client: client context
