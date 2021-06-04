@@ -1268,7 +1268,8 @@ class Client(object):
                                wait_for_event_timeout=DEFAULT_WAIT_FOR_EVENT_TIMEOUT,
                                grpc_broker_unavailable_retry=0,
                                grpc_broker_unavailable_retry_delay=GRPC_BROKER_UNAVAILABLE_RETRY_DELAY,  # ms
-                               raise_broker_unavailable=True):
+                               raise_broker_unavailable=True,
+                               raise_on_error=False):
         """
         Invoke chaincode for ledger update
 
@@ -1293,6 +1294,7 @@ class Client(object):
          (default 3000 ms)
         :param raise_broker_unavailable: Raise if any broker is unavailable,
          else always send the proposal regardless of unavailable brokers.
+        :param raise_on_error: Raise if any of peers or orderers returned unsuccessful response .
 
         :return: invoke result
         """
@@ -1305,7 +1307,8 @@ class Client(object):
                                       wait_for_event_timeout=wait_for_event_timeout,
                                       grpc_broker_unavailable_retry=grpc_broker_unavailable_retry,
                                       grpc_broker_unavailable_retry_delay=grpc_broker_unavailable_retry_delay,  # ms
-                                      raise_broker_unavailable=raise_broker_unavailable)
+                                      raise_broker_unavailable=raise_broker_unavailable,
+                                      raise_on_error=raise_on_error)
 
     # this method is here only for backwards compatibility
     async def chaincode_query(self, requestor, channel_name, peers, args,
