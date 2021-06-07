@@ -9,6 +9,7 @@ import logging
 import unittest
 
 from hfc.fabric.channel.channel import SYSTEM_CHANNEL_NAME
+from hfc.fabric.chaincode import ChaincodeExecutionError
 from hfc.util.policies import s2d
 
 from test.integration.utils import BaseTestCase
@@ -292,6 +293,33 @@ class E2eTest(BaseTestCase):
                              ['ENDORSEMENT_POLICY_FAILURE'])
 
         logger.info("E2E: chaincode invoke fail done")
+
+    async def chaincode_invoke_fail_proposal(self):
+        """
+        Test invoking an example chaincode to peer
+
+        :return:
+        """
+        logger.info("E2E: Chaincode invoke failed proposal start")
+
+        orgs = ["org1.example.com"]
+        args = ['a', '100']
+        for org in orgs:
+            org_admin = self.client.get_user(org, "Admin")
+            with self.assertRaises(ChaincodeExecutionError):
+                await self.client.chaincode_invoke(
+                    requestor=org_admin,
+                    channel_name=self.channel_name,
+                    peers=['peer1.' + org],
+                    args=args,
+                    cc_name=CC_NAME,
+                    wait_for_event=True,
+                    wait_for_event_timeout=120,
+                    cc_pattern="^invoked*",  # for chaincode event,
+                    raise_on_error=True
+                )
+
+        logger.info("E2E: chaincode invoke failed proposal done")
 
     async def chaincode_channel_event_hub(self):
         """
@@ -777,6 +805,8 @@ class E2eTest(BaseTestCase):
         loop.run_until_complete(self.chaincode_invoke())
 
         loop.run_until_complete(self.chaincode_invoke_fail())
+
+        loop.run_until_complete(self.chaincode_invoke_fail_proposal())
 
         loop.run_until_complete(self.chaincode_channel_event_hub())
 

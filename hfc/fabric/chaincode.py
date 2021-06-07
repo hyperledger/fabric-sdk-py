@@ -19,6 +19,10 @@ from hfc.util.consts import CC_INSTALL, CC_INSTANTIATE, CC_UPGRADE, CC_INVOKE, C
 _logger = logging.getLogger(__name__)
 
 
+class ChaincodeExecutionError(Exception):
+    pass
+
+
 class ChaincodeOperation:
     def __init__(self, fcn, operation_type, send_proposal):
         self.fcn = fcn
@@ -313,7 +317,7 @@ class Chaincode:
         tran_req = utils.build_tx_req((res, proposal, header))
 
         if not all([x.response.status == SUCCESS_STATUS for x in tran_req.responses]):
-            raise Exception(res)
+            raise ChaincodeExecutionError(res)
 
         return res[0].response.payload.decode('utf-8')
 
@@ -325,7 +329,8 @@ class Chaincode:
                      wait_for_event_timeout=DEFAULT_WAIT_FOR_EVENT_TIMEOUT,
                      grpc_broker_unavailable_retry=0,
                      grpc_broker_unavailable_retry_delay=GRPC_BROKER_UNAVAILABLE_RETRY_DELAY,  # ms
-                     raise_broker_unavailable=True):
+                     raise_broker_unavailable=True,
+                     raise_on_error=False):
         """
         Invoke chaincode for ledger update
 
@@ -349,6 +354,7 @@ class Chaincode:
          (default 3000 ms)
         :param raise_broker_unavailable: Raise if any broker is unavailable,
          else always send the proposal regardless of unavailable brokers.
+        :param raise_on_error: Raise if any of peers or orderers returned unsuccessful response .
 
         :return: invoke result
         """
@@ -429,8 +435,11 @@ class Chaincode:
 
         # if proposal was not good, return
         if any([x.response.status != SUCCESS_STATUS for x in res]):
-            return '; '.join({x.response.message for x in res
-                              if x.response.status != SUCCESS_STATUS})
+            error_message = '; '.join({x.response.message for x in res if x.response.status != SUCCESS_STATUS})
+            if raise_on_error:
+                raise ChaincodeExecutionError(error_message)
+            else:
+                return error_message
 
         # send transaction to the orderer
         tran_req = utils.build_tx_req((res, proposal, header))
@@ -446,7 +455,10 @@ class Chaincode:
 
         async for v in response:
             if not v.status == SUCCESS_STATUS:
-                return v.message
+                if raise_on_error:
+                    raise ChaincodeExecutionError(v.message)
+                else:
+                    return v.message
         # wait for transaction id proposal available in ledger and block
         # commited
         if wait_for_event:
