@@ -90,7 +90,6 @@
   "peers": {
     "peer0.org1.example.com": {
       "url": "localhost:7051",
-      "eventUrl": "localhost:7053",
       "grpcOptions": {
         "grpc.ssl_target_name_override": "peer0.org1.example.com",
         "grpc.http2.keepalive_time": 15
@@ -107,7 +106,6 @@
     },
     "peer1.org1.example.com": {
       "url": "localhost:8051",
-      "eventUrl": "localhost:8053",
       "grpcOptions": {
         "grpc.ssl_target_name_override": "peer1.org1.example.com"
       },
@@ -123,7 +121,6 @@
     },
     "peer0.org2.example.com": {
       "url": "localhost:9051",
-      "eventUrl": "localhost:9053",
       "grpcOptions": {
         "grpc.ssl_target_name_override": "peer0.org2.example.com",
         "grpc.http2.keepalive_time": 15
@@ -140,7 +137,6 @@
     },
     "peer1.org2.example.com": {
       "url": "localhost:10051",
-      "eventUrl": "localhost:10053",
       "grpcOptions": {
         "grpc.ssl_target_name_override": "peer1.org2.example.com"
       },

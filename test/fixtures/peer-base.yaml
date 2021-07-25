@@ -34,7 +34,6 @@ services:
       - "7050"  # Rest
       - "7051"  # Grpc
       - "7052"  # Peer CLI
-      - "7053"  # Peer Event
       - "7054"  # eCAP
       - "7055"  # eCAA
       - "7056"  # tCAP

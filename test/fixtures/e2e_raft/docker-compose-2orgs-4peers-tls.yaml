@@ -46,7 +46,6 @@ services:
     ports:
       - 7051:7051
       - 7052:7052
-      - 7053:7053
     command: peer node start
 
   peer1.org1.example.com:
@@ -68,7 +67,6 @@ services:
     ports:
       - 8051:7051
       - 8052:7052
-      - 8053:7053
     command: peer node start
 
   peer0.org2.example.com:
@@ -90,7 +88,6 @@ services:
     ports:
       - 9051:7051
       - 9052:7052
-      - 9053:7053
     command: peer node start
 
   peer1.org2.example.com:
@@ -112,5 +109,4 @@ services:
     ports:
       - 10051:7051
       - 10052:7052
-      - 10053:7053
     command: peer node start
