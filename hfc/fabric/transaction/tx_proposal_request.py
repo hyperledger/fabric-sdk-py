@@ -15,7 +15,7 @@ class TXProposalRequest(object):
                  cc_version=None, fcn=None, args=None,
                  cc_endorsement_policy=None,
                  transient_map=None, packaged_cc=None,
-                 collections_config=None):
+                 collections_config=None, package_id=None, is_init=False):
         """ Construct transaction proposal request
 
         :param cc_type: chaincode type
@@ -45,6 +45,8 @@ class TXProposalRequest(object):
         self._packaged_cc = packaged_cc
         self._cc_endorsement_policy = cc_endorsement_policy
         self._collections_config = collections_config
+        self._package_id = package_id
+        self._is_init = is_init
         if transient_map is None:
             self._transient_map = []
         else:
@@ -258,6 +260,44 @@ class TXProposalRequest(object):
         """
         self._collections_config = collections_config
 
+    @property
+    def package_id(self):
+        """Get package_id
+
+        :return: return package_id
+
+        """
+        return self._package_id
+
+    @package_id.setter
+    def package_id(self, package_id):
+        """Set package_id
+
+        :param package_id: package_id
+        :return:
+
+        """
+        self._package_id = package_id
+
+    @property
+    def is_init(self):
+        """Get package_id
+
+        :return: return package_id
+
+        """
+        return self._is_init
+
+    @is_init.setter
+    def is_init(self, is_init):
+        """Set package_id
+
+        :param package_id: package_id
+        :return:
+
+        """
+        self._is_init = is_init
+
 
 def validate(tx_prop_req):
     """Check transaction proposal request.
@@ -300,7 +340,7 @@ def create_tx_prop_req(prop_type=None, cc_path=None, cc_type=CC_TYPE_GOLANG,
                        cc_name=None, cc_version=None, fcn=None, args=None,
                        cc_endorsement_policy=None,
                        transient_map=None, packaged_cc=None,
-                       collections_config=None):
+                       collections_config=None, package_id=None, is_init=False):
     """Create a transaction proposal request
 
     :param prop_type: proposal request type (Default value = None)
@@ -320,5 +360,5 @@ def create_tx_prop_req(prop_type=None, cc_path=None, cc_type=CC_TYPE_GOLANG,
     tx_prop_req = TXProposalRequest(
         prop_type, cc_path, cc_type, cc_name, cc_version, fcn,
         args, cc_endorsement_policy, transient_map,
-        packaged_cc, collections_config)
+        packaged_cc, collections_config, package_id, is_init)
     return validate(tx_prop_req)

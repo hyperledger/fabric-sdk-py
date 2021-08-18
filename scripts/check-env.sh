@@ -10,7 +10,8 @@ set -o pipefail -o noglob
 # pull fabric core images
 dockerFabricPull() {
   local img_tag=$1
-  for images in peer orderer ca ccenv tools; do
+  local services=${2:-"peer orderer ca ccenv tools"}
+  for images in ${services}; do
       local hlf_img=hyperledger/fabric-$images:$img_tag
       echo "==> Check IMAGE: $hlf_img"
       if [[ -z "$(docker images -q $hlf_img 2> /dev/null)" ]]; then  # not exist
@@ -41,6 +42,9 @@ img_tag=1.4.6
 baseimage_tag=0.4.20
 echo "=====> Pulling fabric Images with tag= ${img_tag}, baseimage_tag= ${baseimage_tag}"
 dockerFabricPull ${img_tag}
+img_tag=2.3.0
+echo "=====> Pulling fabric Images with tag= ${img_tag}"
+dockerFabricPull ${img_tag} "peer orderer ccenv"
 img=hyperledger/fabric-baseimage:$baseimage_tag
 [ -z "$(docker images -q $img 2> /dev/null)" ] && docker pull $img
 img=hyperledger/fabric-baseos:$baseimage_tag
