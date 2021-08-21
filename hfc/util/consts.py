@@ -8,6 +8,16 @@ CC_INVOKE = "invoke"
 CC_UPGRADE = "upgrade"
 CC_QUERY = "query"
 
+# lifecycle
+LIFECYCLE_CC = "_lifecycle"
+LC_INSTALL = "InstallChaincode"
+LC_APPROVE_FOR_MY_ORG = "ApproveChaincodeDefinitionForMyOrg"
+LC_COMMIT = "CommitChaincodeDefinition"
+LC_QUERY_INSTALLED = "QueryInstalledChaincodes"
+LC_QUERY_APPROVED = "QueryApprovedChaincodeDefinition"
+LC_QUERY_CC_DEFINITION = "QueryChaincodeDefinition"
+LC_QUERY_CC_DEFINITIONS = "QueryChaincodeDefinitions"
+
 CC_TYPE_GOLANG = "GOLANG"
 CC_TYPE_JAVA = "JAVA"
 CC_TYPE_NODE = "NODE"

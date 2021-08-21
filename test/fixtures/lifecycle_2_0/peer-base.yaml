@@ -1,0 +1,46 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+
+# This is the default base file to config env and command
+# Notice that chaincode is executed inside docker in default net mode
+
+# Depends on the hyperledger/fabric-peer image.
+
+version: '2'
+
+services:
+  peer-base:
+    image: hyperledger/fabric-peer:2.3.0
+    environment:
+      - GODEBUG=netdns=go+1
+      - FABRIC_LOGGING_SPEC=debug
+     #- CORE_PEER_ID=peer0
+      - CORE_PEER_ADDRESSAUTODETECT=false
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=lifecycle_2_0_byfn  # uncomment this to use specific network
+      - CORE_PEER_NETWORKID=byfn
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false  # this node is the group leader, default to false
+      - CORE_PEER_PROFILE_ENABLED=false
+      - CORE_PEER_TLS_ENABLED=true
+      # passing the following option to true will trigger a SSLV3_ALERT_BAD_CERTIFICATE
+      # if you do not specify clientCert and clientKey in network.json for the peer making the query
+      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=false
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+    expose:
+      - "7050"  # Rest
+      - "7051"  # Grpc
+      - "7052"  # Peer CLI
+      - "7054"  # eCAP
+      - "7055"  # eCAA
+      - "7056"  # tCAP
+      - "7057"  # eCAA
+      - "7058"  # tlsCAP
+      - "7059"  # tlsCAA
+    volumes: # docker.sock is mapped as the default CORE_VM_ENDPOINT
+      - /var/run/docker.sock:/var/run/docker.sock
+    #volumes:
+    #    - /var/run/:/host/var/run/
+    command: peer node start

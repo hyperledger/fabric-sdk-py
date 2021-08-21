@@ -11,7 +11,8 @@ import logging
 import unittest
 
 from hfc.fabric.channel.channel import SYSTEM_CHANNEL_NAME
-from hfc.util.utils import CC_TYPE_GOLANG, package_chaincode
+from hfc.util.consts import CC_TYPE_GOLANG
+from hfc.util.utils import package_chaincode
 
 from hfc.fabric.client import Client
 from test.integration.config import E2E_CONFIG
