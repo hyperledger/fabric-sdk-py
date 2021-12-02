@@ -90,7 +90,7 @@ install:
 format:
 	$(PYTHON) -m autopep8 --in-place --recursive --exclude=protos,venv .
 
-doc:
+doc: install
 	cd docs && make install html
 
 .PHONY: check \
