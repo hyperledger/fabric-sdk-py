@@ -23,6 +23,7 @@ E2E_CONFIG = {
             'compose_file_raft': 'test/fixtures/e2e_raft/docker-compose-2orgs-4peers-tls.yaml',
             'compose_file_orderer_raft': 'test/fixtures/e2e_raft/docker-compose-etcdraft2.yaml',
             'compose_file_2_0': 'test/fixtures/lifecycle_2_0/docker-compose-2orgs-4peers-tls.yaml',
+            'compose_file_osn': 'test/fixtures/lifecycle_2_0/docker-compose-osn.yaml',
         },
         'channel-artifacts': {
             'channel_id': 'businesschannel',
@@ -31,6 +32,7 @@ E2E_CONFIG = {
             'config_yaml': 'test/fixtures/e2e_cli/',
             '2_0_channel.tx': 'test/fixtures/lifecycle_2_0/channel-artifacts/channel.tx',
             '2_0_config_yaml': 'test/fixtures/lifecycle_2_0',
+            'osn_config_yaml': 'test/fixtures/lifecycle_2_0/configtx_osn',
             'raft_channel.tx': 'test/fixtures/e2e_raft/channel-artifacts/channel.tx',
             'raft_config_yaml': 'test/fixtures/e2e_raft',
         },
