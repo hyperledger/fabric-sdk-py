@@ -16,7 +16,9 @@
     "orderer.example.com": {
       "mspid": "OrdererMSP",
       "orderers": [
-        "orderer.example.com"
+        "orderer.example.com",
+        "orderer3.example.com",
+        "orderer3.example.com"
       ],
       "certificateAuthorities": [
         "ca-orderer"
@@ -47,33 +49,33 @@
           "private_key": "test/fixtures/lifecycle_2_0/crypto-config/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/priv_sk"
         }
       }
-    },
-    "org2.example.com": {
-      "mspid": "Org2MSP",
-      "peers": [
-        "peer0.org2.example.com",
-        "peer1.org2.example.com"
-      ],
-      "certificateAuthorities": [
-        "ca-org2"
-      ],
-      "users": {
-        "Admin": {
-          "cert": "test/fixtures/lifecycle_2_0/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/signcerts/Admin@org2.example.com-cert.pem",
-          "private_key": "test/fixtures/lifecycle_2_0/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore/priv_sk"
-        },
-        "User1": {
-          "cert": "test/fixtures/lifecycle_2_0/crypto-config/peerOrganizations/org2.example.com/users/User1@org2.example.com/msp/signcerts/User1@org2.example.com-cert.pem",
-          "private_key": "test/fixtures/lifecycle_2_0/crypto-config/peerOrganizations/org2.example.com/users/User1@org2.example.com/msp/keystore/priv_sk"
-        }
-      }
     }
   },
   "orderers": {
+    "orderer2.example.com": {
+      "url": "localhost:8050",
+      "grpcOptions": {
+        "grpc.ssl_target_name_override": "orderer2.example.com",
+        "grpc-max-send-message-length": 15
+      },
+      "tlsCACerts": {
+        "path": "test/fixtures/lifecycle_2_0/crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem"
+      }
+    },
     "orderer.example.com": {
       "url": "localhost:7050",
       "grpcOptions": {
         "grpc.ssl_target_name_override": "orderer.example.com",
+        "grpc-max-send-message-length": 15
+      },
+      "tlsCACerts": {
+        "path": "test/fixtures/lifecycle_2_0/crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem"
+      }
+    },
+    "orderer3.example.com": {
+      "url": "localhost:9050",
+      "grpcOptions": {
+        "grpc.ssl_target_name_override": "orderer3.example.com",
         "grpc-max-send-message-length": 15
       },
       "tlsCACerts": {
@@ -102,27 +104,6 @@
       "tlsCACerts": {
         "path": "test/fixtures/lifecycle_2_0/crypto-config/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/msp/tlscacerts/tlsca.org1.example.com-cert.pem"
       }
-    },
-    "peer0.org2.example.com": {
-      "url": "localhost:9051",
-      "eventUrl": "localhost:9053",
-      "grpcOptions": {
-        "grpc.ssl_target_name_override": "peer0.org2.example.com",
-        "grpc.http2.keepalive_time": 15
-      },
-      "tlsCACerts": {
-        "path": "test/fixtures/lifecycle_2_0/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/msp/tlscacerts/tlsca.org2.example.com-cert.pem"
-      }
-    },
-    "peer1.org2.example.com": {
-      "url": "localhost:10051",
-      "eventUrl": "localhost:10053",
-      "grpcOptions": {
-        "grpc.ssl_target_name_override": "peer1.org2.example.com"
-      },
-      "tlsCACerts": {
-        "path": "test/fixtures/lifecycle_2_0/crypto-config/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/msp/tlscacerts/tlsca.org2.example.com-cert.pem"
-      }
     }
   },
   "certificateAuthorities": {
@@ -133,21 +114,6 @@
       },
       "tlsCACerts": {
         "path": "test/fixtures/lifecycle_2_0/crypto-config/peerOrganizations/org1.example.com/ca/org1.example.com-cert.pem"
-      },
-      "registrar": [
-        {
-          "enrollId": "admin",
-          "enrollSecret": "adminpw"
-        }
-      ]
-    },
-    "ca-org2": {
-      "url": "https://localhost:8054",
-      "grpcOptions": {
-        "verify": true
-      },
-      "tlsCACerts": {
-        "path": "test/fixtures/lifecycle_2_0/crypto-config/peerOrganizations/org2.example.com/ca/org2.example.com-cert.pem"
       },
       "registrar": [
         {
