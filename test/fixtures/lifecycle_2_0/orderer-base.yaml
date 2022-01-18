@@ -11,6 +11,7 @@ services:
     image: hyperledger/fabric-orderer:2.3.0
     environment:
       - FABRIC_LOGGING_SPEC=INFO
+      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:9443
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
       - ORDERER_GENERAL_GENESISMETHOD=file
       - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
