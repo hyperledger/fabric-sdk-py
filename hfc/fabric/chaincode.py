@@ -2,7 +2,10 @@
 
 import asyncio
 import itertools
+import json
 import logging
+import os
+import tarfile
 from time import sleep
 
 from grpc._channel import _MultiThreadedRendezvous
@@ -18,6 +21,13 @@ from hfc.util.consts import CC_INSTALL, CC_INSTANTIATE, CC_UPGRADE, CC_INVOKE, C
 from hfc.fabric.base_chaincode import BaseChaincode
 
 _logger = logging.getLogger(__name__)
+
+
+class PackageMetadata:
+    def __init__(self, cc_path, cc_type, cc_label):
+        self.path = cc_path
+        self.ccType = cc_type
+        self.label = cc_label
 
 
 class ChaincodeExecutionError(Exception):
@@ -62,6 +72,38 @@ class Chaincode(BaseChaincode):
         :return: A set of proposal_response
         """
         return channel.send_upgrade_proposal(tx_context, peers)
+
+    async def package_cc(self, cc_name, cc_path, cc_type, cc_label):
+        """Package chaincode into tar.gz
+
+        :param cc_name: Name of chaincode
+        :param cc_path: Path to the chaincode
+        :param cc_type: Language the chaincode is written in
+        :param cc_label: The package label contains a human-readable description of the package
+        """
+        # Create directory
+        if not os.path.exists(cc_name):
+            os.makedirs(cc_name)
+
+        # Write metadata.json
+        metadata_output_filename = 'metadata.json'
+        with open(f"{cc_name}/{metadata_output_filename}", 'w') as f:
+            meta_data = PackageMetadata(cc_path, cc_type, cc_label)
+            json.dump(meta_data, f, default=lambda o: o.__dict__, sort_keys=True)
+
+        # Write code.tar.gz
+        code_output_filename = "code.tar.gz"
+        with tarfile.open(f"{cc_name}/{code_output_filename}", "w:gz") as tar:
+            tar.add(cc_path, arcname=os.path.basename(cc_path))
+
+        # Compress code.tar.gz and metadata.json into cc_name.tar.gz
+        with tarfile.open(f"{cc_name}.tar.gz", "w:gz") as tar:
+            tar.add(cc_name, arcname=os.path.basename(cc_name))
+
+        # Cleanup
+        os.remove(f"{cc_name}/{metadata_output_filename}")
+        os.remove(f"{cc_name}/{code_output_filename}")
+        os.rmdir(cc_name)
 
     async def install(self, requestor, peers, cc_path,
                       cc_version, cc_type=CC_TYPE_GOLANG,
