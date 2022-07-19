@@ -1269,7 +1269,7 @@ class Client(object):
                                grpc_broker_unavailable_retry=0,
                                grpc_broker_unavailable_retry_delay=GRPC_BROKER_UNAVAILABLE_RETRY_DELAY,  # ms
                                raise_broker_unavailable=True,
-                               raise_on_error=False):
+                               raise_on_error=False, is_init=False):
         """
         Invoke chaincode for ledger update
 
@@ -1308,7 +1308,7 @@ class Client(object):
                                       grpc_broker_unavailable_retry=grpc_broker_unavailable_retry,
                                       grpc_broker_unavailable_retry_delay=grpc_broker_unavailable_retry_delay,  # ms
                                       raise_broker_unavailable=raise_broker_unavailable,
-                                      raise_on_error=raise_on_error)
+                                      raise_on_error=raise_on_error, is_init=is_init)
 
     # this method is here only for backwards compatibility
     async def chaincode_query(self, requestor, channel_name, peers, args,

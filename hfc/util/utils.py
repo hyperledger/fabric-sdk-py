@@ -16,10 +16,6 @@ import base64
 import sys
 import logging
 import random
-import os
-import tarfile
-import io
-import time
 
 from google.protobuf.message import DecodeError
 from google.protobuf.timestamp_pb2 import Timestamp
@@ -27,7 +23,8 @@ from hfc.protos.common import common_pb2, configtx_pb2
 from hfc.protos.msp import identities_pb2
 from hfc.protos.peer import proposal_pb2, chaincode_pb2
 from hfc.protos.utils import create_tx_payload
-from hfc.util.consts import CC_INSTALL, CC_TYPE_GOLANG, CC_TYPE_NODE
+from hfc.util.archive import package_chaincode
+from hfc.util.consts import CC_INSTALL
 
 _logger = logging.getLogger(__name__)
 
@@ -345,6 +342,48 @@ def build_tx_req(ProposalResponses):
     return TXRequest(responses, proposal, header)
 
 
+def send_proposal(tx_context, peers, args, method, chaincode, channel=""):
+    """Send install chaincode proposal
+
+    :param tx_context: transaction context
+    :param peers: peers to install chaincode
+    :param args:
+    :param chaincode:
+    :param method:
+    :param channel:
+    :return: a set of proposal response
+    """
+
+    if not tx_context:
+        raise ValueError("InstallProposalRequest is empty.")
+
+    if not peers:
+        raise ValueError("Please specify the peer.")
+
+    channel_header_extension = proposal_pb2.ChaincodeHeaderExtension()
+    channel_header_extension.chaincode_id.name = proto_str(chaincode)
+    channel_header = build_channel_header(
+        common_pb2.ENDORSER_TRANSACTION,
+        tx_context.tx_id,
+        channel,
+        current_timestamp(),
+        tx_context.epoch,
+        channel_header_extension.SerializeToString()
+    )
+
+    header = build_header(tx_context.identity, channel_header, tx_context.nonce)
+
+    cci_spec = chaincode_pb2.ChaincodeInvocationSpec()
+    cci_spec.chaincode_spec.type = chaincode_pb2.ChaincodeSpec.Type.Value(tx_context.tx_prop_req.cc_type)
+    cci_spec.chaincode_spec.chaincode_id.name = proto_str(chaincode)
+    cci_spec.chaincode_spec.input.args.extend([proto_b(method), args.SerializeToString()])
+    proposal = build_cc_proposal(cci_spec, header, tx_context.tx_prop_req.transient_map)
+    signed_proposal = sign_proposal(tx_context, proposal)
+
+    responses = [peer.send_proposal(signed_proposal) for peer in peers]
+    return responses, proposal, header
+
+
 def send_install_proposal(tx_context, peers):
     """Send install chaincode proposal
 
@@ -379,137 +418,7 @@ def send_install_proposal(tx_context, peers):
         cc_deployment_spec.code_package = \
             tx_context.tx_prop_req.packaged_cc
 
-    channel_header_extension = proposal_pb2.ChaincodeHeaderExtension()
-    channel_header_extension.chaincode_id.name = \
-        proto_str("lscc")
-    channel_header = build_channel_header(
-        common_pb2.ENDORSER_TRANSACTION,
-        tx_context.tx_id,
-        '',
-        current_timestamp(),
-        tx_context.epoch,
-        channel_header_extension.SerializeToString()
-    )
-
-    header = build_header(tx_context.identity,
-                          channel_header,
-                          tx_context.nonce)
-
-    cci_spec = chaincode_pb2.ChaincodeInvocationSpec()
-    cci_spec.chaincode_spec.type = \
-        chaincode_pb2.ChaincodeSpec.Type.Value(tx_context.tx_prop_req.cc_type)
-    cci_spec.chaincode_spec.chaincode_id.name = proto_str("lscc")
-    cci_spec.chaincode_spec.input.args.extend(
-        [proto_b(CC_INSTALL), cc_deployment_spec.SerializeToString()])
-    proposal = build_cc_proposal(
-        cci_spec, header,
-        tx_context.tx_prop_req.transient_map)
-    signed_proposal = sign_proposal(tx_context, proposal)
-
-    responses = [peer.send_proposal(signed_proposal) for peer in peers]
-    return responses, proposal, header
-
-
-# https://jira.hyperledger.org/browse/FAB-7065
-# ?page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment
-# -tabpanel&showAll=true
-def zeroTarInfo(tarinfo):
-
-    tarinfo.uid = tarinfo.gid = 500
-    tarinfo.mode = 100644
-    tarinfo.mtime = 0
-    tarinfo.pax_headers = {
-        'atime': 0,
-        'ctime': 0,
-    }
-    return tarinfo
-
-
-# http://www.onicos.com/staff/iz/formats/gzip.html
-# https://github.com/python/cpython/blob/master/Lib/tarfile.py#L420
-class zeroTimeContextManager(object):
-    def __enter__(self):
-        self.real_time = time.time
-        time.time = lambda: 0
-
-    def __exit__(self, type, value, traceback):
-        time.time = self.real_time
-
-
-def _tar_path(proj_path, go_path=None):
-    """Tar the project path
-
-    :param proj_path: The full path to the code
-    :return: The tar stream.
-    """
-
-    if not os.listdir(proj_path):
-        raise ValueError("No chaincode file found!")
-
-    tar_stream = io.BytesIO()
-    with zeroTimeContextManager():
-        dist = tarfile.open(fileobj=tar_stream,
-                            mode='w|gz', format=tarfile.GNU_FORMAT)
-        for dir_path, _, file_names in os.walk(proj_path):
-            for filename in file_names:
-                file_path = os.path.join(dir_path, filename)
-
-                with open(file_path, mode='rb') as f:
-                    if go_path:
-                        arcname = os.path.relpath(file_path, go_path)
-                    else:
-                        arcname = os.path.relpath(file_path)
-                    tarinfo = dist.gettarinfo(file_path, arcname)
-                    tarinfo = zeroTarInfo(tarinfo)
-                    dist.addfile(tarinfo, f)
-
-        dist.close()
-        tar_stream.seek(0)
-        return(tar_stream.read())
-
-
-def package_chaincode(cc_path, cc_type=CC_TYPE_GOLANG):
-    """Package all chaincode env into a tar.gz file
-
-    :param cc_path: path to the chaincode
-    :param cc_type: chaincode type (Default value = CC_TYPE_GOLANG)
-    :return: The chaincode pkg path or None
-    """
-    _logger.debug('Packaging chaincode path={}, chaincode type={}'.format(
-        cc_path, cc_type))
-
-    if not cc_path:
-        raise ValueError("Missing chaincode path parameter "
-                         "in install proposal request")
-
-    if cc_type == CC_TYPE_GOLANG:
-        go_path = os.environ['GOPATH']
-
-        if not go_path:
-            raise ValueError("No GOPATH env variable is found")
-
-        proj_path = go_path + '/src/' + cc_path
-        _logger.debug('Project path={}'.format(proj_path))
-
-        code_content = _tar_path(proj_path, go_path)
-        if code_content:
-            return code_content
-        else:
-            raise ValueError('No chaincode found')
-
-    elif cc_type == CC_TYPE_NODE:
-
-        proj_path = cc_path
-        _logger.debug('Project path={}'.format(proj_path))
-
-        code_content = _tar_path(proj_path)
-        if code_content:
-            return code_content
-        else:
-            raise ValueError('No chaincode found')
-
-    else:
-        raise ValueError(f'Currently only support install {CC_TYPE_GOLANG}, {CC_TYPE_NODE} chaincodes')
+    return send_proposal(tx_context, peers, cc_deployment_spec, CC_INSTALL, "lscc")
 
 
 def pem_to_der(pem):

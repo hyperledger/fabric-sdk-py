@@ -13,9 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# flake8: noqa
-
-"""Contains the paths and attributes necessary for the integration tests."""
 E2E_CONFIG = {
     'test-network': {
         'docker': {
@@ -25,12 +22,17 @@ E2E_CONFIG = {
             'compose_file_mutual_tls': 'test/fixtures/docker-compose-2orgs-4peers-mutual-tls.yaml',
             'compose_file_raft': 'test/fixtures/e2e_raft/docker-compose-2orgs-4peers-tls.yaml',
             'compose_file_orderer_raft': 'test/fixtures/e2e_raft/docker-compose-etcdraft2.yaml',
+            'compose_file_2_0': 'test/fixtures/lifecycle_2_0/docker-compose-2orgs-4peers-tls.yaml',
+            'compose_file_osn': 'test/fixtures/lifecycle_2_0/docker-compose-osn.yaml',
         },
         'channel-artifacts': {
             'channel_id': 'businesschannel',
+            'channel_profile': 'TwoOrgsChannel',
             'channel.tx': 'test/fixtures/e2e_cli/channel-artifacts/channel.tx',
             'config_yaml': 'test/fixtures/e2e_cli/',
-            'channel_profile': 'TwoOrgsChannel',
+            '2_0_channel.tx': 'test/fixtures/lifecycle_2_0/channel-artifacts/channel.tx',
+            '2_0_config_yaml': 'test/fixtures/lifecycle_2_0',
+            'osn_config_yaml': 'test/fixtures/lifecycle_2_0/configtx_osn',
             'raft_channel.tx': 'test/fixtures/e2e_raft/channel-artifacts/channel.tx',
             'raft_config_yaml': 'test/fixtures/e2e_raft',
         },
@@ -93,3 +95,4 @@ E2E_CONFIG = {
         }
     }
 }
+# flake8: noqa

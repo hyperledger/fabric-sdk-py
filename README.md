@@ -73,11 +73,8 @@ Recommend to read [How to Contribution](CONTRIBUTING.md) before taking action.
 * [Fabric SDK Python Wiki](https://wiki.hyperledger.org/display/fabric/Hyperledger+Fabric+SDK+Py)
 * [Hyperledger Project](https://www.hyperledger.org)
 * [Hyperledger mailing lists](http://lists.hyperledger.org/)
-* [Hyperledger's Rocket.Chat](https://chat.hyperledger.org)
+* [Hyperledger's Discord](https://discord.com/servers/hyperledger-foundation-905194001349627914)
 
-## Incubation Notice
-
-This project is in [_Incubation_](https://goo.gl/4edNRc) now, and was [proposed](https://docs.google.com/document/d/1N-KbwlFb7Oo_pTG2NjjLTqwlhqp_kjyv5fco7VH8WrE/) and [approved](http://lists.hyperledger.org/pipermail/hyperledger-tsc/2016-September/000292.html) by Hyperledger TSC at Sep 08, 2016.
 
 ## License <a name="license"></a>
 The Hyperledger Fabric-SDK-Py software uses the [Apache License Version 2.0](LICENSE) software license.

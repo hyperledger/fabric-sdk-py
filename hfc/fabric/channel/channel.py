@@ -7,11 +7,9 @@ import sys
 import re
 from hashlib import sha256
 
-from hfc.protos.msp import msp_principal_pb2
-
 from hfc.fabric.block_decoder import BlockDecoder
 from hfc.fabric.transaction.tx_proposal_request import create_tx_prop_req
-from hfc.protos.common import common_pb2, policies_pb2, collection_pb2
+from hfc.protos.common import common_pb2
 from hfc.protos.orderer import ab_pb2
 from hfc.protos.peer import chaincode_pb2, proposal_pb2
 from hfc.protos.discovery import protocol_pb2
@@ -23,6 +21,8 @@ from hfc.util.utils import proto_str, current_timestamp, proto_b, \
     send_transaction_proposal, pem_to_der
 from hfc.util.consts import SYSTEM_CHANNEL_NAME, CC_INSTANTIATE, CC_UPGRADE, CC_INVOKE, CC_QUERY, CC_TYPE_GOLANG
 from .channel_eventhub import ChannelEventHub
+from hfc.util.collection_config import build_collection_config_proto
+from hfc.util.policies import build_policy
 
 _logger = logging.getLogger(__name__)
 _logger.setLevel(logging.DEBUG)
@@ -353,149 +353,6 @@ class Channel(object):
 
         return self._send_cc_proposal(tx_context, CC_UPGRADE, peers)
 
-    def _build_principal(self, identity):
-        if 'role' not in identity:
-            raise Exception('NOT IMPLEMENTED')
-
-        newPrincipal = msp_principal_pb2.MSPPrincipal()
-
-        newPrincipal.principal_classification = \
-            msp_principal_pb2.MSPPrincipal.ROLE
-
-        newRole = msp_principal_pb2.MSPRole()
-
-        roleName = identity['role']['name']
-        if roleName == 'peer':
-            newRole.role = msp_principal_pb2.MSPRole.PEER
-        elif roleName == 'member':
-            newRole.role = msp_principal_pb2.MSPRole.MEMBER
-        elif roleName == 'admin':
-            newRole.role = msp_principal_pb2.MSPRole.ADMIN
-        else:
-            raise Exception(f'Invalid role name found: must'
-                            f' be one of "peer", "member" or'
-                            f' "admin", but found "{roleName}"')
-
-        mspid = identity['role']['mspId']
-        if not mspid or not isinstance(mspid, str):
-            raise Exception(f'Invalid mspid found: "{mspid}"')
-        newRole.msp_identifier = mspid.encode()
-
-        newPrincipal.principal = newRole.SerializeToString()
-
-        return newPrincipal
-
-    def _get_policy(self, policy):
-        type = list(policy.keys())[0]
-        # signed-by case
-        if type == 'signed-by':
-            signedBy = policies_pb2.SignaturePolicy()
-            signedBy.signed_by = policy['signed-by']
-            return signedBy
-        # n-of case
-        else:
-            n = int(type.split('-of')[0])
-
-            nOutOf = policies_pb2.SignaturePolicy.NOutOf()
-            nOutOf.n = n
-            subs = []
-            for sub in policy[type]:
-                subPolicy = self._get_policy(sub)
-                subs.append(subPolicy)
-
-            nOutOf.rules.extend(subs)
-
-            nOf = policies_pb2.SignaturePolicy()
-            nOf.n_out_of.CopyFrom(nOutOf)
-
-            return nOf
-
-    def _check_policy(self, policy):
-        if not policy:
-            raise Exception('Missing Required Param "policy"')
-
-        if 'identities' not in policy \
-                or policy['identities'] == '' \
-                or not len(policy['identities']):
-            raise Exception('Invalid policy, missing'
-                            ' the "identities" property')
-        elif not isinstance(policy['identities'], list):
-            raise Exception('Invalid policy, the "identities"'
-                            ' property must be an array')
-
-        if 'policy' not in policy \
-                or policy['policy'] == '' \
-                or not len(policy['policy']):
-            raise Exception('Invalid policy, missing the'
-                            ' "policy" property')
-
-    def _build_policy(self, policy, msps=None, returnProto=False):
-        proto_signature_policy_envelope = \
-            policies_pb2.SignaturePolicyEnvelope()
-
-        if policy:
-            self._check_policy(policy)
-            proto_signature_policy_envelope.version = 0
-            proto_signature_policy_envelope.rule.CopyFrom(
-                self._get_policy(policy['policy']))
-            proto_signature_policy_envelope.identities.extend(
-                [self._build_principal(x) for x in policy['identities']])
-        else:
-            # TODO need to support MSPManager
-            # no policy was passed in, construct a 'Signed By any member
-            # of an organization by mspid' policy
-            # construct a list of msp principals to select from using the
-            # 'n out of' operator
-
-            # for not making it fail with current code
-            return proto_b('')
-
-            principals = []
-            signedBys = []
-            index = 0
-
-            if msps is None:
-                msps = []
-
-            for msp in msps:
-                onePrn = msp_principal_pb2.MSPPrincipal()
-                onePrn.principal_classification = \
-                    msp_principal_pb2.MSPPrincipal.ROLE
-
-                memberRole = msp_principal_pb2.MSPRole()
-                memberRole.role = msp_principal_pb2.MSPRole.MEMBER
-                memberRole.msp_identifier = msp
-
-                onePrn.principal = memberRole.SerializeToString()
-
-                principals.append(onePrn)
-
-                signedBy = policies_pb2.SignaturePolicy()
-                index += 1
-                signedBy.signed_by = index
-                signedBys.append(signedBy)
-
-            if len(principals) == 0:
-                raise Exception('Verifying MSPs not found in the'
-                                ' channel object, make sure'
-                                ' "initialize()" is called first.')
-
-            oneOfAny = policies_pb2.SignaturePolicy.NOutOf()
-            oneOfAny.n = 1
-            oneOfAny.rules.extend(signedBys)
-
-            noutof = policies_pb2.SignaturePolicy()
-            noutof.n_out_of.CopyFrom(oneOfAny)
-
-            proto_signature_policy_envelope.version = 0
-            proto_signature_policy_envelope.rule.CopyFrom(noutof)
-            proto_signature_policy_envelope.identities.extend(principals)
-
-        if returnProto:
-            return proto_signature_policy_envelope
-
-        return proto_signature_policy_envelope.SerializeToString()
-
     def _send_cc_proposal(self, tx_context, command, peers,
                           cc_type=CC_TYPE_GOLANG):
 
@@ -519,7 +376,7 @@ class Channel(object):
         cc_dep_spec.chaincode_spec.CopyFrom(cc_spec)
 
         # Pass msps, TODO create an MSPManager as done in fabric-sdk-node
-        policy = self._build_policy(request.cc_endorsement_policy)
+        policy = build_policy(request.cc_endorsement_policy)
 
         args = [
             proto_b(command),
@@ -532,31 +389,8 @@ class Channel(object):
 
         # collections_configs need V1_2 or later capability enabled,
         # otherwise private channel collections and data are not available
-        collections_configs = []
         if request.collections_config:
-            for config in request.collections_config:
-                static_config = collection_pb2.StaticCollectionConfig()
-                static_config.name = config['name']
-                static_config.member_orgs_policy.signature_policy. \
-                    CopyFrom(self._build_policy(config['policy'],
-                                                returnProto=True))
-                static_config.maximum_peer_count = config['maxPeerCount']
-                static_config. \
-                    required_peer_count = config.get('requiredPeerCount', 0)
-                static_config.block_to_live = config.get('blockToLive', 0)
-                static_config.member_only_read = config.get('memberOnlyRead',
-                                                            False)
-
-                collections_config = collection_pb2.CollectionConfig()
-                collections_config.static_collection_config.CopyFrom(
-                    static_config
-                )
-
-                collections_configs.append(collections_config)
-
-            cc_coll_cfg = collection_pb2.CollectionConfigPackage()
-            cc_coll_cfg.config.extend(collections_configs)
-            args.append(cc_coll_cfg.SerializeToString())
+            args.append(build_collection_config_proto(request.collections_config).SerializeToString())
 
         # construct the invoke spec
         invoke_input = chaincode_pb2.ChaincodeInput()
@@ -637,6 +471,7 @@ class Channel(object):
 
         cc_input = chaincode_pb2.ChaincodeInput()
         cc_input.args.extend(args)
+        cc_input.is_init = request.is_init
 
         cc_spec = chaincode_pb2.ChaincodeSpec()
         cc_spec.type = chaincode_pb2.ChaincodeSpec.Type.Value(cc_type)

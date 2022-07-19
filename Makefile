@@ -13,7 +13,7 @@ check: clean
 
 # Tox related variables
 TOX = tox
-TOX_VENV_NAMES = pylint flake8 py36
+TOX_VENV_NAMES = flake8 py36
 # [tox.pylint, tox.flake8, tox.py36]
 TOX_VENVS = $(patsubst %, $(TOX).%, $(TOX_VENV_NAMES))
 
