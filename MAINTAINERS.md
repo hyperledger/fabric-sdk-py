@@ -3,17 +3,17 @@
 | Name | GitHub | Chat | Email |
 |---|---|---|---|
 | Baohua Yang | yeasy | baohua | yangbaohua@gmail.com |
-| Dong Wang |  dongwangdw | wangdong | xdragon007@gmail.com |
 | Dixing Xu |  dexhunter | dexhunter | dixingxu@gmail.com |
-| Guillaume Cisco | GuillaumeCisco | GuillaumeCisco | guillaumecisco@gmail.com |
 
 ## Retired Maintainers
 
 | Name | GitHub | Chat | Email |
 |---|---|---|---|
 | Chang Chen | lafenicecc | lafenicecc | ccchenbj@cn.ibm.com |
-| David Dornseifer | dpdornseifer | david_dornseifer | dp.dornseifer@gmail.com |
 | Chen Kai | grapebaba | grapebaba | 281165273@qq.com |
+| David Dornseifer | dpdornseifer | david_dornseifer | dp.dornseifer@gmail.com |
+| Dong Wang |  dongwangdw | wangdong | xdragon007@gmail.com |
+| Guillaume Cisco | GuillaumeCisco | GuillaumeCisco | guillaumecisco@gmail.com |
 
 ## License <a name="license"></a>
 
