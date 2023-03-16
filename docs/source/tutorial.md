@@ -108,7 +108,7 @@ The SDK needs the credentials file as a valid network user.
 
 Typically there are two ways: using cryptogen or using Fabric-CA. That will depend on how your network boots up with.
 
-#### 1.2.1 Using Local Credential
+#### 1.2.1 Using Local Credentials
 
 The SDK will load the valid credentials from local path (the credentials file must be put there in advance).
 
@@ -119,7 +119,7 @@ cli = Client(net_profile="test/fixtures/network.json")
 org1_admin = cli.get_user(org_name='org1.example.com', name='Admin') # get the admin user from local path
 ```
 
-#### 1.2.2 Get Credential from Fabric CA
+#### 1.2.2 Get Credentials from Fabric CA
 
 Here demos how to interact with Fabric CA.
 
