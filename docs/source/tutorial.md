@@ -42,7 +42,7 @@ $ make check
 
 If you already have a running fabric network, ignore this.
 
-To start an example fabric network you can simply run the following command:
+To start an example fabric network you can simply run the following commands:
 
 ```bash
 $ HLF_VERSION=1.4.6
@@ -69,7 +69,7 @@ If you want to understand more details on starting up a fabric network, feel fre
 
 ### 0.3. Create the Connection Profile
 
-A network connection profile helps SDK connect to the fabric network by providing all required information to operate with a fabric network, including:
+A network connection profile helps the SDK connect to the fabric network by providing all required information to operate with a fabric network, including:
 
 * Client credentials file location;
 * Service endpoints for peer, orderer and ca;
@@ -104,13 +104,13 @@ print(cli.CAs)  # ca nodes in the network
 
 ### 1.2 Prepare User Id (Optionally)
 
-SDK need the credential file as a valid network user.
+The SDK needs the credentials file as a valid network user.
 
 Typically there are two ways: using cryptogen or using Fabric-CA. That will depend on how your network boots up with.
 
 #### 1.2.1 Using Local Credential
 
-SDK will load the valid credential from local path (the credentail files must be put there in advance).
+The SDK will load the valid credentials from local path (the credentials file must be put there in advance).
 
 ```python
 from hfc.fabric import Client
@@ -119,7 +119,7 @@ cli = Client(net_profile="test/fixtures/network.json")
 org1_admin = cli.get_user(org_name='org1.example.com', name='Admin') # get the admin user from local path
 ```
 
-#### 1.2.2 Get Credentail from Fabric CA
+#### 1.2.2 Get Credential from Fabric CA
 
 Here demos how to interact with Fabric CA.
 
@@ -197,7 +197,7 @@ new_wallet.put("user1", user1Enrollment) # Saves the credentials of 'user1' in t
 
 ### 2.1 Create a new channel and join it
 
-Use sdk to create a new channel and let peers join it.
+Use SDK to create a new channel and let peers join it.
 
 ```python
 import asyncio
@@ -267,7 +267,7 @@ loop.run_until_complete(cli.channel_update(
 
 ## 3. Operate Chaincodes with Fabric Network
 
-Use sdk to install, instantiate and invoke chaincode.
+Use the SDK to install, instantiate and invoke chaincode.
 
 ```python
 import asyncio
