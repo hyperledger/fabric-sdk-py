@@ -104,13 +104,13 @@ print(cli.CAs)  # ca nodes in the network
 
 ### 1.2 Prepare User Id (Optionally)
 
-The SDK needs the credentials file as a valid network user.
+The SDK needs the credential files as a valid network user.
 
 Typically there are two ways: using cryptogen or using Fabric-CA. That will depend on how your network boots up with.
 
 #### 1.2.1 Using Local Credentials
 
-The SDK will load the valid credentials from local path (the credentials file must be put there in advance).
+The SDK will load the valid credentials from local path (the credential files must be put there in advance).
 
 ```python
 from hfc.fabric import Client
