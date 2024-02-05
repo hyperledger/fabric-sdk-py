@@ -3,10 +3,11 @@
 TLDR, run a quick testing.
 
 ```bash
-$ HLF_VERSION=1.4.6
+$ export HLF_VERSION=1.4.12
+$ export FABRIC_CA_VERSION=1.4.9
 $ docker pull hyperledger/fabric-peer:${HLF_VERSION} \
     && docker pull hyperledger/fabric-orderer:${HLF_VERSION} \
-    && docker pull hyperledger/fabric-ca:${HLF_VERSION} \
+    && docker pull yeasy/hyperledger-fabric-ca:${FABRIC_CA_VERSION} \
     && docker pull hyperledger/fabric-ccenv:${HLF_VERSION}
 $ docker-compose -f test/fixtures/docker-compose-2orgs-4peers-tls.yaml up
 $ pip3 install virtualenv; make venv
@@ -45,12 +46,14 @@ If you already have a running fabric network, ignore this.
 To start an example fabric network you can simply run the following commands:
 
 ```bash
-$ HLF_VERSION=1.4.6
-$ docker pull hyperledger/fabric-peer:${HLF_VERSION}
-$ docker pull hyperledger/fabric-orderer:${HLF_VERSION}
-$ docker pull hyperledger/fabric-ca:${HLF_VERSION}
+$ export HLF_VERSION=1.4.12
+$ export FABRIC_CA_VERSION=1.4.9
+$ docker pull hyperledger/fabric-peer:${HLF_VERSION} \
+$ docker pull hyperledger/fabric-orderer:${HLF_VERSION} \
+$ docker pull yeasy/hyperledger-fabric-ca:${FABRIC_CA_VERSION} \
 $ docker pull hyperledger/fabric-ccenv:${HLF_VERSION}
 $ docker-compose -f test/fixtures/docker-compose-2orgs-4peers-tls.yaml up
+
 ```
 
 Then you'll have a fabric network with 3 organizations, 4 peers and 1 orderer:
@@ -63,7 +66,7 @@ Then you'll have a fabric network with 3 organizations, 4 peers and 1 orderer:
  * orderer.example.com
    * orderer.example.com
 
-* Note: make sure `configtxgen` is in the '$PATH'.
+* Note: make sure `configtxgen` is in the '$PATH'. You can download the Fabric v1.4 binaries [here](https://github.com/hyperledger/fabric/releases/download/v1.4.12/hyperledger-fabric-darwin-amd64-1.4.12.tar.gz)
 
 If you want to understand more details on starting up a fabric network, feel free to see the [Building Your First Network](https://hyperledger-fabric.readthedocs.io/en/latest/build_network.html) tutorial.
 
