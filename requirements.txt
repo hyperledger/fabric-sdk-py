@@ -8,5 +8,5 @@ safe-pysha3 >= 1.0.3
 requests >= 2.20.0
 rx >= 3.0.1
 six >= 1.4.0
-protobuf >= 3.6.0
+protobuf == 3.19.0
 couchdb >= 1.2

@@ -55,11 +55,11 @@ class CATest(unittest.TestCase):
         self.shutdown_test_env()
 
     def start_test_env(self):
-        cli_call(["docker-compose", "-f", self.compose_file_path, "up", "-d"])
+        cli_call(["docker", "compose", "-f", self.compose_file_path, "up", "-d"])
         time.sleep(5)
 
     def shutdown_test_env(self):
-        cli_call(["docker-compose", "-f", self.compose_file_path, "down"])
+        cli_call(["docker", "compose", "-f", self.compose_file_path, "down"])
 
     def test_get_ca_info(self):
         ca_client = CAClient("http://" + self._ca_server_address)
