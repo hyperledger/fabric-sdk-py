@@ -52,8 +52,8 @@ img=hyperledger/fabric-baseos:$baseimage_tag
 
 project_version=1.4.6
 echo "=====> Downloading fabric binaries with version= ${project_version}"
-if ! type configtxgen; then
-    if  [[ ! -e fabric-bin/bin/configtxgen ]]; then
+if ! type ./fabric-bin/bin/configtxgen; then
+    if  [[ ! -e ./fabric-bin/bin/configtxgen ]]; then
         echo "configtxgen doesn't exits."
         mkdir -p fabric-bin
         kernel=$(uname -s | tr '[:upper:]' '[:lower:]' | sed 's/mingw64_nt.*/windows/')

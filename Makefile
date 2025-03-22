@@ -6,7 +6,7 @@ PATH := fabric-bin/bin:$(PATH)
 SHELL := env PATH=$(PATH) /bin/bash
 PIP := pip3
 PYTHON := python3
-check: clean
+check: clean venv
 	scripts/check-env.sh
 	echo "=== Testing started... ==="
 	make test
