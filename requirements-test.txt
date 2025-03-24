@@ -1,10 +1,10 @@
 aiogrpc >= 1.6
-docker==6.1.3
+docker==7.1.0
 flake8 >= 3.0.0
 lark-parser == 0.7.1
 mock
 pytest >= 3.0.0
 pytest-cov >= 2.0.0
-grpcio-tools
+grpcio-tools == 1.62.2
 autopep8
 
