@@ -238,7 +238,15 @@ class CAClient(object):
         else:
             bodyAndCert = b'.%s' % b64Cert
 
-        sig = self._cryptoPrimitives.sign(registrar._private_key, bodyAndCert)
+        # Construct the string to be signed: HTTP method + path + body + client cert
+        string_to_sign = {
+                            "http_method": "POST",
+                            "path": self._base_url,
+                            "body": b64Body.decode(),
+                            "client_cert": b64Cert.decode()
+                        }
+        string_to_sign_bytes = string_to_sign.encode()
+        sig = self._cryptoPrimitives.sign(registrar._private_key, string_to_sign_bytes)
         b64Sign = base64.b64encode(sig)
 
         # /!\ cannot mix f format and b
