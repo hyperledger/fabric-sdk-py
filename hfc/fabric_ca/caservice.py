@@ -215,7 +215,7 @@ class CAClient(object):
         self._ca_name = ca_name
         self._cryptoPrimitives = cryptoPrimitives
 
-    def generateAuthToken(self, req, registrar):
+    def generateAuthToken(self, req, registrar,http_method):
         """Generate authorization token required for accessing fabric-ca APIs
 
         :param req: request body
@@ -238,15 +238,13 @@ class CAClient(object):
         else:
             bodyAndCert = b'.%s' % b64Cert
 
-        # Construct the string to be signed: HTTP method + path + body + client cert
         string_to_sign = {
-                            "http_method": "POST",
+                            "http_method":http_method,
                             "path": self._base_url,
-                            "body": b64Body.decode(),
-                            "client_cert": b64Cert.decode()
+                            "body": bodyAndCert,
+                            "client_cert": b64Cert
                         }
-        string_to_sign_bytes = string_to_sign.encode()
-        sig = self._cryptoPrimitives.sign(registrar._private_key, string_to_sign_bytes)
+        sig = self._cryptoPrimitives.sign(registrar._private_key, string_to_sign)
         b64Sign = base64.b64encode(sig)
 
         # /!\ cannot mix f format and b
@@ -349,7 +347,7 @@ class CAClient(object):
                              .format(res['errors']))
 
     def register(self, req, registrar):
-        authorization = self.generateAuthToken(req, registrar)
+        authorization = self.generateAuthToken(req, registrar,"POST")
 
         res, st = self._send_ca_post(path="register",
                                      json=req,
@@ -366,7 +364,7 @@ class CAClient(object):
                              .format(res['errors']))
 
     def reenroll(self, req, registrar):
-        authorization = self.generateAuthToken(req, registrar)
+        authorization = self.generateAuthToken(req, registrar,"POST")
 
         res, st = self._send_ca_post(path='reenroll',
                                      json=req,
@@ -384,7 +382,7 @@ class CAClient(object):
                              .format(res['errors']))
 
     def revoke(self, req, registrar):
-        authorization = self.generateAuthToken(req, registrar)
+        authorization = self.generateAuthToken(req, registrar,"POST")
 
         res, st = self._send_ca_post(path="revoke",
                                      json=req,
@@ -401,7 +399,7 @@ class CAClient(object):
                              .format(res['errors']))
 
     def generateCRL(self, req, registrar):
-        authorization = self.generateAuthToken(req, registrar)
+        authorization = self.generateAuthToken(req, registrar,"POST")
         res, st = self._send_ca_post(path='gencrl',
                                      json=req,
                                      headers={'Authorization': authorization},
