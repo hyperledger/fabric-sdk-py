@@ -225,30 +225,32 @@ class CAClient(object):
         :type registrar: Enrollment
         :return: auth token
         """
-        b64Cert = base64.b64encode(registrar._cert)
-
+        cert_bytes = registrar._cert if isinstance(registrar._cert, bytes) else registrar._cert.encode('utf-8')
+        b64Cert = base64.b64encode(cert_bytes)
         if req:
             reqJson = json.dumps(req, ensure_ascii=False)
-            b64Body = base64.b64encode(reqJson.encode())
-
-            # /!\ cannot mix f format and b
-            # https://stackoverflow.com/questions/45360480/is-there-a-
-            # formatted-byte-string-literal-in-python-3-6
-            bodyAndCert = b'%s.%s' % (b64Body, b64Cert)
+            b64Body = base64.b64encode(reqJson.encode('utf-8'))
+            bodyAndCert = b'%b.%b' % (b64Body, b64Cert)
         else:
             bodyAndCert = b'.%s' % b64Cert
-
+        path = self._base_url
         string_to_sign = {
-                            "http_method":http_method,
-                            "path": self._base_url,
-                            "body": bodyAndCert,
-                            "client_cert": b64Cert
+                            "http_method": http_method,
+                            "path": path,
+                            "body": bodyAndCert.decode('utf-8'),
+                            "client_cert": b64Cert.decode('utf-8')
                         }
-        sig = self._cryptoPrimitives.sign(registrar._private_key, string_to_sign)
-        b64Sign = base64.b64encode(sig)
-
-        # /!\ cannot mix f format and b
-        return b'%s.%s' % (b64Cert, b64Sign)
+        # Serialize and encode to bytes
+        string_to_sign_bytes = json.dumps(string_to_sign, ensure_ascii=False).encode('utf-8')
+        # Sign the message
+        try:
+            sig = self._cryptoPrimitives.sign(registrar._private_key, string_to_sign_bytes)
+            b64Sign = base64.b64encode(sig)
+        except Exception as e:
+            print(f"Signing failed: {e}")
+            raise
+        # Return the final token
+        return b'%b.%b' % (b64Cert, b64Sign)
 
     def _send_ca_post(self, path, **param):
         """Send a post request to the ca service
