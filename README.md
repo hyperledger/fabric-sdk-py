@@ -4,6 +4,17 @@ Fabric-SDK-Py is the Python 3.x implementation of Hyperledger Fabric SDK!
 
 Currently, it mainly supports Fabric 1.4.x version.
 
+## pyenv instructions
+
+1. Follow instructions: https://github.com/pyenv/pyenv?tab=readme-ov-file#installation
+2. Install Python 3:
+
+```bash
+ pyenv install 3.12
+ pyenv global 3.12
+ pip3 install virtualenv
+```
+  
 ## Pre-requisite
 
 The SDK requires the `Python3` and `Libssl` pkgs.
