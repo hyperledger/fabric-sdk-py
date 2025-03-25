@@ -38,7 +38,7 @@ class AffiliationService(object):
             'caname': caname
         }
 
-        authorization = self._client.generateAuthToken(req, registrar)
+        authorization = self._client.generateAuthToken(req, registrar,"POST")
         headers = {'Authorization': authorization}
         verify = self._client._ca_certs_path
 
@@ -68,7 +68,7 @@ class AffiliationService(object):
             raise ValueError('argument "affiliation" is not a valid string')
 
         path = 'affiliations/' + affiliation
-        authorization = self._client.generateAuthToken(None, registrar)
+        authorization = self._client.generateAuthToken(None, registrar,"GET")
         headers = {'Authorization': authorization}
         verify = self._client._ca_certs_path
         res, st = self._client._send_ca_get(path,
@@ -92,7 +92,7 @@ class AffiliationService(object):
         """
 
         path = 'affiliations'
-        authorization = self._client.generateAuthToken(None, registrar)
+        authorization = self._client.generateAuthToken(None, registrar,"GET")
         headers = {'Authorization': authorization}
         verify = self._client._ca_certs_path
         res, st = self._client._send_ca_get(path,
@@ -130,7 +130,7 @@ class AffiliationService(object):
         if force is True:
             path += '?force=true'
 
-        authorization = self._client.generateAuthToken(None, registrar)
+        authorization = self._client.generateAuthToken(None, registrar,"DELETE")
         headers = {'Authorization': authorization}
         verify = self._client._ca_certs_path
         res, st = self._client._send_ca_delete(path,
@@ -180,7 +180,7 @@ class AffiliationService(object):
         if caname:
             req['caname'] = caname
 
-        authorization = self._client.generateAuthToken(req, registrar)
+        authorization = self._client.generateAuthToken(req, registrar,"PUT")
         headers = {'Authorization': authorization}
         verify = self._client._ca_certs_path
         res, st = self._client._send_ca_update(path,
