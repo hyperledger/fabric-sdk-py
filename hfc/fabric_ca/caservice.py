@@ -243,17 +243,19 @@ class CAClient(object):
         #                     "client_cert": b64Cert.decode('utf-8')
         #                 }
 
-        string_to_sign = http_method + "." + base64.b64encode(fullpath.encode('utf-8')) + "." + bodyAndCert
+
+        #string_to_sign = http_method + "." + base64.b64encode(fullpath.encode('utf-8')) + "." + bodyAndCert
+        string_to_sign = b'%s.%b.%b' % (http_method, base64.b64encode(fullpath.encode('utf-8')), bodyAndCert)
 
         print("######## string_to_sign ########")
         print(string_to_sign)
         print("################")
 
         # Serialize and encode to bytes
-        string_to_sign_bytes = json.dumps(string_to_sign, ensure_ascii=False).encode('utf-8')
+        #string_to_sign_bytes = json.dumps(string_to_sign, ensure_ascii=False).encode('utf-8')
         # Sign the message
         try:
-            sig = self._cryptoPrimitives.sign(registrar._private_key, string_to_sign_bytes)
+            sig = self._cryptoPrimitives.sign(registrar._private_key, string_to_sign)
             b64Sign = base64.b64encode(sig)
         except Exception as e:
             print(f"Signing failed: {e}")
