@@ -232,36 +232,27 @@ class CAClient(object):
         if req:
             reqJson = json.dumps(req, ensure_ascii=False)
             b64Body = base64.b64encode(reqJson.encode('utf-8'))
-            bodyAndCert = b'%b.%b' % (b64Body, b64Cert)
+            bodyAndCert = b'%s.%s' % (b64Body, b64Cert)
         else:
             bodyAndCert = b'.%s' % b64Cert
-        fullpath = self._base_url + path
-        # string_to_sign = {
-        #                     "http_method": http_method,
-        #                     "path": fullpath,
-        #                     "body": bodyAndCert.decode('utf-8'),
-        #                     "client_cert": b64Cert.decode('utf-8')
-        #                 }
-
-
-        #string_to_sign = http_method + "." + base64.b64encode(fullpath.encode('utf-8')) + "." + bodyAndCert
-        string_to_sign = b'%s.%b.%b' % (http_method, base64.b64encode(fullpath.encode('utf-8')), bodyAndCert)
-
-        print("######## string_to_sign ########")
-        print(string_to_sign)
-        print("################")
-
         # Serialize and encode to bytes
-        #string_to_sign_bytes = json.dumps(string_to_sign, ensure_ascii=False).encode('utf-8')
+        fullpath = self._base_url + path
+        b64Path = fullpath.encode('utf-8')
+        http_method_bytes = http_method.encode('utf-8')
+        string_to_sign = b'%s.%s.%s' % (http_method_bytes, b64Path, bodyAndCert)
+        if isinstance(string_to_sign, str):
+            string_to_sign = string_to_sign.encode('utf-8')
         # Sign the message
         try:
             sig = self._cryptoPrimitives.sign(registrar._private_key, string_to_sign)
+            if not sig or not isinstance(sig, bytes):
+                raise ValueError("Signing failed: Signature is empty or not bytes")
             b64Sign = base64.b64encode(sig)
         except Exception as e:
             print(f"Signing failed: {e}")
             raise
         # Return the final token
-        return b'%b.%b' % (b64Cert, b64Sign)
+        return b'%s.%s' % (b64Cert, b64Sign)
 
     def _send_ca_post(self, path, **param):
         """Send a post request to the ca service
