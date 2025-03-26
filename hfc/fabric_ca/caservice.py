@@ -240,6 +240,9 @@ class CAClient(object):
                             "body": bodyAndCert.decode('utf-8'),
                             "client_cert": b64Cert.decode('utf-8')
                         }
+        print("######## string_to_sign ########")
+        print(string_to_sign)
+        print("################")
         # Serialize and encode to bytes
         string_to_sign_bytes = json.dumps(string_to_sign, ensure_ascii=False).encode('utf-8')
         # Sign the message
