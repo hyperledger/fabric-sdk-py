@@ -74,7 +74,7 @@ class CertificateService(object):
         if queryString:
             path += '?' + queryString
 
-        authorization = self.client.generateAuthToken(None, registrar,"GET")
+        authorization = self.client.generateAuthToken(None, registrar,"GET", path)
         headers = {'Authorization': authorization}
         verify = self.client._ca_certs_path
 

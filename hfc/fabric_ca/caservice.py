@@ -215,7 +215,7 @@ class CAClient(object):
         self._ca_name = ca_name
         self._cryptoPrimitives = cryptoPrimitives
 
-    def generateAuthToken(self, req, registrar,http_method):
+    def generateAuthToken(self, req, registrar, http_method, path):
         """Generate authorization token required for accessing fabric-ca APIs
 
         :param req: request body
@@ -223,6 +223,8 @@ class CAClient(object):
         :param registrar: Required. The identity of the registrar
         (i.e. who is performing the request)
         :type registrar: Enrollment
+        :param http_method: http method
+        :param path: path
         :return: auth token
         """
         cert_bytes = registrar._cert if isinstance(registrar._cert, bytes) else registrar._cert.encode('utf-8')
@@ -233,10 +235,10 @@ class CAClient(object):
             bodyAndCert = b'%b.%b' % (b64Body, b64Cert)
         else:
             bodyAndCert = b'.%s' % b64Cert
-        path = self._base_url
+        fullpath = self._base_url + path
         string_to_sign = {
                             "http_method": http_method,
-                            "path": path,
+                            "path": fullpath,
                             "body": bodyAndCert.decode('utf-8'),
                             "client_cert": b64Cert.decode('utf-8')
                         }
