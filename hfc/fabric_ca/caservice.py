@@ -245,6 +245,9 @@ class CAClient(object):
         print("######## string_to_sign ########")
         print(string_to_sign)
         print("################")
+        print("######## json.dumps(string_to_sign, ensure_ascii=False) ########")
+        print(json.dumps(string_to_sign, ensure_ascii=False))
+        print("################")
         # Serialize and encode to bytes
         string_to_sign_bytes = json.dumps(string_to_sign, ensure_ascii=False).encode('utf-8')
         # Sign the message
