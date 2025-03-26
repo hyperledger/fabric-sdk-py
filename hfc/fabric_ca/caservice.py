@@ -243,7 +243,7 @@ class CAClient(object):
         #                     "client_cert": b64Cert.decode('utf-8')
         #                 }
 
-        string_to_sign = http_method + "." + base64.b64encode(fullpath) + "." + bodyAndCert
+        string_to_sign = http_method + "." + base64.b64encode( b'.%s' % fullpath) + "." + bodyAndCert
 
         print("######## string_to_sign ########")
         print(string_to_sign)
