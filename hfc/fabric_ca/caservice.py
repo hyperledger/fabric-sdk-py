@@ -239,10 +239,10 @@ class CAClient(object):
         fullpath = self._base_url + path
         b64Path = base64.b64encode(fullpath.encode('utf-8'))
 
-        string_to_sign = b'%b.%s.%s' % (http_method, b64Path, bodyAndCert)
+        string_to_sign = b'%s.%s.%s' % (http_method.encode('utf-8'), b64Path, bodyAndCert)
 
-        if isinstance(string_to_sign, str):
-            string_to_sign = string_to_sign.encode('utf-8')
+        # if isinstance(string_to_sign, str):
+        #     string_to_sign = string_to_sign.encode('utf-8')
         # Sign the message
         try:
             sig = self._cryptoPrimitives.sign(registrar._private_key, string_to_sign)
