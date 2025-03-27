@@ -353,7 +353,7 @@ class CAClient(object):
                              .format(res['errors']))
 
     def register(self, req, registrar):
-        authorization = self.generateAuthToken(req, registrar,"POST")
+        authorization = self.generateAuthToken(req, registrar, "POST", path="register")
 
         res, st = self._send_ca_post(path="register",
                                      json=req,
@@ -370,7 +370,7 @@ class CAClient(object):
                              .format(res['errors']))
 
     def reenroll(self, req, registrar):
-        authorization = self.generateAuthToken(req, registrar,"POST")
+        authorization = self.generateAuthToken(req, registrar, "POST", path='reenroll')
 
         res, st = self._send_ca_post(path='reenroll',
                                      json=req,
@@ -388,7 +388,7 @@ class CAClient(object):
                              .format(res['errors']))
 
     def revoke(self, req, registrar):
-        authorization = self.generateAuthToken(req, registrar,"POST")
+        authorization = self.generateAuthToken(req, registrar, "POST", path="revoke")
 
         res, st = self._send_ca_post(path="revoke",
                                      json=req,
@@ -405,7 +405,7 @@ class CAClient(object):
                              .format(res['errors']))
 
     def generateCRL(self, req, registrar):
-        authorization = self.generateAuthToken(req, registrar,"POST", path='gencrl')
+        authorization = self.generateAuthToken(req, registrar, "POST", path='gencrl')
         res, st = self._send_ca_post(path='gencrl',
                                      json=req,
                                      headers={'Authorization': authorization},
