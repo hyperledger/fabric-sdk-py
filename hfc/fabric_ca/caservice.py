@@ -227,6 +227,9 @@ class CAClient(object):
         :param path: path
         :return: auth token
         """
+        print("######### path ##########")
+        print(path)
+        print("###################")
         cert_bytes = registrar._cert if isinstance(registrar._cert, bytes) else registrar._cert.encode('utf-8')
         b64Cert = base64.b64encode(cert_bytes)
         if req:
@@ -237,7 +240,7 @@ class CAClient(object):
             bodyAndCert = b'.%s' % b64Cert
         # Serialize and encode to bytes
         fullpath = self._base_url + path
-        b64Path = base64.b64encode(fullpath.encode('utf-8'))
+        b64Path = base64.b64encode(fullpath)
         http_method_bytes = http_method.encode('utf-8')
         string_to_sign = b'%s.%s.%s' % (http_method_bytes, b64Path, bodyAndCert)
         print("######### string_to_sign ##########")
