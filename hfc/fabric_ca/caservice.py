@@ -227,9 +227,6 @@ class CAClient(object):
         :param path: path
         :return: auth token
         """
-        print("######### path ##########")
-        print(path)
-        print("###################")
         cert_bytes = registrar._cert if isinstance(registrar._cert, bytes) else registrar._cert.encode('utf-8')
         b64Cert = base64.b64encode(cert_bytes)
         if req:
@@ -242,10 +239,8 @@ class CAClient(object):
         fullpath = self._base_url + path
         b64Path = base64.b64encode(fullpath.encode('utf-8'))
 
-        string_to_sign = b'%s.%s.%s' % (http_method, b64Path, bodyAndCert)
-        print("######### string_to_sign ##########")
-        print(string_to_sign)
-        print("###################")
+        string_to_sign = b'%b.%s.%s' % (http_method, b64Path, bodyAndCert)
+
         if isinstance(string_to_sign, str):
             string_to_sign = string_to_sign.encode('utf-8')
         # Sign the message
