@@ -240,7 +240,7 @@ class CAClient(object):
         b64Path = base64.b64encode(fullpath.encode('utf-8'))
         http_method_bytes = http_method.encode('utf-8')
         string_to_sign = b'%s.%s.%s' % (http_method_bytes, b64Path, bodyAndCert)
-        print("###################")
+        print("######### string_to_sign ##########")
         print(string_to_sign)
         print("###################")
         if isinstance(string_to_sign, str):
