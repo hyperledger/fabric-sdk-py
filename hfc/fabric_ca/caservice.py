@@ -405,7 +405,7 @@ class CAClient(object):
                              .format(res['errors']))
 
     def generateCRL(self, req, registrar):
-        authorization = self.generateAuthToken(req, registrar,"POST")
+        authorization = self.generateAuthToken(req, registrar,"POST", path='gencrl')
         res, st = self._send_ca_post(path='gencrl',
                                      json=req,
                                      headers={'Authorization': authorization},
