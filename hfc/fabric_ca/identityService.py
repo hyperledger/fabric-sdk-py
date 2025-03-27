@@ -86,7 +86,7 @@ class IdentityService(object):
             raise ValueError('argument "enrollmentID" is not a valid string')
 
         path = 'identities/' + enrollmentID + '?ca=' + self._client._ca_name
-        authorization = self._client.generateAuthToken(None, registrar,"GET",path)
+        authorization = self._client.generateAuthToken(None, registrar,"GET", path)
         headers = {'Authorization': authorization}
         verify = self._client._ca_certs_path
         res, st = self._client._send_ca_get(path,

@@ -212,6 +212,7 @@ class CAClient(object):
         """
         self._ca_certs_path = ca_certs_path
         self._base_url = target + base_url
+        self._base_path = base_url
         self._ca_name = ca_name
         self._cryptoPrimitives = cryptoPrimitives
 
@@ -236,7 +237,7 @@ class CAClient(object):
         else:
             bodyAndCert = b'.%s' % b64Cert
         # Serialize and encode to bytes
-        fullpath = self._base_url + path
+        fullpath = self._base_path + path
         b64Path = base64.b64encode(fullpath.encode('utf-8'))
 
         string_to_sign = b'%s.%s.%s' % (http_method.encode('utf-8'), b64Path, bodyAndCert)
