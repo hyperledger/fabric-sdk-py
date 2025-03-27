@@ -237,9 +237,12 @@ class CAClient(object):
             bodyAndCert = b'.%s' % b64Cert
         # Serialize and encode to bytes
         fullpath = self._base_url + path
-        b64Path = fullpath.encode('utf-8')
+        b64Path = base64.b64encode(fullpath.encode('utf-8'))
         http_method_bytes = http_method.encode('utf-8')
         string_to_sign = b'%s.%s.%s' % (http_method_bytes, b64Path, bodyAndCert)
+        print("###################")
+        print(string_to_sign)
+        print("###################")
         if isinstance(string_to_sign, str):
             string_to_sign = string_to_sign.encode('utf-8')
         # Sign the message
