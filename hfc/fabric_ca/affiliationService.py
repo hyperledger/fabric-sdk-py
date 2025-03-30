@@ -1,5 +1,5 @@
 import logging
-
+ogging.basicConfig(level=logging.DEBUG, filename='/Users/muthu/Projects/fabric-python-logfile.log')
 _logger = logging.getLogger(__name__)
 
 
@@ -38,7 +38,7 @@ class AffiliationService(object):
             'caname': caname
         }
 
-        authorization = self._client.generateAuthToken(req, registrar,"POST")
+        authorization = self._client.generateAuthToken(req, registrar, path, "POST")
         headers = {'Authorization': authorization}
         verify = self._client._ca_certs_path
 
@@ -68,7 +68,7 @@ class AffiliationService(object):
             raise ValueError('argument "affiliation" is not a valid string')
 
         path = 'affiliations/' + affiliation
-        authorization = self._client.generateAuthToken(None, registrar,"GET")
+        authorization = self._client.generateAuthToken(None, registrar, path, "GET")
         headers = {'Authorization': authorization}
         verify = self._client._ca_certs_path
         res, st = self._client._send_ca_get(path,
@@ -92,7 +92,7 @@ class AffiliationService(object):
         """
 
         path = 'affiliations'
-        authorization = self._client.generateAuthToken(None, registrar,"GET")
+        authorization = self._client.generateAuthToken(None, registrar, path, "GET")
         headers = {'Authorization': authorization}
         verify = self._client._ca_certs_path
         res, st = self._client._send_ca_get(path,
@@ -130,7 +130,7 @@ class AffiliationService(object):
         if force is True:
             path += '?force=true'
 
-        authorization = self._client.generateAuthToken(None, registrar,"DELETE")
+        authorization = self._client.generateAuthToken(None, registrar, path, "DELETE")
         headers = {'Authorization': authorization}
         verify = self._client._ca_certs_path
         res, st = self._client._send_ca_delete(path,
@@ -180,7 +180,7 @@ class AffiliationService(object):
         if caname:
             req['caname'] = caname
 
-        authorization = self._client.generateAuthToken(req, registrar,"PUT")
+        authorization = self._client.generateAuthToken(req, registrar, path, "PUT")
         headers = {'Authorization': authorization}
         verify = self._client._ca_certs_path
         res, st = self._client._send_ca_update(path,

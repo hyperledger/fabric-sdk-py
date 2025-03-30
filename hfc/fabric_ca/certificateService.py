@@ -1,6 +1,7 @@
 import logging
 import urllib.parse
 
+logging.basicConfig(level=logging.DEBUG, filename='/Users/muthu/Projects/fabric-python-logfile.log')
 _logger = logging.getLogger(__name__)
 
 
@@ -74,7 +75,7 @@ class CertificateService(object):
         if queryString:
             path += '?' + queryString
 
-        authorization = self.client.generateAuthToken(None, registrar,"GET")
+        authorization = self.client.generateAuthToken(None, registrar, path, "GET")
         headers = {'Authorization': authorization}
         verify = self.client._ca_certs_path
 

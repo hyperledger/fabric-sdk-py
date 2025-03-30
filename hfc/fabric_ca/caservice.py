@@ -32,7 +32,7 @@ from hfc.util.crypto.crypto import ecies
 
 DEFAULT_CA_ENDPOINT = 'http://localhost:7054'
 DEFAULT_CA_BASE_URL = '/api/v1/'
-
+logging.basicConfig(level=logging.DEBUG, filename='/Users/muthu/Projects/fabric-python-logfile.log')
 _logger = logging.getLogger(__name__)
 
 reasons = (
@@ -215,7 +215,7 @@ class CAClient(object):
         self._ca_name = ca_name
         self._cryptoPrimitives = cryptoPrimitives
 
-    def generateAuthToken(self, req, registrar,http_method):
+    def generateAuthToken(self, req, registrar, path, http_method):
         """Generate authorization token required for accessing fabric-ca APIs
 
         :param req: request body
@@ -225,29 +225,32 @@ class CAClient(object):
         :type registrar: Enrollment
         :return: auth token
         """
-        cert_bytes = registrar._cert if isinstance(registrar._cert, bytes) else registrar._cert.encode('utf-8')
-        b64Cert = base64.b64encode(cert_bytes)
+        b64Cert = base64.b64encode(registrar._cert if isinstance(registrar._cert, bytes) else registrar._cert.encode())
         if req:
             reqJson = json.dumps(req, ensure_ascii=False)
-            b64Body = base64.b64encode(reqJson.encode('utf-8'))
+            b64Body = base64.b64encode(reqJson.encode())
             bodyAndCert = b'%s.%s' % (b64Body, b64Cert)
         else:
             bodyAndCert = b'.%s' % b64Cert
         # Serialize and encode to bytes
-        b64Path = self._base_url.encode('utf-8')
-        http_method_bytes = http_method.encode('utf-8')
+        full_path = self._base_url + path
+        b64Path = full_path.encode()
+        http_method_bytes = http_method.encode()
         string_to_sign = b'%s.%s.%s' % (http_method_bytes, b64Path, bodyAndCert)
+        _logger.debug("string_to_sign=%s", string_to_sign)
         if isinstance(string_to_sign, str):
-            string_to_sign = string_to_sign.encode('utf-8')
+            string_to_sign = string_to_sign.encode()
         # Sign the message
         try:
             sig = self._cryptoPrimitives.sign(registrar._private_key, string_to_sign)
+            _logger.debug("Singnature=%s", sig)
             if not sig or not isinstance(sig, bytes):
                 raise ValueError("Signing failed: Signature is empty or not bytes")
             b64Sign = base64.b64encode(sig)
         except Exception as e:
-            print(f"Signing failed: {e}")
+            _logger.error(f"Signing failed: {e}")
             raise
+        _logger.debug("Generated base64-encoded certificate and signature: b64Cert=%s, b64Sign=%s", b64Cert.decode(), b64Sign.decode())
         # Return the final token
         return b'%s.%s' % (b64Cert, b64Sign)
 
@@ -348,9 +351,10 @@ class CAClient(object):
                              .format(res['errors']))
 
     def register(self, req, registrar):
-        authorization = self.generateAuthToken(req, registrar,"POST")
+        path="register"
+        authorization = self.generateAuthToken(req, registrar, path, "POST")
 
-        res, st = self._send_ca_post(path="register",
+        res, st = self._send_ca_post(path=path,
                                      json=req,
                                      headers={'Authorization': authorization},
                                      verify=self._ca_certs_path)
@@ -365,9 +369,10 @@ class CAClient(object):
                              .format(res['errors']))
 
     def reenroll(self, req, registrar):
-        authorization = self.generateAuthToken(req, registrar,"POST")
-
-        res, st = self._send_ca_post(path='reenroll',
+        path='reenroll'
+        authorization = self.generateAuthToken(req, registrar, path, "POST")
+        _logger.debug("authorization", authorization)
+        res, st = self._send_ca_post(path=path,
                                      json=req,
                                      headers={'Authorization': authorization},
                                      verify=self._ca_certs_path)
@@ -383,9 +388,10 @@ class CAClient(object):
                              .format(res['errors']))
 
     def revoke(self, req, registrar):
-        authorization = self.generateAuthToken(req, registrar,"POST")
+        path="revoke"
+        authorization = self.generateAuthToken(req, registrar, path, "POST")
 
-        res, st = self._send_ca_post(path="revoke",
+        res, st = self._send_ca_post(path=path,
                                      json=req,
                                      headers={'Authorization': authorization},
                                      verify=self._ca_certs_path)
@@ -400,8 +406,9 @@ class CAClient(object):
                              .format(res['errors']))
 
     def generateCRL(self, req, registrar):
-        authorization = self.generateAuthToken(req, registrar,"POST")
-        res, st = self._send_ca_post(path='gencrl',
+        path='gencrl'
+        authorization = self.generateAuthToken(req, registrar, path, "POST")
+        res, st = self._send_ca_post(path=path,
                                      json=req,
                                      headers={'Authorization': authorization},
                                      verify=self._ca_certs_path)
