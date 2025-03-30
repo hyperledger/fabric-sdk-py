@@ -1,7 +1,6 @@
 import logging
 import urllib.parse
 
-logging.basicConfig(level=logging.DEBUG, filename='/Users/muthu/Projects/fabric-python-logfile.log')
 _logger = logging.getLogger(__name__)
 
 

@@ -32,7 +32,6 @@ from hfc.util.crypto.crypto import ecies
 
 DEFAULT_CA_ENDPOINT = 'http://localhost:7054'
 DEFAULT_CA_BASE_URL = '/api/v1/'
-logging.basicConfig(level=logging.DEBUG, filename='/Users/muthu/Projects/fabric-python-logfile.log')
 _logger = logging.getLogger(__name__)
 
 reasons = (
