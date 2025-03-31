@@ -3,7 +3,7 @@
 services:
   ca:
     container_name: fabric-ca
-    image: hyperledger/fabric-ca:1.4.6
+    image: hyperledger/fabric-ca:1.5.15
     #command: fabric-ca-server start -c ./testdata/testconfig-sdk.json
     volumes:
       - ../ca/fabric-ca-server:/etc/hyperledger/fabric-ca-server
