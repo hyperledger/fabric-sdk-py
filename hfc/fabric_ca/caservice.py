@@ -212,10 +212,11 @@ class CAClient(object):
         """
         self._ca_certs_path = ca_certs_path
         self._base_url = target + base_url
+        self._base_path = base_url
         self._ca_name = ca_name
         self._cryptoPrimitives = cryptoPrimitives
 
-    def generateAuthToken(self, req, registrar):
+    def generateAuthToken(self, req, registrar, http_method, path):
         """Generate authorization token required for accessing fabric-ca APIs
 
         :param req: request body
@@ -223,25 +224,36 @@ class CAClient(object):
         :param registrar: Required. The identity of the registrar
         (i.e. who is performing the request)
         :type registrar: Enrollment
+        :param http_method: http method
+        :param path: path
         :return: auth token
         """
-        b64Cert = base64.b64encode(registrar._cert)
-
+        cert_bytes = registrar._cert if isinstance(registrar._cert, bytes) else registrar._cert.encode('utf-8')
+        b64Cert = base64.b64encode(cert_bytes)
         if req:
             reqJson = json.dumps(req, ensure_ascii=False)
-            b64Body = base64.b64encode(reqJson.encode())
-
-            # /!\ cannot mix f format and b
-            # https://stackoverflow.com/questions/45360480/is-there-a-
-            # formatted-byte-string-literal-in-python-3-6
+            b64Body = base64.b64encode(reqJson.encode('utf-8'))
             bodyAndCert = b'%s.%s' % (b64Body, b64Cert)
         else:
             bodyAndCert = b'.%s' % b64Cert
+        # Serialize and encode to bytes
+        fullpath = self._base_path + path
+        b64Path = base64.b64encode(fullpath.encode('utf-8'))
 
-        sig = self._cryptoPrimitives.sign(registrar._private_key, bodyAndCert)
-        b64Sign = base64.b64encode(sig)
+        string_to_sign = b'%s.%s.%s' % (http_method.encode('utf-8'), b64Path, bodyAndCert)
 
-        # /!\ cannot mix f format and b
+        # if isinstance(string_to_sign, str):
+        #     string_to_sign = string_to_sign.encode('utf-8')
+        # Sign the message
+        try:
+            sig = self._cryptoPrimitives.sign(registrar._private_key, string_to_sign)
+            if not sig or not isinstance(sig, bytes):
+                raise ValueError("Signing failed: Signature is empty or not bytes")
+            b64Sign = base64.b64encode(sig)
+        except Exception as e:
+            print(f"Signing failed: {e}")
+            raise
+        # Return the final token
         return b'%s.%s' % (b64Cert, b64Sign)
 
     def _send_ca_post(self, path, **param):
@@ -341,7 +353,7 @@ class CAClient(object):
                              .format(res['errors']))
 
     def register(self, req, registrar):
-        authorization = self.generateAuthToken(req, registrar)
+        authorization = self.generateAuthToken(req, registrar, "POST", path="register")
 
         res, st = self._send_ca_post(path="register",
                                      json=req,
@@ -358,7 +370,7 @@ class CAClient(object):
                              .format(res['errors']))
 
     def reenroll(self, req, registrar):
-        authorization = self.generateAuthToken(req, registrar)
+        authorization = self.generateAuthToken(req, registrar, "POST", path='reenroll')
 
         res, st = self._send_ca_post(path='reenroll',
                                      json=req,
@@ -376,7 +388,7 @@ class CAClient(object):
                              .format(res['errors']))
 
     def revoke(self, req, registrar):
-        authorization = self.generateAuthToken(req, registrar)
+        authorization = self.generateAuthToken(req, registrar, "POST", path="revoke")
 
         res, st = self._send_ca_post(path="revoke",
                                      json=req,
@@ -393,7 +405,7 @@ class CAClient(object):
                              .format(res['errors']))
 
     def generateCRL(self, req, registrar):
-        authorization = self.generateAuthToken(req, registrar)
+        authorization = self.generateAuthToken(req, registrar, "POST", path='gencrl')
         res, st = self._send_ca_post(path='gencrl',
                                      json=req,
                                      headers={'Authorization': authorization},

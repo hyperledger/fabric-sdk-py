@@ -54,11 +54,11 @@ class CertificateServiceTest(unittest.TestCase):
         self.shutdown_test_env()
 
     def start_test_env(self):
-        cli_call(["docker-compose", "-f", self.compose_file_path, "up", "-d"])
+        cli_call(["docker", "compose", "-f", self.compose_file_path, "up", "-d"])
         time.sleep(5)
 
     def shutdown_test_env(self):
-        cli_call(["docker-compose", "-f", self.compose_file_path, "down"])
+        cli_call(["docker", "compose", "-f", self.compose_file_path, "down"])
 
     def test_get_success(self):
         """Test create success.

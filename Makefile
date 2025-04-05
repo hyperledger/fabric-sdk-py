@@ -6,15 +6,15 @@ PATH := fabric-bin/bin:$(PATH)
 SHELL := env PATH=$(PATH) /bin/bash
 PIP := pip3
 PYTHON := python3
-check: clean
+check: clean venv
 	scripts/check-env.sh
 	echo "=== Testing started... ==="
 	make test
 
 # Tox related variables
 TOX = tox
-TOX_VENV_NAMES = flake8 py36
-# [tox.pylint, tox.flake8, tox.py36]
+TOX_VENV_NAMES = flake8 py312
+# [tox.pylint, tox.flake8, tox.py312]
 TOX_VENVS = $(patsubst %, $(TOX).%, $(TOX_VENV_NAMES))
 
 # Run all unit test cases
@@ -32,7 +32,7 @@ define run-py-tox
 	@rm -rf .tox/$(1)/log
 	# bin_path=.tox/$(1)/bin
 	# export PYTHON=$bin_path/python
-	@tox -v -e$(1) test
+	@tox -v -e$(1)
 	# set +o pipefail
 endef
 
@@ -55,11 +55,11 @@ image:
 # Generate the protobuf python files
 proto:
 	shopt -s globstar
-	$(PYTHON) -m grpc.tools.protoc \
-		-I./\
-		--python_out=./ \
-		--grpc_python_out=./ \
-		hfc/protos/**/*.proto
+	$(PYTHON) -m grpc_tools.protoc -I./ --python_out=./ --grpc_python_out=./ hfc/protos/**/*.proto
+	$(PYTHON) -m grpc_tools.protoc -I./ --python_out=./ --grpc_python_out=./ hfc/protos/orderer/**/*.proto
+	$(PYTHON) -m grpc_tools.protoc -I./ --python_out=./ --grpc_python_out=./ hfc/protos/peer/**/*.proto
+	$(PYTHON) -m grpc_tools.protoc -I./ --python_out=./ --grpc_python_out=./ hfc/protos/ledger/**/*.proto
+	$(PYTHON) -m grpc_tools.protoc -I./ --python_out=./ --grpc_python_out=./ hfc/protos/ledger/rwset/**/*.proto
 
 # Clean temporary files
 clean:

@@ -46,17 +46,17 @@ class BaseTestCase(unittest.TestCase):
         self.shutdown_test_env()
 
     def check_logs(self):
-        cli_call(["docker-compose", "-f", self.compose_file_path, "logs",
+        cli_call(["docker", "compose", "-f", self.compose_file_path, "logs",
                   "--tail=200"])
 
     def start_test_env(self):
         print("set-up")
-        cli_call(["docker-compose", "-f", self.compose_file_path, "up", "-d"])
+        cli_call(["docker", "compose", "-f", self.compose_file_path, "up", "-d"])
 
     def shutdown_test_env(self):
         print("tear down")
         self.check_logs()
-        cli_call(["docker-compose", "-f", self.compose_file_path, "down"])
+        cli_call(["docker", "compose", "-f", self.compose_file_path, "down"])
 
 
 class ChannelEventHubTestCase(BaseTestCase):

@@ -1,11 +1,12 @@
 # SPDX-License-Identifier: Apache-2.0
 #
-ca:
-  container_name: fabric-ca
-  image: hyperledger/fabric-ca:${HLF_VERSION}
-  #command: fabric-ca-server start -c ./testdata/testconfig-sdk.json
-  volumes:
-    - ../ca/fabric-ca-server:/etc/hyperledger/fabric-ca-server
-  ports:
-    - "7054:7054"
-  command: bash -c "fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server/ca-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server/ca-key.pem -c /etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml -b admin:adminpw"
+services:
+  ca:
+    container_name: fabric-ca
+    image: hyperledger/fabric-ca:1.5.15
+    #command: fabric-ca-server start -c ./testdata/testconfig-sdk.json
+    volumes:
+      - ../ca/fabric-ca-server:/etc/hyperledger/fabric-ca-server
+    ports:
+      - "7054:7054"
+    command: bash -c "fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server/ca-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server/ca-key.pem -c /etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml -b admin:adminpw"

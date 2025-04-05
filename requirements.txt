@@ -1,6 +1,7 @@
-aiogrpc >= 1.6
-cryptography >= 1.9
-grpcio >= 1.0.1
+aiogrpc == 1.8
+cryptography == 44.0.2
+grpcio == 1.62.2
+grpcio-tools == 1.62.2
 hkdf >= 0.0.3
 lark-parser == 0.7.1
 pycryptodomex >= 3.4.2
@@ -8,5 +9,5 @@ safe-pysha3 >= 1.0.3
 requests >= 2.20.0
 rx >= 3.0.1
 six >= 1.4.0
-protobuf >= 3.6.0
+protobuf == 4.25.6
 couchdb >= 1.2

@@ -61,10 +61,12 @@ class IdentityService(object):
         if isinstance(enrollmentSecret, str) and len(enrollmentSecret):
             req['secret'] = enrollmentSecret
 
-        authorization = self._client.generateAuthToken(req, registrar)
+        path = 'identities'
+
+        authorization = self._client.generateAuthToken(req, registrar, "POST", path)
         headers = {'Authorization': authorization}
         verify = self._client._ca_certs_path
-        res, st = self._client._send_ca_post(path='identities',
+        res, st = self._client._send_ca_post(path,
                                              json=req,
                                              headers=headers,
                                              verify=verify)
@@ -84,7 +86,7 @@ class IdentityService(object):
             raise ValueError('argument "enrollmentID" is not a valid string')
 
         path = 'identities/' + enrollmentID + '?ca=' + self._client._ca_name
-        authorization = self._client.generateAuthToken(None, registrar)
+        authorization = self._client.generateAuthToken(None, registrar, "GET", path)
         headers = {'Authorization': authorization}
         verify = self._client._ca_certs_path
         res, st = self._client._send_ca_get(path,
@@ -99,7 +101,7 @@ class IdentityService(object):
     def getAll(self, registrar):
 
         path = 'identities?ca=' + self._client._ca_name
-        authorization = self._client.generateAuthToken(None, registrar)
+        authorization = self._client.generateAuthToken(None, registrar, "GET", path)
         headers = {'Authorization': authorization}
         verify = self._client._ca_certs_path
         res, st = self._client._send_ca_get(path,
@@ -120,7 +122,7 @@ class IdentityService(object):
         if force is True:
             path += '?force=true'
 
-        authorization = self._client.generateAuthToken(None, registrar)
+        authorization = self._client.generateAuthToken(None, registrar, "DELETE", path)
         headers = {'Authorization': authorization}
         verify = self._client._ca_certs_path
         res, st = self._client._send_ca_delete(path,
@@ -155,7 +157,7 @@ class IdentityService(object):
         if caname:
             req['caname'] = caname
 
-        authorization = self._client.generateAuthToken(req, registrar)
+        authorization = self._client.generateAuthToken(req, registrar, "PUT", path)
         headers = {'Authorization': authorization}
         verify = self._client._ca_certs_path
         res, st = self._client._send_ca_update(path,
