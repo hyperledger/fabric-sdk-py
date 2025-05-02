@@ -11,3 +11,4 @@ rx >= 3.0.1
 six >= 1.4.0
 protobuf == 4.25.6
 couchdb >= 1.2
+setuptools>=78.1.1 # not directly required, pinned by Snyk to avoid a vulnerability
