@@ -3,3 +3,4 @@ sphinx_rtd_theme>=0.4.0,<=0.4.3
 recommonmark>=0.6.0,<=0.6.0
 sphinx-autoapi>=1.4.0
 sphinx-markdown-tables>=0.0.15
+markdown>=3.8.1 # not directly required, pinned by Snyk to avoid a vulnerability
