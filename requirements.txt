@@ -6,7 +6,7 @@ hkdf >= 0.0.3
 lark-parser == 0.7.1
 pycryptodomex >= 3.4.2
 safe-pysha3 >= 1.0.3
-requests >= 2.20.0
+requests>=2.33.0
 rx >= 3.0.1
 six >= 1.4.0
 protobuf == 4.25.6
